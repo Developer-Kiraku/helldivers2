@@ -1,3 +1,5 @@
+import { boards } from '@/lib/data';
+import { createPoll, castBallot, serializePoll, pollClosed } from '@/lib/server/polls';
 import { NextResponse } from 'next/server';
 import { randomUUID } from 'node:crypto';
 import { transaction, readStore, audit } from '@/lib/server/store';
@@ -20,7 +22,7 @@ async function body(request) {
 }
 function safeReason(value) { const reason = typeof value === 'string' ? value.trim() : ''; if (reason.length < 2 || reason.length > 1000) fail(400, '사유를 2~1,000자로 입력해주세요.'); return reason; }
 function bootstrap(db, actor) {
-  return { user: publicUser(actor), posts: Object.fromEntries(['notice','guide','talk'].map(board => [board, db.posts.filter(post => post.board === board && !post.deletedAt).sort((a,b) => Number(b.pinned)-Number(a.pinned) || b.createdAt.localeCompare(a.createdAt)).map(post => serializePost(db, post, actor))])), stats: { totalMembers: db.users.filter(user => user.status === 'active').length, onlineMembers: new Set(db.sessions.filter(session => Date.parse(session.expiresAt) > Date.now() && db.users.some(user => user.id === session.userId && user.status === 'active')).map(session => session.userId)).size } };
+  return { user: publicUser(actor), posts: Object.fromEntries(Object.keys(boards).map(board => [board, db.posts.filter(post => post.board === board && !post.deletedAt).sort((a,b) => Number(b.pinned)-Number(a.pinned) || b.createdAt.localeCompare(a.createdAt)).map(post => serializePost(db, post, actor))])), stats: { totalMembers: db.users.filter(user => user.status === 'active').length, onlineMembers: new Set(db.sessions.filter(session => Date.parse(session.expiresAt) > Date.now() && db.users.some(user => user.id === session.userId && user.status === 'active')).map(session => session.userId)).size } };
 }
 
 async function handler(request, context) {
@@ -62,7 +64,7 @@ async function handler(request, context) {
       }
       if(path==='posts'&&method==='POST'){
         const board=input.board;if(board==='notice'&&!isStaff(actor.role))fail(403,'공지사항은 운영진만 작성할 수 있습니다.');
-        const clean=cleanPost(input,board),post={...clean,id:randomUUID(),board,authorId:actor.id,pinned:clean.pinned ?? false,views:0,createdAt:now(),updatedAt:now(),deletedAt:null};db.posts.unshift(post);audit(db,actor.id,'post.create',post.id);return {post:serializePost(db,post,actor)};
+        const clean=cleanPost(input,board),post={...clean,poll:createPoll(input.poll),id:randomUUID(),board,authorId:actor.id,pinned:clean.pinned ?? false,views:0,createdAt:now(),updatedAt:now(),deletedAt:null};db.posts.unshift(post);audit(db,actor.id,'post.create',post.id);return {post:serializePost(db,post,actor)};
       }
       if(segments[0]==='posts'&&segments[1]){
         const post=postForId(db,segments[1]);const author=db.users.find(user=>user.id===post.authorId);
@@ -79,6 +81,16 @@ async function handler(request, context) {
         if(segments[2]==='comments'&&segments.length===3&&method==='POST'){
           const text=typeof input.body==='string'?input.body.trim():'';if(!text||text.length>1000)fail(400,'댓글은 1~1,000자로 입력해주세요.');
           const comment={id:randomUUID(),postId:post.id,authorId:actor.id,body:text,createdAt:now(),deletedAt:null};db.comments.push(comment);return {comment:serializeComment(db,comment,actor)};
+        }
+        if(segments[2]==='poll'&&segments.length===3&&['POST','PATCH'].includes(method)){
+          if(!post.poll)fail(404,'투표를 찾을 수 없습니다.');
+          if(method==='PATCH'){
+            if(actor.id!==post.authorId)fail(403,'작성자만 투표를 마감할 수 있습니다.');
+            if(input.close!==true)fail(400,'마감 요청을 확인해주세요.');
+            if(pollClosed(post.poll))fail(409,'이미 마감된 투표입니다.');
+            post.poll.closedAt=now();audit(db,actor.id,'poll.close',post.id);
+          }else{castBallot(post.poll,actor,input.choices);}
+          return {poll:serializePoll(db,post.poll,actor)};
         }
         if(segments[2]==='vote'&&segments.length===3&&method==='POST'){
           if(![0,1,-1].includes(input.value))fail(400,'추천 값을 확인해주세요.');
