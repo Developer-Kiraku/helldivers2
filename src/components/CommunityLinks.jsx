@@ -10,5 +10,5 @@ export function KakaoChatLink() {
 }
 
 export function MobileCommunityLinks() {
-  return <details className="mobile-community"><summary><Icon name="talk" /><span>채팅방</span></summary><div className="mobile-community-popover"><a href={communityLinks.discord} target="_blank" rel="noopener noreferrer"><Icon name="discord" size={18} />디스코드 <Icon name="external" size={14} /></a><a href={communityLinks.kakaoChat} target="_blank" rel="noopener noreferrer"><Icon name="kakao" size={18} />카카오톡 오픈채팅 <Icon name="external" size={14} /></a></div></details>;
+  return <details className="mobile-community"><summary><Icon name="talk" /><span>채팅방</span></summary><div className="mobile-community-popover"><a href={communityLinks.kakaoChat} target="_blank" rel="noopener noreferrer"><Icon name="kakao" size={18} />카카오톡 오픈채팅 <Icon name="external" size={14} /></a><a href={communityLinks.discord} target="_blank" rel="noopener noreferrer"><Icon name="discord" size={18} />디스코드 <Icon name="external" size={14} /></a></div></details>;
 }
