@@ -7,12 +7,16 @@
     "build": "next build --webpack",
     "start": "next start --hostname 127.0.0.1",
     "test:functional": "node scripts/test-functional.cjs",
-    "test:probation": "node scripts/test-probation.cjs"
+    "test:probation": "node scripts/test-probation.cjs",
+    "build:pages": "node scripts/build-pages.mjs"
   },
   "dependencies": {
     "next": "16.4.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "sanitize-html": "2.18.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

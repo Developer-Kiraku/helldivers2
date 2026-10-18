@@ -2,6 +2,16 @@
 
 승인된 디자인에 서버 로그인·회원 관리·게시판·운영진 처리 요청을 연결한 실행 가능한 프로젝트입니다. 임시 데이터는 서버 JSON 파일에 저장하며 새로고침·서버 재시작 후에도 유지됩니다.
 
+## GitHub Pages 디자인 미리보기
+
+[미리보기 열기](https://developer-kiraku.github.io/helldivers2/)
+
+화면 확인만 가능한 정적 버전입니다. 기존 React 화면을 사용하며 상단에서 운영자·부운영자·일반·견습·로그인 전 화면을 전환할 수 있습니다. 로그인·가입·프로필·게시판·회원 관리·요청 화면과 PC/모바일 디자인을 확인할 수 있습니다. 표시하는 모든 계정·게시글·요청은 예시이며 실제 카카오 인증·데이터 변경·저장은 실행하지 않습니다.
+
+`npm run build:pages`로 `pages-dist`를 생성합니다. `preview/`와 `scripts/build-pages.mjs`가 전용 진입점이며 Next.js 서버용 소스·실제 DB·환경변수는 정적 배포에 포함하지 않습니다. 주소의 `#/...` 부분으로 화면을 이동하므로 각 화면 링크를 그대로 공유하거나 새로고침해도 유지됩니다.
+
+GitHub 설정은 **Settings → Pages → Source: GitHub Actions**입니다. `main`에 push하면 `.github/workflows/pages.yml`이 미리보기를 자동 갱신합니다. 실제 기능 서비스는 아래의 Next.js 실행 방법을 사용합니다.
+
 ## 실행
 
 ```bash
