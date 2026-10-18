@@ -1,7 +1,7 @@
 export const boards = {
-  qna: { label: '질답', eyebrow: 'ASK YOUR SQUAD', description: '궁금한 점을 묻고, 동료의 경험으로 함께 해결해요.', categories: ['질문', '장비', '작전', '기타'] },
+  qna: { label: '질문상담실', eyebrow: 'ASK YOUR SQUAD', description: '궁금한 점을 묻고, 동료의 경험으로 함께 해결해요.', categories: ['질문', '장비', '작전', '기타'] },
   notice: { label: '공지사항', eyebrow: 'COMMAND CENTER', description: '함께하는 대원들에게 전하는 운영진의 소식입니다.', categories: ['공지', '모임', '기타'] },
-  guide: { label: '공략글', eyebrow: 'FIELD MANUAL', description: '경험을 나누고, 다음 강하를 함께 준비하세요.', categories: ['무기', '스트라타젬', '운영', '기타'] },
+  guide: { label: '공략브리핑', eyebrow: 'FIELD MANUAL', description: '경험을 나누고, 다음 강하를 함께 준비하세요.', categories: ['무기', '스트라타젬', '운영', '기타'] },
   talk: { label: '헬다이버톡', eyebrow: 'AFTER THE DROP', description: '작전 이야기부터 퇴근 이야기까지, 편하게 나눠요.', categories: ['잡담', '사진', '기타'] },
 };
 
