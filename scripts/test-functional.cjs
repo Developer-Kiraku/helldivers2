@@ -65,7 +65,31 @@ async function run() {
     assert.ok(deputyMembers.filter(u=>['member','apprentice'].includes(u.role)).every(u=>u.canRequestExpel));
     await deputy.call('/api/admin/users/u-user1','PATCH',{role:'deputy'},403);await member.call('/api/admin/users','GET',undefined,403);
     await member.call('/api/posts','POST',draft('notice'),403);await apprentice.call('/api/posts','POST',draft('notice'),403);
-    assert.equal((await member.call('/api/bootstrap')).data.posts.qna.length,18);
+    const sharedBoards = (await member.call('/api/bootstrap')).data.posts;
+    for (const board of ['notice','guide','talk','qna']) {
+      const post = sharedBoards[board][0];
+      assert.match(post.sharePath, /^\/s\/[A-Za-z0-9_-]{16}$/);
+      const anonymous = await guest.call(post.sharePath, 'GET', undefined, 307);
+      assert.equal(new URL(anonymous.response.headers.get('location'),origin).pathname, '/login');
+      assert.match(anonymous.response.headers.get('cache-control'), /no-store/);
+      assert.match(anonymous.response.headers.get('set-cookie'), /HttpOnly/);
+      assert.ok(!anonymous.data.includes(post.title), 'Private post text must not leak from short links');
+      const pendingCookie = anonymous.response.headers.get('set-cookie').split(';')[0];
+      const returning = client(`${member.cookie}; ${pendingCookie}`);
+      const destination = await returning.call('/', 'GET', undefined, 307);
+      assert.equal(new URL(destination.response.headers.get('location'),origin).pathname,post.sharePath);
+      const resolved = await returning.call(post.sharePath,'GET',undefined,307);
+      assert.equal(new URL(resolved.response.headers.get('location'),origin).pathname,`/boards/${board}/${post.id}`);
+      assert.match(resolved.response.headers.get('set-cookie'),/Max-Age=0/i);
+    }
+    await guest.call('/s/invalid', 'GET', undefined, 404);
+    await guest.call('/s/AAAAAAAAAAAAAAAA', 'GET', undefined, 404);
+    const removable = (await member.call('/api/posts','POST',draft('talk','공유 삭제 검증'))).data.post;
+    await member.call('/api/posts/'+removable.id,'DELETE');
+    await member.call(removable.sharePath,'GET',undefined,404);
+    const untrustedReturn = await client(`${member.cookie}; hd_shared_post=https%3A%2F%2Funtrusted.example`).call('/');
+    assert.equal(untrustedReturn.response.status,200);
+    assert.equal(sharedBoards.qna.length,18);
     const question=(await member.call('/api/posts','POST',draft('qna','장비 질문'))).data.post;
     await member.call('/boards/qna/'+question.id);await member.call('/boards/qna/'+question.id+'/edit');
     for(const board of ['talk','qna']){

@@ -109,3 +109,14 @@
 @media(max-width:379px){.mobile-brand-header .mobile-auth-action{right:9px;width:44px}.mobile-auth-action>span{display:none}}
 
 @media(max-width:760px){.site-shell:not(.show-mobile-preview)>.main-column>.preview-controls{display:none}.page-content:has(>.home-page){padding-top:0}}
+
+/* Shared article/feed sharing dialog. */
+.share-post-title{font-size:16px;font-weight:700;line-height:1.5;margin:0 0 8px;overflow-wrap:anywhere}
+.post-share-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+.post-share-options .ui-button{min-height:46px;font-size:14px}
+.post-share-options .kakao-share-button{background:#fee500!important;color:#191919!important;box-shadow:none}
+.post-share-options .kakao-share-button:hover{background:#f5d900!important}
+.post-share-options .kakao-share-button:disabled{opacity:.55}
+.share-url-input{width:100%;font-size:14px}.share-error{margin-top:12px}
+.article-actions .post-share-trigger{flex-shrink:0}
+@media(max-width:380px){.post-share-options{grid-template-columns:1fr}}

@@ -1,3 +1,4 @@
+import { postSharePath } from './share-links.mjs';
 import { serializePoll } from './polls';
 import 'server-only';
 import sanitizeHtml from 'sanitize-html';
@@ -54,7 +55,7 @@ export function canRequest(actor, target) { return actor.role === 'deputy' && ta
 export function serializePost(db, post, viewer) {
   const author = db.users.find(user => user.id === post.authorId);
   const votes = db.votes.filter(vote => vote.postId === post.id);
-  return { ...post, poll: serializePoll(db, post.poll, viewer), author: author?.status === 'withdrawn' ? '탈퇴한 회원' : author?.nickname || '알 수 없는 회원', authorRole: author?.role || 'apprentice', authorPhoto: author?.status === 'active' ? author.photo : '', own: viewer.id === post.authorId, date: post.createdAt.slice(0, 10).replaceAll('-', '.'), likes: votes.filter(vote => vote.value === 1).length, dislikes: votes.filter(vote => vote.value === -1).length, myVote: votes.find(vote => vote.userId === viewer.id)?.value || 0, comments: db.comments.filter(comment => comment.postId === post.id && !comment.deletedAt).length, canDelete: canDeletePost(viewer, author), canEdit: viewer.id === post.authorId, canRequestDelete: canRequest(viewer, author) && viewer.id !== post.authorId };
+  return { ...post, sharePath: postSharePath(post), poll: serializePoll(db, post.poll, viewer), author: author?.status === 'withdrawn' ? '탈퇴한 회원' : author?.nickname || '알 수 없는 회원', authorRole: author?.role || 'apprentice', authorPhoto: author?.status === 'active' ? author.photo : '', own: viewer.id === post.authorId, date: post.createdAt.slice(0, 10).replaceAll('-', '.'), likes: votes.filter(vote => vote.value === 1).length, dislikes: votes.filter(vote => vote.value === -1).length, myVote: votes.find(vote => vote.userId === viewer.id)?.value || 0, comments: db.comments.filter(comment => comment.postId === post.id && !comment.deletedAt).length, canDelete: canDeletePost(viewer, author), canEdit: viewer.id === post.authorId, canRequestDelete: canRequest(viewer, author) && viewer.id !== post.authorId };
 }
 export function serializeComment(db, comment, viewer) {
   const author = db.users.find(user => user.id === comment.authorId);

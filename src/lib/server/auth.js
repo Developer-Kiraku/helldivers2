@@ -1,3 +1,4 @@
+import { validSharePath } from './share-links.mjs';
 import 'server-only';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -36,6 +37,8 @@ export async function getCurrentUser() {
 }
 export async function requirePageUser(roles) {
   const user = await getCurrentUser(); if (!user) redirect('/login');
+  const shared = (await cookies()).get('hd_shared_post')?.value;
+  if (validSharePath(shared)) redirect(shared);
   if (roles && !roles.includes(user.role)) redirect('/');
   return user;
 }

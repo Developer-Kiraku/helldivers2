@@ -7,6 +7,7 @@ import { useCommunity } from './CommunityProvider';
 import Avatar from './Avatar';
 import Icon from './Icon';
 import VoteButtons from './VoteButtons';
+import PostShare from './PostShare';
 
 export default function FeedPostCard({ post, board }) {
   const { api, profile, notify, refresh } = useCommunity();
@@ -43,11 +44,6 @@ export default function FeedPostCard({ post, board }) {
       notify('댓글을 등록했습니다.'); await refresh();
     } catch (error) { setError(error.message); } finally { setBusy(false); }
   }
-  async function share() {
-    try { await navigator.clipboard.writeText(new URL(href, location.origin).href); notify('게시글 주소를 복사했습니다.'); }
-    catch { notify('게시글을 열어 브라우저 주소창의 링크를 복사해주세요.'); }
-  }
-
   const image = post.images?.[0] || post.image;
   return <article className="talk-card">
     <div className="post-meta"><span className="badge">{post.category}</span><Avatar name={post.author} own={post.own} photo={post.authorPhoto} /><span>{post.own ? profile.nickname : post.author}</span><span>· {post.date}</span></div>
@@ -58,7 +54,7 @@ export default function FeedPostCard({ post, board }) {
     <footer className="talk-card-footer">
       <VoteButtons postId={post.id} likes={post.likes} dislikes={post.dislikes} myVote={post.myVote} />
       <Button type="button" id={`${panelId}-toggle`} aria-expanded={open} aria-controls={panelId} onClick={() => setOpen(current => !current)}><Icon name="talk" size={16} />댓글 {count}<span className="feed-comment-toggle-label">{open ? '접기' : '펼치기'}</span></Button>
-      <Button type="button" onClick={share}><Icon name="share" size={16} />공유</Button>
+      <PostShare post={post}/>
     </footer>
     <section id={panelId} className="feed-comment-panel" aria-labelledby={`${panelId}-toggle`} hidden={!open}>
       {open && <>
