@@ -10,7 +10,7 @@ import { useCommunity } from './CommunityProvider';
 import { DiscordLink,KakaoChatLink,MobileCommunityLinks } from './CommunityLinks';
 import { isStaff,roleLabels } from '@/lib/roles';
 const menu=[{href:'/',label:'대시보드',mobileLabel:'홈',icon:'home'},{href:'/boards/notice',label:'공지사항',icon:'flag'},{href:'/boards/guide',label:'공략글',icon:'target'},{href:'/boards/talk',label:'헬다이버톡',mobileLabel:'톡',icon:'talk'},{href:'/boards/qna',label:'질답',icon:'question'}];
-export default function Shell({children}){
+export default function Shell({children,previewSkeleton=false}){
  const pathname=usePathname(),router=useRouter();const {signedIn,role,profile,logout}=useCommunity();
  const [device,setDevice]=useState('pc'),[isFrame,setIsFrame]=useState(false),[previewRoute,setPreviewRoute]=useState(pathname);const frame=useRef(null);
  useEffect(()=>{setIsFrame(window.parent!==window)},[]);
