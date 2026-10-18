@@ -62,7 +62,7 @@ async function handler(request, context) {
       }
       if(path==='posts'&&method==='POST'){
         const board=input.board;if(board==='notice'&&!isStaff(actor.role))fail(403,'공지사항은 운영진만 작성할 수 있습니다.');
-        const clean=cleanPost(input,board),post={...clean,id:randomUUID(),board,authorId:actor.id,pinned:false,views:0,createdAt:now(),updatedAt:now(),deletedAt:null};db.posts.unshift(post);audit(db,actor.id,'post.create',post.id);return {post:serializePost(db,post,actor)};
+        const clean=cleanPost(input,board),post={...clean,id:randomUUID(),board,authorId:actor.id,pinned:clean.pinned ?? false,views:0,createdAt:now(),updatedAt:now(),deletedAt:null};db.posts.unshift(post);audit(db,actor.id,'post.create',post.id);return {post:serializePost(db,post,actor)};
       }
       if(segments[0]==='posts'&&segments[1]){
         const post=postForId(db,segments[1]);const author=db.users.find(user=>user.id===post.authorId);

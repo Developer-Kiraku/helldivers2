@@ -31,3 +31,5 @@
 /* Feed boards use the full content width without a rules sidebar. */
 .feed-layout.feed-layout-full{grid-template-columns:minmax(0,1fr)}
 @media(max-width:760px){.mobile-nav{gap:0;padding-inline:0}.mobile-nav>a,.mobile-nav>.mobile-community{flex:1;min-width:0}}
+
+.notice-pin-option{padding:14px 16px;margin:0 0 22px;background:#ffffff04;border:1px solid #46564b;border-radius:7px}.notice-pin-option .checkbox-label{align-items:center;gap:10px;font-size:14px;font-weight:600;margin:0}.notice-pin-option .ui-checkbox{margin-top:0}.notice-pin-option .field-hint{margin:7px 0 0 29px}

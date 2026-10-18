@@ -24,6 +24,8 @@ export function validImage(value, allowLocal = false, max = 900000) {
 }
 export function cleanPost(input, board) {
   if (!boards[board]) fail(400, '게시판을 확인해주세요.');
+  if (input.pinned !== undefined && typeof input.pinned !== 'boolean') fail(400, '상단 고정 여부를 확인해주세요.');
+  if (input.pinned === true && board !== 'notice') fail(400, '공지사항만 상단에 고정할 수 있습니다.');
   const title = typeof input.title === 'string' ? input.title.trim() : '';
   if (!title || title.length > 100) fail(400, '제목은 1~100자로 입력해주세요.');
   if (!boards[board].categories.includes(input.category)) fail(400, '게시글 분류를 확인해주세요.');
@@ -42,7 +44,7 @@ export function cleanPost(input, board) {
     exclusiveFilter: frame => frame.tag === 'img' && !images.includes(frame.attribs.src),
   });
   if (!content && !images.length) fail(400, '본문을 입력해주세요.');
-  return { title, category: input.category, content, bodyHtml, images };
+  return { title, category: input.category, content, bodyHtml, images, ...(board === 'notice' && input.pinned !== undefined ? { pinned: input.pinned } : {}) };
 }
 export function postForId(db, id) { const post = db.posts.find(item => item.id === id && !item.deletedAt); if (!post) fail(404, '게시글을 찾을 수 없습니다.'); return post; }
 export function memberForId(db, id) { const user = db.users.find(item => item.id === id && item.status === 'active'); if (!user) fail(404, '활성 회원을 찾을 수 없습니다.'); return user; }

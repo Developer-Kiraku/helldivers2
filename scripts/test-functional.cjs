@@ -66,6 +66,24 @@ async function run() {
     await deputy.call('/api/admin/users/u-user1','PATCH',{role:'deputy'},403);await member.call('/api/admin/users','GET',undefined,403);
     await member.call('/api/posts','POST',draft('notice'),403);await apprentice.call('/api/posts','POST',draft('notice'),403);
     const notice=(await deputy.call('/api/posts','POST',draft('notice'))).data.post;
+    const pinnedNotice=(await admin.call('/api/posts','POST',{...draft('notice','상단 고정 검증'),pinned:true})).data.post;
+    assert.equal(pinnedNotice.pinned,true);
+    const normalNotice=(await deputy.call('/api/posts','POST',draft('notice','일반 공지 검증'))).data.post;
+    assert.equal(normalNotice.pinned,false);
+    let noticeList=(await member.call('/api/bootstrap')).data.posts.notice;
+    assert.ok(noticeList.findIndex(p=>p.id===pinnedNotice.id)<noticeList.findIndex(p=>p.id===normalNotice.id));
+    await admin.call(`/api/posts/${pinnedNotice.id}`,'PATCH',draft('notice','고정 유지 검증'));
+    assert.equal((await admin.call(`/api/posts/${pinnedNotice.id}`)).data.post.pinned,true);
+    await member.call(`/api/posts/${pinnedNotice.id}`,'PATCH',{...draft('notice'),pinned:false},403);
+    await admin.call(`/api/posts/${pinnedNotice.id}`,'PATCH',{...draft('notice'),pinned:false});
+    assert.equal((await admin.call(`/api/posts/${pinnedNotice.id}`)).data.post.pinned,false);
+    await deputy.call(`/api/posts/${normalNotice.id}`,'PATCH',{...draft('notice'),pinned:true});
+    assert.equal((await deputy.call(`/api/posts/${normalNotice.id}`)).data.post.pinned,true);
+    await admin.call('/api/posts','POST',{...draft('notice'),pinned:'true'},400);
+    await member.call('/api/posts','POST',{...draft('guide'),pinned:true},400);
+    await admin.call(`/api/posts/${pinnedNotice.id}`,'DELETE',{});
+    await deputy.call(`/api/posts/${normalNotice.id}`,'DELETE',{});
+
     const post=(await member.call('/api/posts','POST',draft())).data.post;
     const guide=(await apprentice.call('/api/posts','POST',draft('guide'))).data.post;
     assert.ok(!post.bodyHtml.includes('<script'));assert.ok(!post.bodyHtml.includes('onerror'));assert.match(post.bodyHtml,/noopener noreferrer/);
