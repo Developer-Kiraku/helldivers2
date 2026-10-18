@@ -38,6 +38,7 @@ const draft = (board = 'talk', title = '기능 검증 글') => ({ board, title, 
 async function run() {
   await import('./test-application-url.mjs');
   await import('./test-owner-setup.mjs');
+  await import('./test-post-html.mjs');
   await fs.mkdir(path.join(root, 'work'), {recursive:true});
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-')); const file = path.join(directory, 'test-db.json');
   try {
@@ -92,6 +93,13 @@ async function run() {
     const untrustedReturn = await client(`${member.cookie}; hd_shared_post=https%3A%2F%2Funtrusted.example`).call('/');
     assert.equal(untrustedReturn.response.status,200);
     assert.equal(sharedBoards.qna.length,18);
+    const rich=(await member.call('/api/posts','POST',{...draft('guide','HTML 영상 검증'),content:'',bodyHtml:'<iframe src="https://www.youtube.com/embed/M7lc1UVf-VE"></iframe>'})).data.post;
+    assert.match(rich.bodyHtml,/youtube-nocookie.com/);
+    const richEdit=(await member.call('/api/posts/'+rich.id,'PATCH',{...draft('guide','HTML 영상 수정'),bodyHtml:'<p><span style="font-size:17px">세밀한 글자</span></p><iframe src="https://youtu.be/M7lc1UVf-VE?t=62"></iframe><iframe src="https://attacker.example"></iframe><script>alert(1)</script>'})).data.post;
+    assert.match(richEdit.bodyHtml,/font-size:17px/);assert.match(richEdit.bodyHtml,/start=62/);assert.ok(!/attacker|script/.test(richEdit.bodyHtml));
+    assert.equal((await member.call('/api/posts/'+rich.id)).data.post.bodyHtml,richEdit.bodyHtml);
+    await member.call('/api/posts','POST',{...draft('guide'),content:'',bodyHtml:'<iframe src="https://attacker.example"></iframe>'},400);
+    await member.call('/api/posts/'+rich.id,'DELETE');
     const question=(await member.call('/api/posts','POST',draft('qna','장비 질문'))).data.post;
     await member.call('/boards/qna/'+question.id);await member.call('/boards/qna/'+question.id+'/edit');
     for(const board of ['talk','qna']){

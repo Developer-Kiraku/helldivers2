@@ -120,3 +120,11 @@
 .share-url-input{width:100%;font-size:14px}.share-error{margin-top:12px}
 .article-actions .post-share-trigger{flex-shrink:0}
 @media(max-width:380px){.post-share-options{grid-template-columns:1fr}}
+
+.rich-text-composer{min-width:0}.editor-toolbar{gap:8px}.editor-mode-switch,.editor-format-controls{display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.editor-mode-switch{padding-right:10px;border-right:1px solid #52605c}.editor-mode-switch button[aria-pressed=true]{background:#495951;color:#fff}
+.editor-font-size{display:inline-flex;align-items:center;gap:5px;margin:0 5px}.editor-font-size .ui-input{width:76px;min-width:0;height:34px}.editor-font-size .ui-input input{font-size:14px}.editor-font-size span{font-size:12px;color:#aabbb2}
+.editor-source.ui-textarea{width:100%;min-height:340px;border-radius:0 0 4px 4px;background:#191e1f}.editor-source textarea{min-height:340px;font-family:Consolas,monospace;font-size:14px;line-height:1.7;tab-size:2;resize:vertical}
+.rich-editor[hidden]{display:none!important}.rich-editor iframe,.article-copy iframe.youtube-embed{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:16/9;min-height:200px;border:0;border-radius:6px;margin:18px 0;background:#111}
+.rich-editor iframe{pointer-events:none}.rich-editor p,.article-copy p{min-height:1em}
+@media(max-width:600px){.editor-mode-switch{border-right:0;width:100%;padding-right:0}.editor-format-controls{gap:4px}.editor-toolbar .ui-button{font-size:12px;padding:5px 7px}.editor-font-size{margin:0 2px}.editor-font-size .ui-input{width:66px}}

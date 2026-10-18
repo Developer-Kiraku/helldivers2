@@ -1,7 +1,7 @@
 import { postSharePath } from './share-links.mjs';
 import { serializePoll } from './polls';
 import 'server-only';
-import sanitizeHtml from 'sanitize-html';
+import { sanitizePostHtml } from './post-html.mjs';
 import { boards } from '../data';
 import { outranks } from '../roles';
 import { fail } from './auth';
@@ -13,9 +13,13 @@ export function validateNickname(value, db, excludeId) {
   if (db.users.some(user => user.id !== excludeId && user.status === 'active' && user.nickname.toLowerCase() === nickname.toLowerCase())) fail(409, '이미 사용 중인 닉네임입니다.');
   return nickname;
 }
-export function validImage(value, allowLocal = false, max = 900000) {
+export function validImage(value, allowLocal = false, max = 900000, allowRemote = false) {
   if (typeof value !== 'string' || value.length > max) fail(400, '이미지 크기가 허용 범위를 초과했습니다.');
   if (!value) return '';
+  if (allowRemote && value.startsWith('https://')) {
+    try { const url = new URL(value); if (url.username || url.password || value.length > 2048) throw Error(); return url.href; }
+    catch { fail(400, '유효한 HTTPS 이미지 주소를 입력해주세요.'); }
+  }
   if (allowLocal && /^\/images\/[a-zA-Z0-9_.-]+$/.test(value)) return value;
   const match = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$/.exec(value);
   if (!match) fail(400, 'JPG·PNG·WebP 이미지 형식만 사용할 수 있습니다.');
@@ -34,18 +38,11 @@ export function cleanPost(input, board) {
   const content = typeof input.content === 'string' ? input.content.trim() : '';
   if (content.length > 50000) fail(400, '본문은 50,000자 이하로 작성해주세요.');
   if (Array.isArray(input.images) && input.images.length > 5) fail(400, '본문 이미지는 최대 5개까지 넣을 수 있습니다.');
-  const images = Array.isArray(input.images) ? input.images.map(image => validImage(image, true, 7000000)) : [];
+  const images = Array.isArray(input.images) ? input.images.map(image => validImage(image, true, 7000000, true)) : [];
   const raw = typeof input.bodyHtml === 'string' ? input.bodyHtml : '';
   if (raw.length > 12000000) fail(400, '본문 크기가 너무 큽니다.');
-  const bodyHtml = sanitizeHtml(raw, {
-    allowedTags: ['p','br','b','strong','i','em','u','ul','ol','li','blockquote','h2','h3','a','img'],
-    allowedAttributes: { a: ['href','target','rel'], img: ['src','alt'] },
-    allowedSchemes: ['http','https'], allowedSchemesByTag: { img: ['data'] },
-    allowProtocolRelative: false,
-    transformTags: { a: (tag, attrs) => ({ tagName: 'a', attribs: { href: attrs.href || '', target: '_blank', rel: 'noopener noreferrer' } }) },
-    exclusiveFilter: frame => frame.tag === 'img' && !images.includes(frame.attribs.src),
-  });
-  if (!content && !images.length) fail(400, '본문을 입력해주세요.');
+  const bodyHtml = sanitizePostHtml(raw, images);
+  if (!content && !images.length && !bodyHtml.includes('<iframe ')) fail(400, '본문을 입력해주세요.');
   return { title, category: input.category, content, bodyHtml, images, ...(board === 'notice' && input.pinned !== undefined ? { pinned: input.pinned } : {}) };
 }
 export function postForId(db, id) { const post = db.posts.find(item => item.id === id && !item.deletedAt); if (!post) fail(404, '게시글을 찾을 수 없습니다.'); return post; }
