@@ -39,6 +39,7 @@ async function run() {
   await import('./test-application-url.mjs');
   await import('./test-owner-setup.mjs');
   await import('./test-post-html.mjs');
+  await import('./test-tiptap.mjs');
   await fs.mkdir(path.join(root, 'work'), {recursive:true});
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-')); const file = path.join(directory, 'test-db.json');
   try {
@@ -69,6 +70,8 @@ async function run() {
     await deputy.call('/api/admin/users/u-user1','PATCH',{role:'deputy'},403);await member.call('/api/admin/users','GET',undefined,403);
     await member.call('/api/posts','POST',draft('notice'),403);await apprentice.call('/api/posts','POST',draft('notice'),403);
     const sharedBoards = (await member.call('/api/bootstrap')).data.posts;
+    assert.equal(sharedBoards.notice.find(p=>p.authorId==='u-admin').authorRole,'operator');
+    assert.equal(sharedBoards.notice.find(p=>p.authorId==='u-subadmin').authorRole,'deputy');
     for (const board of ['notice','guide','talk','qna']) {
       const post = sharedBoards[board][0];
       assert.match(post.sharePath, /^\/s\/[A-Za-z0-9_-]{16}$/);
@@ -108,6 +111,7 @@ async function run() {
       await member.call('/api/posts/'+item.id+'/comments','POST',{body:'   '},400);
       const answer=(await deputy.call('/api/posts/'+item.id+'/comments','POST',{body:'목록에서 작성한 답변'})).data.comment;
       const detail=(await member.call('/api/posts/'+item.id)).data;
+      assert.equal(detail.comments.find(c=>c.id===answer.id).authorRole,'deputy');
       assert.equal(detail.comments.length,1);assert.equal(detail.comments[0].id,answer.id);assert.equal(detail.comments[0].body,'목록에서 작성한 답변');
       const listed=(await member.call('/api/bootstrap')).data.posts[board].find(p=>p.id===item.id);assert.equal(listed.comments,1);
     }
