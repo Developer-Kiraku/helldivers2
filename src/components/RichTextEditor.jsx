@@ -31,7 +31,6 @@ const RichTextEditor = forwardRef(function RichTextEditor({ initialPost, notify 
   });
   const state = useEditorState({ editor, selector: ({ editor }) => editor ? {
     size: parseInt(editor.getAttributes('textStyle').fontSize) || 14,
-    bold: editor.isActive('bold'), italic: editor.isActive('italic'), underline: editor.isActive('underline'),
     bulletList: editor.isActive('bulletList'), undo: editor.can().undo(), redo: editor.can().redo(),
   } : { size: 14 } });
   useEffect(() => {
@@ -85,7 +84,6 @@ const RichTextEditor = forwardRef(function RichTextEditor({ initialPost, notify 
     <div className="editor-toolbar" aria-label="본문 편집 도구">
       <div className="editor-mode-switch"><Button type="button" aria-pressed={!sourceMode} onClick={() => sourceMode && toggleSource()}>일반 편집</Button><Button type="button" aria-pressed={sourceMode} onClick={() => !sourceMode && toggleSource()}><Icon name="code" size={16}/>HTML 소스</Button></div>
       <div className="editor-format-controls" aria-disabled={sourceMode || !editor}>
-        {[['toggleBold','굵게','bold'],['toggleItalic','기울임','italic'],['toggleUnderline','밑줄','underline']].map(([command,label,mark]) => <Button key={command} type="button" aria-label={label} aria-pressed={Boolean(state?.[mark])} disabled={sourceMode || !editor} onMouseDown={e=>e.preventDefault()} onClick={()=>format(command)}><Icon name={command} size={16}/></Button>)}
         <div className="editor-font-size"><Select aria-label="글자 크기" value={String(state?.size || 14)} disabled={sourceMode || !editor} onChange={event=>applyFontSize(event.target.value)}>{Array.from({length:maxFontSize-minFontSize+1},(_,index)=>index+minFontSize).map(size=><option key={size} value={String(size)}>{size}px</option>)}</Select></div>
         <Button type="button" disabled={sourceMode || !editor} onMouseDown={e=>e.preventDefault()} onClick={()=>format('toggleBulletList')}><Icon name="list" size={16}/>목록</Button>
         <Button type="button" disabled={sourceMode || !editor} onClick={()=>showDialog('link')}><Icon name="link" size={16}/>링크</Button>

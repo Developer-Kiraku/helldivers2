@@ -136,3 +136,5 @@
 .tiptap-editor .ProseMirror-selectednode{outline:2px solid #8ea99d;outline-offset:3px}.tiptap-editor [data-youtube-video]{margin:15px 0}.tiptap-editor [data-youtube-video] iframe{margin:0}
 .editor-font-size .ui-select{min-width:88px;width:88px;min-height:34px;height:34px;font-size:14px}.editor-format-controls button[aria-pressed=true]{background:#4a5b51;color:#fff}
 @media(max-width:600px){.editor-font-size .ui-select{min-width:78px;width:78px}}
+
+.full-menu{display:flex;flex-direction:column;gap:6px}.full-menu>a,.full-menu>.ui-button{display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:12px 14px;min-height:46px;border-radius:6px;color:#d6e1d5;font-size:14px;text-decoration:none;background:transparent}.full-menu>a:hover,.full-menu>.ui-button:hover,.full-menu>a[aria-current=page]{background:#354139}.full-menu>a>svg{flex-shrink:0;width:20px;height:20px}.full-menu-divider{height:1px;background:#46534a;margin:8px 0}
