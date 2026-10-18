@@ -1,3 +1,4 @@
+import { applicationUrl } from '@/lib/server/application-url.mjs';
 import { NextResponse } from 'next/server';
 import { config } from '@/lib/server/config';
 import { createToken, tokenHash } from '@/lib/server/passwords';
@@ -6,7 +7,7 @@ import { transaction, audit } from '@/lib/server/store';
 
 export async function GET(request) {
   const url=new URL(request.url),state=request.cookies.get('hd_oauth_state')?.value;
-  function failure(code){const response=NextResponse.redirect(new URL(`/login?error=${code}`,request.url));response.cookies.set('hd_oauth_state','',{...cookieOptions,maxAge:0});return response;}
+  function failure(code){const response=NextResponse.redirect(applicationUrl(`/login?error=${code}`,request.url,config.origin));response.cookies.set('hd_oauth_state','',{...cookieOptions,maxAge:0});return response;}
   if(!state||state!==url.searchParams.get('state')||!url.searchParams.get('code')||!config.kakaoClientId||!config.kakaoRedirectUri)return failure('kakao-invalid-state');
   try{
     const form=new URLSearchParams({grant_type:'authorization_code',client_id:config.kakaoClientId,redirect_uri:config.kakaoRedirectUri,code:url.searchParams.get('code')});if(config.kakaoClientSecret)form.set('client_secret',config.kakaoClientSecret);
@@ -23,7 +24,7 @@ export async function GET(request) {
       db.pendingRegistrations.push({ticketHash:tokenHash(ticket),kakaoId:String(kakao.id),expiresAt:new Date(Date.now()+600000).toISOString()});return {ticket};
     });
     if(result.blocked)return failure('account-blocked');
-    const response=NextResponse.redirect(new URL(result.token?'/':'/signup',request.url));response.cookies.set('hd_oauth_state','',{...cookieOptions,maxAge:0});
+    const response=NextResponse.redirect(applicationUrl(result.token?'/':'/signup',request.url,config.origin));response.cookies.set('hd_oauth_state','',{...cookieOptions,maxAge:0});
     if(result.token)setSessionCookie(response,result.token);else response.cookies.set('hd_signup',result.ticket,{...cookieOptions,maxAge:600});
     return response;
   }catch{return failure('kakao-auth-failed');}

@@ -36,6 +36,8 @@ function client(cookie = '') {
 }
 const draft = (board = 'talk', title = '기능 검증 글') => ({ board, title, category: board === 'notice' ? '공지' : board === 'guide' ? '무기' : board === 'qna' ? '질문' : '잡담', content: '임시 JSON에 저장되는 본문', bodyHtml: '<p>본문 <a href="https://example.com">링크</a><script>alert(1)</script><img src=x onerror=alert(1)></p>', images: [] });
 async function run() {
+  await import('./test-application-url.mjs');
+  await import('./test-owner-setup.mjs');
   await fs.mkdir(path.join(root, 'work'), {recursive:true});
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-')); const file = path.join(directory, 'test-db.json');
   try {
