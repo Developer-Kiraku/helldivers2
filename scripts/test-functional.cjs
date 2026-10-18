@@ -41,7 +41,7 @@ async function run() {
   try {
     await start(file);
     const guest = client(), admin = client(), deputy = client(), member = client(), apprentice = client();
-    for (const route of ['/', '/profile', '/boards/guide', '/boards/talk', '/admin/users', '/admin/requests']) {
+    for (const route of ['/', '/profile', '/boards/guide', '/boards/talk', '/admin/users', '/admin/requests', '/admin/approvals']) {
       const {response} = await guest.call(route, 'GET', undefined, 307); assert.equal(new URL(response.headers.get('location'), origin).pathname, '/login');
     }
     await guest.call('/login'); await guest.call('/signup'); await guest.call('/api/bootstrap', 'GET', undefined, 401); await guest.call('/api/admin/requests', 'GET', undefined, 401);
@@ -54,7 +54,9 @@ async function run() {
       for (const route of ['/login','/signup']) { const r = await actor.call(route,'GET',undefined,307);assert.equal(new URL(r.response.headers.get('location'),origin).pathname,'/'); }
     }
     for (const route of ['/', '/profile', '/boards/notice', '/boards/guide', '/boards/talk', '/boards/guide/write']) await member.call(route);
-    await admin.call('/admin/users'); await admin.call('/admin/requests'); await deputy.call('/admin/users'); await deputy.call('/admin/requests','GET',undefined,307); await member.call('/admin/users','GET',undefined,307);
+    await admin.call('/admin/users'); await admin.call('/admin/requests','GET',undefined,307); await admin.call('/admin/approvals'); await deputy.call('/admin/users'); await deputy.call('/admin/requests','GET',undefined,307); await deputy.call('/admin/approvals'); await member.call('/admin/users','GET',undefined,307);await member.call('/admin/approvals','GET',undefined,307);
+    await guest.call('/api/admin/approvals','GET',undefined,401);await member.call('/api/admin/approvals','GET',undefined,403);await apprentice.call('/api/admin/approvals','GET',undefined,403);
+    for(const staff of [admin,deputy]){const pending=(await staff.call('/api/admin/approvals')).data.requests;assert.equal(pending.length,1);assert.equal(pending[0].type,'member_approval');assert.equal(pending[0].targetId,'u-user2');assert.equal(pending[0].canApprove,true);assert.equal(pending[0].canReject,false);}
     await member.call('/api/posts','POST',draft('notice'),403);await apprentice.call('/api/posts','POST',draft('notice'),403);
     const notice=(await deputy.call('/api/posts','POST',draft('notice'))).data.post;
     const post=(await member.call('/api/posts','POST',draft())).data.post;
@@ -74,9 +76,11 @@ async function run() {
     const requests='/api/admin/requests';
     await member.call(requests,'POST',{type:'post_delete',targetId:guide.id,reason:'검토 요청'},403);await deputy.call(requests,'POST',{type:'post_delete',targetId:notice.id,reason:'검토 요청'},403);
     const req=(await deputy.call(requests,'POST',{type:'post_delete',targetId:post.id,reason:'게시글 검토'})).data.request;
+    assert.ok((await admin.call('/api/admin/approvals')).data.requests.some(r=>r.id===req.id));assert.ok((await deputy.call('/api/admin/approvals')).data.requests.every(r=>r.type==='member_approval'));
     await deputy.call(requests,'POST',{type:'post_delete',targetId:post.id,reason:'중복 검토'},409);await member.call(requests,'GET',undefined,403);
     assert.ok((await admin.call(requests)).data.requests.some(r=>r.id===req.id));await deputy.call(`${requests}/${req.id}/review`,'POST',{decision:'approved'},403);
     await admin.call(`${requests}/${req.id}/review`,'POST',{decision:'approved',note:'삭제 승인'});await admin.call(`${requests}/${req.id}/review`,'POST',{decision:'approved'},409);await member.call(`/api/posts/${post.id}`,'GET',undefined,404);
+    assert.equal((await admin.call('/api/admin/approvals')).data.requests.find(r=>r.id===req.id).status,'approved');
     const rejected=(await deputy.call(requests,'POST',{type:'post_delete',targetId:guide.id,reason:'거부 테스트'})).data.request;
     await admin.call(`${requests}/${rejected.id}/review`,'POST',{decision:'rejected',note:'유지'});await member.call(`/api/posts/${guide.id}`);
     const stale=(await deputy.call(requests,'POST',{type:'user_expel',targetId:'u-user1',reason:'등급 변경 검증'})).data.request;
@@ -99,6 +103,9 @@ async function run() {
     await signup.call('/api/auth/register','POST',{nickname:'신입대원',agreements:{age:'true',terms:true,collect:true}},400);
     const registered=(await signup.call('/api/auth/register','POST',{nickname:'신입대원',role:'operator',agreements:{age:true,terms:true,collect:true}},201)).data.user;
     assert.equal(registered.role,'apprentice');assert.equal(registered.kakao.id,'test-kakao-verified-1');assert.equal(registered.probationStartedAt,registered.createdAt);assert.ok(Date.parse(registered.probationExpiresAt)>Date.parse(registered.createdAt));assert.equal(registered.approvedAt,null);await signup.call('/api/bootstrap');
+    assert.ok((await deputy.call('/api/admin/approvals')).data.requests.some(r=>r.type==='member_approval'&&r.targetId===registered.id&&r.status==='pending'));
+    await member.call(`/api/admin/users/${registered.id}/approve`,'POST',{},403);await deputy.call(`/api/admin/users/${registered.id}/approve`,'POST',{});
+    for(const staff of [admin,deputy]){const approvals=(await staff.call('/api/admin/approvals')).data.requests;assert.ok(!approvals.some(r=>r.targetId===registered.id&&r.status==='pending'));assert.ok(approvals.some(r=>r.targetId===registered.id&&r.status==='approved'&&r.reviewerNickname==='부운영자'));}
     await client(`hd_signup=${ticket}`).call('/api/auth/register','POST',{nickname:'재사용검증',agreements:{age:true,terms:true,collect:true}},401);
     const second=client();await second.call('/api/auth/login','POST',{loginId:'user1',password:'1234'});await member.call('/api/profile','DELETE',{confirm:false},400);await member.call('/api/profile','DELETE',{confirm:true});await second.call('/api/bootstrap','GET',undefined,401);await guest.call('/api/auth/login','POST',{loginId:'user1',password:'1234'},401);
     assert.equal((await admin.call(`/api/posts/${concurrent[0].data.post.id}`)).data.post.author,'탈퇴한 회원');await admin.call('/api/profile','DELETE',{confirm:true},403);

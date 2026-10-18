@@ -4,10 +4,44 @@ import {useCallback,useEffect,useState} from 'react';
 import {useCommunity} from './CommunityProvider';
 import Modal from './Modal';
 const statuses={pending:'대기',approved:'승인',rejected:'거부'};
+const types={member_approval:'견습회원 가입 승인',post_delete:'게시글 삭제',user_expel:'회원 강퇴'};
+const date=value=>value?new Date(value).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}):'-';
 export default function RequestsPage(){
- const {api,refresh,notify}=useCommunity();const [requests,setRequests]=useState([]),[filter,setFilter]=useState('pending'),[error,setError]=useState(''),[review,setReview]=useState(null),[note,setNote]=useState(''),[busy,setBusy]=useState(false);
- const load=useCallback(async()=>{try{const data=await api('admin/requests');setRequests(data.requests);setError('')}catch(error){setError(error.message)}},[api]);useEffect(()=>{load()},[load]);
- async function submit(event){event.preventDefault();setBusy(true);try{await api(`admin/requests/${review.item.id}/review`,{method:'POST',body:{decision:review.decision,note}});setReview(null);await load();await refresh();notify(review.decision==='approved'?'승인하고 요청한 작업을 적용했습니다.':'요청을 거부했습니다.')}catch(error){setError(error.message)}finally{setBusy(false)}}
- const filtered=requests.filter(item=>filter==='all'||item.status===filter);
- return <section className="admin-page"><header className="page-heading"><div><div className="eyebrow">MODERATION REQUESTS</div><h1>부운영자 요청</h1><p>요청 내역을 확인하고 승인 또는 거부합니다. 승인 시 삭제·강퇴가 실제로 적용됩니다.</p></div></header><div className="category-tabs">{[['pending','대기'],['approved','승인'],['rejected','거부'],['all','전체']].map(([value,label])=><button key={value} className={filter===value?'selected':''} onClick={()=>setFilter(value)}>{label} {requests.filter(item=>value==='all'||item.status===value).length}</button>)}</div><p className="form-error" role="alert">{error}</p><div className="request-list">{filtered.map(item=><article className="panel request-card" key={item.id}><header><span className="badge">{item.type==='post_delete'?'게시글 삭제':'회원 강퇴'}</span><span className={`status-label ${item.status}`}>{statuses[item.status]}</span><time>{new Date(item.createdAt).toLocaleString('ko-KR')}</time></header><h2>{item.targetSnapshot}</h2><p className="request-reason">{item.reason}</p><dl className="member-info"><dt>요청자</dt><dd>{item.requesterNickname}</dd><dt>처리자</dt><dd>{item.reviewerNickname||'-'}</dd><dt>처리일</dt><dd>{item.reviewedAt?new Date(item.reviewedAt).toLocaleString('ko-KR'):'-'}</dd>{item.reviewNote&&<><dt>처리 의견</dt><dd>{item.reviewNote}</dd></>}</dl><details className="request-json"><summary>요청 데이터 보기</summary><pre>{JSON.stringify(item,null,2)}</pre></details><footer>{item.board&&<Link className="button secondary" href={`/boards/${item.board}/${item.targetId}`}>대상 게시글</Link>}{item.status==='pending'&&<><button className="button secondary" onClick={()=>{setReview({item,decision:'rejected'});setNote('');setError('')}}>거부</button><button className="button primary" onClick={()=>{setReview({item,decision:'approved'});setNote('');setError('')}}>승인</button></>}</footer></article>)}</div>{!filtered.length&&<div className="empty-state">해당 요청이 없습니다.</div>}{review&&<Modal title={review.decision==='approved'?'요청 승인':'요청 거부'} onClose={()=>setReview(null)}><form onSubmit={submit}><p>{review.item.targetSnapshot}</p><p>{review.decision==='approved'?'승인하면 삭제 또는 강퇴를 즉시 실행합니다.':'거부하면 대상 게시글과 회원 상태는 변경되지 않습니다.'}</p><label htmlFor="review-note">처리 의견 (선택)</label><textarea id="review-note" value={note} onChange={e=>setNote(e.target.value)} maxLength={1000}/><p className="form-error" role="alert">{error}</p><div className="form-actions"><button type="button" className="button secondary" onClick={()=>setReview(null)}>취소</button><button className="button primary" disabled={busy}>{busy?'처리 중…':review.decision==='approved'?'승인하기':'거부하기'}</button></div></form></Modal>}</section>;
+ const {api,refresh,notify}=useCommunity();
+ const [requests,setRequests]=useState([]),[filter,setFilter]=useState('pending'),[type,setType]=useState('all'),[error,setError]=useState(''),[review,setReview]=useState(null),[note,setNote]=useState(''),[busy,setBusy]=useState(false);
+ const load=useCallback(async()=>{try{const data=await api('admin/approvals');setRequests(data.requests);setError('')}catch(error){setError(error.message)}},[api]);
+ useEffect(()=>{load()},[load]);
+ async function submit(event){
+  event.preventDefault();setBusy(true);
+  try{
+   if(review.item.type==='member_approval')await api(`admin/users/${review.item.targetId}/approve`,{method:'POST',body:{}});
+   else await api(`admin/requests/${review.item.id}/review`,{method:'POST',body:{decision:review.decision,note}});
+   setReview(null);await load();await refresh();
+   notify(review.item.type==='member_approval'?'견습회원을 승인하고 일반회원으로 전환했습니다.':review.decision==='approved'?'승인하고 요청한 작업을 적용했습니다.':'요청을 거부했습니다.');
+  }catch(error){setError(error.message)}finally{setBusy(false)}
+ }
+ function openReview(item,decision){setReview({item,decision});setNote('');setError('')}
+ const byType=requests.filter(item=>type==='all'||item.type===type);
+ const filtered=byType.filter(item=>filter==='all'||item.status===filter);
+ const availableTypes=Object.entries(types).filter(([value])=>requests.some(item=>item.type===value));
+ return <section className="admin-page">
+  <header className="page-heading"><div><div className="eyebrow">APPROVAL CENTER</div><h1>요청 승인 목록</h1><p>내 권한으로 처리할 수 있는 가입·게시글·회원 관련 요청과 처리 이력을 확인합니다.</p></div></header>
+  <div className="board-toolbar"><span>요청 {requests.length}건</span><label>요청 종류 <select aria-label="요청 종류" value={type} onChange={event=>setType(event.target.value)}><option value="all">전체</option>{availableTypes.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label></div>
+  <div className="category-tabs">{[['pending','대기'],['approved','승인'],['rejected','거부'],['all','전체']].map(([value,label])=><button key={value} className={filter===value?'selected':''} onClick={()=>setFilter(value)}>{label} {byType.filter(item=>value==='all'||item.status===value).length}</button>)}</div>
+  <p className="form-error" role="alert">{error}</p>
+  <div className="request-list">{filtered.map(item=><article className="panel request-card" key={item.id}>
+   <header><span className="badge">{types[item.type]||item.type}</span><span className={`status-label ${item.status}`}>{statuses[item.status]}</span><time>{date(item.createdAt)}</time></header>
+   <h2>{item.targetSnapshot}</h2><p className="request-reason">{item.reason}</p>
+   <dl className="member-info"><dt>요청자</dt><dd>{item.requesterNickname}</dd>{item.expiresAt&&<><dt>승인 기한</dt><dd>{date(item.expiresAt)}<br/>기한 내 미승인 시 자동 탈퇴됩니다.</dd></>}<dt>처리자</dt><dd>{item.reviewerNickname||'-'}</dd><dt>처리일</dt><dd>{date(item.reviewedAt)}</dd>{item.reviewNote&&<><dt>처리 의견</dt><dd>{item.reviewNote}</dd></>}</dl>
+   <details className="request-json"><summary>요청 데이터 보기</summary><pre>{JSON.stringify(item,null,2)}</pre></details>
+   <footer>{item.board&&<Link className="button secondary" href={`/boards/${item.board}/${item.targetId}`}>대상 게시글</Link>}{item.type==='member_approval'&&<Link className="button secondary" href="/admin/users">회원 정보 확인</Link>}{item.status==='pending'&&<>{item.canReject&&<button className="button secondary" onClick={()=>openReview(item,'rejected')}>거부</button>}{item.canApprove&&<button className="button primary" onClick={()=>openReview(item,'approved')}>승인</button>}</>}</footer>
+  </article>)}</div>
+  {!filtered.length&&<div className="empty-state">해당 요청이 없습니다.</div>}
+  {review&&<Modal title={review.decision==='approved'?'요청 승인':'요청 거부'} onClose={()=>setReview(null)}><form onSubmit={submit}>
+   <p>{types[review.item.type]} · {review.item.targetSnapshot}</p>
+   <p>{review.item.type==='member_approval'?'승인하면 일반회원으로 전환되고 미승인에 따른 자동 탈퇴 대상에서 제외됩니다.':review.decision==='approved'?'승인하면 요청한 삭제 또는 강퇴를 즉시 실행합니다.':'거부하면 대상 게시글과 회원 상태는 변경되지 않습니다.'}</p>
+   {review.item.type!=='member_approval'&&<><label htmlFor="review-note">처리 의견 (선택)</label><textarea id="review-note" value={note} onChange={e=>setNote(e.target.value)} maxLength={1000}/></>}
+   <p className="form-error" role="alert">{error}</p><div className="form-actions"><button type="button" className="button secondary" onClick={()=>setReview(null)}>취소</button><button className="button primary" disabled={busy}>{busy?'처리 중…':review.decision==='approved'?'승인하기':'거부하기'}</button></div>
+  </form></Modal>}
+ </section>;
 }
