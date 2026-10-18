@@ -33,6 +33,9 @@ textarea { resize: vertical; min-height: 112px; line-height: 1.9; }
 label { display: block; font-size: 14px; color: #c1d1c4; }
 hr { border: 0; border-top: 1px solid var(--line); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.nickname-status { font-size: 12px; margin: 6px 0 0; min-height: 23px; color: var(--muted); }
+.nickname-status.available { color: #abd5a0; }
+.nickname-status.invalid, .nickname-status.taken, .nickname-status.error { color: #e8aaa0; }
 .skip-link { position: fixed; z-index: 100; top: 10px; left: 10px; background: #ffe34c; color: #161919; padding: 10px; transform: translateY(-150%); }
 .skip-link:focus { transform: translateY(0); }
 .muted { color: var(--muted); }
@@ -210,10 +213,9 @@ hr { border: 0; border-top: 1px solid var(--line); }
 .table-head { padding: 14px 20px; background: #1c2021; color: #929e9f; border-bottom: 1px solid #3c4344; font-size: 12px; }
 .board-row { padding: 20px; color: #dbe1de; border-bottom: 1px solid #353b3c; }
 .board-row:last-child { border-bottom: 0; }
-.board-row.pinned { background: #2a2f30; }
+.board-row.pinned .post-title-text { font-weight: 700; }
 .board-row:hover { background: #303738; }
 .board-row .badge { justify-self: start; }
-.board-row.pinned .badge { background: #414b4c; color: #e7efec; }
 .row-number { font-size: 12px; color: #929d9e; }
 .board-title { font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
 .board-title em { font-size: 12px; color: #b4c0bf; font-style: normal; margin-left: 6px; }

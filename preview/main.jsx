@@ -5,7 +5,8 @@ import {createRoot} from 'react-dom/client';
 import {useEffect,useState} from 'react';
 import PageSkeleton from '../src/components/PageSkeleton';
 import {PreviewRouter,usePathname,useRouter} from './router';
-import {PreviewProvider,useCommunity} from './provider';
+import {PreviewProvider,useCommunity,accounts} from './provider';
+import {nicknamePattern,nicknameFormatMessage,nicknameTakenMessage} from '../src/lib/nicknames';
 import {roleLabels} from '../src/lib/roles';
 import Shell from '../src/components/Shell';
 import HomePage from '../src/components/HomePage';
@@ -24,7 +25,7 @@ import './preview.css';
 // These two design screens normally ask the Next server for authentication state.
 // The Pages bundle answers with fixed preview state and never contacts a backend.
 const originalFetch=window.fetch.bind(window);
-window.fetch=(input,options)=>{const url=new URL(typeof input==='string'?input:input.url,location.href);if(url.origin===location.origin&&url.pathname.startsWith('/api/'))return Promise.resolve(new Response(JSON.stringify(url.pathname==='/api/auth/me'?{user:null,demoAuthEnabled:true,kakaoConfigured:false}:url.pathname==='/api/auth/signup-info'?{verified:true}:{error:'읽기 전용 미리보기입니다.'}),{status:['/api/auth/me','/api/auth/signup-info'].includes(url.pathname)?200:405,headers:{'Content-Type':'application/json'}}));return originalFetch(input,options)};
+window.fetch=(input,options)=>{const url=new URL(typeof input==='string'?input:input.url,location.href);if(url.origin===location.origin&&url.pathname==='/api/auth/nickname-check'){const nickname=JSON.parse(options?.body||'{}').nickname?.trim()||'';const valid=nicknamePattern.test(nickname),available=valid&&!accounts.some(user=>user.nickname.toLowerCase()===nickname.toLowerCase());return Promise.resolve(new Response(JSON.stringify(valid?{nickname,available,message:available?'사용 가능한 닉네임입니다.':nicknameTakenMessage}:{error:nicknameFormatMessage}),{status:valid?200:400,headers:{'Content-Type':'application/json'}}));}if(url.origin===location.origin&&url.pathname.startsWith('/api/'))return Promise.resolve(new Response(JSON.stringify(url.pathname==='/api/auth/me'?{user:null,demoAuthEnabled:true,kakaoConfigured:false}:url.pathname==='/api/auth/signup-info'?{verified:true}:{error:'읽기 전용 미리보기입니다.'}),{status:['/api/auth/me','/api/auth/signup-info'].includes(url.pathname)?200:405,headers:{'Content-Type':'application/json'}}));return originalFetch(input,options)};
 
 function App(){
  const path=usePathname(),router=useRouter(),{user,account,chooseAccount,notify}=useCommunity();

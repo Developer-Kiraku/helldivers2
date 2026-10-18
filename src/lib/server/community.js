@@ -5,12 +5,13 @@ import { sanitizePostHtml } from './post-html.mjs';
 import { boards } from '../data';
 import { outranks } from '../roles';
 import { fail } from './auth';
+import { nicknamePattern, nicknameFormatMessage, nicknameTakenMessage } from '../nicknames';
 
 export const now = () => new Date().toISOString();
 export function validateNickname(value, db, excludeId) {
   const nickname = typeof value === 'string' ? value.trim() : '';
-  if (!/^[가-힣a-zA-Z0-9_]{2,16}$/.test(nickname)) fail(400, '닉네임은 한글·영문·숫자·밑줄 2~16자로 입력해주세요.');
-  if (db.users.some(user => user.id !== excludeId && user.status === 'active' && user.nickname.toLowerCase() === nickname.toLowerCase())) fail(409, '이미 사용 중인 닉네임입니다.');
+  if (!nicknamePattern.test(nickname)) fail(400, nicknameFormatMessage);
+  if (db.users.some(user => user.id !== excludeId && user.status === 'active' && user.nickname.toLowerCase() === nickname.toLowerCase())) fail(409, nicknameTakenMessage);
   return nickname;
 }
 export function validImage(value, allowLocal = false, max = 900000, allowRemote = false) {

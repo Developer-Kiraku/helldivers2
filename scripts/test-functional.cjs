@@ -11,7 +11,7 @@ async function start(file) {
   output = '';
   server = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', new URL(origin).port], {
     cwd: root, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env, JSON_DB_FILE: file, APP_ORIGIN: origin, COOKIE_SECURE: 'false', DEMO_AUTH_ENABLED: 'true', SEED_PASSWORD: '1234', KAKAO_REST_API_KEY: '', KAKAO_CLIENT_SECRET: '' },
+    env: { ...process.env, DATABASE_URL: '', JSON_DB_FILE: file, APP_ORIGIN: origin, COOKIE_SECURE: 'false', DEMO_AUTH_ENABLED: 'true', SEED_PASSWORD: '1234', KAKAO_REST_API_KEY: '', KAKAO_CLIENT_SECRET: '' },
   });
   server.stdout.on('data', chunk => { output += chunk }); server.stderr.on('data', chunk => { output += chunk });
   for (let i = 0; i < 200; i++) {
@@ -40,6 +40,7 @@ async function run() {
   await import('./test-owner-setup.mjs');
   await import('./test-post-html.mjs');
   await import('./test-tiptap.mjs');
+  await import('./test-signup-nickname.mjs');
   await fs.mkdir(path.join(root, 'work'), {recursive:true});
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-')); const file = path.join(directory, 'test-db.json');
   try {
@@ -200,13 +201,29 @@ async function run() {
     let db=JSON.parse(await fs.readFile(file,'utf8'));assert.equal(db.posts.filter(p=>p.title.startsWith('동시 저장')).length,5);assert.ok(db.users.every(u=>!u.passwordHash||u.passwordHash!=='1234'));assert.ok(db.sessions.every(s=>s.tokenHash!==admin.cookie.split('=')[1]));
     await stop();
     // Stand in for a completed Kakao provider exchange, only in the isolated test DB.
-    const ticket=randomBytes(32).toString('hex');db=JSON.parse(await fs.readFile(file,'utf8'));
+    const ticket=randomBytes(32).toString('hex'),raceTickets=[randomBytes(32).toString('hex'),randomBytes(32).toString('hex')],expiredTicket=randomBytes(32).toString('hex');db=JSON.parse(await fs.readFile(file,'utf8'));
     db.posts.find(p=>p.id===scheduledPoll.id).poll.endsAt=new Date(Date.now()-1000).toISOString();
-    db.pendingRegistrations=[{ticketHash:createHash('sha256').update(ticket).digest('hex'),kakaoId:'test-kakao-verified-1',expiresAt:new Date(Date.now()+600000).toISOString()}];await fs.writeFile(file,JSON.stringify(db));
+    db.pendingRegistrations=[...raceTickets.map((value,index)=>({ticketHash:createHash('sha256').update(value).digest('hex'),kakaoId:'nickname-race-'+index,expiresAt:new Date(Date.now()+600000).toISOString()})),{ticketHash:createHash('sha256').update(expiredTicket).digest('hex'),kakaoId:'expired-check',expiresAt:new Date(Date.now()-1000).toISOString()},{ticketHash:createHash('sha256').update(ticket).digest('hex'),kakaoId:'test-kakao-verified-1',expiresAt:new Date(Date.now()+600000).toISOString()}];await fs.writeFile(file,JSON.stringify(db));
     await start(file);assert.equal((await member.call('/api/posts/'+question.id)).data.comments[0].body,'목록에서 작성한 답변');assert.equal((await member.call('/api/bootstrap')).data.posts.qna.find(p=>p.id===question.id).title,'수정된 장비 질문');assert.equal((await admin.call('/api/posts/'+scheduledPoll.id)).data.post.poll.closed,true);await member.call('/api/posts/'+scheduledPoll.id+'/poll','POST',{choices:[]},409);assert.equal((await admin.call('/api/posts/'+pollPost.id)).data.post.poll.closed,true);assert.equal((await admin.call('/api/posts/'+publicPoll.id)).data.post.poll.totalVoters,1);await admin.call('/api/bootstrap');assert.equal((await member.call('/api/auth/me')).data.user.nickname,'테스트헬다이버');await member.call(`/api/posts/${concurrent[0].data.post.id}`);assert.equal((await admin.call(requests)).data.requests.find(r=>r.id===req.id).status,'approved');
     const signup=client(`hd_signup=${ticket}`);assert.equal((await signup.call('/api/auth/signup-info')).data.verified,true);
+    const nicknameUrl='/api/auth/nickname-check';
+    await guest.call(nicknameUrl,'POST',{nickname:'신입대원'},401);
+    await client('hd_signup=tampered').call(nicknameUrl,'POST',{nickname:'신입대원'},401);
+    await client('hd_signup='+expiredTicket).call(nicknameUrl,'POST',{nickname:'신입대원'},401);
+    await signup.call(nicknameUrl,'POST',{nickname:'신입대원'},403,{Origin:'https://untrusted.example'});
+    for(const nickname of ['', '한', '공백 포함', '<script>', 'a'.repeat(17)])await signup.call(nicknameUrl,'POST',{nickname},400);
+    await signup.call(nicknameUrl,'POST',null,400);
+    const takenCheck=(await signup.call(nicknameUrl,'POST',{nickname:'라미아'})).data;assert.equal(takenCheck.available,false);assert.deepEqual(Object.keys(takenCheck).sort(),['available','message','nickname']);
+    const freeCheck=await signup.call(nicknameUrl,'POST',{nickname:'  신입대원  '});assert.equal(freeCheck.data.available,true);assert.equal(freeCheck.data.nickname,'신입대원');assert.equal(freeCheck.response.headers.get('cache-control'),'no-store');
+    await signup.call('/api/auth/register','POST',{nickname:'라미아',agreements:{age:true,terms:true,collect:true}},409);
+    const racers=raceTickets.map(value=>client('hd_signup='+value));
+    for(const actor of racers)assert.equal((await actor.call(nicknameUrl,'POST',{nickname:'UniqueDiver'})).data.available,true);
+    const nicknameRaces=await Promise.all(racers.map((actor,index)=>actor.call('/api/auth/register','POST',{nickname:index?'uniquediver':'UniqueDiver',agreements:{age:true,terms:true,collect:true}},[201,409])));
+    assert.deepEqual(nicknameRaces.map(result=>result.response.status).sort(),[201,409]);
+    assert.equal((await signup.call(nicknameUrl,'POST',{nickname:'UNIQUEDIVER'})).data.available,false);
     await signup.call('/api/auth/register','POST',{nickname:'신입대원',agreements:{age:'true',terms:true,collect:true}},400);
     const registered=(await signup.call('/api/auth/register','POST',{nickname:'신입대원',role:'operator',agreements:{age:true,terms:true,collect:true}},201)).data.user;
+    await client('hd_signup='+ticket).call('/api/auth/nickname-check','POST',{nickname:'다른이름'},401);
     assert.equal(registered.role,'apprentice');assert.equal(registered.kakao.id,'test-kakao-verified-1');assert.equal(registered.probationStartedAt,registered.createdAt);assert.ok(Date.parse(registered.probationExpiresAt)>Date.parse(registered.createdAt));assert.equal(registered.approvedAt,null);await signup.call('/api/bootstrap');
     assert.ok((await deputy.call('/api/admin/approvals')).data.requests.some(r=>r.type==='member_approval'&&r.targetId===registered.id&&r.status==='pending'));
     await member.call(`/api/admin/users/${registered.id}/approve`,'POST',{},403);await deputy.call(`/api/admin/users/${registered.id}/approve`,'POST',{});

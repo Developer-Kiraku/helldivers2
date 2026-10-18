@@ -134,6 +134,15 @@
 .member-nickname.is-deputy{color:#8bd8cc;font-weight:700;text-shadow:0 0 8px rgba(96,206,185,.18)}
 .tiptap-surface[hidden]{display:none!important}.tiptap-editor{outline:none}.tiptap-editor p.is-editor-empty:first-child:before{content:attr(data-placeholder);color:#93a49c;float:left;height:0;pointer-events:none}
 .tiptap-editor .ProseMirror-selectednode{outline:2px solid #8ea99d;outline-offset:3px}.tiptap-editor [data-youtube-video]{margin:15px 0}.tiptap-editor [data-youtube-video] iframe{margin:0}
+/* Keep mobile input text at 16px to prevent focus zoom in iOS browsers. */
+@media(max-width:760px),(hover:none) and (pointer:coarse){
+ .community-theme .ui-input.rt-TextFieldRoot,
+ .community-theme .ui-textarea.rt-TextAreaRoot,
+ .community-theme .ui-select.rt-SelectTrigger,
+ .community-theme .ui-input .rt-TextFieldInput,
+ .community-theme .ui-textarea .rt-TextAreaInput,
+ .community-theme .tiptap-editor[contenteditable=true]{font-size:16px}
+}
 .editor-font-size .ui-select{min-width:88px;width:88px;min-height:34px;height:34px;font-size:14px}.editor-format-controls button[aria-pressed=true]{background:#4a5b51;color:#fff}
 @media(max-width:600px){.editor-font-size .ui-select{min-width:78px;width:78px}}
 
