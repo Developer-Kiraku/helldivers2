@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {useCallback,useEffect,useState} from 'react';
 import {useCommunity} from './CommunityProvider';
 import Icon from './Icon';
+import PageSkeleton from './PageSkeleton';
 import Modal from './Modal';
 const statuses={pending:'대기',approved:'승인',rejected:'거부'};
 const types={member_approval:'견습회원 가입 승인',post_delete:'게시글 삭제',user_expel:'회원 강퇴'};
@@ -12,7 +13,8 @@ const date=value=>value?new Date(value).toLocaleString('ko-KR',{timeZone:'Asia/S
 export default function RequestsPage(){
  const {api,refresh,notify}=useCommunity();
  const [requests,setRequests]=useState([]),[filter,setFilter]=useState('pending'),[type,setType]=useState('all'),[error,setError]=useState(''),[review,setReview]=useState(null),[note,setNote]=useState(''),[busy,setBusy]=useState(false);
- const load=useCallback(async()=>{try{const data=await api('admin/approvals');setRequests(data.requests);setError('')}catch(error){setError(error.message)}},[api]);
+ const [loading,setLoading]=useState(true);
+ const load=useCallback(async()=>{try{const data=await api('admin/approvals');setRequests(data.requests);setError('')}catch(error){setError(error.message)}finally{setLoading(false)}},[api]);
  useEffect(()=>{load()},[load]);
  async function submit(event){
   event.preventDefault();setBusy(true);
@@ -27,6 +29,7 @@ export default function RequestsPage(){
  const byType=requests.filter(item=>type==='all'||item.type===type);
  const filtered=byType.filter(item=>filter==='all'||item.status===filter);
  const availableTypes=Object.entries(types).filter(([value])=>requests.some(item=>item.type===value));
+ if(loading)return <PageSkeleton path="/admin/approvals"/>;
  return <section className="admin-page">
   <header className="page-heading"><div><div className="eyebrow">APPROVAL CENTER</div><h1>요청 승인 목록</h1><p>내 권한으로 처리할 수 있는 가입·게시글·회원 관련 요청과 처리 이력을 확인합니다.</p></div></header>
   <div className="board-toolbar"><span>요청 {requests.length}건</span><Label>요청 종류 <Select aria-label="요청 종류" value={type} onChange={event=>setType(event.target.value)}><option value="all">전체</option>{availableTypes.map(([value,label])=><option key={value} value={value}>{label}</option>)}</Select></Label></div>

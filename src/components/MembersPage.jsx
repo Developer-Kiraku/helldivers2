@@ -5,6 +5,7 @@ import {useCallback,useEffect,useState} from 'react';
 import {useCommunity} from './CommunityProvider';
 import {roleLabels} from '@/lib/roles';
 import Icon from './Icon';
+import PageSkeleton from './PageSkeleton';
 import Avatar from './Avatar';
 import Modal from './Modal';
 import Link from 'next/link';
@@ -12,8 +13,9 @@ const date=value=>value?new Date(value).toLocaleString('ko-KR',{timeZone:'Asia/S
 export default function MembersPage(){
  const {api,role,refresh,notify}=useCommunity();
  const [users,setUsers]=useState([]),[search,setSearch]=useState(''),[grade,setGrade]=useState('all'),[error,setError]=useState(''),[action,setAction]=useState(null),[reason,setReason]=useState(''),[busy,setBusy]=useState(false);
+ const [loading,setLoading]=useState(true);
  const operator=role==='operator';
- const load=useCallback(async()=>{try{const data=await api('admin/users');setUsers(data.users);setError('')}catch(error){setError(error.message)}},[api]);
+ const load=useCallback(async()=>{try{const data=await api('admin/users');setUsers(data.users);setError('')}catch(error){setError(error.message)}finally{setLoading(false)}},[api]);
  useEffect(()=>{load()},[load]);
  async function submit(event){
   event.preventDefault();setBusy(true);setError('');
@@ -27,6 +29,7 @@ export default function MembersPage(){
  async function changeRole(user,value){setBusy(true);try{await api(`admin/users/${user.id}`,{method:'PATCH',body:{role:value}});await load();await refresh();notify('회원 등급을 변경했습니다.')}catch(error){notify(error.message)}finally{setBusy(false)}}
  function openAction(mode,user){setAction({mode,user});setReason('');setError('')}
  const filtered=users.filter(user=>(grade==='all'||user.role===grade)&&`${user.nickname} ${user.loginId||''} ${roleLabels[user.role]}`.toLowerCase().includes(search.toLowerCase()));
+ if(loading)return <PageSkeleton path="/admin/users"/>;
  return <section className="admin-page">
   <header className="page-heading"><div><div className="eyebrow">CREW MANAGEMENT</div><h1>회원 리스트</h1><p>{operator?'부운영자 이하 회원의 등급을 변경하거나 직접 강퇴할 수 있습니다.':'회원 정보를 조회하고 일반·견습회원의 강퇴를 운영자에게 요청할 수 있습니다.'}</p></div><span className="badge">{operator?'운영자 관리 화면':'부운영자 조회·요청 화면'}</span></header>
   <div className="member-management-note"><strong>{operator?'운영자 권한':'부운영자 권한'}</strong><span>{operator?'하위 등급 변경 · 직접 강퇴 · 가입 승인':'일반·견습회원 강퇴 요청 · 가입 승인'}</span><ActionLink className="button secondary" href="/admin/approvals"><Icon name="approvals" size={17}/>요청 승인 목록</ActionLink></div>
