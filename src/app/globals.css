@@ -368,6 +368,9 @@ hr { border: 0; border-top: 1px solid var(--line); }
   .auth-art h2 { font-size: 27px; }
   .signup-page .auth-card { padding: 30px 25px; }
 }
+@media (min-width: 761px) {
+  .home-page .hero { margin-inline: 0; }
+}
 @media (max-width: 760px) {
   body { padding-bottom: 76px; }
   .sidebar { display: none; }
