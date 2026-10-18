@@ -6,10 +6,10 @@ export const config = {
   demoAuth: process.env.DEMO_AUTH_ENABLED !== 'false',
   sessionHours: 24,
   cookie: 'hd_session',
-  secureCookies: process.env.COOKIE_SECURE === 'true',
-  origin: process.env.APP_ORIGIN || '',
+  secureCookies: process.env.COOKIE_SECURE ? process.env.COOKIE_SECURE === 'true' : Boolean(process.env.RENDER),
+  origin: process.env.APP_ORIGIN || process.env.RENDER_EXTERNAL_URL || '',
   kakaoClientId: process.env.KAKAO_REST_API_KEY || '',
   kakaoClientSecret: process.env.KAKAO_CLIENT_SECRET || '',
-  kakaoRedirectUri: process.env.KAKAO_REDIRECT_URI || '',
+  kakaoRedirectUri: process.env.KAKAO_REDIRECT_URI || (process.env.RENDER_EXTERNAL_URL ? `${process.env.RENDER_EXTERNAL_URL}/api/auth/kakao/callback` : ''),
   termsVersion: '2026-10-18',
 };

@@ -1,6 +1,6 @@
 # 헬다이버즈2 커뮤니티 · Next.js / React
 
-승인된 디자인에 서버 로그인·회원 관리·게시판·운영진 처리 요청을 연결한 실행 가능한 프로젝트입니다. 임시 데이터는 서버 JSON 파일에 저장하며 새로고침·서버 재시작 후에도 유지됩니다.
+승인된 디자인에 서버 로그인·회원 관리·게시판·운영진 처리 요청을 연결한 실행 가능한 프로젝트입니다. `DATABASE_URL`이 있으면 PostgreSQL을 사용하며, 미설정 시 기존 서버 JSON 파일을 사용합니다.
 
 ## GitHub Pages 디자인 미리보기
 
@@ -69,7 +69,7 @@ npm run start
 
 `.env.local`에 `KAKAO_REST_API_KEY`, `KAKAO_CLIENT_SECRET`, `KAKAO_REDIRECT_URI`를 채우고 카카오 앱 도메인·콜백 주소를 등록하면 서버 인가 코드 교환 → 사용자 확인 → 가입/로그인을 실행합니다. 키 미설정 상태에서는 가입 계정을 임의로 만들지 않습니다. 신규 카카오 회원은 견습회원으로 가입합니다.
 
-JSON 기본 경로는 `data/db.json`이며 처음 실행 시 자동 생성합니다. `JSON_DB_FILE`로 저장 위치를 바꿀 수 있습니다. **단일 서버 프로세스·영구 디스크에서 사용하는 임시 저장소**입니다. 실제 MariaDB 연결은 저장소 코드를 DB 트랜잭션으로 교체해야 합니다.
+PostgreSQL 초기화는 `npm run db:migrate`, 비어 있는 DB로 기존 JSON 이전은 `npm run db:import -- data/db.json`입니다. [Render 배포·로컬 DB 연결 문서](docs/render-postgres.md)를 참고하세요. JSON 모드의 기본 경로는 `data/db.json`이며 `JSON_DB_FILE`로 바꿀 수 있습니다. JSON 모드는 단일 프로세스와 영구 디스크를 사용하는 임시 저장소입니다.
 
 설정·데이터 구조·권한·카카오 연결 범위·검증 방법은 [docs/runtime.md](docs/runtime.md)에 정리했습니다. 약관·개인정보 문구는 운영 내용 확정 전 초안이며 [docs/legal-review.md](docs/legal-review.md)를 참고합니다.
 

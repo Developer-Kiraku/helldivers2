@@ -1,0 +1,33 @@
+# Existing Render service: set Build/Start commands and env vars as documented.
+# This Blueprint is an optional template for a NEW deployment; do not create duplicates.
+services:
+  - type: web
+    name: helldivers2
+    runtime: node
+    region: oregon
+    plan: 0.1c-256mb
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:render
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: '22'
+      - key: DATABASE_URL
+        fromDatabase:
+          name: helldivers2-db
+          property: connectionString
+      - key: COOKIE_SECURE
+        value: 'true'
+      - key: DEMO_AUTH_ENABLED
+        value: 'false'
+      - key: SEED_PASSWORD
+        generateValue: true
+databases:
+  - name: helldivers2-db
+    databaseName: helldivers2
+    user: helldivers2
+    region: oregon
+    plan: 0.1c-256mb
+    postgresMajorVersion: '17'
+    diskSizeGB: 1
+    ipAllowList: []
