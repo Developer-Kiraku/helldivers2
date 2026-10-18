@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Icon from './Icon';
 
 export function KakaoButton({ children, onClick }) {
-  return <Button type="button" className="kakao-button" onClick={onClick}><span className="kakao-bubble" aria-hidden="true" />{children}</Button>;
+  return <Button type="button" className="kakao-button" onClick={onClick}><Icon name="kakao" size={22} />{children}</Button>;
 }
 
 export default function AuthLayout({ children, signup = false }) {

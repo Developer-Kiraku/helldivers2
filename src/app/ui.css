@@ -16,3 +16,14 @@
 .ui-modal.rt-DialogContent{padding:0;width:min(660px,calc(100vw - 28px));max-height:86dvh;background:#242d27;border:1px solid #5e6d61;border-radius:9px;color:#d6e1d5;box-shadow:0 25px 80px #0008}.ui-modal .modal-header h2{margin:0;font-size:20px;line-height:1.5}.rt-DialogOverlay{z-index:100;background:#000a}.rt-DialogScroll{padding:20px 0}.rt-DialogContent .ui-select-menu{z-index:120}
 .member-management-note{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:15px 18px;margin-bottom:22px;border:1px solid #4a5b50;border-radius:7px;background:#242e28;color:#bfcfbe;font-size:13px}.member-management-note strong{color:#ecf1df}.member-readonly{font-size:12px;color:#8fa391}.member-card footer{flex-wrap:wrap}.member-card .member-info dd{overflow-wrap:anywhere}
 @media(max-width:760px){.search-form .ui-input{width:145px}.ui-button.rt-Button.button{padding:10px 13px}.board-toolbar>.ui-label{flex:1}.board-toolbar>.ui-label>.ui-select{flex:1;min-width:120px}.admin-search.ui-input{max-width:none}.member-management-note{padding:13px 15px}.rt-DialogScroll{padding:14px 0}}
+
+/* Consistent Lucide and Simple Icons sizing. */
+.community-icon{display:inline-block;vertical-align:middle;flex-shrink:0;pointer-events:none}
+.desktop-nav>a>.community-icon{width:22px;height:22px;box-sizing:content-box;padding:7px;border-radius:9px;background:#ffffff06;color:#b9c4bf;transition:background .15s,color .15s}
+.desktop-nav>a.active>.community-icon{background:#ffe34c18;color:#ffe34c}
+.desktop-nav>a:hover>.community-icon{background:#ffffff0d;color:#e7ede4}
+.ui-button>.community-icon{width:17px;height:17px}.ui-button.kakao-button>.community-icon{width:22px;height:22px}
+.account-actions>a{display:inline-flex;align-items:center;gap:5px}.account-actions .ui-button{gap:5px}
+.discord-link>span>.community-icon,.kakao-chat-link>span>.community-icon{margin-left:3px;opacity:.65}
+.mobile-nav .community-icon{width:22px;height:22px}.mobile-community-popover a>.community-icon:last-child{width:14px;height:14px}
+@media(max-width:760px){.segmented .ui-button{gap:5px}.member-card footer .ui-button{gap:6px}}

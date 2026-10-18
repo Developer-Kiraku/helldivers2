@@ -4,6 +4,7 @@ import {ActionLink,Button,Label,Select,TextArea} from './ui';
 import Link from 'next/link';
 import {useCallback,useEffect,useState} from 'react';
 import {useCommunity} from './CommunityProvider';
+import Icon from './Icon';
 import Modal from './Modal';
 const statuses={pending:'대기',approved:'승인',rejected:'거부'};
 const types={member_approval:'견습회원 가입 승인',post_delete:'게시글 삭제',user_expel:'회원 강퇴'};
@@ -36,7 +37,7 @@ export default function RequestsPage(){
    <h2>{item.targetSnapshot}</h2><p className="request-reason">{item.reason}</p>
    <dl className="member-info"><dt>요청자</dt><dd>{item.requesterNickname}</dd>{item.expiresAt&&<><dt>승인 기한</dt><dd>{date(item.expiresAt)}<br/>기한 내 미승인 시 자동 탈퇴됩니다.</dd></>}<dt>처리자</dt><dd>{item.reviewerNickname||'-'}</dd><dt>처리일</dt><dd>{date(item.reviewedAt)}</dd>{item.reviewNote&&<><dt>처리 의견</dt><dd>{item.reviewNote}</dd></>}</dl>
    <details className="request-json"><summary>요청 데이터 보기</summary><pre>{JSON.stringify(item,null,2)}</pre></details>
-   <footer>{item.board&&<ActionLink className="button secondary" href={`/boards/${item.board}/${item.targetId}`}>대상 게시글</ActionLink>}{item.type==='member_approval'&&<ActionLink className="button secondary" href="/admin/users">회원 정보 확인</ActionLink>}{item.status==='pending'&&<>{item.canReject&&<Button className="button secondary" onClick={()=>openReview(item,'rejected')}>거부</Button>}{item.canApprove&&<Button className="button primary" onClick={()=>openReview(item,'approved')}>승인</Button>}</>}</footer>
+   <footer>{item.board&&<ActionLink className="button secondary" href={`/boards/${item.board}/${item.targetId}`}>대상 게시글</ActionLink>}{item.type==='member_approval'&&<ActionLink className="button secondary" href="/admin/users"><Icon name="user" size={17}/>회원 정보 확인</ActionLink>}{item.status==='pending'&&<>{item.canReject&&<Button className="button secondary" onClick={()=>openReview(item,'rejected')}><Icon name="close" size={17}/>거부</Button>}{item.canApprove&&<Button className="button primary" onClick={()=>openReview(item,'approved')}><Icon name="check" size={17}/>승인</Button>}</>}</footer>
   </article>)}</div>
   {!filtered.length&&<div className="empty-state">해당 요청이 없습니다.</div>}
   {review&&<Modal title={review.decision==='approved'?'요청 승인':'요청 거부'} onClose={()=>setReview(null)}><form onSubmit={submit}>
