@@ -25,7 +25,7 @@
 .ui-button>.community-icon{width:17px;height:17px}.ui-button.kakao-button>.community-icon{width:22px;height:22px}
 .account-actions>a{display:inline-flex;align-items:center;gap:5px}.account-actions .ui-button{gap:5px}
 .discord-link>span>.community-icon,.kakao-chat-link>span>.community-icon{margin-left:3px;opacity:.65}
-.mobile-nav .community-icon{width:22px;height:22px}.mobile-community-popover a>.community-icon:last-child{width:14px;height:14px}
+.mobile-nav .community-icon{width:22px;height:22px}.mobile-community-popover a>.community-icon{width:18px;height:18px}
 @media(max-width:760px){.segmented .ui-button{gap:5px}.member-card footer .ui-button{gap:6px}}
 
 /* Feed boards use the full content width without a rules sidebar. */
@@ -47,3 +47,7 @@
 @keyframes community-shimmer{from{background-position:100% 0}to{background-position:-100% 0}}
 @media(prefers-reduced-motion:reduce){.skeleton-block{animation:none;background:#354139}}
 @media(max-width:760px){.sk-grid,.sk-profile,.sk-auth{grid-template-columns:1fr}.sk-card{padding:20px}.sk-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.sk-stats .sk-card{padding:12px}.sk-stats .sk-name{width:80%}.sk-title{width:75%}.sk-auth{margin:0}.sk-auth-art{display:none}.sk-row>.sk-name{display:none}.sk-hero{min-height:270px}.sk-controls{flex-wrap:wrap}.sk-controls>.skeleton-block{flex:1;min-width:60px}.sk-auth-page{padding:20px 0}}
+
+/* Stable category columns keep titles and author details aligned. */
+.community-theme{--category-width:80px}
+.latest-list .badge,.board-row>.badge,.post-meta>.badge,.article-paper>.badge{display:inline-flex;align-items:center;justify-content:center;width:var(--category-width);min-width:var(--category-width);flex:0 0 var(--category-width);text-align:center;white-space:normal;overflow-wrap:anywhere;line-height:1.5}
