@@ -30,3 +30,4 @@
 
 /* Feed boards use the full content width without a rules sidebar. */
 .feed-layout.feed-layout-full{grid-template-columns:minmax(0,1fr)}
+@media(max-width:760px){.mobile-nav{gap:0;padding-inline:0}.mobile-nav>a,.mobile-nav>.mobile-community{flex:1;min-width:0}}
