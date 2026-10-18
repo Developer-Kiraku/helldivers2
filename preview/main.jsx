@@ -1,3 +1,6 @@
+import {Button,Label,Select} from '../src/components/ui';
+import '@radix-ui/themes/styles.css';
+import {UIProvider} from '../src/components/ui';
 import {createRoot} from 'react-dom/client';
 import {useEffect} from 'react';
 import {PreviewRouter,usePathname,useRouter} from './router';
@@ -14,6 +17,7 @@ import BoardEditor from '../src/components/BoardEditor';
 import MembersPage from '../src/components/MembersPage';
 import RequestsPage from '../src/components/RequestsPage';
 import '../src/app/globals.css';
+import '../src/app/ui.css';
 import './preview.css';
 
 // These two design screens normally ask the Next server for authentication state.
@@ -34,6 +38,6 @@ function App(){
  else if(['/admin/approvals','/admin/requests'].includes(path)&&['operator','deputy'].includes(user.role))page=<RequestsPage/>;
  else if(pieces[0]==='boards'&&['notice','guide','talk'].includes(pieces[1])){const board=pieces[1];page=!pieces[2]?<BoardPage board={board}/>:pieces[2]==='write'?<BoardEditor board={board}/>:pieces[3]==='edit'?<BoardEditor board={board} id={pieces[2]}/>:<ArticlePage board={board} id={pieces[2]}/>;}
  else page=<section className="empty-state"><h1>이 화면을 볼 수 없습니다.</h1><a href="#/">메인으로 이동</a></section>;
- return <>{!isFrame&&<header className="pages-preview-bar"><div><strong>DESIGN PREVIEW</strong><span>화면 확인 전용 · 실제 인증 및 저장 없음</span></div><nav aria-label="미리보기 설정"><label>계정 <select aria-label="미리보기 계정" value={account} onChange={event=>{chooseAccount(event.target.value);router.push(event.target.value==='guest'?'/login':'/')}}><option value="guest">로그인 전</option>{[['admin','operator'],['subadmin','deputy'],['user1','member'],['user2','apprentice']].map(([id,role])=><option value={id} key={id}>{roleLabels[role]}</option>)}</select></label><button onClick={()=>visitGuest('/login')}>로그인</button><button onClick={()=>visitGuest('/signup')}>회원가입</button><a href="https://github.com/Developer-Kiraku/helldivers2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav></header>}<Shell key={`${path}:${account}`}>{page}</Shell></>;
+ return <>{!isFrame&&<header className="pages-preview-bar"><div><strong>DESIGN PREVIEW</strong><span>화면 확인 전용 · 실제 인증 및 저장 없음</span></div><nav aria-label="미리보기 설정"><Label>계정 <Select aria-label="미리보기 계정" value={account} onChange={event=>{chooseAccount(event.target.value);router.push(event.target.value==='guest'?'/login':'/')}}><option value="guest">로그인 전</option>{[['admin','operator'],['subadmin','deputy'],['user1','member'],['user2','apprentice']].map(([id,role])=><option value={id} key={id}>{roleLabels[role]}</option>)}</Select></Label><Button onClick={()=>visitGuest('/login')}>로그인</Button><Button onClick={()=>visitGuest('/signup')}>회원가입</Button><a href="https://github.com/Developer-Kiraku/helldivers2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav></header>}<Shell key={`${path}:${account}`}>{page}</Shell></>;
 }
-createRoot(document.getElementById('root')).render(<PreviewRouter><PreviewProvider><App/></PreviewProvider></PreviewRouter>);
+createRoot(document.getElementById('root')).render(<UIProvider><PreviewRouter><PreviewProvider><App/></PreviewProvider></PreviewRouter></UIProvider>);

@@ -1,4 +1,6 @@
 'use client';
+import {ActionLink,Button,Label,Select,TextArea} from './ui';
+
 import Link from 'next/link';
 import {useCallback,useEffect,useState} from 'react';
 import {useCommunity} from './CommunityProvider';
@@ -26,22 +28,22 @@ export default function RequestsPage(){
  const availableTypes=Object.entries(types).filter(([value])=>requests.some(item=>item.type===value));
  return <section className="admin-page">
   <header className="page-heading"><div><div className="eyebrow">APPROVAL CENTER</div><h1>요청 승인 목록</h1><p>내 권한으로 처리할 수 있는 가입·게시글·회원 관련 요청과 처리 이력을 확인합니다.</p></div></header>
-  <div className="board-toolbar"><span>요청 {requests.length}건</span><label>요청 종류 <select aria-label="요청 종류" value={type} onChange={event=>setType(event.target.value)}><option value="all">전체</option>{availableTypes.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label></div>
-  <div className="category-tabs">{[['pending','대기'],['approved','승인'],['rejected','거부'],['all','전체']].map(([value,label])=><button key={value} className={filter===value?'selected':''} onClick={()=>setFilter(value)}>{label} {byType.filter(item=>value==='all'||item.status===value).length}</button>)}</div>
+  <div className="board-toolbar"><span>요청 {requests.length}건</span><Label>요청 종류 <Select aria-label="요청 종류" value={type} onChange={event=>setType(event.target.value)}><option value="all">전체</option>{availableTypes.map(([value,label])=><option key={value} value={value}>{label}</option>)}</Select></Label></div>
+  <div className="category-tabs">{[['pending','대기'],['approved','승인'],['rejected','거부'],['all','전체']].map(([value,label])=><Button key={value} className={filter===value?'selected':''} onClick={()=>setFilter(value)}>{label} {byType.filter(item=>value==='all'||item.status===value).length}</Button>)}</div>
   <p className="form-error" role="alert">{error}</p>
   <div className="request-list">{filtered.map(item=><article className="panel request-card" key={item.id}>
    <header><span className="badge">{types[item.type]||item.type}</span><span className={`status-label ${item.status}`}>{statuses[item.status]}</span><time>{date(item.createdAt)}</time></header>
    <h2>{item.targetSnapshot}</h2><p className="request-reason">{item.reason}</p>
    <dl className="member-info"><dt>요청자</dt><dd>{item.requesterNickname}</dd>{item.expiresAt&&<><dt>승인 기한</dt><dd>{date(item.expiresAt)}<br/>기한 내 미승인 시 자동 탈퇴됩니다.</dd></>}<dt>처리자</dt><dd>{item.reviewerNickname||'-'}</dd><dt>처리일</dt><dd>{date(item.reviewedAt)}</dd>{item.reviewNote&&<><dt>처리 의견</dt><dd>{item.reviewNote}</dd></>}</dl>
    <details className="request-json"><summary>요청 데이터 보기</summary><pre>{JSON.stringify(item,null,2)}</pre></details>
-   <footer>{item.board&&<Link className="button secondary" href={`/boards/${item.board}/${item.targetId}`}>대상 게시글</Link>}{item.type==='member_approval'&&<Link className="button secondary" href="/admin/users">회원 정보 확인</Link>}{item.status==='pending'&&<>{item.canReject&&<button className="button secondary" onClick={()=>openReview(item,'rejected')}>거부</button>}{item.canApprove&&<button className="button primary" onClick={()=>openReview(item,'approved')}>승인</button>}</>}</footer>
+   <footer>{item.board&&<ActionLink className="button secondary" href={`/boards/${item.board}/${item.targetId}`}>대상 게시글</ActionLink>}{item.type==='member_approval'&&<ActionLink className="button secondary" href="/admin/users">회원 정보 확인</ActionLink>}{item.status==='pending'&&<>{item.canReject&&<Button className="button secondary" onClick={()=>openReview(item,'rejected')}>거부</Button>}{item.canApprove&&<Button className="button primary" onClick={()=>openReview(item,'approved')}>승인</Button>}</>}</footer>
   </article>)}</div>
   {!filtered.length&&<div className="empty-state">해당 요청이 없습니다.</div>}
   {review&&<Modal title={review.decision==='approved'?'요청 승인':'요청 거부'} onClose={()=>setReview(null)}><form onSubmit={submit}>
    <p>{types[review.item.type]} · {review.item.targetSnapshot}</p>
    <p>{review.item.type==='member_approval'?'승인하면 일반회원으로 전환되고 미승인에 따른 자동 탈퇴 대상에서 제외됩니다.':review.decision==='approved'?'승인하면 요청한 삭제 또는 강퇴를 즉시 실행합니다.':'거부하면 대상 게시글과 회원 상태는 변경되지 않습니다.'}</p>
-   {review.item.type!=='member_approval'&&<><label htmlFor="review-note">처리 의견 (선택)</label><textarea id="review-note" value={note} onChange={e=>setNote(e.target.value)} maxLength={1000}/></>}
-   <p className="form-error" role="alert">{error}</p><div className="form-actions"><button type="button" className="button secondary" onClick={()=>setReview(null)}>취소</button><button className="button primary" disabled={busy}>{busy?'처리 중…':review.decision==='approved'?'승인하기':'거부하기'}</button></div>
+   {review.item.type!=='member_approval'&&<><Label htmlFor="review-note">처리 의견 (선택)</Label><TextArea id="review-note" value={note} onChange={e=>setNote(e.target.value)} maxLength={1000}/></>}
+   <p className="form-error" role="alert">{error}</p><div className="form-actions"><Button type="button" className="button secondary" onClick={()=>setReview(null)}>취소</Button><Button className="button primary" disabled={busy}>{busy?'처리 중…':review.decision==='approved'?'승인하기':'거부하기'}</Button></div>
   </form></Modal>}
  </section>;
 }

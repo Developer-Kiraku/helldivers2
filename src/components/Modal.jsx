@@ -1,18 +1,14 @@
 'use client';
-
-import { useEffect, useRef } from 'react';
+import {useRef} from 'react';
+import {Dialog} from '@radix-ui/themes';
 import Icon from './Icon';
-
-export default function Modal({ title, children, footer, onClose }) {
-  const dialog = useRef(null);
-  useEffect(() => {
-    const element = dialog.current;
-    const previous = document.activeElement;
-    element.showModal();
-    return () => { element.close(); previous?.focus?.(); };
-  }, []);
-  return <dialog ref={dialog} className="modal" aria-labelledby="modal-heading" onCancel={event => { event.preventDefault(); onClose(); }}>
-    <header className="modal-header"><h2 id="modal-heading">{title}</h2><button className="icon-button" onClick={onClose} aria-label="닫기"><Icon name="close" /></button></header>
-    <div className="modal-body">{children}</div>{footer && <footer className="modal-footer">{footer}</footer>}
-  </dialog>;
+import {Button} from './ui';
+export default function Modal({title,children,footer,onClose}){
+ const previous=useRef(typeof document==='undefined'?null:document.activeElement);
+ return <Dialog.Root open onOpenChange={open=>{if(!open)onClose()}}>
+  <Dialog.Content className="modal ui-modal" maxWidth="660px" aria-describedby={undefined} onCloseAutoFocus={event=>{event.preventDefault();previous.current?.isConnected&&previous.current.focus()}}>
+   <header className="modal-header"><Dialog.Title>{title}</Dialog.Title><Button type="button" className="icon-button" onClick={onClose} aria-label="닫기"><Icon name="close"/></Button></header>
+   <div className="modal-body">{children}</div>{footer&&<footer className="modal-footer">{footer}</footer>}
+  </Dialog.Content>
+ </Dialog.Root>;
 }

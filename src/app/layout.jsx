@@ -1,4 +1,7 @@
+import '@radix-ui/themes/styles.css';
 import './globals.css';
+import './ui.css';
+import {UIProvider} from '@/components/ui';
 import { CommunityProvider } from '@/components/CommunityProvider';
 import Shell from '@/components/Shell';
 import { getCurrentUser } from '@/lib/server/auth';
@@ -10,5 +13,5 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const initialUser=await getCurrentUser();
-  return <html lang="ko"><body><CommunityProvider initialUser={initialUser}><Shell>{children}</Shell></CommunityProvider></body></html>;
+  return <html lang="ko"><body><UIProvider><CommunityProvider initialUser={initialUser}><Shell>{children}</Shell></CommunityProvider></UIProvider></body></html>;
 }

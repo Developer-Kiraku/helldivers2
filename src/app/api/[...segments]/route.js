@@ -5,7 +5,7 @@ import { config } from '@/lib/server/config';
 import { fail, AppError, requireUser, userForToken, publicUser, createSession, setSessionCookie, clearSessionCookie, verifyOrigin } from '@/lib/server/auth';
 import { tokenHash, verifyPassword, hashPassword } from '@/lib/server/passwords';
 import { now, cleanPost, validateNickname, validImage, postForId, memberForId, canDeletePost, canRequest, serializePost, serializeComment } from '@/lib/server/community';
-import { roleLabels, outranks, isStaff } from '@/lib/roles';
+import { roleLabels, outranks, isStaff, memberCapabilities } from '@/lib/roles';
 import { approveApprentice, startProbation, withdrawMember } from '@/lib/server/probation.mjs';
 import { approvalList } from '@/lib/approvals';
 
@@ -87,7 +87,7 @@ async function handler(request, context) {
       }
       if(path==='admin/users'&&method==='GET'){
         if(!isStaff(actor.role))fail(403,'회원 목록은 운영진만 볼 수 있습니다.');
-        return {users:db.users.filter(user=>user.status!=='withdrawn').map(user=>({...publicUser(user),canApprove:isStaff(actor.role)&&user.status==='active'&&user.role==='apprentice',canExpel:actor.role==='operator'&&user.status==='active'&&outranks(actor.role,user.role),canRequestExpel:user.status==='active'&&canRequest(actor,user),canChangeRole:actor.role==='operator'&&user.id!==actor.id&&outranks(actor.role,user.role)}))};
+        return {users:db.users.filter(user=>user.status!=='withdrawn').map(user=>({...publicUser(user),...memberCapabilities(actor,user)}))};
       }
       if(path==='admin/approvals'&&method==='GET'){
         if(!isStaff(actor.role))fail(403,'운영자·부운영자만 요청 승인 목록을 볼 수 있습니다.');

@@ -1,8 +1,9 @@
+import {Button} from './ui';
 import Link from 'next/link';
 import Icon from './Icon';
 
 export function KakaoButton({ children, onClick }) {
-  return <button type="button" className="kakao-button" onClick={onClick}><span className="kakao-bubble" aria-hidden="true" />{children}</button>;
+  return <Button type="button" className="kakao-button" onClick={onClick}><span className="kakao-bubble" aria-hidden="true" />{children}</Button>;
 }
 
 export default function AuthLayout({ children, signup = false }) {

@@ -57,6 +57,13 @@ async function run() {
     await admin.call('/admin/users'); await admin.call('/admin/requests','GET',undefined,307); await admin.call('/admin/approvals'); await deputy.call('/admin/users'); await deputy.call('/admin/requests','GET',undefined,307); await deputy.call('/admin/approvals'); await member.call('/admin/users','GET',undefined,307);await member.call('/admin/approvals','GET',undefined,307);
     await guest.call('/api/admin/approvals','GET',undefined,401);await member.call('/api/admin/approvals','GET',undefined,403);await apprentice.call('/api/admin/approvals','GET',undefined,403);
     for(const staff of [admin,deputy]){const pending=(await staff.call('/api/admin/approvals')).data.requests;assert.equal(pending.length,1);assert.equal(pending[0].type,'member_approval');assert.equal(pending[0].targetId,'u-user2');assert.equal(pending[0].canApprove,true);assert.equal(pending[0].canReject,false);}
+    const operatorMembers=(await admin.call('/api/admin/users')).data.users;
+    assert.equal(operatorMembers.find(u=>u.id==='u-admin').canExpel,false);assert.equal(operatorMembers.find(u=>u.id==='u-admin').canChangeRole,false);
+    assert.equal(operatorMembers.find(u=>u.id==='u-subadmin').canExpel,true);assert.equal(operatorMembers.find(u=>u.id==='u-user1').canChangeRole,true);
+    const deputyMembers=(await deputy.call('/api/admin/users')).data.users;
+    assert.ok(deputyMembers.every(u=>!u.canExpel&&!u.canChangeRole));assert.ok(deputyMembers.filter(u=>['operator','deputy'].includes(u.role)).every(u=>!u.canRequestExpel));
+    assert.ok(deputyMembers.filter(u=>['member','apprentice'].includes(u.role)).every(u=>u.canRequestExpel));
+    await deputy.call('/api/admin/users/u-user1','PATCH',{role:'deputy'},403);await member.call('/api/admin/users','GET',undefined,403);
     await member.call('/api/posts','POST',draft('notice'),403);await apprentice.call('/api/posts','POST',draft('notice'),403);
     const notice=(await deputy.call('/api/posts','POST',draft('notice'))).data.post;
     const post=(await member.call('/api/posts','POST',draft())).data.post;
@@ -90,6 +97,7 @@ async function run() {
     const expel=(await deputy.call(requests,'POST',{type:'user_expel',targetId:'u-user2',reason:'강퇴 승인 테스트'})).data.request;
     const results=await Promise.all([admin.call(`${requests}/${expel.id}/review`,'POST',{decision:'approved'},[200,409]),client(admin.cookie).call(`${requests}/${expel.id}/review`,'POST',{decision:'approved'},[200,409])]);
     assert.deepEqual(results.map(r=>r.response.status).sort(),[200,409]);await apprentice.call('/api/bootstrap','GET',undefined,401);await guest.call('/api/auth/login','POST',{loginId:'user2',password:'1234'},401);
+    const expelled=(await admin.call('/api/admin/users')).data.users.find(u=>u.id==='u-user2');assert.equal(expelled.canExpel,false);assert.equal(expelled.canChangeRole,false);assert.equal(expelled.canApprove,false);
     await admin.call(`/api/posts/${notice.id}`,'DELETE',{});await deputy.call(`/api/posts/${notice.id}`,'GET',undefined,404);
     const own=(await member.call('/api/posts','POST',draft())).data.post;await member.call(`/api/posts/${own.id}`,'DELETE',{});
     const concurrent=await Promise.all(Array.from({length:5},(_,i)=>member.call('/api/posts','POST',draft('guide',`동시 저장 ${i}`))));

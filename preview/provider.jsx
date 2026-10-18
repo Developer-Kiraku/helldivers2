@@ -1,6 +1,6 @@
 import {createContext,useCallback,useContext,useMemo,useRef,useState} from 'react';
 import {posts as examples} from '../src/lib/data';
-import {isStaff,outranks} from '../src/lib/roles';
+import {isStaff,outranks,memberCapabilities} from '../src/lib/roles';
 import {useRouter} from './router';
 import {approvalList} from '../src/lib/approvals';
 const Context=createContext(null);
@@ -20,7 +20,7 @@ export function PreviewProvider({children}){
  const allPosts=Object.values(posts).flat();
  const api=useCallback(async(path,options={})=>{
   if(options.method&&options.method!=='GET')return blocked();
-  if(path==='admin/users')return {users:accounts.map(target=>({...target,canApprove:isStaff(user?.role)&&target.role==='apprentice',canExpel:user?.role==='operator'&&outranks(user.role,target.role),canRequestExpel:user?.role==='deputy'&&outranks(user.role,target.role),canChangeRole:user?.role==='operator'&&outranks(user.role,target.role)}))};
+  if(path==='admin/users')return {users:accounts.map(target=>({...target,...memberCapabilities(user,target)}))};
   if(path==='admin/approvals')return {requests:approvalList({users:accounts,posts:allPosts,audit:[],requests:[{id:'preview-request-1',type:'post_delete',targetId:'talk-2',targetUserId:'u-user2',targetSnapshot:'오늘의 한 줄: 보급은 사랑입니다.',board:'talk',requestedBy:'u-subadmin',reason:'운영 규칙에 맞는 게시글인지 검토 부탁드립니다. (예시)',status:'pending',createdAt,reviewedAt:null,reviewedBy:null,reviewNote:''},{id:'preview-request-2',type:'user_expel',targetId:'u-user1',targetUserId:'u-user1',targetSnapshot:'헬다이버',requestedBy:'u-subadmin',reason:'회원 이용 상태 검토 부탁드립니다. (예시)',status:'pending',createdAt,reviewedAt:null,reviewedBy:null,reviewNote:''}]},user)};
   if(path.startsWith('posts/')){const post=allPosts.find(item=>item.id===path.split('/')[1]);if(!post)throw Error('게시글을 찾을 수 없습니다.');return {post,comments:[{id:'preview-comment',postId:post.id,author:'헬다이버',authorPhoto:'',own:user?.loginId==='user1',body:'함께 즐길 동료가 있어서 좋네요. 오늘도 안전한 강하 하세요!',createdAt}]};}
   throw Error('화면 확인용 미리보기입니다.');
