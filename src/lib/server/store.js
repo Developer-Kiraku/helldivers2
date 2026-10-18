@@ -21,9 +21,9 @@ function createSeed() {
   users.filter(user => user.role === 'apprentice').forEach(user => startProbation(user));
   const posts = Object.entries(samplePosts).flatMap(([board, items]) => items.map((item, index) => ({
     id: `${board}-${item.id}`, board, category: item.category, title: item.title,
-    authorId: board === 'notice' ? (index % 2 ? 'u-subadmin' : 'u-admin') : authors[index],
+    authorId: board === 'notice' ? (index % 2 ? 'u-subadmin' : 'u-admin') : authors[index % authors.length],
     content: item.content, bodyHtml: '', images: item.image ? [item.image] : [], pinned: Boolean(item.pinned),
-    views: 0, createdAt: now, updatedAt: now, deletedAt: null,
+    views: 0, createdAt: new Date(`${item.date.replaceAll('.','-')}T12:00:00+09:00`).toISOString(), updatedAt: now, deletedAt: null,
   })));
   const comments = posts.map(post => ({ id: randomUUID(), postId: post.id, authorId: 'u-user1', body: '함께 즐길 동료가 있어서 좋네요. 오늘도 안전한 강하 하세요!', createdAt: now, deletedAt: null }));
   return { schemaVersion: 1, users, posts, comments, votes: [], requests: [], sessions: [], audit: [] };

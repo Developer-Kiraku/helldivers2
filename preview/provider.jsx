@@ -14,8 +14,8 @@ export function PreviewProvider({children}){
  const notify=useCallback(message=>{clearTimeout(timer.current);setToast(message);timer.current=setTimeout(()=>setToast(''),4000)},[]);
  function chooseAccount(loginId){setAccount(loginId||'guest');try{sessionStorage.setItem('hd-pages-account',loginId||'guest')}catch{}}
  const posts=useMemo(()=>Object.fromEntries(Object.entries(examples).map(([board,items])=>[board,items.map((item,index)=>{
-  const author=accounts[board==='notice'?index%2:([2,1,2,3,2][index])];
-  return {...item,id:`${board}-${item.id}`,board,author:author.nickname,authorId:author.id,authorRole:author.role,authorPhoto:'',own:user?.id===author.id,bodyHtml:'',images:item.image?[item.image]:[],createdAt,comments:1,myVote:0,canEdit:user?.id===author.id,canDelete:user?.id===author.id||user?.role==='operator'&&outranks(user.role,author.role),canRequestDelete:user?.role==='deputy'&&outranks(user.role,author.role)};
+  const author=accounts[board==='notice'?index%2:([2,1,2,3,2][index%5])];
+  return {...item,id:`${board}-${item.id}`,board,author:author.nickname,authorId:author.id,authorRole:author.role,authorPhoto:'',own:user?.id===author.id,bodyHtml:'',images:item.image?[item.image]:[],createdAt:`${item.date.replaceAll('.','-')}T12:00:00+09:00`,comments:1,myVote:0,canEdit:user?.id===author.id,canDelete:user?.id===author.id||user?.role==='operator'&&outranks(user.role,author.role),canRequestDelete:user?.role==='deputy'&&outranks(user.role,author.role)};
  })])),[user]);
  const allPosts=Object.values(posts).flat();
  const api=useCallback(async(path,options={})=>{

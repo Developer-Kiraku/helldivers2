@@ -65,7 +65,7 @@ async function run() {
     assert.ok(deputyMembers.filter(u=>['member','apprentice'].includes(u.role)).every(u=>u.canRequestExpel));
     await deputy.call('/api/admin/users/u-user1','PATCH',{role:'deputy'},403);await member.call('/api/admin/users','GET',undefined,403);
     await member.call('/api/posts','POST',draft('notice'),403);await apprentice.call('/api/posts','POST',draft('notice'),403);
-    assert.deepEqual((await member.call('/api/bootstrap')).data.posts.qna,[]);
+    assert.equal((await member.call('/api/bootstrap')).data.posts.qna.length,18);
     const question=(await member.call('/api/posts','POST',draft('qna','장비 질문'))).data.post;
     await member.call('/boards/qna/'+question.id);await member.call('/boards/qna/'+question.id+'/edit');
     for(const board of ['talk','qna']){
