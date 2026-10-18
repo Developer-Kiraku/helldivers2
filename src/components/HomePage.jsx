@@ -1,0 +1,29 @@
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { boards } from '@/lib/data';
+import { useCommunity } from './CommunityProvider';
+import Icon from './Icon';
+import { communityLinks } from '@/lib/community-links';
+
+function Clock() {
+  const [time, setTime] = useState('--:--:--');
+  useEffect(() => {
+    const tick = () => setTime(new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(new Date()));
+    tick(); const interval = setInterval(tick, 1000); return () => clearInterval(interval);
+  }, []);
+  return <strong className="clock">{time}</strong>;
+}
+
+export default function HomePage() {
+  const { signedIn, posts, stats } = useCommunity();
+  return <div className="home-page">
+    <section className="hero"><img className="hero-logo" src="/images/helldivers-logo.png" alt="HELLDIVERS II" /><div className="hero-copy"><div className="eyebrow">OFF DUTY. ON MISSION.</div><h1>퇴근은 했고,<br />민주주의는 지금부터.</h1><p>헬다이버즈2 직장인 커뮤니티.<br />레벨도 실력도 상관없이, 오늘의 마지막 작전은 함께.</p><div className="hero-actions"><Link className="button hero-primary" href={signedIn ? '/boards/talk' : '/login'}>{signedIn ? '작전실 입장하기' : '카카오로 합류하기'} <Icon name="arrow" size={16} /></Link><a className="button hero-secondary" href={communityLinks.discord} target="_blank" rel="noopener noreferrer"><Icon name="discord" size={17} />디스코드</a><a className="button hero-secondary" href={communityLinks.kakaoChat} target="_blank" rel="noopener noreferrer"><Icon name="talk" size={17} />카카오톡</a></div></div><span className="hero-tag">HELLDIVERS 2 / COMMUNITY</span></section>
+    <section className="status-strip" aria-label="커뮤니티 현황"><div><small>함께하는 대원</small><strong>{stats.onlineMembers}<span>명</span></strong><em>● ONLINE</em></div><div><small>총 대원 수</small><strong>{stats.totalMembers}<span>명</span></strong><em>HELLDIVERS</em></div><div><small>현재 시각</small><Clock /><em>KST</em></div></section>
+    {!signedIn && <p className="muted-callout"><Icon name="lock" size={16} />게시판은 로그인 후 이용할 수 있습니다. 가입하고 최신 소식을 만나보세요.</p>}
+    <div className="home-board-grid">{['notice', 'guide'].map(board => <section className="panel latest-panel" key={board}><header className="section-heading"><h2><Icon name={board === 'notice' ? 'flag' : 'target'} />{boards[board].label}</h2><Link href={`/boards/${board}`}>전체 보기 ↗</Link></header><ul className="latest-list">{posts[board].slice(0, 5).map(post => <li key={post.id}><Link href={`/boards/${board}/${post.id}`}><span className="badge">{post.category}</span><span className="latest-title">{signedIn ? post.title : '로그인 후 게시글을 확인할 수 있습니다.'}{signedIn && <em>{post.comments}</em>}</span><time>{post.date.slice(5)}</time></Link></li>)}</ul></section>)}</div>
+    <section className="panel home-talk"><header className="section-heading"><h2><Icon name="talk" />헬다이버톡</h2><Link href="/boards/talk">전체 보기 ↗</Link></header><div className="talk-preview-grid">{posts.talk.slice(0, 5).map(post => <Link key={post.id} className="talk-preview-card" href={`/boards/talk/${post.id}`}><small>{post.category}{signedIn ? ` · ${post.author}` : ' · 회원 전용'}</small><h3>{signedIn ? post.title : '동료들의 이야기가 기다리고 있어요.'}</h3><footer>{signedIn ? <>추천 {post.likes} · 댓글 {post.comments}</> : <>로그인하고 읽기 →</>}</footer></Link>)}</div></section>
+    <p className="design-note">비공식 팬 커뮤니티 · 회원 전용 작전실</p>
+  </div>;
+}
