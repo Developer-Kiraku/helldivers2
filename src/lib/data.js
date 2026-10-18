@@ -1,4 +1,5 @@
 export const boards = {
+  qna: { label: '질답', eyebrow: 'ASK YOUR SQUAD', description: '궁금한 점을 묻고, 동료의 경험으로 함께 해결해요.', categories: ['질문', '장비', '작전', '기타'] },
   notice: { label: '공지사항', eyebrow: 'COMMAND CENTER', description: '함께하는 대원들에게 전하는 운영진의 소식입니다.', categories: ['공지', '모임', '기타'] },
   guide: { label: '공략글', eyebrow: 'FIELD MANUAL', description: '경험을 나누고, 다음 강하를 함께 준비하세요.', categories: ['무기', '스트라타젬', '운영', '기타'] },
   talk: { label: '헬다이버톡', eyebrow: 'AFTER THE DROP', description: '작전 이야기부터 퇴근 이야기까지, 편하게 나눠요.', categories: ['잡담', '사진', '기타'] },
@@ -8,6 +9,7 @@ export const defaultProfile = { nickname: '정시퇴근', photo: '' };
 const row = (id, category, title, author, comments, likes, content, extra = {}) => ({ id: String(id), category, title, author, comments, likes, dislikes: 1, views: 150 + id * 28, date: '2026.10.18', content, ...extra });
 
 export const posts = {
+  qna: [],
   notice: [
     row(5, '공지', '새로운 동료가 되어주신 헬다이버 여러분, 환영합니다.', '운영사령부', 12, 24, '퇴근 후 부담 없이 함께 즐기는 우리 작전실에 오신 것을 환영합니다. 레벨도 실력도 상관없이, 서로의 시간을 존중하며 함께해요.', { pinned: true }),
     row(4, '모임', '금요일 22시, 직장인 정기 강하 모집', '부운영자', 24, 31, '금요일 오후 10시, 디스코드에서 만나요. 처음 참여하는 대원도 편하게 합류해주세요.'),

@@ -27,3 +27,6 @@
 .discord-link>span>.community-icon,.kakao-chat-link>span>.community-icon{margin-left:3px;opacity:.65}
 .mobile-nav .community-icon{width:22px;height:22px}.mobile-community-popover a>.community-icon:last-child{width:14px;height:14px}
 @media(max-width:760px){.segmented .ui-button{gap:5px}.member-card footer .ui-button{gap:6px}}
+
+/* Feed boards use the full content width without a rules sidebar. */
+.feed-layout.feed-layout-full{grid-template-columns:minmax(0,1fr)}
