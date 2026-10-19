@@ -10,8 +10,12 @@ import Avatar from './Avatar';
 import Icon from './Icon';
 import VoteButtons from './VoteButtons';
 import PostShare from './PostShare';
+import HelstagramPost from './HelstagramPost';
 
 export default function FeedPostCard({ post, board }) {
+  return board === 'helstagram' ? <HelstagramPost post={post}/> : <StandardFeedPostCard post={post} board={board}/>;
+}
+function StandardFeedPostCard({ post, board }) {
   const { api, profile, notify, refresh } = useCommunity();
   const [open, setOpen] = useState(false);
   const [comments, setComments] = useState([]);

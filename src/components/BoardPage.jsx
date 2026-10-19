@@ -15,10 +15,15 @@ import FeedPostCard from './FeedPostCard';
 import BoardSearchFilter from './BoardSearchFilter';
 import {SlidersHorizontal} from 'lucide-react';
 import {emptyBoardFilters,matchesBoardFilters} from '@/lib/board-search.mjs';
+import HelstagramPage from './HelstagramPage';
 
 const batchSize = 10;
 
 export default function BoardPage({ board }) {
+  return board === 'helstagram' ? <HelstagramPage/> : <StandardBoardPage board={board}/>;
+}
+
+function StandardBoardPage({ board }) {
   const config = boards[board];
   const isFeed = board === 'talk' || board === 'qna' || board === 'helstagram';
   const { posts, profile, canWriteNotice } = useCommunity();

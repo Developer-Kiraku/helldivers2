@@ -106,6 +106,7 @@ async function handler(request, context) {
         }
         if(segments[2]==='vote'&&segments.length===3&&method==='POST'){
           if(![0,1,-1].includes(input.value))fail(400,'추천 값을 확인해주세요.');
+          if(post.board==='helstagram'&&input.value===-1)fail(400,'헬스타그램은 좋아요만 사용할 수 있습니다.');
           db.votes=db.votes.filter(vote=>!(vote.userId===actor.id&&vote.postId===post.id));if(input.value)db.votes.push({postId:post.id,userId:actor.id,value:input.value});return {post:serializePost(db,post,actor)};
         }
       }

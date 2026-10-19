@@ -44,6 +44,7 @@ async function run() {
   await import('./test-image-upload.mjs');
   await import('./test-auth-security.mjs');
   await import('./test-signup-nickname.mjs');
+  await import('./test-helstagram.mjs');
   await fs.mkdir(path.join(root, 'work'), {recursive:true});
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-')); const file = path.join(directory, 'test-db.json');
   try {
@@ -86,6 +87,11 @@ async function run() {
     assert.deepEqual((await member.call(`/api/posts/${photoPost.id}`,'PATCH',{...photoDraft,images:reorderedPhotos})).data.post.images,reorderedPhotos);
     await member.call(`/api/posts/${photoPost.id}/comments`,'POST',{body:'멋진 사진이에요!'});
     assert.equal((await member.call(`/api/posts/${photoPost.id}/vote`,'POST',{value:1})).data.post.likes,1);
+    const likedPhoto=(await member.call(`/api/posts/${photoPost.id}/vote`,'POST',{value:1})).data.post;
+    assert.equal(likedPhoto.likes,1);assert.equal(likedPhoto.myVote,1);assert.equal(likedPhoto.dislikes,0);
+    await member.call(`/api/posts/${photoPost.id}/vote`,'POST',{value:-1},400);
+    assert.equal((await member.call(`/api/posts/${photoPost.id}/vote`,'POST',{value:0})).data.post.likes,0);
+    await member.call(`/api/posts/${photoPost.id}/vote`,'POST',{value:1});
     const tenPhotos=(await apprentice.call('/api/posts','POST',{...photoDraft,images:Array(10).fill(photoDraft.images[0])})).data.post;
     assert.equal(tenPhotos.images.length,10);
     await apprentice.call(`/api/posts/${tenPhotos.id}`,'DELETE',{});
@@ -253,10 +259,13 @@ async function run() {
     // Stand in for a completed Kakao provider exchange, only in the isolated test DB.
     const ticket=randomBytes(32).toString('hex'),raceTickets=[randomBytes(32).toString('hex'),randomBytes(32).toString('hex')],expiredTicket=randomBytes(32).toString('hex');db=JSON.parse(await fs.readFile(file,'utf8'));
     db.posts.find(p=>p.id===scheduledPoll.id).poll.endsAt=new Date(Date.now()-1000).toISOString();
+    db.votes.push({postId:photoPost.id,userId:'u-subadmin',value:-1});
     db.users.push({...db.users.find(user=>user.id==='u-admin'),id:'security-session-test',loginId:'security-session-test',nickname:'세션검증',role:'member'});
     db.pendingRegistrations=[...raceTickets.map((value,index)=>({ticketHash:createHash('sha256').update(value).digest('hex'),kakaoId:'nickname-race-'+index,expiresAt:new Date(Date.now()+600000).toISOString()})),{ticketHash:createHash('sha256').update(expiredTicket).digest('hex'),kakaoId:'expired-check',expiresAt:new Date(Date.now()-1000).toISOString()},{ticketHash:createHash('sha256').update(ticket).digest('hex'),kakaoId:'test-kakao-verified-1',expiresAt:new Date(Date.now()+600000).toISOString()}];await fs.writeFile(file,JSON.stringify(db));
     await start(file);assert.deepEqual((await member.call(`/api/posts/${photoPost.id}`)).data.post.images,reorderedPhotos);assert.equal((await member.call('/api/posts/'+question.id)).data.comments[0].body,'목록에서 작성한 답변');assert.equal((await member.call('/api/bootstrap')).data.posts.qna.find(p=>p.id===question.id).title,'수정된 장비 질문');assert.equal((await admin.call('/api/posts/'+scheduledPoll.id)).data.post.poll.closed,true);await member.call('/api/posts/'+scheduledPoll.id+'/poll','POST',{choices:[]},409);assert.equal((await admin.call('/api/posts/'+pollPost.id)).data.post.poll.closed,true);assert.equal((await admin.call('/api/posts/'+publicPoll.id)).data.post.poll.totalVoters,1);await admin.call('/api/bootstrap');assert.equal((await member.call('/api/auth/me')).data.user.nickname,'테스트헬다이버');await member.call(`/api/posts/${concurrent[0].data.post.id}`);assert.equal((await admin.call(requests)).data.requests.find(r=>r.id===req.id).status,'approved');
     const signup=client(`hd_signup=${ticket}`);assert.equal((await signup.call('/api/auth/signup-info')).data.verified,true);
+    const legacyPhoto=(await deputy.call(`/api/posts/${photoPost.id}`)).data.post;
+    assert.equal(legacyPhoto.dislikes,0);assert.equal(legacyPhoto.myVote,0);assert.equal(legacyPhoto.likes,1);
     await guest.call('/api/auth/login','POST',{loginId:'security-rate-check',password:'wrong'},429,{'X-Forwarded-For':'203.0.113.1'});
     const sessionClients=Array.from({length:6},()=>client());
     for(const sessionClient of sessionClients)await sessionClient.call('/api/auth/login','POST',{loginId:'security-session-test',password:'1234'});

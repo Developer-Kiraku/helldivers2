@@ -16,7 +16,11 @@ import Avatar from './Avatar';
 import Icon from './Icon';
 import VoteButtons from './VoteButtons';
 import ModerationActions from './ModerationActions';
+import HelstagramDetail from './HelstagramDetail';
 export default function ArticlePage({board,id}){
+ return board==='helstagram'?<HelstagramDetail id={id}/>:<StandardArticlePage board={board} id={id}/>;
+}
+function StandardArticlePage({board,id}){
  const {posts,profile,api,notify}=useCommunity();const post=posts[board].find(item=>item.id===id||item.id===`${board}-${id}`);
  const [commentsLoading,setCommentsLoading]=useState(true);
  const [comments,setComments]=useState([]),[draft,setDraft]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');

@@ -7,8 +7,9 @@ import KakaoSymbol from './KakaoSymbol';
 import { useCommunity } from './CommunityProvider';
 import { loadKakaoShare, shareMessage } from '@/lib/kakao-share';
 import { site } from '@/lib/site.mjs';
+import { Send } from 'lucide-react';
 
-export default function PostShare({ post }) {
+export default function PostShare({ post, iconOnly = false }) {
   const { notify } = useCommunity();
   const [open, setOpen] = useState(false), [url, setUrl] = useState('');
   const [ready, setReady] = useState(false), [error, setError] = useState('');
@@ -33,7 +34,7 @@ export default function PostShare({ post }) {
     try { await navigator.clipboard.writeText(url); notify('게시글 주소를 복사했습니다.'); }
     catch { input.current?.focus(); input.current?.select(); setError('아래 주소를 길게 누르거나 Ctrl+C로 복사해주세요.'); }
   }
-  return <><Button type="button" className="post-share-trigger" onClick={() => setOpen(true)} aria-label="카카오톡 및 URL 공유"><Icon name="share" size={16} />공유</Button>{open && <Modal title="게시글 공유" onClose={() => setOpen(false)}>
+  return <><Button type="button" className={`post-share-trigger ${iconOnly ? 'helsta-icon-button' : ''}`} onClick={() => setOpen(true)} aria-label="카카오톡 및 URL 공유">{iconOnly ? <Send size={25}/> : <><Icon name="share" size={16} />공유</>}</Button>{open && <Modal title="게시글 공유" onClose={() => setOpen(false)}>
     <p className="share-post-title">{post.title}</p>
     <p className="field-hint">공유받은 게시글은 로그인 후 확인할 수 있어요.</p>
     <div className="post-share-options"><Button type="button" className="kakao-share-button" disabled={!ready || !url} onClick={kakaoShare}><KakaoSymbol size={20} />{ready ? '카카오톡 공유' : '카카오 연결 중…'}</Button><Button type="button" disabled={!url} onClick={copy}><Icon name="link" size={18} />URL 복사하기</Button></div>
