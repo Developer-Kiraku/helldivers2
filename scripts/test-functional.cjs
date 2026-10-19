@@ -78,6 +78,13 @@ async function run() {
     await member.call('/api/posts','POST',{...photoDraft,images:[]},400);
     await member.call('/api/posts','POST',{...photoDraft,images:Array(11).fill(photoDraft.images[0])},400);
     await member.call('/api/posts','POST',{...photoDraft,images:['data:image/png;base64,YmFk']},400);
+    for(const youtubeUrl of ['javascript:alert(1)','https://youtube.com.evil.example/watch?v=M7lc1UVf-VE','https://example.com/watch?v=M7lc1UVf-VE']) await member.call('/api/posts','POST',{...photoDraft,images:[],youtubeUrl},400);
+    const videoPost=(await member.call('/api/posts','POST',{...photoDraft,images:[],youtubeUrl:'https://youtu.be/M7lc1UVf-VE?t=30'})).data.post;
+    assert.equal(videoPost.youtubeUrl,'https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?start=30');assert.deepEqual(videoPost.images,[]);
+    assert.equal((await member.call(`/api/posts/${videoPost.id}`)).data.post.youtubeUrl,videoPost.youtubeUrl);
+    assert.equal((await member.call(`/api/posts/${videoPost.id}`,'PATCH',{...photoDraft,youtubeUrl:'https://www.youtube.com/shorts/M7lc1UVf-VE'})).data.post.youtubeUrl,'https://www.youtube-nocookie.com/embed/M7lc1UVf-VE');
+    assert.equal((await member.call(`/api/posts/${videoPost.id}`,'PATCH',{...photoDraft,youtubeUrl:''})).data.post.youtubeUrl,'');
+    await member.call(`/api/posts/${videoPost.id}`,'DELETE',{});
     const photoPost=(await member.call('/api/posts','POST',photoDraft)).data.post;
     assert.deepEqual(photoPost.images,photoDraft.images);assert.equal(photoPost.content,'');
     assert.ok((await member.call('/api/bootstrap')).data.posts.helstagram.some(post=>post.id===photoPost.id));

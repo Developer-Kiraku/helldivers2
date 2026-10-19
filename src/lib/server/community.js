@@ -2,6 +2,7 @@ import { postSharePath } from './share-links.mjs';
 import { serializePoll } from './polls';
 import 'server-only';
 import { sanitizePostHtml } from './post-html.mjs';
+import { youtubeEmbedUrl } from '../editor-format.mjs';
 import { boards } from '../data';
 import { outranks } from '../roles';
 import { fail } from './auth';
@@ -41,13 +42,17 @@ export function cleanPost(input, board) {
   const imageLimit = board === 'helstagram' ? 10 : 5;
   if (Array.isArray(input.images) && input.images.length > imageLimit) fail(400, `이미지는 최대 ${imageLimit}장까지 넣을 수 있습니다.`);
   const images = Array.isArray(input.images) ? input.images.map(image => validImage(image, true, 7000000, true)) : [];
-  if (board === 'helstagram' && !images.length) fail(400, '사진을 한 장 이상 첨부해주세요.');
+  const youtubeInput = board === 'helstagram' ? input.youtubeUrl ?? '' : '';
+  if (typeof youtubeInput !== 'string' || youtubeInput.length > 2048) fail(400, '유효한 유튜브 주소를 입력해주세요.');
+  const youtubeUrl = youtubeInput.trim() ? youtubeEmbedUrl(youtubeInput) : '';
+  if (youtubeInput.trim() && !youtubeUrl) fail(400, '유효한 유튜브 주소를 입력해주세요.');
+  if (board === 'helstagram' && !images.length && !youtubeUrl) fail(400, '사진 또는 유튜브 영상을 첨부해주세요.');
   if (board === 'helstagram' && images.reduce((size, image) => size + image.length, 0) > 10000000) fail(400, '사진 전체 크기를 줄여주세요.');
   const raw = typeof input.bodyHtml === 'string' ? input.bodyHtml : '';
   if (raw.length > 12000000) fail(400, '본문 크기가 너무 큽니다.');
   const bodyHtml = sanitizePostHtml(raw, images);
-  if (!content && !images.length && !bodyHtml.includes('<iframe ')) fail(400, '본문을 입력해주세요.');
-  return { title, category: input.category, content, bodyHtml, images, ...(board === 'notice' && input.pinned !== undefined ? { pinned: input.pinned } : {}) };
+  if (!content && !images.length && !youtubeUrl && !bodyHtml.includes('<iframe ')) fail(400, '본문을 입력해주세요.');
+  return { title, category: input.category, content, bodyHtml, images, ...(board === 'helstagram' ? {youtubeUrl} : {}), ...(board === 'notice' && input.pinned !== undefined ? { pinned: input.pinned } : {}) };
 }
 export function postForId(db, id) { const post = db.posts.find(item => item.id === id && !item.deletedAt); if (!post) fail(404, '게시글을 찾을 수 없습니다.'); return post; }
 export function memberForId(db, id) { const user = db.users.find(item => item.id === id && item.status === 'active'); if (!user) fail(404, '활성 회원을 찾을 수 없습니다.'); return user; }

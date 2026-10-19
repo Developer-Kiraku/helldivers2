@@ -11,6 +11,7 @@ import PhotoCarousel from './PhotoCarousel';
 import PostShare from './PostShare';
 import ModerationActions from './ModerationActions';
 import PostPoll from './PostPoll';
+import YoutubeVideo from './YoutubeVideo';
 
 const number = value => Number(value || 0).toLocaleString('ko-KR');
 function useLike(post) {
@@ -39,10 +40,9 @@ export default function HelstagramPost({ post, detail = false }) {
   const like = useLike(post);
   const [open, setOpen] = useState(detail), [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false), [busy, setBusy] = useState(false), [draft, setDraft] = useState('');
-  const [error, setError] = useState(''), [attempt, setAttempt] = useState(0), [expanded, setExpanded] = useState(detail), [heart, setHeart] = useState(false);
-  const input = useRef(null), timer = useRef(null), submitting = useRef(false);
+  const [error, setError] = useState(''), [attempt, setAttempt] = useState(0), [expanded, setExpanded] = useState(detail);
+  const input = useRef(null), submitting = useRef(false);
   const href = `/boards/helstagram/${post.id}`, panelId = `helsta-comments-${post.id}`;
-  useEffect(() => () => clearTimeout(timer.current), []);
   useEffect(() => {
     if (!open) return;
     let active = true; setLoading(true); setError('');
@@ -60,9 +60,7 @@ export default function HelstagramPost({ post, detail = false }) {
     } catch (error) { setError(error.message); }
     finally { submitting.current = false; setBusy(false); }
   }
-  function doubleLike(event) {
-    void like.change(true); setHeart(true); clearTimeout(timer.current); timer.current = setTimeout(() => setHeart(false), 400);
-  }
+  function doubleLike() { void like.change(true); }
   const caption = expanded || post.content.length <= 160 ? post.content : `${post.content.slice(0, 160)}…`;
   return <article className={`helsta-post ${detail ? 'helsta-post-detail' : ''}`} aria-label={`${post.author}의 사진: ${post.title}`}>
     <header className="helsta-post-header">
@@ -70,13 +68,13 @@ export default function HelstagramPost({ post, detail = false }) {
       <div className="helsta-author"><strong><Nickname name={post.author} role={post.authorRole} own={post.own}/></strong><span>{post.category} <span aria-hidden="true">·</span> <time dateTime={post.createdAt}>{post.date}</time></span></div>
       <Popover.Root><Popover.Trigger><Button type="button" className="helsta-icon-button" aria-label="게시글 더보기"><MoreHorizontal size={24}/></Button></Popover.Trigger><Popover.Content className="helsta-post-menu" align="end" collisionPadding={12} aria-label="게시글 메뉴"><Link href={href}>게시글 자세히 보기 <ArrowUpRight size={16}/></Link><ModerationActions post={post}/></Popover.Content></Popover.Root>
     </header>
-    <div className="helsta-media"><PhotoCarousel images={post.images} title={post.title} onPhotoDoubleClick={doubleLike}/>{heart && <Heart className="helsta-double-heart" fill="currentColor" aria-hidden="true"/>}</div>
+    <div className="helsta-media"><PhotoCarousel images={post.images} title={post.title} onPhotoDoubleClick={doubleLike}/><YoutubeVideo url={post.youtubeUrl} title={post.title}/></div>
     <div className="helsta-post-body">
       <div className="helsta-actions">
-        <Button type="button" className={`helsta-icon-button helsta-like ${like.liked ? 'is-liked' : ''}`} aria-label={like.liked ? '좋아요 취소' : '좋아요'} aria-pressed={like.liked} disabled={like.busy} onClick={() => like.change()}><Heart size={27} fill={like.liked ? 'currentColor' : 'none'}/></Button>
+        <Button type="button" className={`helsta-icon-button helsta-like ${like.liked ? 'is-liked' : ''}`} aria-label={like.liked ? '좋아요 취소' : '좋아요'} aria-pressed={like.liked} disabled={like.busy} onClick={() => like.change()}><Heart size={27} fill={like.liked ? '#ff4057' : 'transparent'}/></Button>
         <Button type="button" className="helsta-icon-button" aria-label="댓글 달기" aria-expanded={open} aria-controls={panelId} onClick={() => { setOpen(true); input.current?.focus(); }}><MessageCircle size={26}/></Button>
         <PostShare post={post} iconOnly/>
-        <span className="helsta-photo-label">{post.images.length > 1 ? `사진 ${post.images.length}장` : '강하의 순간'}</span>
+        <span className="helsta-photo-label">{post.youtubeUrl ? 'YouTube' : post.images.length > 1 ? `사진 ${post.images.length}장` : '강하의 순간'}</span>
       </div>
       <p className="helsta-like-count" aria-live="polite">좋아요 {number(like.count)}개</p>
       <div className="helsta-caption"><strong><Nickname name={post.author} role={post.authorRole} own={post.own}/></strong> {detail ? <h1>{post.title}</h1> : <Link className="helsta-caption-title" href={href}>{post.title}</Link>}{post.content && <p>{caption}{!expanded && post.content.length > 160 && <Button type="button" className="helsta-text-button" onClick={() => setExpanded(true)}>더 보기</Button>}</p>}</div>
