@@ -21,12 +21,12 @@ export default function HelstagramPage() {
   const photographers = [...new Map(allPosts.map(post => [post.authorId, post])).values()].slice(0, 5);
   function apply(next) { setFilters(next); setDraft(next); setCount(10); }
   return <AccessGate><div className="helstagram-page">
-    <header className="helsta-heading"><div><h1>Helstagram<span aria-hidden="true">.</span></h1><p>우리의 강하, 한 장의 기록.</p></div><div><Link className="helsta-upload" href="/boards/helstagram/write" aria-label="사진 올리기"><SquarePlus size={25}/><span>사진 올리기</span></Link></div></header>
+    <h1 className="sr-only">헬스타그램</h1>
     <div className="helsta-layout"><div className="helsta-main">
       <form className="helsta-simple-search" aria-label="헬스타그램 검색" onSubmit={event => { event.preventDefault(); apply({author:draft.author.trim(), content:draft.content.trim()}); }}>
         <Label htmlFor="helsta-author-search">닉네임<Input id="helsta-author-search" aria-label="닉네임 검색" placeholder="닉네임 검색" value={draft.author} onChange={event => setDraft(current => ({...current, author:event.target.value}))} maxLength={100}/></Label>
         <Label htmlFor="helsta-content-search">내용<Input id="helsta-content-search" aria-label="내용 검색" placeholder="내용 검색" value={draft.content} onChange={event => setDraft(current => ({...current, content:event.target.value}))} maxLength={200}/></Label>
-        <Button type="submit"><Search size={17}/>검색</Button>
+        <div className="helsta-search-actions"><Button type="submit" className="helsta-icon-button" aria-label="검색"><Search size={25}/></Button><Link className="helsta-upload" href="/boards/helstagram/write" aria-label="사진 올리기"><SquarePlus size={25}/><span>사진 올리기</span></Link></div>
       </form>
       {hasFilters && <div className="helsta-filter-summary"><span>검색 결과 {filtered.length}개</span><Button type="button" className="helsta-text-button" onClick={() => apply({author:'', content:''})}>검색 초기화</Button></div>}
       <section className="helsta-feed" aria-label="헬스타그램 게시글">{visible.map(post => <HelstagramPost key={post.id} post={post}/>)}</section>
