@@ -2,20 +2,30 @@ html:has(.helstagram-page){min-width:0}
 .helstagram-page{--helsta-text:#f5f5f5;--helsta-muted:#989898;--helsta-line:#363636;color:var(--helsta-text);max-width:1000px;margin:0 auto;min-width:0}
 .helsta-detail-heading>a:nth-child(2){font-family:Georgia,'Times New Roman',serif;font-size:42px;font-style:italic;font-weight:700;letter-spacing:-2px;line-height:1.2;margin:0;color:#fafafa}
 .helsta-detail-heading>a:nth-child(2)>span{color:#f373ae}
-.helsta-upload{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;color:#f5f5f5;text-decoration:none}
-.helsta-upload:hover{color:#bdbdbd}
 .helsta-layout{display:grid;grid-template-columns:minmax(0,540px) minmax(0,280px);gap:70px;justify-content:center;align-items:start}
 .helsta-main{min-width:0;width:100%}
 .helstagram-page .helsta-icon-button.ui-button.rt-Button,.helsta-post-menu .helsta-icon-button.ui-button.rt-Button{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:40px;height:40px;min-height:40px;padding:5px;border:0;background:transparent;box-shadow:none;color:#f5f5f5;border-radius:8px}
 .helstagram-page .helsta-icon-button.ui-button.rt-Button:hover{background:#ffffff08;color:#b8b8b8}
 .helsta-icon-button svg{flex-shrink:0;stroke-width:1.8}
-.helsta-filter-summary{display:flex;align-items:center;justify-content:space-between;margin:12px 0;color:var(--helsta-muted);font-size:12px}
-.helsta-simple-search{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:end;gap:10px;margin:0 0 16px;padding-bottom:20px;border-bottom:1px solid var(--helsta-line)}
-.helsta-simple-search>.ui-label{display:grid;gap:6px;min-width:0;font-size:11px;color:var(--helsta-muted)}
-.helsta-simple-search .ui-input{min-width:0;width:100%;background:#26292a;border-color:#363636}
-.helsta-search-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-height:44px}
-.helsta-search-actions .helsta-upload{min-height:40px;white-space:nowrap}
-.helsta-search-actions .helsta-icon-button.ui-button{min-height:44px;height:44px}
+.helsta-filter-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;color:var(--helsta-muted);font-size:12px}
+.helsta-filter-summary>span{min-width:0;overflow-wrap:anywhere}.helsta-filter-summary strong{color:#eee;font-weight:500;white-space:nowrap;margin-left:4px}
+.helsta-search-panel{padding:16px;margin-bottom:16px;border:1px solid #ffffff12;border-radius:18px;background:linear-gradient(135deg,#ffffff06,#ffffff02);box-shadow:0 8px 24px #0000000a}
+.helsta-search-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}
+.helsta-search-modes{display:flex;gap:3px;padding:3px;border-radius:10px;background:#0003}
+.helsta-search-modes .ui-button.rt-Button{min-height:34px;height:34px;padding:0 15px;border:0;border-radius:7px;background:transparent;box-shadow:none;color:#92999d;font-size:12px;font-weight:500}
+.helsta-search-modes .ui-button.rt-Button[aria-pressed=true]{background:#363a3d;color:#fff;box-shadow:0 1px 4px #0002}
+.helsta-search-modes .ui-button.rt-Button:hover{color:#fff}
+.helsta-create{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 12px;border-radius:10px;background:#e8b5d00d;color:#eabbd4;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap}
+.helsta-create:hover{background:#e8b5d01a;color:#fbd7e9}
+.helsta-search-field{display:flex;align-items:center;gap:9px;min-width:0;padding:5px 5px 5px 13px;border:1px solid #ffffff14;border-radius:12px;background:#121516;color:#858d92;transition:border-color .15s,box-shadow .15s}
+.helsta-search-field:focus-within{border-color:#b5c4ce66;box-shadow:0 0 0 3px #b5c4ce09}
+.helsta-search-field>svg{flex-shrink:0}
+.helsta-search-field .ui-input.rt-TextFieldRoot{flex:1;min-width:0;min-height:38px;height:38px;padding:0;border:0;background:transparent;box-shadow:none;font-size:13px;color:#f5f5f5}
+.helsta-search-field .rt-TextFieldInput{padding:0;min-width:0}.helsta-search-field .rt-TextFieldInput::placeholder{color:#737d83}
+.helsta-search-field .helsta-search-submit.ui-button.rt-Button{min-height:38px;height:38px;flex-shrink:0;padding:0 17px;border:0;border-radius:8px;background:#e9edf0;color:#262b2e;font-size:12px;font-weight:600;box-shadow:none}
+.helsta-search-field .helsta-search-submit.ui-button.rt-Button:hover{background:#fff}
+.helsta-search-field .helsta-clear-search.ui-button.rt-Button{flex-shrink:0;width:30px;height:38px;min-height:38px;padding:0;border:0;background:transparent;color:#9ba3a7;box-shadow:none}
+.helsta-search-panel :is(button,a):focus-visible{outline:2px solid #b5c4ce;outline-offset:3px}
 .helsta-post{min-width:0;margin:0 0 26px;padding:0 0 16px;border-bottom:1px solid var(--helsta-line);color:var(--helsta-text)}
 .helsta-post-header{display:flex;align-items:center;gap:11px;padding:12px 0}
 .helsta-avatar-ring{padding:2px;border:1px solid #555;border-radius:50%;display:flex;flex-shrink:0}
@@ -98,18 +108,17 @@ html:has(.helstagram-page){min-width:0}
 @media(max-width:1150px){.helsta-layout{grid-template-columns:minmax(0,540px);gap:0}.helsta-sidebar{display:none}}
 @media(max-width:760px){
  .helstagram-page{margin:0 -18px;max-width:none}
- .helsta-upload>span{display:none}
  .helsta-layout{display:block}
  .helsta-post{margin-bottom:16px;padding-bottom:12px}
  .helsta-post-header{padding:13px 14px}.helsta-post-body{padding:5px 14px 0}
  .helsta-media .photo-carousel{border-radius:0}.helsta-media .photo-carousel-stage{min-height:200px}
  .helsta-media .photo-carousel-stage>img{min-height:200px;max-height:640px}
  .helsta-filter-summary{margin-inline:16px}
- .helsta-simple-search{margin-inline:16px}
+ .helsta-search-panel{margin-inline:14px;padding:12px;border-radius:16px}
  .helsta-main>.helsta-more.ui-button{width:calc(100% - 32px);margin-inline:16px}
  .helsta-photo-label{font-size:9px}.helsta-empty{padding:50px 20px 65px}
  .helsta-detail-heading{padding:0 16px 20px;margin-bottom:0}
  .helsta-caption,.helsta-comments{font-size:13px}.helsta-double-heart{width:75px;height:75px}
 }
-@media(max-width:420px){.helsta-simple-search{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.helsta-search-actions{grid-column:1/-1;justify-self:end;min-height:40px}}
+@media(max-width:420px){.helsta-search-field{gap:7px;padding-left:10px}.helsta-search-field .helsta-search-submit.ui-button.rt-Button{padding-inline:13px}.helsta-search-modes .ui-button.rt-Button{padding-inline:13px}}
 @media(prefers-reduced-motion:reduce){.helsta-double-heart{animation:none;transform:translate(-50%,-50%)}.helsta-grid-photo>img,.helsta-grid-stats{transition:none}}

@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
-import { Camera, Search, SquarePlus, Heart } from 'lucide-react';
-import { Button, Input, Label } from './ui';
+import { Camera, Search, Plus, X, Heart } from 'lucide-react';
+import { Button, Input } from './ui';
 import { matchesBoardFilters } from '@/lib/board-search.mjs';
 import { useCommunity } from './CommunityProvider';
 import AccessGate from './AccessGate';
@@ -15,20 +15,21 @@ export default function HelstagramPage() {
   const { posts } = useCommunity();
   const allPosts = posts.helstagram;
   const [count, setCount] = useState(10);
-  const [draft, setDraft] = useState({author:'', content:''}), [filters, setFilters] = useState({author:'', content:''});
+  const [searchType, setSearchType] = useState('content'), [draft, setDraft] = useState('');
+  const [filters, setFilters] = useState({author:'', content:''});
   const filtered = allPosts.filter(post => matchesBoardFilters({...post, content:[post.title, post.content].filter(Boolean).join('\n')}, filters));
   const visible = filtered.slice(0, count), hasFilters = Object.values(filters).some(Boolean);
   const photographers = [...new Map(allPosts.map(post => [post.authorId, post])).values()].slice(0, 5);
-  function apply(next) { setFilters(next); setDraft(next); setCount(10); }
+  function apply() { setFilters({author:'', content:'', [searchType]:draft.trim()}); setCount(10); }
+  function reset() { setFilters({author:'', content:''}); setDraft(''); setCount(10); }
   return <AccessGate><div className="helstagram-page">
     <h1 className="sr-only">헬스타그램</h1>
     <div className="helsta-layout"><div className="helsta-main">
-      <form className="helsta-simple-search" aria-label="헬스타그램 검색" onSubmit={event => { event.preventDefault(); apply({author:draft.author.trim(), content:draft.content.trim()}); }}>
-        <Label htmlFor="helsta-author-search">닉네임<Input id="helsta-author-search" aria-label="닉네임 검색" placeholder="닉네임 검색" value={draft.author} onChange={event => setDraft(current => ({...current, author:event.target.value}))} maxLength={100}/></Label>
-        <Label htmlFor="helsta-content-search">내용<Input id="helsta-content-search" aria-label="내용 검색" placeholder="내용 검색" value={draft.content} onChange={event => setDraft(current => ({...current, content:event.target.value}))} maxLength={200}/></Label>
-        <div className="helsta-search-actions"><Button type="submit" className="helsta-icon-button" aria-label="검색"><Search size={25}/></Button><Link className="helsta-upload" href="/boards/helstagram/write" aria-label="사진 올리기"><SquarePlus size={25}/><span>사진 올리기</span></Link></div>
+      <form className="helsta-search-panel" role="search" aria-label="헬스타그램 검색" onSubmit={event => { event.preventDefault(); apply(); }}>
+        <div className="helsta-search-top"><div className="helsta-search-modes" role="group" aria-label="검색 대상">{[['content','내용'],['author','닉네임']].map(([value,label]) => <Button key={value} type="button" aria-pressed={searchType === value} onClick={() => setSearchType(value)}>{label}</Button>)}</div><Link className="helsta-create" href="/boards/helstagram/write"><Plus size={17}/><span>사진 올리기</span></Link></div>
+        <div className="helsta-search-field"><Search size={19} aria-hidden="true"/><Input aria-label={searchType === 'author' ? '닉네임 검색' : '내용 검색'} placeholder={searchType === 'author' ? '찾고 싶은 대원의 닉네임' : '어떤 순간을 찾고 있나요?'} value={draft} onChange={event => setDraft(event.target.value)} maxLength={200}/>{draft && <Button type="button" className="helsta-clear-search" aria-label="검색어 지우기" onClick={() => setDraft('')}><X size={15}/></Button>}<Button type="submit" className="helsta-search-submit">검색</Button></div>
       </form>
-      {hasFilters && <div className="helsta-filter-summary"><span>검색 결과 {filtered.length}개</span><Button type="button" className="helsta-text-button" onClick={() => apply({author:'', content:''})}>검색 초기화</Button></div>}
+      {hasFilters && <div className="helsta-filter-summary" role="status"><span>{filters.author ? '닉네임' : '내용'} · “{filters.author || filters.content}” <strong>{filtered.length}개</strong></span><Button type="button" className="helsta-text-button" onClick={reset}>초기화</Button></div>}
       <section className="helsta-feed" aria-label="헬스타그램 게시글">{visible.map(post => <HelstagramPost key={post.id} post={post}/>)}</section>
       {!filtered.length && <div className="helsta-empty"><span><Camera size={38}/></span><h2>{hasFilters ? '검색된 사진이 없어요' : '우리의 첫 사진을 기다려요'}</h2><p>{hasFilters ? '다른 검색어와 조건으로 찾아보세요.' : '분대와 함께한 순간부터 오늘의 스크린샷까지.'}</p><Link href="/boards/helstagram/write">첫 사진 올리기</Link></div>}
       {filtered.length > count && <Button type="button" className="helsta-more" onClick={() => setCount(value => value + 10)}>사진 더 보기</Button>}
