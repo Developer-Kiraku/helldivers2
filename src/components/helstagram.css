@@ -37,7 +37,7 @@ html:has(.helstagram-page){min-width:0}
 .helsta-media{position:relative}
 .helsta-media .photo-carousel{position:relative;background:#090b0c;border-radius:4px;touch-action:pan-y}
 .helsta-media .photo-carousel-stage{aspect-ratio:auto;display:flex;align-items:center;justify-content:center;min-height:240px;background:#090b0c}
-.helsta-media .photo-carousel-stage>img{width:100%;height:auto;max-height:675px;min-height:240px;object-fit:contain;display:block}
+.helsta-media .photo-open{height:auto}.helsta-media .photo-open>img{width:100%;height:auto;max-height:675px;min-height:240px;object-fit:contain;display:block}
 .helsta-media .photo-counter{top:14px;right:14px;background:#141414b8;padding:3px 10px;font-size:11px}
 .helsta-media .photo-prev.ui-button,.helsta-media .photo-next.ui-button{width:30px;height:30px;min-height:30px;background:#ffffffde;color:#222;border:0;box-shadow:0 1px 5px #0003}
 .helsta-media .photo-prev{left:12px}.helsta-media .photo-next{right:12px}
@@ -112,7 +112,7 @@ html:has(.helstagram-page){min-width:0}
  .helsta-post{margin-bottom:16px;padding-bottom:12px}
  .helsta-post-header{padding:13px 14px}.helsta-post-body{padding:5px 14px 0}
  .helsta-media .photo-carousel{border-radius:0}.helsta-media .photo-carousel-stage{min-height:200px}
- .helsta-media .photo-carousel-stage>img{min-height:200px;max-height:640px}
+ .helsta-media .photo-open>img{min-height:200px;max-height:640px}
  .helsta-filter-summary{margin-inline:16px}
  .helsta-search-panel{margin-inline:14px;padding:12px;border-radius:16px}
  .helsta-main>.helsta-more.ui-button{width:calc(100% - 32px);margin-inline:16px}

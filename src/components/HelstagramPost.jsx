@@ -61,7 +61,6 @@ export default function HelstagramPost({ post, detail = false }) {
     finally { submitting.current = false; setBusy(false); }
   }
   function doubleLike(event) {
-    if (event.target.closest('button')) return;
     void like.change(true); setHeart(true); clearTimeout(timer.current); timer.current = setTimeout(() => setHeart(false), 850);
   }
   const caption = expanded || post.content.length <= 160 ? post.content : `${post.content.slice(0, 160)}…`;
@@ -71,7 +70,7 @@ export default function HelstagramPost({ post, detail = false }) {
       <div className="helsta-author"><strong><Nickname name={post.author} role={post.authorRole} own={post.own}/></strong><span>{post.category} <span aria-hidden="true">·</span> <time dateTime={post.createdAt}>{post.date}</time></span></div>
       <Popover.Root><Popover.Trigger><Button type="button" className="helsta-icon-button" aria-label="게시글 더보기"><MoreHorizontal size={24}/></Button></Popover.Trigger><Popover.Content className="helsta-post-menu" align="end" collisionPadding={12} aria-label="게시글 메뉴"><Link href={href}>게시글 자세히 보기 <ArrowUpRight size={16}/></Link><ModerationActions post={post}/></Popover.Content></Popover.Root>
     </header>
-    <div className="helsta-media" onDoubleClick={doubleLike}><PhotoCarousel images={post.images} title={post.title}/>{heart && <Heart className="helsta-double-heart" fill="currentColor" aria-hidden="true"/>}</div>
+    <div className="helsta-media"><PhotoCarousel images={post.images} title={post.title} onPhotoDoubleClick={doubleLike}/>{heart && <Heart className="helsta-double-heart" fill="currentColor" aria-hidden="true"/>}</div>
     <div className="helsta-post-body">
       <div className="helsta-actions">
         <Button type="button" className={`helsta-icon-button helsta-like ${like.liked ? 'is-liked' : ''}`} aria-label={like.liked ? '좋아요 취소' : '좋아요'} aria-pressed={like.liked} disabled={like.busy} onClick={() => like.change()}><Heart size={27} fill={like.liked ? 'currentColor' : 'none'}/></Button>

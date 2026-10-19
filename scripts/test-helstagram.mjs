@@ -21,7 +21,7 @@ try {
       args.path==='./CommunityProvider' ? `export const useCommunity=()=>globalThis.__helstaTest;` :
       args.path==='./ui' ? `import React from 'react';export const Button=({type='submit',...props})=><button type={type} {...props}/>;export const Input=React.forwardRef((props,ref)=><input ref={ref} {...props}/>);` :
       args.path==='next/link' ? `export default function Link(props){return <a {...props}/>}` :
-      args.path==='./PhotoCarousel' ? `export default function Photo(){return <img src="/photo.png" alt="test photo"/>}` :
+      args.path==='./PhotoCarousel' ? `export default function Photo({onPhotoDoubleClick}){return <img src="/photo.png" alt="test photo" onDoubleClick={onPhotoDoubleClick}/>} ` :
       `export default function Placeholder(){return null}` }));
   }}] });
   let vote=0, fail=false; const calls=[], notices=[];
