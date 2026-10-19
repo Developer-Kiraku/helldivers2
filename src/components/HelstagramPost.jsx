@@ -61,7 +61,7 @@ export default function HelstagramPost({ post, detail = false }) {
     finally { submitting.current = false; setBusy(false); }
   }
   function doubleLike(event) {
-    void like.change(true); setHeart(true); clearTimeout(timer.current); timer.current = setTimeout(() => setHeart(false), 850);
+    void like.change(true); setHeart(true); clearTimeout(timer.current); timer.current = setTimeout(() => setHeart(false), 400);
   }
   const caption = expanded || post.content.length <= 160 ? post.content : `${post.content.slice(0, 160)}…`;
   return <article className={`helsta-post ${detail ? 'helsta-post-detail' : ''}`} aria-label={`${post.author}의 사진: ${post.title}`}>
