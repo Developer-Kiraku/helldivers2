@@ -39,7 +39,8 @@ html:has(.helstagram-page){min-width:0}
 .helsta-media .photo-carousel-stage{aspect-ratio:auto;display:flex;align-items:center;justify-content:center;min-height:240px;background:#090b0c}
 .helsta-media .photo-open{height:auto}.helsta-media .photo-open>img{width:100%;height:auto;max-height:675px;min-height:240px;object-fit:contain;display:block}
 .helsta-media .photo-counter{top:14px;right:14px;background:#141414b8;padding:3px 10px;font-size:11px}
-.helsta-media .photo-prev.ui-button,.helsta-media .photo-next.ui-button{width:30px;height:30px;min-height:30px;background:#ffffffde;color:#222;border:0;box-shadow:0 1px 5px #0003}
+.helsta-media .photo-prev.ui-button,.helsta-media .photo-next.ui-button{width:36px;height:36px;min-height:36px;background:#10141755;color:#ffffffb3;border:1px solid #ffffff14;box-shadow:none;backdrop-filter:blur(6px);opacity:.65;transition:opacity .2s,background .2s}
+.helsta-media :is(.photo-prev,.photo-next).ui-button:hover,.helsta-media :is(.photo-prev,.photo-next).ui-button:focus-visible{opacity:1;background:#10141799;color:#fff}
 .helsta-media .photo-prev{left:12px}.helsta-media .photo-next{right:12px}
 .helsta-media .photo-prev svg,.helsta-media .photo-next svg{width:18px;height:18px}
 .helsta-media .photo-carousel-stage button:disabled{opacity:0;pointer-events:none}

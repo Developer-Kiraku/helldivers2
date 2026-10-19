@@ -45,6 +45,7 @@ async function run() {
   await import('./test-auth-security.mjs');
   await import('./test-signup-nickname.mjs');
   await import('./test-helstagram.mjs');
+  await import('./test-photo-carousel.mjs');
   await fs.mkdir(path.join(root, 'work'), {recursive:true});
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-')); const file = path.join(directory, 'test-db.json');
   try {
