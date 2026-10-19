@@ -7,11 +7,11 @@ const { createHash, randomBytes } = require('node:crypto');
 const root = path.resolve(__dirname, '..');
 const origin = `http://127.0.0.1:${process.env.TEST_PORT || 3150}`;
 let server, output = '', passed = 0;
-async function start(file) {
+async function start(file, {databaseUrl = ''} = {}) {
   output = '';
   server = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', new URL(origin).port], {
     cwd: root, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env, DATABASE_URL: '', JSON_DB_FILE: file, APP_ORIGIN: origin, COOKIE_SECURE: 'false', DEMO_AUTH_ENABLED: 'true', SEED_PASSWORD: '1234', KAKAO_REST_API_KEY: '', KAKAO_CLIENT_SECRET: '' },
+    env: { ...process.env, DATABASE_URL: databaseUrl, JSON_DB_FILE: file, APP_ORIGIN: origin, COOKIE_SECURE: 'false', DEMO_AUTH_ENABLED: 'true', SEED_PASSWORD: '1234', KAKAO_REST_API_KEY: '', KAKAO_CLIENT_SECRET: '', OPENAI_API_KEY: '' },
   });
   server.stdout.on('data', chunk => { output += chunk }); server.stderr.on('data', chunk => { output += chunk });
   for (let i = 0; i < 200; i++) {
@@ -40,6 +40,9 @@ async function run() {
   await import('./test-owner-setup.mjs');
   await import('./test-post-html.mjs');
   await import('./test-tiptap.mjs');
+  await import('./test-ai-polish.mjs');
+  await import('./test-image-upload.mjs');
+  await import('./test-auth-security.mjs');
   await import('./test-signup-nickname.mjs');
   await fs.mkdir(path.join(root, 'work'), {recursive:true});
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-')); const file = path.join(directory, 'test-db.json');
@@ -58,11 +61,50 @@ async function run() {
       assert.equal(data.user.nickname,nickname);assert.equal(data.user.role,role);assert.ok(data.user.lastLoginAt);assert.ok(data.user.createdAt);assert.ok(!('passwordHash' in data.user));assert.match(response.headers.get('set-cookie'), /HttpOnly/i);
       for (const route of ['/login','/signup']) { const r = await actor.call(route,'GET',undefined,307);assert.equal(new URL(r.response.headers.get('location'),origin).pathname,'/'); }
     }
+    const aiDraft = {board:'talk', title:'테스트', segments:['맞춤뻡을 고쳐줘']};
+    await guest.call('/api/ai/polish','POST',aiDraft,401);
+    await member.call('/api/ai/polish','POST',aiDraft,403,{Origin:'https://untrusted.example'});
+    await member.call('/api/ai/polish','POST',{...aiDraft,board:'notice'},403);
+    await member.call('/api/ai/polish','POST',{...aiDraft,board:'unknown'},400);
+    await member.call('/api/ai/polish','POST',{...aiDraft,segments:['x'.repeat(10001)]},400);
+    for (const board of ['talk','guide','qna','helstagram']) await member.call('/api/ai/polish','POST',{...aiDraft,board},503);
+    await admin.call('/api/ai/polish','POST',{...aiDraft,board:'notice'},503);
     for (const route of ['/', '/profile', '/boards/notice', '/boards/guide', '/boards/talk', '/boards/guide/write', '/boards/qna', '/boards/qna/write']) await member.call(route);
+    await guest.call('/boards/helstagram','GET',undefined,307);
+    for(const route of ['/boards/helstagram','/boards/helstagram/write']) await member.call(route);
+    const photoDraft={board:'helstagram',title:'분대의 순간',category:'스크린샷',content:'',bodyHtml:'',images:['/images/community-squad.png','/images/helldivers-logo.png']};
+    await guest.call('/api/posts','POST',photoDraft,401);
+    await member.call('/api/posts','POST',{...photoDraft,images:[]},400);
+    await member.call('/api/posts','POST',{...photoDraft,images:Array(11).fill(photoDraft.images[0])},400);
+    await member.call('/api/posts','POST',{...photoDraft,images:['data:image/png;base64,YmFk']},400);
+    const photoPost=(await member.call('/api/posts','POST',photoDraft)).data.post;
+    assert.deepEqual(photoPost.images,photoDraft.images);assert.equal(photoPost.content,'');
+    assert.ok((await member.call('/api/bootstrap')).data.posts.helstagram.some(post=>post.id===photoPost.id));
+    await member.call(`/boards/helstagram/${photoPost.id}`);await member.call(`/boards/helstagram/${photoPost.id}/edit`);
+    await deputy.call(`/api/posts/${photoPost.id}`,'PATCH',photoDraft,403);
+    const reorderedPhotos=[...photoDraft.images].reverse();
+    assert.deepEqual((await member.call(`/api/posts/${photoPost.id}`,'PATCH',{...photoDraft,images:reorderedPhotos})).data.post.images,reorderedPhotos);
+    await member.call(`/api/posts/${photoPost.id}/comments`,'POST',{body:'멋진 사진이에요!'});
+    assert.equal((await member.call(`/api/posts/${photoPost.id}/vote`,'POST',{value:1})).data.post.likes,1);
+    const tenPhotos=(await apprentice.call('/api/posts','POST',{...photoDraft,images:Array(10).fill(photoDraft.images[0])})).data.post;
+    assert.equal(tenPhotos.images.length,10);
+    await apprentice.call(`/api/posts/${tenPhotos.id}`,'DELETE',{});
+    await member.call(`/api/posts/${tenPhotos.id}`,'GET',undefined,404);
     await admin.call('/admin/users'); await admin.call('/admin/requests','GET',undefined,307); await admin.call('/admin/approvals'); await deputy.call('/admin/users'); await deputy.call('/admin/requests','GET',undefined,307); await deputy.call('/admin/approvals'); await member.call('/admin/users','GET',undefined,307);await member.call('/admin/approvals','GET',undefined,307);
     await guest.call('/api/admin/approvals','GET',undefined,401);await member.call('/api/admin/approvals','GET',undefined,403);await apprentice.call('/api/admin/approvals','GET',undefined,403);
     for(const staff of [admin,deputy]){const pending=(await staff.call('/api/admin/approvals')).data.requests;assert.equal(pending.length,1);assert.equal(pending[0].type,'member_approval');assert.equal(pending[0].targetId,'u-user2');assert.equal(pending[0].canApprove,true);assert.equal(pending[0].canReject,false);}
     const operatorMembers=(await admin.call('/api/admin/users')).data.users;
+    assert.ok(operatorMembers.every(user=>!('kakao' in user)&&!('passwordHash' in user)&&!('approvedBy' in user)));
+    assert.ok(operatorMembers.filter(user=>user.id!=='u-admin').every(user=>!('loginId' in user)));
+    const privacyResponse=await admin.call('/api/admin/users');
+    assert.match(privacyResponse.response.headers.get('cache-control'),/no-store/);
+    assert.equal(privacyResponse.response.headers.get('x-frame-options'),'SAMEORIGIN');
+    assert.equal(privacyResponse.response.headers.get('x-content-type-options'),'nosniff');
+    assert.equal(privacyResponse.response.headers.get('referrer-policy'),'no-referrer');
+    await member.call('/api/admin/users/not-a-member/approve','POST',{},403);
+    await member.call('/api/profile','PATCH',null,400);
+    await guest.call('/api/auth/login','POST',{loginId:'x'.repeat(2000),password:'bad'},413);
+    await guest.call('/api/auth/logout','POST',{});await admin.call('/api/bootstrap');
     assert.equal(operatorMembers.find(u=>u.id==='u-admin').canExpel,false);assert.equal(operatorMembers.find(u=>u.id==='u-admin').canChangeRole,false);
     assert.equal(operatorMembers.find(u=>u.id==='u-subadmin').canExpel,true);assert.equal(operatorMembers.find(u=>u.id==='u-user1').canChangeRole,true);
     const deputyMembers=(await deputy.call('/api/admin/users')).data.users;
@@ -143,10 +185,16 @@ async function run() {
     await deputy.call(`/api/posts/${post.id}`,'DELETE',{},403);await apprentice.call(`/api/posts/${post.id}`,'DELETE',{},403);
     await member.call('/api/posts','POST',{...draft(),category:'없는 분류'},400);await member.call('/api/posts','POST',{...draft(),images:Array(6).fill('/images/community-squad.png')},400);
     await member.call('/api/profile','PATCH',{nickname:'라미아'},409);await member.call('/api/profile','PATCH',{photo:'data:image/svg+xml;base64,abcd'},400);
-    const photo='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j2ioAAAAASUVORK5CYII=';
+    const sharp=(await import('sharp')).default;
+    const photo='data:image/png;base64,'+(await sharp({create:{width:3200,height:1800,channels:3,background:'#557766'}}).png().toBuffer()).toString('base64');
     const profile=(await member.call('/api/profile','PATCH',{nickname:'테스트헬다이버',photo,role:'operator',loginId:'evil'})).data.user;
-    assert.equal(profile.role,'member');assert.equal(profile.loginId,'user1');assert.equal(profile.photo,photo);
-    const author=(await admin.call(`/api/posts/${post.id}`)).data.post;assert.equal(author.author,'테스트헬다이버');assert.equal(author.authorPhoto,photo);
+    assert.equal(profile.role,'member');assert.equal(profile.loginId,'user1');
+    assert.equal((await sharp(Buffer.from(profile.photo.split(',')[1],'base64')).metadata()).width,256);
+    const resizedPost=(await member.call('/api/posts','POST',{...draft(),images:[photo],bodyHtml:`<p>대형 사진</p><img src="${photo}">`})).data.post;
+    assert.equal((await sharp(Buffer.from(resizedPost.images[0].split(',')[1],'base64')).metadata()).width,1600);
+    assert.ok(resizedPost.bodyHtml.includes(resizedPost.images[0]));
+    await member.call('/api/profile','PATCH',{photo:'data:image/png;base64,iVBORw0KGgo='},400);
+    const author=(await admin.call(`/api/posts/${post.id}`)).data.post;assert.equal(author.author,'테스트헬다이버');assert.equal(author.authorPhoto,profile.photo);
     await member.call(`/api/posts/${post.id}/comments`,'POST',{body:'저장되는 댓글'});assert.ok((await member.call(`/api/posts/${post.id}`)).data.comments.some(c=>c.body==='저장되는 댓글'));
     for (const value of [1,1,-1]) await member.call(`/api/posts/${post.id}/vote`,'POST',{value});
     const voted=(await member.call(`/api/posts/${post.id}`)).data.post;assert.equal(voted.likes,0);assert.equal(voted.dislikes,1);assert.equal(voted.myVote,-1);
@@ -198,14 +246,21 @@ async function run() {
     await admin.call(`/api/posts/${notice.id}`,'DELETE',{});await deputy.call(`/api/posts/${notice.id}`,'GET',undefined,404);
     const own=(await member.call('/api/posts','POST',draft())).data.post;await member.call(`/api/posts/${own.id}`,'DELETE',{});
     const concurrent=await Promise.all(Array.from({length:5},(_,i)=>member.call('/api/posts','POST',draft('guide',`동시 저장 ${i}`))));
+    for(let i=0;i<8;i++)await guest.call('/api/auth/login','POST',{loginId:'security-rate-check',password:'wrong'},401,{'X-Forwarded-For':`192.0.2.${i}`});
+    await guest.call('/api/auth/login','POST',{loginId:'security-rate-check',password:'wrong'},429,{'X-Forwarded-For':'198.51.100.1'});
     let db=JSON.parse(await fs.readFile(file,'utf8'));assert.equal(db.posts.filter(p=>p.title.startsWith('동시 저장')).length,5);assert.ok(db.users.every(u=>!u.passwordHash||u.passwordHash!=='1234'));assert.ok(db.sessions.every(s=>s.tokenHash!==admin.cookie.split('=')[1]));
     await stop();
     // Stand in for a completed Kakao provider exchange, only in the isolated test DB.
     const ticket=randomBytes(32).toString('hex'),raceTickets=[randomBytes(32).toString('hex'),randomBytes(32).toString('hex')],expiredTicket=randomBytes(32).toString('hex');db=JSON.parse(await fs.readFile(file,'utf8'));
     db.posts.find(p=>p.id===scheduledPoll.id).poll.endsAt=new Date(Date.now()-1000).toISOString();
+    db.users.push({...db.users.find(user=>user.id==='u-admin'),id:'security-session-test',loginId:'security-session-test',nickname:'세션검증',role:'member'});
     db.pendingRegistrations=[...raceTickets.map((value,index)=>({ticketHash:createHash('sha256').update(value).digest('hex'),kakaoId:'nickname-race-'+index,expiresAt:new Date(Date.now()+600000).toISOString()})),{ticketHash:createHash('sha256').update(expiredTicket).digest('hex'),kakaoId:'expired-check',expiresAt:new Date(Date.now()-1000).toISOString()},{ticketHash:createHash('sha256').update(ticket).digest('hex'),kakaoId:'test-kakao-verified-1',expiresAt:new Date(Date.now()+600000).toISOString()}];await fs.writeFile(file,JSON.stringify(db));
-    await start(file);assert.equal((await member.call('/api/posts/'+question.id)).data.comments[0].body,'목록에서 작성한 답변');assert.equal((await member.call('/api/bootstrap')).data.posts.qna.find(p=>p.id===question.id).title,'수정된 장비 질문');assert.equal((await admin.call('/api/posts/'+scheduledPoll.id)).data.post.poll.closed,true);await member.call('/api/posts/'+scheduledPoll.id+'/poll','POST',{choices:[]},409);assert.equal((await admin.call('/api/posts/'+pollPost.id)).data.post.poll.closed,true);assert.equal((await admin.call('/api/posts/'+publicPoll.id)).data.post.poll.totalVoters,1);await admin.call('/api/bootstrap');assert.equal((await member.call('/api/auth/me')).data.user.nickname,'테스트헬다이버');await member.call(`/api/posts/${concurrent[0].data.post.id}`);assert.equal((await admin.call(requests)).data.requests.find(r=>r.id===req.id).status,'approved');
+    await start(file);assert.deepEqual((await member.call(`/api/posts/${photoPost.id}`)).data.post.images,reorderedPhotos);assert.equal((await member.call('/api/posts/'+question.id)).data.comments[0].body,'목록에서 작성한 답변');assert.equal((await member.call('/api/bootstrap')).data.posts.qna.find(p=>p.id===question.id).title,'수정된 장비 질문');assert.equal((await admin.call('/api/posts/'+scheduledPoll.id)).data.post.poll.closed,true);await member.call('/api/posts/'+scheduledPoll.id+'/poll','POST',{choices:[]},409);assert.equal((await admin.call('/api/posts/'+pollPost.id)).data.post.poll.closed,true);assert.equal((await admin.call('/api/posts/'+publicPoll.id)).data.post.poll.totalVoters,1);await admin.call('/api/bootstrap');assert.equal((await member.call('/api/auth/me')).data.user.nickname,'테스트헬다이버');await member.call(`/api/posts/${concurrent[0].data.post.id}`);assert.equal((await admin.call(requests)).data.requests.find(r=>r.id===req.id).status,'approved');
     const signup=client(`hd_signup=${ticket}`);assert.equal((await signup.call('/api/auth/signup-info')).data.verified,true);
+    await guest.call('/api/auth/login','POST',{loginId:'security-rate-check',password:'wrong'},429,{'X-Forwarded-For':'203.0.113.1'});
+    const sessionClients=Array.from({length:6},()=>client());
+    for(const sessionClient of sessionClients)await sessionClient.call('/api/auth/login','POST',{loginId:'security-session-test',password:'1234'});
+    await sessionClients[0].call('/api/bootstrap','GET',undefined,401);await sessionClients[5].call('/api/bootstrap');
     const nicknameUrl='/api/auth/nickname-check';
     await guest.call(nicknameUrl,'POST',{nickname:'신입대원'},401);
     await client('hd_signup=tampered').call(nicknameUrl,'POST',{nickname:'신입대원'},401);
@@ -214,7 +269,7 @@ async function run() {
     for(const nickname of ['', '한', '공백 포함', '<script>', 'a'.repeat(17)])await signup.call(nicknameUrl,'POST',{nickname},400);
     await signup.call(nicknameUrl,'POST',null,400);
     const takenCheck=(await signup.call(nicknameUrl,'POST',{nickname:'라미아'})).data;assert.equal(takenCheck.available,false);assert.deepEqual(Object.keys(takenCheck).sort(),['available','message','nickname']);
-    const freeCheck=await signup.call(nicknameUrl,'POST',{nickname:'  신입대원  '});assert.equal(freeCheck.data.available,true);assert.equal(freeCheck.data.nickname,'신입대원');assert.equal(freeCheck.response.headers.get('cache-control'),'no-store');
+    const freeCheck=await signup.call(nicknameUrl,'POST',{nickname:'  신입대원  '});assert.equal(freeCheck.data.available,true);assert.equal(freeCheck.data.nickname,'신입대원');assert.match(freeCheck.response.headers.get('cache-control'),/no-store/);
     await signup.call('/api/auth/register','POST',{nickname:'라미아',agreements:{age:true,terms:true,collect:true}},409);
     const racers=raceTickets.map(value=>client('hd_signup='+value));
     for(const actor of racers)assert.equal((await actor.call(nicknameUrl,'POST',{nickname:'UniqueDiver'})).data.available,true);

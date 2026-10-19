@@ -8,7 +8,7 @@ await adminPool.query(`CREATE SCHEMA ${schema}`);
 url.searchParams.set('options',`-c search_path=${schema}`);
 process.env.DATABASE_URL=url.href;
 try {
- await harness.start('work/postgres-http-unused.json');
+ await harness.start('work/postgres-http-unused.json',{databaseUrl:url.href});
  const admin=harness.client(),member=harness.client();
  assert.equal((await member.call('/api/health')).data.storage,'postgresql');
  await member.call('/api/bootstrap','GET',undefined,401);
@@ -20,7 +20,7 @@ try {
  await admin.call(`/api/posts/${post.id}/poll`,'POST',{choices:[post.poll.options[0].id]});
  await admin.call(`/api/posts/${post.id}/comments`,'POST',{body:'PostgreSQL 댓글'});
  await admin.call('/api/admin/users/u-user2/approve','POST',{});
- await harness.stop();await harness.start('work/postgres-http-unused.json');
+ await harness.stop();await harness.start('work/postgres-http-unused.json',{databaseUrl:url.href});
  const persisted=(await member.call(`/api/posts/${post.id}`)).data;
  assert.equal(persisted.comments[0].body,'PostgreSQL 댓글');
  assert.equal(persisted.post.poll.totalVoters,1);

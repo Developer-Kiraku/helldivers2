@@ -13,7 +13,7 @@ shared.__hdJsonQueue ||= Promise.resolve();
 
 function createSeed() {
   const now = new Date().toISOString();
-  const seedPassword=process.env.SEED_PASSWORD||(process.env.RENDER?`${randomUUID()}${randomUUID()}`:'1234');
+  const seedPassword=process.env.SEED_PASSWORD||((process.env.NODE_ENV==='production'||process.env.RENDER)?`${randomUUID()}${randomUUID()}`:'1234');
   const accounts = [
     ['admin', 'operator', '라미아'], ['subadmin', 'deputy', '부운영자'],
     ['user1', 'member', '헬다이버'], ['user2', 'apprentice', '견습헬다이버'],

@@ -151,3 +151,21 @@
 .ui-modal.full-menu-modal.rt-DialogContent{background:rgba(17,23,20,.9);border-color:rgba(146,168,152,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.rt-DialogOverlay:has(.full-menu-modal){background:rgba(0,0,0,.38)}
 
 .ui-modal.full-menu-modal .modal-header{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:center;gap:12px}.ui-modal.full-menu-modal .modal-header h2{margin:0;line-height:1.3;align-self:center}.ui-modal.full-menu-modal .modal-header .icon-button{width:44px;height:44px;min-height:44px;justify-self:end;align-self:center}
+
+.approval-toolbar{min-width:0;max-width:100%}
+.approval-toolbar>.request-type-filter{display:grid;grid-template-columns:auto minmax(0,210px);flex:0 1 auto;min-width:0;max-width:100%;gap:10px}
+.approval-toolbar>.request-type-filter>.ui-select{min-width:0;width:100%;max-width:100%}
+.request-type-filter .rt-SelectTriggerInner{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mobile-board-popover.rt-PopoverContent{width:min(300px,calc(100vw - 28px));padding:12px;background:#222b27;color:#dce6dc;border:1px solid #526257;border-radius:12px;box-shadow:0 12px 36px #0008;z-index:60}
+.mobile-board-popover>header{display:flex;align-items:center;justify-content:space-between;padding:0 2px 8px;border-bottom:1px solid #3d4743}
+.mobile-board-popover nav{display:grid;gap:4px;padding-top:8px}
+.mobile-board-popover nav>a{display:flex;align-items:center;gap:12px;min-height:48px;padding:10px;border-radius:7px;color:#dce6dc;text-decoration:none}
+.mobile-board-popover nav>a>span{flex:1;min-width:0}
+.mobile-board-popover nav>a:hover,.mobile-board-popover nav>a[aria-current=page]{background:#ffe34c12;color:#ffe34c}
+@media(max-width:760px){
+ .mobile-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible}
+ .mobile-nav>a,.mobile-nav>.mobile-community-trigger.ui-button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:48px;height:auto;padding:0 2px;background:transparent;border:0;border-radius:0;color:#909a97;font-size:12px;line-height:1.25;box-shadow:none}
+ .mobile-nav>a>span:last-child,.mobile-nav>.mobile-community-trigger>span:last-child{display:flex;align-items:center;justify-content:center;min-height:30px;white-space:nowrap}
+ .mobile-nav>.mobile-community-trigger.ui-button.active,.mobile-nav>a.active{color:#ffe34c}
+ .approval-toolbar>.request-type-filter{flex:0 1 auto;grid-template-columns:auto minmax(0,1fr);width:100%}
+}

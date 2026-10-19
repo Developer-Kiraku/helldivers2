@@ -4,22 +4,20 @@ import { NextResponse } from 'next/server';
 import { randomUUID } from 'node:crypto';
 import { transaction, readStore, audit } from '@/lib/server/store';
 import { config } from '@/lib/server/config';
-import { fail, AppError, requireUser, userForToken, publicUser, createSession, setSessionCookie, clearSessionCookie, verifyOrigin } from '@/lib/server/auth';
+import { fail, AppError, requireUser, userForToken, publicUser, memberListUser, createSession, setSessionCookie, clearSessionCookie, verifyOrigin } from '@/lib/server/auth';
 import { tokenHash, verifyPassword, hashPassword } from '@/lib/server/passwords';
 import { now, cleanPost, validateNickname, validImage, postForId, memberForId, canDeletePost, canRequest, serializePost, serializeComment } from '@/lib/server/community';
 import { roleLabels, outranks, isStaff, memberCapabilities } from '@/lib/roles';
 import { approveApprentice, startProbation, withdrawMember } from '@/lib/server/probation.mjs';
 import { approvalList } from '@/lib/approvals';
+import { readJsonRequest } from '@/lib/server/request-json';
+import { reserveLoginAttempt } from '@/lib/server/login-throttle.mjs';
+import { normalizeUploadedImage, normalizePostImages, ImageUploadError } from '@/lib/server/image-upload.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-const attempts = globalThis.__hdLoginAttempts ||= new Map();
+const dummyPasswordHash = hashPassword('invalid-login-placeholder');
 const json = (data, status = 200) => NextResponse.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
-async function body(request) {
-  const raw = await request.text();
-  if (Buffer.byteLength(raw) > 13000000) fail(413, '요청 크기가 너무 큽니다.');
-  try { return raw ? JSON.parse(raw) : {}; } catch { fail(400, '올바른 JSON 요청이 필요합니다.'); }
-}
 function safeReason(value) { const reason = typeof value === 'string' ? value.trim() : ''; if (reason.length < 2 || reason.length > 1000) fail(400, '사유를 2~1,000자로 입력해주세요.'); return reason; }
 function bootstrap(db, actor) {
   return { user: publicUser(actor), posts: Object.fromEntries(Object.keys(boards).map(board => [board, db.posts.filter(post => post.board === board && !post.deletedAt).sort((a,b) => Number(b.pinned)-Number(a.pinned) || b.createdAt.localeCompare(a.createdAt)).map(post => serializePost(db, post, actor))])), stats: { totalMembers: db.users.filter(user => user.status === 'active').length, onlineMembers: new Set(db.sessions.filter(session => Date.parse(session.expiresAt) > Date.now() && db.users.some(user => user.id === session.userId && user.status === 'active')).map(session => session.userId)).size } };
@@ -32,23 +30,37 @@ async function handler(request, context) {
     const token = request.cookies.get(config.cookie)?.value;
     if (path === 'auth/login' && method === 'POST') {
       if (!config.demoAuth) fail(403, '임시 계정 로그인이 비활성화되어 있습니다. 카카오로 로그인해주세요.');
-      const input = await body(request); if (typeof input.loginId !== 'string' || input.loginId.length > 100 || typeof input.password !== 'string' || input.password.length > 256) fail(400, '아이디와 비밀번호를 확인해주세요.');
-      const key = `${request.headers.get('x-forwarded-for') || 'local'}:${input.loginId}`; const attempt = attempts.get(key);
-      if (attempt && attempt.count >= 8 && Date.now() - attempt.started < 60000) fail(429, '로그인 시도가 많습니다. 잠시 후 다시 시도해주세요.');
+      const input = await readJsonRequest(request, 1024); if (typeof input.loginId !== 'string' || input.loginId.length > 100 || typeof input.password !== 'string' || input.password.length > 256) fail(400, '아이디와 비밀번호를 확인해주세요.');
       const result = await transaction(db => {
+        if (!reserveLoginAttempt(db, input.loginId)) return { limited: true };
         const user = db.users.find(user => user.loginId === input.loginId && user.status === 'active');
-        if (!user || !verifyPassword(input.password, user.passwordHash)) return null;
+        const valid = verifyPassword(input.password, user?.passwordHash || dummyPasswordHash);
+        if (!user || !valid) return null;
         const newToken = createSession(db, user); audit(db, user.id, 'login', user.id); return { token: newToken, user: publicUser(user) };
       });
-      if (!result) { const current = attempt && Date.now()-attempt.started<60000 ? attempt : { count:0,started:Date.now() }; attempts.set(key,{...current,count:current.count+1});fail(401, '아이디 또는 비밀번호가 올바르지 않습니다.'); }
-      attempts.delete(key);const response = json({ user: result.user });setSessionCookie(response,result.token);return response;
+      if (result?.limited) fail(429, '로그인 시도가 많습니다. 잠시 후 다시 시도해주세요.');
+      if (!result) fail(401, '아이디 또는 비밀번호가 올바르지 않습니다.');
+      const response = json({ user: result.user });setSessionCookie(response,result.token);return response;
     }
     if (path === 'auth/logout' && method === 'POST') {
-      await transaction(db => { db.sessions = db.sessions.filter(session => !token || session.tokenHash !== tokenHash(token)); });
+      await transaction(db => { if (token) db.sessions = db.sessions.filter(session => session.tokenHash !== tokenHash(token)); });
       const response = json({ ok:true });clearSessionCookie(response);return response;
     }
     if (path === 'auth/me' && method === 'GET') return readStore(db => json({ user: publicUser(userForToken(db,token)), demoAuthEnabled:config.demoAuth, kakaoConfigured:Boolean(config.kakaoClientId && config.kakaoRedirectUri) }));
-    const input = method === 'GET' ? {} : await body(request);
+    let input = method === 'GET' ? {} : await readJsonRequest(request, path === 'profile' ? 1300000 : 13000000);
+    if ((path === 'profile' && method === 'PATCH' && input.photo !== undefined) || (path === 'posts' && method === 'POST') || (segments[0] === 'posts' && segments.length === 2 && method === 'PATCH')) {
+      const board = await readStore(db => {
+        const actor = requireUser(db, token);
+        if (path === 'profile') return null;
+        const post = method === 'PATCH' ? postForId(db, segments[1]) : null;
+        if (post && actor.id !== post.authorId) fail(403, '본인이 작성한 게시글만 수정할 수 있습니다.');
+        const targetBoard = post?.board || input.board;
+        if (!Object.hasOwn(boards, targetBoard)) fail(400, '게시판을 확인해주세요.');
+        if (targetBoard === 'notice' && !isStaff(actor.role)) fail(403, '공지사항은 운영진만 작성할 수 있습니다.');
+        return targetBoard;
+      });
+      input = path === 'profile' ? { ...input, photo: await normalizeUploadedImage(input.photo, { avatar: true }) } : await normalizePostImages(input, board);
+    }
     const result = await transaction(db => {
       const actor = requireUser(db,token);
       if (path === 'bootstrap' && method === 'GET') return bootstrap(db,actor);
@@ -99,18 +111,19 @@ async function handler(request, context) {
       }
       if(path==='admin/users'&&method==='GET'){
         if(!isStaff(actor.role))fail(403,'회원 목록은 운영진만 볼 수 있습니다.');
-        return {users:db.users.filter(user=>user.status!=='withdrawn').map(user=>({...publicUser(user),...memberCapabilities(actor,user)}))};
+        return {users:db.users.filter(user=>user.status!=='withdrawn').map(user=>({...memberListUser(user,actor),...memberCapabilities(actor,user)}))};
       }
       if(path==='admin/approvals'&&method==='GET'){
         if(!isStaff(actor.role))fail(403,'운영자·부운영자만 요청 승인 목록을 볼 수 있습니다.');
         return {requests:approvalList(db,actor)};
       }
       if(segments[0]==='admin'&&segments[1]==='users'&&segments[2]){
+        if (!isStaff(actor.role)) fail(403, '회원 관리 권한이 없습니다.');
         const target=memberForId(db,segments[2]);
         if(segments.length===4&&segments[3]==='approve'&&method==='POST'){
           if(!isStaff(actor.role))fail(403,'운영자·부운영자만 견습회원 승인이 가능합니다.');
           if(target.role!=='apprentice')fail(409,'승인 대기 중인 견습회원이 아닙니다.');
-          approveApprentice(target,actor.id);audit(db,actor.id,'user.approve',target.id);return {user:publicUser(target)};
+          approveApprentice(target,actor.id);audit(db,actor.id,'user.approve',target.id);return {user:memberListUser(target,actor)};
         }
         if(segments[3]==='expel'&&method==='POST'){
           if(actor.role!=='operator'||!outranks(actor.role,target.role))fail(403,'하위 등급 회원만 강퇴할 수 있습니다.');
@@ -122,7 +135,7 @@ async function handler(request, context) {
           if(previous==='apprentice'&&input.role!=='apprentice'){approveApprentice(target,actor.id);audit(db,actor.id,'user.approve',target.id);}
           target.role=input.role;target.updatedAt=now();
           if(previous!=='apprentice'&&input.role==='apprentice')startProbation(target,target.updatedAt);
-          audit(db,actor.id,'user.role',target.id,{previous,role:input.role});return {user:publicUser(target)};
+          audit(db,actor.id,'user.role',target.id,{previous,role:input.role});return {user:memberListUser(target,actor)};
         }
       }
       if(path==='admin/requests'&&method==='POST'){
@@ -153,7 +166,7 @@ async function handler(request, context) {
       fail(404,'요청한 API를 찾을 수 없습니다.');
     },method!=='GET');
     const response=json(result);if(path==='profile'&&method==='DELETE')clearSessionCookie(response);return response;
-  }catch(error){if(error instanceof AppError)return json({error:error.message},error.status);console.error('Community API error:',error);return json({error:'요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.'},500);}
+  }catch(error){if(error instanceof AppError || error instanceof ImageUploadError)return json({error:error.message},error.status);console.error('Community API error:',error);return json({error:'요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.'},500);}
 }
 export const GET=handler;
 export const POST=handler;

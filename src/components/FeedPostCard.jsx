@@ -1,5 +1,6 @@
 'use client';
 import Nickname from './Nickname';
+import PhotoCarousel from './PhotoCarousel';
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -46,12 +47,13 @@ export default function FeedPostCard({ post, board }) {
     } catch (error) { setError(error.message); } finally { setBusy(false); }
   }
   const image = post.images?.[0] || post.image;
-  return <article className="talk-card">
+  return <article className={`talk-card ${board === 'helstagram' ? 'helstagram-card' : ''}`}>
     <div className="post-meta"><span className="badge">{post.category}</span><Avatar name={post.author} own={post.own} photo={post.authorPhoto} /><span><Nickname name={post.author} role={post.authorRole} own={post.own}/></span><span>· {post.date}</span></div>
+    {board === 'helstagram' && <PhotoCarousel images={post.images} title={post.title}/>}
     <h2><Link href={href}>{post.title}</Link></h2>
     {post.poll && <Link className="poll-list-badge" href={href}><Icon name="poll" size={15} />{post.poll.closed ? '투표 마감' : '투표 진행 중'} · {post.poll.totalVoters}명 참여</Link>}
     <p className="preserve-lines">{post.content}</p>
-    {image && <Link href={href} className="post-image"><img src={image} alt="게시글 첨부 이미지" /></Link>}
+    {board !== 'helstagram' && image && <Link href={href} className="post-image"><img src={image} alt="게시글 첨부 이미지" /></Link>}
     <footer className="talk-card-footer">
       <VoteButtons postId={post.id} likes={post.likes} dislikes={post.dislikes} myVote={post.myVote} />
       <Button type="button" id={`${panelId}-toggle`} aria-expanded={open} aria-controls={panelId} onClick={() => setOpen(current => !current)}><Icon name="talk" size={16} />댓글 {count}<span className="feed-comment-toggle-label">{open ? '접기' : '펼치기'}</span></Button>

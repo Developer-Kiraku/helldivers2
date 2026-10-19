@@ -13,7 +13,7 @@ export default function PageSkeleton({path}){
  const editor=/\/(write|edit)$/.test(route);
  const board=route.startsWith('/boards/');
  const article=board&&!editor&&route.split('/').filter(Boolean).length>2;
- const feed=/^\/boards\/(talk|qna)$/.test(route);
+ const feed=/^\/boards\/(talk|qna|helstagram)$/.test(route);
  let content;
  if(auth)content=<div className="sk-auth"><div className="sk-card sk-auth-art"><Block className="sk-title"/><Block className="sk-media"/></div><div className="sk-card"><Heading/><Block className="sk-control"/><Block/><Block className="sk-control"/><Block className="sk-control"/></div></div>;
  else if(route==='/')content=<><div className="sk-card sk-hero"><Block className="sk-title"/><Block className="sk-title"/><Block className="sk-description"/><div className="sk-controls"><Block/><Block/></div></div><div className="sk-grid sk-stats">{[0,1,2].map(i=><div className="sk-card" key={i}><Block className="sk-name"/><Block className="sk-subtitle"/></div>)}</div><div className="sk-grid"><Rows/><Rows/></div><Card/></>;

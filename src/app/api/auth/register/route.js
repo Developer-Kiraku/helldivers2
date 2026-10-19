@@ -6,10 +6,11 @@ import { AppError, fail, verifyOrigin, cookieOptions, createSession, setSessionC
 import { tokenHash } from '@/lib/server/passwords';
 import { validateNickname, now } from '@/lib/server/community';
 import { startProbation } from '@/lib/server/probation.mjs';
+import { readJsonRequest } from '@/lib/server/request-json';
 
 export async function POST(request){
  try{
-  verifyOrigin(request);const raw=await request.text();if(raw.length>10000)fail(413,'요청 크기가 너무 큽니다.');let input;try{input=JSON.parse(raw)}catch{fail(400,'요청 정보를 확인해주세요.')}
+  verifyOrigin(request);const input=await readJsonRequest(request,10000);
   const ticket=request.cookies.get('hd_signup')?.value;
   const result=await transaction(db=>{
    if(userForToken(db,request.cookies.get(config.cookie)?.value))fail(409,'이미 로그인되어 있습니다.');

@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import {randomBytes} from 'node:crypto';
 import {createPool,migrate,importJson,postgresTransaction} from '../src/lib/server/postgres.mjs';
+import {reserveLoginAttempt} from '../src/lib/server/login-throttle.mjs';
+import {registerOAuthState,consumeOAuthState} from '../src/lib/server/oauth-state.mjs';
 
 // Creates only disposable test data in a new isolated schema; never clears application tables.
 const url=new URL(process.env.DATABASE_URL);
@@ -19,6 +21,12 @@ try {
  assert.equal((await read()).posts[0].poll.options[0].text,'찬성');
  await Promise.all(Array.from({length:12},(_,index)=>postgresTransaction(index%2?pool:other,async db=>{const value=db.posts[0].views;await new Promise(resolve=>setTimeout(resolve,5));db.posts[0].views=value+1})));
  assert.equal((await read()).posts[0].views,12);
+ const attempts=await Promise.all(Array.from({length:12},(_,index)=>postgresTransaction(index%2?pool:other,db=>reserveLoginAttempt(db,'concurrent-account'))));
+ assert.equal(attempts.filter(Boolean).length,8);
+ assert.equal(await postgresTransaction(other,db=>reserveLoginAttempt(db,'concurrent-account')),false);
+ await postgresTransaction(pool,db=>registerOAuthState(db,'concurrent-state'));
+ const consumed=await Promise.all([pool,other].map(connection=>postgresTransaction(connection,db=>consumeOAuthState(db,'concurrent-state'))));
+ assert.equal(consumed.filter(Boolean).length,1);
  await assert.rejects(postgresTransaction(pool,db=>{db.posts[0].views=999;throw Error('reject operation')}),/reject operation/);
  assert.equal((await read()).posts[0].views,12);
  await assert.rejects(postgresTransaction(pool,db=>{db.posts[0].title='rejected';throw Error('reject operation')},{settle:db=>{db.users[0].status='withdrawn';return true}}),/reject operation/);

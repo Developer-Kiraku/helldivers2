@@ -22,7 +22,8 @@ async function run(){
   for(const [actor,loginId]of[[admin,'admin'],[deputy,'subadmin'],[member,'user1'],[apprentice,'user2']])await actor.call('/api/auth/login','POST',{loginId,password:'1234'});
   const pending=(await deputy.call('/api/admin/users')).data.users.find(u=>u.id==='u-user2');assert.equal(pending.canApprove,true);assert.equal(pending.probationExpiresAt,probationDeadline(pending.createdAt));
   await member.call('/api/admin/users/u-user2/approve','POST',{},403);await apprentice.call('/api/admin/users/u-user2/approve','POST',{},403);
-  const approved=(await deputy.call('/api/admin/users/u-user2/approve','POST',{})).data.user;assert.equal(approved.role,'member');assert.equal(approved.approvedBy,'u-subadmin');assert.ok(approved.approvedAt);
+  const approved=(await deputy.call('/api/admin/users/u-user2/approve','POST',{})).data.user;assert.equal(approved.role,'member');assert.ok(!('approvedBy' in approved));assert.ok(approved.approvedAt);
+  assert.equal(JSON.parse(await fs.readFile(file,'utf8')).users.find(user=>user.id==='u-user2').approvedBy,'u-subadmin');
   await deputy.call('/api/admin/users/u-user2/approve','POST',{},409);assert.equal((await apprentice.call('/api/auth/me')).data.user.role,'member');
   await admin.call('/api/admin/users/u-user2','PATCH',{role:'apprentice'});const renewed=(await apprentice.call('/api/auth/me')).data.user;assert.equal(renewed.approvedAt,null);assert.equal(renewed.probationExpiresAt,probationDeadline(renewed.probationStartedAt));
   await admin.call('/api/admin/users/u-user2/approve','POST',{});await stop();

@@ -33,7 +33,7 @@ export default function RequestsPage(){
  if(loading)return <PageSkeleton path="/admin/approvals"/>;
  return <section className="admin-page">
   <header className="page-heading"><div><div className="eyebrow">APPROVAL CENTER</div><h1>요청 승인 목록</h1><p>내 권한으로 처리할 수 있는 가입·게시글·회원 관련 요청과 처리 이력을 확인합니다.</p></div></header>
-  <div className="board-toolbar"><span>요청 {requests.length}건</span><Label>요청 종류 <Select aria-label="요청 종류" value={type} onChange={event=>setType(event.target.value)}><option value="all">전체</option>{availableTypes.map(([value,label])=><option key={value} value={value}>{label}</option>)}</Select></Label></div>
+  <div className="board-toolbar approval-toolbar"><span>요청 {requests.length}건</span><Label className="request-type-filter"><span>요청 종류</span><Select aria-label="요청 종류" value={type} onChange={event=>setType(event.target.value)}><option value="all">전체</option>{availableTypes.map(([value,label])=><option key={value} value={value}>{label}</option>)}</Select></Label></div>
   <div className="category-tabs">{[['pending','대기'],['approved','승인'],['rejected','거부'],['all','전체']].map(([value,label])=><Button key={value} className={filter===value?'selected':''} onClick={()=>setFilter(value)}>{label} {byType.filter(item=>value==='all'||item.status===value).length}</Button>)}</div>
   <p className="form-error" role="alert">{error}</p>
   <div className="request-list">{filtered.map(item=><article className="panel request-card" key={item.id}>

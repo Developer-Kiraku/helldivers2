@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 const CommunityContext=createContext(null);
-const emptyPosts={notice:[],guide:[],talk:[],qna:[]};
+const emptyPosts={notice:[],guide:[],talk:[],qna:[],helstagram:[]};
 
 export function CommunityProvider({children,initialUser=null}){
  const [user,setUser]=useState(initialUser),[posts,setPosts]=useState(emptyPosts),[stats,setStats]=useState({totalMembers:0,onlineMembers:0}),[ready,setReady]=useState(false),[toast,setToast]=useState('');

@@ -3,6 +3,7 @@ import { readStore } from '@/lib/server/store';
 import { AppError, fail, verifyOrigin } from '@/lib/server/auth';
 import { tokenHash } from '@/lib/server/passwords';
 import { validateNickname } from '@/lib/server/community';
+import { readJsonRequest } from '@/lib/server/request-json';
 
 export const runtime = 'nodejs';
 const respond = (data, status = 200) => NextResponse.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
@@ -10,10 +11,7 @@ const respond = (data, status = 200) => NextResponse.json(data, { status, header
 export async function POST(request) {
   try {
     verifyOrigin(request);
-    const raw = await request.text();
-    if (raw.length > 1000) fail(413, '요청 크기가 너무 큽니다.');
-    let input;
-    try { input = JSON.parse(raw); } catch { fail(400, '요청 정보를 확인해주세요.'); }
+    const input = await readJsonRequest(request, 1000);
     const ticket = request.cookies.get('hd_signup')?.value;
     const result = await readStore(db => {
       const pending = (db.pendingRegistrations || []).some(item => ticket && item.ticketHash === tokenHash(ticket) && Date.parse(item.expiresAt) > Date.now());

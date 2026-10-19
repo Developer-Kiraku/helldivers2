@@ -11,7 +11,7 @@ export const fail = (status, message) => { throw new AppError(status, message); 
 export const cookieOptions = { httpOnly: true, sameSite: 'lax', secure: config.secureCookies, path: '/' };
 
 export function userForToken(db, token) {
-  if (!token) return null;
+  if (typeof token !== 'string' || !/^[a-f0-9]{64}$/.test(token)) return null;
   const session = db.sessions.find(item => item.tokenHash === tokenHash(token) && Date.parse(item.expiresAt) > Date.now());
   if (!session) return null;
   return db.users.find(user => user.id === session.userId && user.status === 'active') || null;
@@ -21,9 +21,20 @@ export function publicUser(user) {
   if (!user) return null;
   return { id: user.id, loginId: user.loginId || null, role: user.role, nickname: user.nickname, photo: user.photo, kakao: user.kakao ? { id: user.kakao.id, connectedAt: user.kakao.connectedAt } : null, provider: user.kakao ? 'kakao' : 'temporary', status: user.status, lastLoginAt: user.lastLoginAt, createdAt: user.createdAt, probationStartedAt: user.probationStartedAt || null, probationExpiresAt: user.probationExpiresAt || null, approvedAt: user.approvedAt || null, approvedBy: user.approvedBy || null };
 }
+export function memberListUser(user, actor) {
+  const result = publicUser(user);
+  // Provider identifiers are only needed on the account owner's own profile.
+  delete result.kakao;
+  delete result.approvedBy;
+  if (actor.id !== user.id) delete result.loginId;
+  return result;
+}
 export function createSession(db, user) {
   const token = createToken(); const now = new Date().toISOString();
   db.sessions = db.sessions.filter(item => Date.parse(item.expiresAt) > Date.now());
+  const existing = db.sessions.filter(item => item.userId === user.id).sort((a,b) => b.createdAt.localeCompare(a.createdAt));
+  const revoke = new Set(existing.slice(4).map(item => item.tokenHash));
+  db.sessions = db.sessions.filter(item => !revoke.has(item.tokenHash));
   db.sessions.push({ tokenHash: tokenHash(token), userId: user.id, createdAt: now, expiresAt: new Date(Date.now() + config.sessionHours * 3600000).toISOString() });
   user.lastLoginAt = now;
   return token;
