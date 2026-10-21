@@ -13,7 +13,12 @@
     "test:postgres-http": "node --env-file-if-exists=.env.local scripts/test-postgres-http.mjs",
     "test:functional": "node scripts/test-functional.cjs",
     "test:probation": "node scripts/test-probation.cjs",
-    "build:pages": "node scripts/build-pages.mjs"
+    "build:pages": "node scripts/build-pages.mjs",
+    "test:styles": "node scripts/test-styles.mjs",
+    "format": "prettier --write \"src/**/*.{js,jsx,mjs,scss}\" \"preview/**/*.{js,jsx,scss}\" \"scripts/**/*.{js,mjs,cjs}\" next.config.mjs",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,mjs,scss}\" \"preview/**/*.{js,jsx,scss}\" \"scripts/**/*.{js,mjs,cjs}\" next.config.mjs",
+    "prebuild": "npm run format:check && npm run test:styles",
+    "prebuild:pages": "npm run test:styles"
   },
   "dependencies": {
     "@daypicker/react": "10.0.2",
@@ -38,6 +43,9 @@
   },
   "devDependencies": {
     "esbuild": "0.28.2",
-    "jsdom": "^29.1.1"
+    "jsdom": "^29.1.1",
+    "postcss": "^8.5.31",
+    "prettier": "^3.9.10",
+    "sass": "^1.106.0"
   }
 }

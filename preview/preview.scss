@@ -1,0 +1,94 @@
+@use '../src/styles/tokens' as t;
+
+.pages-preview-bar {
+  height: auto;
+  min-height: var(--hd-size-64);
+  padding: var(--hd-space-12) var(--hd-space-24);
+  border-bottom: var(--hd-size-1) solid var(--hd-color-palette-46504d);
+  background: var(--hd-color-palette-121716);
+  color: var(--hd-color-palette-e7ece7);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hd-space-15);
+  position: relative;
+  z-index: var(--hd-layer-30);
+  font-size: var(--hd-font-size-12);
+}
+.pages-preview-bar > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hd-space-8) var(--hd-space-16);
+  align-items: center;
+}
+.pages-preview-bar strong {
+  letter-spacing: 0.08em;
+  color: var(--hd-color-palette-e6dd95);
+}
+.pages-preview-bar span {
+  color: var(--hd-color-palette-a8b6ad);
+}
+.pages-preview-bar nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hd-space-12);
+}
+.pages-preview-bar nav label {
+  display: flex;
+  align-items: center;
+  gap: var(--hd-space-7);
+  white-space: nowrap;
+}
+.pages-preview-bar select {
+  padding: var(--hd-space-7);
+  border: var(--hd-size-1) solid var(--hd-color-palette-48534e);
+  background: var(--hd-color-palette-242c28);
+  color: var(--hd-color-palette-edf0e8);
+  font-size: var(--hd-font-size-12);
+  border-radius: var(--hd-radius-4);
+}
+.pages-preview-bar button,
+.pages-preview-bar a {
+  color: var(--hd-color-palette-d4ddd4);
+  background: var(--hd-color-transparent);
+  border: 0;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.pages-preview-bar ~ .site-shell .sidebar {
+  top: var(--hd-size-64);
+  height: calc(100dvh - var(--hd-size-64));
+}
+@media (max-width:#{t.breakpoint('mobile')}) {
+  .pages-preview-bar {
+    padding: var(--hd-space-12) var(--hd-space-16);
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .pages-preview-bar > div {
+    gap: var(--hd-space-4);
+  }
+  .pages-preview-bar nav {
+    gap: var(--hd-space-15);
+  }
+  .pages-preview-bar ~ .site-shell .sidebar {
+    top: 0;
+    height: 100dvh;
+  }
+}
+.pages-preview-bar .ui-select {
+  width: var(--hd-size-140);
+  min-height: var(--hd-size-36);
+  padding: var(--hd-space-6) var(--hd-space-10);
+  font-size: var(--hd-font-size-12);
+}
+.pages-preview-bar .ui-button {
+  min-height: var(--hd-size-32);
+  padding: var(--hd-space-5) var(--hd-space-10);
+  font-size: var(--hd-font-size-12);
+}
+.pages-preview-bar .ui-label {
+  font-size: var(--hd-font-size-12);
+}

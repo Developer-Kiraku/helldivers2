@@ -1,0 +1,75 @@
+@use '../tokens' as t;
+
+/* Stable category columns keep titles and author details aligned. */
+.community-theme {
+  --category-width: var(--hd-size-80);
+}
+.latest-list .badge,
+.board-row > .badge,
+.post-meta > .badge,
+.article-paper > .badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--category-width);
+  min-width: var(--category-width);
+  flex: 0 0 var(--category-width);
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: var(--hd-leading-1-5);
+}
+
+/* Keep list titles on one line while preserving comment counts and metadata. */
+.home-board-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.latest-panel,
+.talk-preview-card {
+  min-width: 0;
+}
+.latest-title,
+.board-title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+}
+.post-title-text {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.latest-title em,
+.board-title em,
+.board-title > .community-icon,
+.latest-list time {
+  flex-shrink: 0;
+}
+.talk-preview-card h3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (min-width:#{t.breakpoint('desktop-start')}) {
+  .board-columns > :not(:nth-child(3)) {
+    text-align: center;
+    justify-self: center;
+  }
+  .board-columns > .board-author {
+    justify-content: center;
+    width: 100%;
+  }
+  .board-author > span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+@media (max-width:#{t.breakpoint('tablet')}) {
+  .home-board-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

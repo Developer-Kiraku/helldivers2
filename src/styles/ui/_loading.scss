@@ -1,0 +1,210 @@
+@use '../tokens' as t;
+
+/* Route and data loading placeholders. No artificial loading delay. */
+.page-skeleton {
+  width: 100%;
+  min-width: 0;
+}
+.skeleton-block {
+  height: var(--hd-size-14);
+  width: 100%;
+  border-radius: var(--hd-radius-5);
+  background: linear-gradient(
+    100deg,
+    var(--hd-color-palette-303a34) 25%,
+    var(--hd-color-palette-455148) 45%,
+    var(--hd-color-palette-303a34) 65%
+  );
+  background-size: 240% 100%;
+  animation: community-shimmer var(--hd-duration-1600) ease-in-out infinite;
+}
+.sk-stack {
+  display: grid;
+  gap: var(--hd-space-22);
+}
+.sk-heading {
+  display: grid;
+  gap: var(--hd-space-15);
+  margin-bottom: var(--hd-space-12);
+}
+.sk-title {
+  height: var(--hd-size-36);
+  width: 56%;
+  max-width: var(--hd-size-420);
+}
+.sk-kicker {
+  width: var(--hd-size-140);
+  height: var(--hd-size-11);
+}
+.sk-description {
+  width: 76%;
+}
+.sk-subtitle {
+  height: var(--hd-size-24);
+  width: 65%;
+}
+.sk-short {
+  width: 48%;
+}
+.sk-name {
+  width: var(--hd-size-110);
+}
+.sk-avatar {
+  height: var(--hd-size-34);
+  width: var(--hd-size-34);
+  border-radius: var(--hd-radius-round);
+  flex-shrink: 0;
+}
+.sk-author {
+  display: flex;
+  align-items: center;
+  gap: var(--hd-space-12);
+}
+.sk-card {
+  display: grid;
+  gap: var(--hd-space-20);
+  padding: var(--hd-space-25);
+  border: var(--hd-size-1) solid var(--hd-color-palette-3d4941);
+  border-radius: var(--hd-radius-7);
+  background: var(--hd-color-palette-242b27);
+}
+.sk-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hd-space-22);
+}
+.sk-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.sk-controls {
+  display: flex;
+  gap: var(--hd-space-12);
+}
+.sk-controls > .skeleton-block {
+  max-width: var(--hd-size-220);
+}
+.sk-control {
+  height: var(--hd-size-44);
+}
+.sk-badge {
+  height: var(--hd-size-28);
+  width: var(--hd-size-70);
+  flex-shrink: 0;
+}
+.sk-row {
+  display: flex;
+  align-items: center;
+  gap: var(--hd-space-18);
+  min-height: var(--hd-size-45);
+  border-bottom: var(--hd-size-1) solid var(--hd-color-palette-3d4941);
+  padding-bottom: var(--hd-space-14);
+}
+.sk-row > .sk-name {
+  flex-shrink: 0;
+}
+.sk-row:last-child {
+  border: 0;
+}
+.sk-media {
+  height: var(--hd-size-220);
+}
+.sk-editor {
+  height: var(--hd-size-300);
+}
+.sk-hero {
+  min-height: var(--hd-size-300);
+  align-content: center;
+}
+.sk-profile {
+  display: grid;
+  grid-template-columns: var(--hd-size-300) minmax(0, 1fr);
+  gap: var(--hd-space-22);
+}
+.sk-auth {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--hd-space-25);
+  width: min(var(--hd-size-960), 100%);
+  margin: var(--hd-space-45) auto;
+}
+.sk-auth-page {
+  padding: var(--hd-space-20);
+}
+.sk-auth-art {
+  min-height: var(--hd-size-400);
+  align-content: center;
+}
+.sk-comment {
+  display: grid;
+  gap: var(--hd-space-16);
+  padding: var(--hd-space-20) 0;
+  border-bottom: var(--hd-size-1) solid var(--hd-color-palette-3d4941);
+}
+@keyframes community-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block {
+    animation: none;
+    background: var(--hd-color-palette-354139);
+  }
+}
+@media (max-width:#{t.breakpoint('mobile')}) {
+  .sk-grid,
+  .sk-profile,
+  .sk-auth {
+    grid-template-columns: 1fr;
+  }
+  .sk-card {
+    padding: var(--hd-space-20);
+  }
+  .sk-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--hd-space-8);
+  }
+  .sk-stats .sk-card {
+    padding: var(--hd-space-12);
+  }
+  .sk-stats .sk-name {
+    width: 80%;
+  }
+  .sk-title {
+    width: 75%;
+  }
+  .sk-auth {
+    margin: 0;
+  }
+  .sk-auth-art {
+    display: none;
+  }
+  .sk-row > .sk-name {
+    display: none;
+  }
+  .sk-hero {
+    min-height: var(--hd-size-270);
+  }
+  .sk-controls {
+    flex-wrap: wrap;
+  }
+  .sk-controls > .skeleton-block {
+    flex: 1;
+    min-width: var(--hd-size-60);
+  }
+  .sk-auth-page {
+    padding: var(--hd-space-20) 0;
+  }
+}
+
+.sk-helstagram {
+  max-width: var(--hd-size-540);
+  width: 100%;
+  margin: 0 auto;
+}
+.sk-helstagram > .sk-controls {
+  margin: var(--hd-space-24) 0;
+}

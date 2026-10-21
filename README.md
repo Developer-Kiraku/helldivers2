@@ -12,6 +12,10 @@
 
 GitHub 설정은 **Settings → Pages → Source: GitHub Actions**입니다. `main`에 push하면 `.github/workflows/pages.yml`이 미리보기를 자동 갱신합니다. 실제 기능 서비스는 아래의 Next.js 실행 방법을 사용합니다.
 
+## SCSS와 소스 수정
+
+색상·크기·간격·반응형 값은 `src/styles/_tokens.scss`에서 관리합니다. 스타일 모듈 위치, 토큰 사용 예제, 동작 코드 구조와 검증 명령은 [개발·디자인 시스템 가이드](docs/design-system.md)를 참고하세요.
+
 ## 실행
 
 ```bash
@@ -92,7 +96,7 @@ PostgreSQL 초기화는 `npm run db:migrate`, 비어 있는 DB로 기존 JSON �
 
 ## 공통 UI와 회원 관리
 
-버튼·링크형 버튼·텍스트/비밀번호/검색 입력·선택창·체크박스·텍스트 영역·라벨·모달은 [Radix UI Themes](https://www.radix-ui.com/themes/docs/overview/getting-started)를 사용합니다. `src/components/ui.jsx`에서 공통 API를 제공하고 `src/app/ui.css`에서 기존 차콜 톤을 적용합니다. 모달과 선택창은 라이브러리의 키보드 조작·포커스 관리를 사용합니다. 파일 선택은 브라우저 기본 파일 입력을 Radix VisuallyHidden으로 감추고 라이브러리 버튼으로 엽니다. 본문 에디터의 콘텐츠 영역은 기존 방식이며 도구 버튼은 공통 UI를 사용합니다.
+버튼·링크형 버튼·텍스트/비밀번호/검색 입력·선택창·체크박스·텍스트 영역·라벨·모달은 [Radix UI Themes](https://www.radix-ui.com/themes/docs/overview/getting-started)를 사용합니다. `src/components/ui.jsx`에서 공통 API를 제공하고 `src/app/ui.scss`에서 기존 차콜 톤을 적용합니다. 모달과 선택창은 라이브러리의 키보드 조작·포커스 관리를 사용합니다. 파일 선택은 브라우저 기본 파일 입력을 Radix VisuallyHidden으로 감추고 라이브러리 버튼으로 엽니다. 본문 에디터의 콘텐츠 영역은 기존 방식이며 도구 버튼은 공통 UI를 사용합니다.
 
 회원 리스트는 로그인한 등급에 따라 자동으로 구분됩니다. 운영자는 부운영자 이하의 등급 변경·직접 강퇴를, 부운영자는 일반·견습회원의 강퇴 요청만 할 수 있습니다. 본인·상위·동급 등급에 허용되지 않는 작업은 표시하지 않습니다. 두 등급 모두 요청 승인 목록에서 견습회원 가입 승인이 가능합니다. `memberCapabilities`의 같은 권한 계산을 서버 API와 Pages 미리보기에 적용하며 실제 변경 API도 권한을 별도로 검사합니다.
 

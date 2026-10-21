@@ -5,29 +5,71 @@ import { communityEditorExtensions } from '../src/lib/tiptap-extensions.js';
 import { sanitizePostHtml } from '../src/lib/server/post-html.mjs';
 
 const dom = new JSDOM('<!doctype html><html><body></body></html>', { pretendToBeVisual: true });
-for (const name of ['window','document','navigator','HTMLElement','Node','DOMParser','MutationObserver']) Object.defineProperty(globalThis,name,{configurable:true,writable:true,value:dom.window[name]});
-globalThis.getComputedStyle=dom.window.getComputedStyle.bind(dom.window);
-globalThis.requestAnimationFrame=dom.window.requestAnimationFrame.bind(dom.window);
-globalThis.cancelAnimationFrame=dom.window.cancelAnimationFrame.bind(dom.window);
+for (const name of [
+  'window',
+  'document',
+  'navigator',
+  'HTMLElement',
+  'Node',
+  'DOMParser',
+  'MutationObserver',
+])
+  Object.defineProperty(globalThis, name, {
+    configurable: true,
+    writable: true,
+    value: dom.window[name],
+  });
+globalThis.getComputedStyle = dom.window.getComputedStyle.bind(dom.window);
+globalThis.requestAnimationFrame = dom.window.requestAnimationFrame.bind(dom.window);
+globalThis.cancelAnimationFrame = dom.window.cancelAnimationFrame.bind(dom.window);
 const { cleanEditorHtml } = await import('../src/lib/editor-html.js');
-const make = content => new Editor({element:document.createElement('div'),extensions:communityEditorExtensions(),content});
+const make = (content) =>
+  new Editor({
+    element: document.createElement('div'),
+    extensions: communityEditorExtensions(),
+    content,
+  });
 const loaded = make('');
-loaded.chain().setContent('<p>저장된 본문</p>', { emitUpdate: false }).setMeta('addToHistory', false).run();
-assert.equal(loaded.can().undo(),false);loaded.destroy();
+loaded
+  .chain()
+  .setContent('<p>저장된 본문</p>', { emitUpdate: false })
+  .setMeta('addToHistory', false)
+  .run();
+assert.equal(loaded.can().undo(), false);
+loaded.destroy();
 const first = make('<p><span style="font-size:17px">기존 본문</span></p>');
-first.commands.selectAll();first.commands.setFontSize('19px');
-assert.match(first.getHTML(),/font-size: 19px/);
-first.commands.undo();assert.match(first.getHTML(),/font-size: 17px/);
-first.commands.redo();assert.match(first.getHTML(),/font-size: 19px/);
+first.commands.selectAll();
+first.commands.setFontSize('19px');
+assert.match(first.getHTML(), /font-size: 19px/);
+first.commands.undo();
+assert.match(first.getHTML(), /font-size: 17px/);
+first.commands.redo();
+assert.match(first.getHTML(), /font-size: 19px/);
 first.commands.setTextSelection(first.state.doc.content.size);
-assert.equal(first.commands.setYoutubeVideo({src:'https://youtu.be/M7lc1UVf-VE?t=62'}),true);
-const saved=sanitizePostHtml(cleanEditorHtml(first.getHTML()));
-assert.match(saved,/font-size:19px/);assert.match(saved,/youtube-nocookie.com/);assert.match(saved,/start=62/);
-const restored=make(saved);
-let videos=0;restored.state.doc.descendants(node=>{if(node.type.name==='youtube')videos++;});assert.equal(videos,1);
-assert.match(restored.getHTML(),/font-size: 19px/);assert.match(restored.getHTML(),/start=62/);
-restored.commands.setContent(cleanEditorHtml('<p><span style="font-size:23px">HTML 소스 수정</span></p><iframe src="https://www.youtube.com/embed/M7lc1UVf-VE"></iframe><script>alert(1)</script>'));
-assert.match(restored.getHTML(),/font-size: 23px/);assert.ok(!restored.getHTML().includes('<script'));
-assert.match(restored.getHTML(),/youtube-nocookie.com/);
-first.destroy();restored.destroy();dom.window.close();
-console.log('PASS: Tiptap immediate font size, undo/redo, HTML source parsing, YouTube persistence and saved-HTML re-editing');
+assert.equal(first.commands.setYoutubeVideo({ src: 'https://youtu.be/M7lc1UVf-VE?t=62' }), true);
+const saved = sanitizePostHtml(cleanEditorHtml(first.getHTML()));
+assert.match(saved, /font-size:19px/);
+assert.match(saved, /youtube-nocookie.com/);
+assert.match(saved, /start=62/);
+const restored = make(saved);
+let videos = 0;
+restored.state.doc.descendants((node) => {
+  if (node.type.name === 'youtube') videos++;
+});
+assert.equal(videos, 1);
+assert.match(restored.getHTML(), /font-size: 19px/);
+assert.match(restored.getHTML(), /start=62/);
+restored.commands.setContent(
+  cleanEditorHtml(
+    '<p><span style="font-size:23px">HTML 소스 수정</span></p><iframe src="https://www.youtube.com/embed/M7lc1UVf-VE"></iframe><script>alert(1)</script>',
+  ),
+);
+assert.match(restored.getHTML(), /font-size: 23px/);
+assert.ok(!restored.getHTML().includes('<script'));
+assert.match(restored.getHTML(), /youtube-nocookie.com/);
+first.destroy();
+restored.destroy();
+dom.window.close();
+console.log(
+  'PASS: Tiptap immediate font size, undo/redo, HTML source parsing, YouTube persistence and saved-HTML re-editing',
+);

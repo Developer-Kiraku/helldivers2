@@ -13,5 +13,5 @@ export function verifyPassword(password, hash) {
   const actual = scryptSync(password, salt, 64);
   return actual.length === expected.length && timingSafeEqual(actual, expected);
 }
-export const tokenHash = value => createHash('sha256').update(value).digest('hex');
+export const tokenHash = (value) => createHash('sha256').update(value).digest('hex');
 export const createToken = () => randomBytes(32).toString('hex');

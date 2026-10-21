@@ -1,0 +1,207 @@
+@use '../styles/tokens' as t;
+
+.deadline-picker {
+  min-width: 0;
+}
+.deadline-field {
+  display: flex;
+  align-items: center;
+  gap: var(--hd-space-8);
+}
+.deadline-field .deadline-trigger.ui-button {
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-start;
+  gap: var(--hd-space-11);
+  min-height: var(--hd-size-64);
+  padding: var(--hd-space-12) var(--hd-space-14);
+  text-align: left;
+  background: var(--hd-color-palette-191f1f);
+  border: var(--hd-size-1) solid var(--hd-color-palette-4a5652);
+  color: var(--hd-color-palette-e1e9df);
+}
+.deadline-trigger > span {
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+  font-size: var(--hd-font-size-14);
+}
+.deadline-trigger small {
+  display: block;
+  margin-top: var(--hd-space-4);
+  color: var(--hd-color-palette-94a79b);
+  font-size: var(--hd-font-size-12);
+}
+.deadline-trigger.is-empty > span {
+  color: var(--hd-color-palette-c0cec3);
+}
+.deadline-trigger > svg {
+  flex-shrink: 0;
+  color: var(--hd-color-palette-9bb4a4);
+}
+.deadline-picker > .field-hint {
+  margin: var(--hd-space-8) 0 0;
+  font-size: var(--hd-font-size-12);
+}
+.deadline-popover.rt-PopoverContent {
+  z-index: var(--hd-layer-120);
+  width: min(var(--hd-size-360), calc(100vw - var(--hd-size-24)));
+  max-width: none;
+  max-height: min(var(--hd-size-700), calc(100dvh - var(--hd-size-32)));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--hd-space-16);
+  background: var(--hd-color-palette-222827);
+  color: var(--hd-color-palette-e5ece3);
+  border: var(--hd-size-1) solid var(--hd-color-palette-52635a);
+  border-radius: var(--hd-radius-12);
+  box-shadow: 0 var(--hd-size-16) var(--hd-size-55) var(--hd-color-palette-0008);
+  font-family: var(--default-font-family);
+  font-size: var(--hd-font-size-14);
+}
+.deadline-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hd-space-8);
+}
+.deadline-heading strong {
+  display: block;
+  font-size: var(--hd-font-size-16);
+}
+.deadline-heading span {
+  display: block;
+  color: var(--hd-color-palette-9db1a3);
+  font-size: var(--hd-font-size-12);
+  margin-top: var(--hd-space-3);
+}
+.deadline-heading .icon-button.ui-button {
+  min-height: var(--hd-size-32);
+  width: var(--hd-size-32);
+  min-width: var(--hd-size-32);
+}
+.deadline-shortcuts {
+  display: flex;
+  gap: var(--hd-space-7);
+  margin: var(--hd-space-14) 0;
+}
+.deadline-shortcuts .ui-button {
+  flex: 1;
+  min-height: var(--hd-size-34);
+  padding: var(--hd-space-6) var(--hd-space-8);
+  font-size: var(--hd-font-size-12);
+  background: var(--hd-color-palette-2b3530);
+  border-color: var(--hd-color-palette-4b5e50);
+}
+.deadline-calendar.rdp-root {
+  --rdp-accent-color: var(--hd-color-palette-b6ccb3);
+  --rdp-accent-background-color: var(--hd-color-palette-394d3e);
+  --rdp-today-color: var(--hd-color-palette-c1d3b5);
+  --rdp-day-width: min(var(--hd-size-42), calc((100vw - var(--hd-size-60)) / 7));
+  --rdp-day-height: var(--hd-size-40);
+  --rdp-day_button-width: var(--rdp-day-width);
+  --rdp-day_button-height: var(--hd-size-38);
+  --rdp-day_button-border-radius: var(--hd-radius-7);
+  --rdp-selected-border: var(--hd-size-1) solid var(--hd-color-palette-a5be9b);
+  --rdp-disabled-opacity: 0.28;
+  --rdp-nav_button-height: var(--hd-size-36);
+  --rdp-nav_button-width: var(--hd-size-36);
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--hd-font-size-14);
+}
+.deadline-calendar .rdp-months,
+.deadline-calendar .rdp-month,
+.deadline-calendar .rdp-month_grid {
+  width: 100%;
+}
+.deadline-calendar .rdp-month_caption {
+  font-size: var(--hd-font-size-15);
+}
+.deadline-calendar .rdp-weekday {
+  font-size: var(--hd-font-size-12);
+  color: var(--hd-color-palette-9eafa3);
+  font-weight: var(--hd-weight-normal);
+}
+.deadline-calendar .rdp-day_button {
+  font: inherit;
+  color: inherit;
+  margin: auto;
+}
+.deadline-calendar .rdp-day_button:hover:not(:disabled) {
+  background: var(--hd-color-palette-35433a);
+}
+.deadline-calendar .rdp-selected .rdp-day_button {
+  background: var(--hd-color-palette-394d3e);
+  color: var(--hd-color-palette-f0f5e9);
+  font-size: var(--hd-font-size-14);
+  font-weight: var(--hd-weight-bold);
+}
+.deadline-calendar .rdp-day_button:focus-visible,
+.deadline-calendar .rdp-button_previous:focus-visible,
+.deadline-calendar .rdp-button_next:focus-visible {
+  outline: var(--hd-size-2) solid var(--hd-color-palette-b6ccb3);
+  outline-offset: var(--hd-size-2);
+}
+.deadline-calendar .rdp-button_previous,
+.deadline-calendar .rdp-button_next {
+  border: var(--hd-size-1) solid var(--hd-color-palette-46564b);
+  border-radius: var(--hd-radius-7);
+  background: var(--hd-color-palette-2a352d);
+}
+.deadline-calendar .rdp-chevron {
+  fill: var(--hd-color-palette-b9cbb6);
+}
+.deadline-time {
+  border-top: var(--hd-size-1) solid var(--hd-color-palette-405047);
+  padding-top: var(--hd-space-14);
+  margin-top: var(--hd-space-12);
+}
+.deadline-time > .ui-label {
+  display: flex;
+  align-items: center;
+  gap: var(--hd-space-7);
+  margin-bottom: var(--hd-space-9);
+  font-size: var(--hd-font-size-13);
+}
+.deadline-time > div {
+  display: flex;
+  align-items: center;
+  gap: var(--hd-space-10);
+}
+.deadline-time .ui-select {
+  flex: 1;
+  min-width: 0;
+}
+.deadline-summary {
+  font-size: var(--hd-font-size-12);
+  line-height: var(--hd-leading-1-6);
+  margin: var(--hd-space-12) 0;
+  color: var(--hd-color-palette-b7cbb9);
+}
+.deadline-summary.is-invalid {
+  color: var(--hd-color-palette-e7b3a4);
+}
+.deadline-actions {
+  display: flex;
+  gap: var(--hd-space-9);
+}
+.deadline-actions > .ui-button {
+  flex: 1;
+  min-height: var(--hd-size-42);
+  padding: var(--hd-space-9) var(--hd-space-10);
+}
+.deadline-popover.rt-PopoverContent {
+  min-width: 0;
+  max-height: min(var(--hd-size-700), var(--radix-popover-content-available-height));
+}
+@media (max-width:#{t.breakpoint('tablet-small')}) {
+  [data-radix-popper-content-wrapper]:has(> .deadline-popover) {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+  .deadline-popover.rt-PopoverContent {
+    max-height: calc(100dvh - var(--hd-size-24));
+  }
+}

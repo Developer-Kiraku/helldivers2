@@ -4,9 +4,21 @@ import { randomUUID } from 'node:crypto';
 export function probationDeadline(startedAt) {
   const date = new Date(Date.parse(startedAt) + 9 * 3600000);
   if (!Number.isFinite(date.getTime())) throw new Error('Invalid probation start date');
-  const year = date.getUTCFullYear(), month = date.getUTCMonth() + 1;
+  const year = date.getUTCFullYear(),
+    month = date.getUTCMonth() + 1;
   const day = Math.min(date.getUTCDate(), new Date(Date.UTC(year, month + 1, 0)).getUTCDate());
-  return new Date(Date.UTC(year, month, day, date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getUTCMilliseconds()) - 9 * 3600000).toISOString();
+  return new Date(
+    Date.UTC(
+      year,
+      month,
+      day,
+      date.getUTCHours(),
+      date.getUTCMinutes(),
+      date.getUTCSeconds(),
+      date.getUTCMilliseconds(),
+    ) -
+      9 * 3600000,
+  ).toISOString();
 }
 
 export function startProbation(user, startedAt = user.createdAt) {
@@ -33,7 +45,7 @@ export function withdrawMember(db, user, reason, at = new Date().toISOString()) 
   user.withdrawnAt = at;
   user.withdrawalReason = reason;
   user.updatedAt = at;
-  db.sessions = db.sessions.filter(session => session.userId !== user.id);
+  db.sessions = db.sessions.filter((session) => session.userId !== user.id);
 }
 
 // Runs before every transaction and on the server's minute timer.
@@ -42,10 +54,20 @@ export function settleProbation(db, at = new Date().toISOString()) {
   let changed = false;
   for (const user of db.users) {
     if (user.status !== 'active' || user.role !== 'apprentice') continue;
-    if (!user.probationExpiresAt) { startProbation(user); changed = true; }
+    if (!user.probationExpiresAt) {
+      startProbation(user);
+      changed = true;
+    }
     if (Date.parse(user.probationExpiresAt) > Date.parse(at)) continue;
     withdrawMember(db, user, 'probation_expired', at);
-    db.audit.push({ id: randomUUID(), actorId: null, action: 'user.withdraw.probation_expired', targetId: user.id, details: { deadline: user.probationExpiresAt }, createdAt: at });
+    db.audit.push({
+      id: randomUUID(),
+      actorId: null,
+      action: 'user.withdraw.probation_expired',
+      targetId: user.id,
+      details: { deadline: user.probationExpiresAt },
+      createdAt: at,
+    });
     changed = true;
   }
   return changed;

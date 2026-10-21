@@ -1,0 +1,6 @@
+node_modules
+.next
+pages-dist
+work
+public
+package-lock.json

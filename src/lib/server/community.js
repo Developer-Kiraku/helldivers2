@@ -1,9 +1,6 @@
 import { postSharePath } from './share-links.mjs';
 import { serializePoll } from './polls';
 import 'server-only';
-import { sanitizePostHtml } from './post-html.mjs';
-import { youtubeEmbedUrl } from '../editor-format.mjs';
-import { boards } from '../data';
 import { outranks } from '../roles';
 import { fail } from './auth';
 import { nicknamePattern, nicknameFormatMessage, nicknameTakenMessage } from '../nicknames';
@@ -12,58 +9,72 @@ export const now = () => new Date().toISOString();
 export function validateNickname(value, db, excludeId) {
   const nickname = typeof value === 'string' ? value.trim() : '';
   if (!nicknamePattern.test(nickname)) fail(400, nicknameFormatMessage);
-  if (db.users.some(user => user.id !== excludeId && user.status === 'active' && user.nickname.toLowerCase() === nickname.toLowerCase())) fail(409, nicknameTakenMessage);
+  if (
+    db.users.some(
+      (user) =>
+        user.id !== excludeId &&
+        user.status === 'active' &&
+        user.nickname.toLowerCase() === nickname.toLowerCase(),
+    )
+  )
+    fail(409, nicknameTakenMessage);
   return nickname;
 }
-export function validImage(value, allowLocal = false, max = 900000, allowRemote = false) {
-  if (typeof value !== 'string' || value.length > max) fail(400, '이미지 크기가 허용 범위를 초과했습니다.');
-  if (!value) return '';
-  if (allowRemote && value.startsWith('https://')) {
-    try { const url = new URL(value); if (url.username || url.password || value.length > 2048) throw Error(); return url.href; }
-    catch { fail(400, '유효한 HTTPS 이미지 주소를 입력해주세요.'); }
-  }
-  if (allowLocal && /^\/images\/[a-zA-Z0-9_.-]+$/.test(value)) return value;
-  const match = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$/.exec(value);
-  if (!match) fail(400, 'JPG·PNG·WebP 이미지 형식만 사용할 수 있습니다.');
-  const bytes = Buffer.from(match[2], 'base64');
-  const valid = match[1] === 'jpeg' ? bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255 : match[1] === 'png' ? bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) : bytes.toString('ascii', 0, 4) === 'RIFF' && bytes.toString('ascii', 8, 12) === 'WEBP';
-  if (!valid) fail(400, '유효한 이미지 파일을 선택해주세요.');
-  return value;
+export { validImage, cleanPost } from './post-validation';
+
+export function postForId(db, id) {
+  const post = db.posts.find((item) => item.id === id && !item.deletedAt);
+  if (!post) fail(404, '게시글을 찾을 수 없습니다.');
+  return post;
 }
-export function cleanPost(input, board) {
-  if (!boards[board]) fail(400, '게시판을 확인해주세요.');
-  if (input.pinned !== undefined && typeof input.pinned !== 'boolean') fail(400, '상단 고정 여부를 확인해주세요.');
-  if (input.pinned === true && board !== 'notice') fail(400, '공지사항만 상단에 고정할 수 있습니다.');
-  const title = typeof input.title === 'string' ? input.title.trim() : '';
-  if (!title || title.length > 100) fail(400, '제목은 1~100자로 입력해주세요.');
-  if (!boards[board].categories.includes(input.category)) fail(400, '게시글 분류를 확인해주세요.');
-  const content = typeof input.content === 'string' ? input.content.trim() : '';
-  if (content.length > 50000) fail(400, '본문은 50,000자 이하로 작성해주세요.');
-  const imageLimit = board === 'helstagram' ? 10 : 5;
-  if (Array.isArray(input.images) && input.images.length > imageLimit) fail(400, `이미지는 최대 ${imageLimit}장까지 넣을 수 있습니다.`);
-  const images = Array.isArray(input.images) ? input.images.map(image => validImage(image, true, 7000000, true)) : [];
-  const youtubeInput = board === 'helstagram' ? input.youtubeUrl ?? '' : '';
-  if (typeof youtubeInput !== 'string' || youtubeInput.length > 2048) fail(400, '유효한 유튜브 주소를 입력해주세요.');
-  const youtubeUrl = youtubeInput.trim() ? youtubeEmbedUrl(youtubeInput) : '';
-  if (youtubeInput.trim() && !youtubeUrl) fail(400, '유효한 유튜브 주소를 입력해주세요.');
-  if (board === 'helstagram' && !images.length && !youtubeUrl) fail(400, '사진 또는 유튜브 영상을 첨부해주세요.');
-  if (board === 'helstagram' && images.reduce((size, image) => size + image.length, 0) > 10000000) fail(400, '사진 전체 크기를 줄여주세요.');
-  const raw = typeof input.bodyHtml === 'string' ? input.bodyHtml : '';
-  if (raw.length > 12000000) fail(400, '본문 크기가 너무 큽니다.');
-  const bodyHtml = sanitizePostHtml(raw, images);
-  if (!content && !images.length && !youtubeUrl && !bodyHtml.includes('<iframe ')) fail(400, '본문을 입력해주세요.');
-  return { title, category: input.category, content, bodyHtml, images, ...(board === 'helstagram' ? {youtubeUrl} : {}), ...(board === 'notice' && input.pinned !== undefined ? { pinned: input.pinned } : {}) };
+export function memberForId(db, id) {
+  const user = db.users.find((item) => item.id === id && item.status === 'active');
+  if (!user) fail(404, '활성 회원을 찾을 수 없습니다.');
+  return user;
 }
-export function postForId(db, id) { const post = db.posts.find(item => item.id === id && !item.deletedAt); if (!post) fail(404, '게시글을 찾을 수 없습니다.'); return post; }
-export function memberForId(db, id) { const user = db.users.find(item => item.id === id && item.status === 'active'); if (!user) fail(404, '활성 회원을 찾을 수 없습니다.'); return user; }
-export function canDeletePost(actor, author) { return actor.id === author?.id || actor.role === 'operator' && outranks(actor.role, author?.role); }
-export function canRequest(actor, target) { return actor.role === 'deputy' && target && outranks(actor.role, target.role); }
+export function canDeletePost(actor, author) {
+  return (
+    actor.id === author?.id || (actor.role === 'operator' && outranks(actor.role, author?.role))
+  );
+}
+export function canRequest(actor, target) {
+  return actor.role === 'deputy' && target && outranks(actor.role, target.role);
+}
 export function serializePost(db, post, viewer) {
-  const author = db.users.find(user => user.id === post.authorId);
-  const votes = db.votes.filter(vote => vote.postId === post.id);
-  return { ...post, sharePath: postSharePath(post), poll: serializePoll(db, post.poll, viewer), author: author?.status === 'withdrawn' ? '탈퇴한 회원' : author?.nickname || '탈퇴한 회원', authorRole: author?.status === 'active' ? author.role : null, authorPhoto: author?.status === 'active' ? author.photo : '', own: viewer.id === post.authorId, date: post.createdAt.slice(0, 10).replaceAll('-', '.'), likes: votes.filter(vote => vote.value === 1).length, dislikes: post.board === 'helstagram' ? 0 : votes.filter(vote => vote.value === -1).length, myVote: post.board === 'helstagram' ? (votes.some(vote => vote.userId === viewer.id && vote.value === 1) ? 1 : 0) : votes.find(vote => vote.userId === viewer.id)?.value || 0, comments: db.comments.filter(comment => comment.postId === post.id && !comment.deletedAt).length, canDelete: canDeletePost(viewer, author), canEdit: viewer.id === post.authorId, canRequestDelete: canRequest(viewer, author) && viewer.id !== post.authorId };
+  const author = db.users.find((user) => user.id === post.authorId);
+  const votes = db.votes.filter((vote) => vote.postId === post.id);
+  return {
+    ...post,
+    sharePath: postSharePath(post),
+    poll: serializePoll(db, post.poll, viewer),
+    author: author?.status === 'withdrawn' ? '탈퇴한 회원' : author?.nickname || '탈퇴한 회원',
+    authorRole: author?.status === 'active' ? author.role : null,
+    authorPhoto: author?.status === 'active' ? author.photo : '',
+    own: viewer.id === post.authorId,
+    date: post.createdAt.slice(0, 10).replaceAll('-', '.'),
+    likes: votes.filter((vote) => vote.value === 1).length,
+    dislikes: post.board === 'helstagram' ? 0 : votes.filter((vote) => vote.value === -1).length,
+    myVote:
+      post.board === 'helstagram'
+        ? votes.some((vote) => vote.userId === viewer.id && vote.value === 1)
+          ? 1
+          : 0
+        : votes.find((vote) => vote.userId === viewer.id)?.value || 0,
+    comments: db.comments.filter((comment) => comment.postId === post.id && !comment.deletedAt)
+      .length,
+    canDelete: canDeletePost(viewer, author),
+    canEdit: viewer.id === post.authorId,
+    canRequestDelete: canRequest(viewer, author) && viewer.id !== post.authorId,
+  };
 }
 export function serializeComment(db, comment, viewer) {
-  const author = db.users.find(user => user.id === comment.authorId);
-  return { ...comment, authorRole: author?.status === 'active' ? author.role : null, author: author?.status === 'withdrawn' ? '탈퇴한 회원' : author?.nickname || '알 수 없는 회원', authorPhoto: author?.status === 'active' ? author.photo : '', own: author?.id === viewer.id, date: comment.createdAt };
+  const author = db.users.find((user) => user.id === comment.authorId);
+  return {
+    ...comment,
+    authorRole: author?.status === 'active' ? author.role : null,
+    author: author?.status === 'withdrawn' ? '탈퇴한 회원' : author?.nickname || '알 수 없는 회원',
+    authorPhoto: author?.status === 'active' ? author.photo : '',
+    own: author?.id === viewer.id,
+    date: comment.createdAt,
+  };
 }
