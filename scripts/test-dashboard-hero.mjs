@@ -82,7 +82,8 @@ try {
   root = createRoot(document.getElementById('hero-test'));
   await React.act(async () => root.render(React.createElement(Hero)));
   const images = [...document.querySelectorAll('.hero-slide')];
-  assert.equal(images.length, 3);
+  assert.equal(images.length, 4);
+  assert.equal(dashboardSlides[0].image, '/images/community-squad.png');
   assert.equal(dashboardSlideInterval, 6000);
   assert.equal(interval, 6000);
   const active = () => document.querySelector('.hero-slide.is-active').getAttribute('src');
@@ -94,7 +95,7 @@ try {
     await React.act(async () => image.dispatchEvent(new window.Event('load')));
   const logo = document.querySelector('.hero-logo'),
     links = [...document.querySelectorAll('.hero-actions a')];
-  for (const index of [1, 2, 0]) {
+  for (const index of [1, 2, 3, 0]) {
     await React.act(async () => tick());
     assert.equal(active(), dashboardSlides[index].image);
     assert.equal(
@@ -117,11 +118,16 @@ try {
   for (const slide of dashboardSlides) {
     const filename = path.resolve('public', '.' + slide.image),
       metadata = await sharp(filename).metadata();
-    assert.equal(metadata.width, 1600);
-    assert.ok((await fs.stat(filename)).size < 400000);
+    if (slide.id === 'original-squad') {
+      assert.equal(metadata.width, 2172);
+      assert.equal(metadata.height, 724);
+    } else {
+      assert.equal(metadata.width, 1600);
+      assert.ok((await fs.stat(filename)).size < 400000);
+    }
   }
   console.log(
-    'PASS: three hero scenes, six-second rotation, synchronized copy, fixed logo/actions, unloaded image guard, hidden-tab/reduced-motion pause, timer cleanup and optimized assets',
+    'PASS: original plus three faction scenes, six-second rotation, synchronized copy, fixed logo/actions, unloaded image guard, hidden-tab/reduced-motion pause, timer cleanup and optimized assets',
   );
 } finally {
   if (root) await React.act(async () => root.unmount());
