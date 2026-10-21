@@ -208,10 +208,7 @@
     padding: var(--hd-space-150) var(--hd-space-22) var(--hd-space-30);
     min-height: var(--hd-size-440);
   }
-  .hero::before {
-    background-position: 65% top;
-    background-size: auto var(--hd-size-300);
-    background-repeat: no-repeat;
+  .hero-background {
     mask-image: linear-gradient(
       180deg,
       var(--hd-color-black),
@@ -219,6 +216,10 @@
       var(--hd-color-palette-0003) 54%,
       var(--hd-color-transparent) 74%
     );
+  }
+  .hero-slide {
+    height: var(--hd-size-300);
+    object-position: 65% top;
   }
   .hero-copy {
     max-width: 100%;

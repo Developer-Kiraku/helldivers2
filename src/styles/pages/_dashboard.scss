@@ -14,12 +14,11 @@
   overflow: hidden;
   border-bottom: var(--hd-size-1) solid var(--hd-color-palette-5c685b);
 }
-.hero::before {
-  content: '';
+.hero-background {
   position: absolute;
   inset: 0;
   z-index: var(--hd-layer-n1);
-  background: url('/images/community-squad.png') center/cover;
+  pointer-events: none;
   mask-image: linear-gradient(
     90deg,
     var(--hd-color-palette-0002),
@@ -27,6 +26,34 @@
     var(--hd-color-palette-000c) 55%,
     var(--hd-color-black) 74%
   );
+}
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity var(--hd-duration-450) ease-in-out;
+}
+.hero-slide.is-active {
+  opacity: 1;
+}
+.hero h1 {
+  display: grid;
+}
+.hero-title {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+.hero-title.is-active {
+  visibility: visible;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide {
+    transition: none;
+  }
 }
 .hero-copy {
   position: relative;

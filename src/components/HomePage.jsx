@@ -1,15 +1,13 @@
 'use client';
 import Nickname from './Nickname';
-import { ExternalButton } from './ui';
+import DashboardHero from './DashboardHero';
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { boards } from '@/lib/data';
 import { useCommunity } from './CommunityProvider';
 import Icon from './Icon';
-import KakaoSymbol from './KakaoSymbol';
 import PageSkeleton from './PageSkeleton';
-import { communityLinks } from '@/lib/community-links';
 
 function Clock() {
   const [time, setTime] = useState('--:--:--');
@@ -36,43 +34,7 @@ export default function HomePage() {
   if (!ready) return <PageSkeleton path="/" />;
   return (
     <div className="home-page">
-      <section className="hero">
-        <img className="hero-logo" src="/images/helldivers-logo.png" alt="HELLDIVERS II" />
-        <div className="hero-copy">
-          <div className="eyebrow">OFF DUTY. ON MISSION.</div>
-          <h1>
-            퇴근은 했고,
-            <br />
-            민주주의는 지금부터.
-          </h1>
-          <p>
-            헬다이버즈2 직장인 커뮤니티.
-            <br />
-            레벨도 실력도 상관없이, 오늘의 마지막 작전은 함께.
-          </p>
-          <div className="hero-actions">
-            <ExternalButton
-              className="button hero-secondary hero-kakao"
-              href={communityLinks.kakaoChat}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <KakaoSymbol size={17} />
-              카카오톡
-            </ExternalButton>
-            <ExternalButton
-              className="button hero-secondary hero-discord"
-              href={communityLinks.discord}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Icon name="discord" size={17} />
-              디스코드
-            </ExternalButton>
-          </div>
-        </div>
-        <span className="hero-tag">HELLDIVERS 2 / COMMUNITY</span>
-      </section>
+      <DashboardHero />
       <section className="status-strip" aria-label="커뮤니티 현황">
         <div>
           <small>함께하는 대원</small>
