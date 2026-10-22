@@ -63,7 +63,11 @@ export async function POST(request) {
       db.users.push(user);
       db.pendingRegistrations = db.pendingRegistrations.filter((item) => item !== pending);
       const token = createSession(db, user);
-      audit(db, user.id, 'user.register', user.id);
+      audit(db, user.id, 'user.register', user.id, {
+        actorNickname: user.nickname,
+        targetNickname: user.nickname,
+        targetCreatedAt: user.createdAt,
+      });
       return { user: publicUser(user), token };
     });
     const response = NextResponse.json({ user: result.user }, { status: 201 });

@@ -138,6 +138,7 @@ async function run() {
       '/admin/requests',
       '/admin/approvals',
       '/admin/post-history',
+      '/admin/logs',
     ]) {
       const { response } = await guest.call(route, 'GET', undefined, 307);
       assert.equal(new URL(response.headers.get('location'), origin).pathname, '/login');
@@ -527,7 +528,13 @@ async function run() {
     await member.call('/api/admin/post-history', 'GET', undefined, 403);
     await apprentice.call('/api/admin/post-history', 'GET', undefined, 403);
     await member.call('/admin/post-history', 'GET', undefined, 307);
-    await admin.call('/admin/post-history');
+    await admin.call('/admin/post-history', 'GET', undefined, 307);
+    await admin.call('/admin/logs');
+    await deputy.call('/admin/logs');
+    await guest.call('/api/admin/logs', 'GET', undefined, 401);
+    await member.call('/api/admin/logs', 'GET', undefined, 403);
+    await apprentice.call('/api/admin/logs', 'GET', undefined, 403);
+    await member.call('/admin/logs', 'GET', undefined, 307);
     const history = (
       await admin.call('/api/admin/post-history?q=' + encodeURIComponent('수정된 글'))
     ).data;
@@ -537,12 +544,18 @@ async function run() {
     const detailPath = '/api/admin/post-history/' + updated.id;
     await guest.call(detailPath, 'GET', undefined, 401);
     await member.call(detailPath, 'GET', undefined, 403);
-    await deputy.call('/admin/post-history');
+    await deputy.call('/admin/post-history', 'GET', undefined, 307);
     const revision = (await deputy.call(detailPath)).data.log;
     assert.equal(revision.before.title, post.title);
     assert.equal(revision.after.title, '수정된 글');
     assert.equal(revision.actorNickname, '헬다이버');
     assert.deepEqual(revision.changedFields, ['title']);
+    const compact = (
+      await deputy.call('/api/admin/logs?type=post_update&q=' + encodeURIComponent('수정된 글'))
+    ).data.logs.find((entry) => entry.targetName === '수정된 글');
+    assert.equal(compact.targetCreatedAt, post.createdAt);
+    assert.equal(compact.actorNickname, '헬다이버');
+    assert.ok(!('before' in compact) && !('content' in compact));
     await admin.call('/api/admin/post-history/missing', 'GET', undefined, 404);
     const deletedHistory = (await deputy.call('/api/admin/post-history?action=post.delete')).data;
     const removed = deletedHistory.logs.find((entry) => entry.postId === removable.id);
@@ -997,6 +1010,12 @@ async function run() {
     assert.equal(registered.probationStartedAt, registered.createdAt);
     assert.ok(Date.parse(registered.probationExpiresAt) > Date.parse(registered.createdAt));
     assert.equal(registered.approvedAt, null);
+    const joinLog = (
+      await admin.call('/api/admin/logs?type=member_join&q=' + encodeURIComponent('신입대원'))
+    ).data.logs[0];
+    assert.equal(joinLog.actorNickname, '신입대원');
+    assert.equal(joinLog.targetName, '신입대원');
+    assert.equal(joinLog.targetCreatedAt, registered.createdAt);
     await signup.call('/api/bootstrap');
     assert.ok(
       (await deputy.call('/api/admin/approvals')).data.requests.some(
@@ -1028,6 +1047,14 @@ async function run() {
     await second.call('/api/auth/login', 'POST', { loginId: 'user1', password: '1234' });
     await member.call('/api/profile', 'DELETE', { confirm: false }, 400);
     await member.call('/api/profile', 'DELETE', { confirm: true });
+    const leaveLog = (
+      await admin.call(
+        '/api/admin/logs?type=member_leave&q=' + encodeURIComponent('테스트헬다이버'),
+      )
+    ).data.logs[0];
+    assert.equal(leaveLog.targetName, '테스트헬다이버');
+    assert.equal(leaveLog.actorNickname, '테스트헬다이버');
+    assert.ok(leaveLog.targetCreatedAt);
     await second.call('/api/bootstrap', 'GET', undefined, 401);
     await guest.call('/api/auth/login', 'POST', { loginId: 'user1', password: '1234' }, 401);
     assert.equal(

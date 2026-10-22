@@ -3,6 +3,8 @@ import { JSDOM } from 'jsdom';
 import { postSummary } from '../src/lib/post-summary.mjs';
 import { shareMessage } from '../src/lib/kakao-share.js';
 import { sharePreview } from '../src/lib/server/share-preview.mjs';
+import { auditLogList } from '../src/lib/server/audit-logs.mjs';
+import { withdrawMember, settleProbation, startProbation } from '../src/lib/server/probation.mjs';
 import {
   postSnapshot,
   postHistoryDetails,
@@ -78,4 +80,76 @@ db.audit = Array.from({ length: 25 }, (_, index) => ({ ...log, id: String(index)
 assert.equal(postHistoryList(db, new URLSearchParams('page=2')).logs.length, 5);
 console.log(
   'PASS: bounded share excerpts, HTML escaping, private attachment exclusion, revision snapshots, legacy logs, filters and pagination',
+);
+const joinedAt = '2026-10-01T01:00:00Z';
+const member = {
+  id: 'member1',
+  nickname: '가입닉네임',
+  status: 'active',
+  role: 'member',
+  createdAt: joinedAt,
+};
+const membership = { users: [member], posts: [], sessions: [], audit: [] };
+const departure = withdrawMember(membership, member, 'self');
+membership.audit.push({
+  id: 'leave',
+  action: 'user.withdraw',
+  actorId: member.id,
+  targetId: member.id,
+  createdAt: '2026-10-22T01:00:00Z',
+  details: departure,
+});
+membership.audit.push({
+  id: 'join',
+  action: 'user.register',
+  actorId: member.id,
+  targetId: member.id,
+  createdAt: joinedAt,
+  details: { actorNickname: '가입닉네임', targetNickname: '가입닉네임', targetCreatedAt: joinedAt },
+});
+const leaves = auditLogList(membership, new URLSearchParams('type=member_leave')).logs;
+assert.equal(leaves.length, 1);
+assert.equal(leaves[0].targetName, '가입닉네임');
+assert.equal(leaves[0].actorNickname, '가입닉네임');
+assert.equal(leaves[0].targetCreatedAt, joinedAt);
+assert.equal(
+  auditLogList(membership, new URLSearchParams('type=member_join')).logs[0].targetName,
+  '가입닉네임',
+);
+assert.deepEqual(
+  Object.keys(leaves[0]).sort(),
+  [
+    'actorNickname',
+    'automatic',
+    'executedAt',
+    'id',
+    'targetCreatedAt',
+    'targetName',
+    'type',
+  ].sort(),
+);
+assert.ok(!JSON.stringify(leaves).includes('passwordHash'));
+const probation = {
+  id: 'expired1',
+  nickname: '만료대원',
+  status: 'active',
+  role: 'apprentice',
+  createdAt: '2026-01-01T00:00:00Z',
+};
+startProbation(probation);
+membership.users.push(probation);
+settleProbation(membership, '2026-10-22T00:00:00Z');
+const automatic = auditLogList(membership, new URLSearchParams('q=만료대원')).logs[0];
+assert.equal(automatic.actorNickname, '시스템');
+assert.equal(automatic.targetName, '만료대원');
+assert.equal(automatic.automatic, true);
+assert.equal(automatic.targetCreatedAt, probation.createdAt);
+db.audit = Array.from({ length: 25 }, (_, index) => ({ ...log, id: String(index) }));
+assert.equal(auditLogList(db, new URLSearchParams('page=2')).logs.length, 10);
+assert.equal(auditLogList(db, new URLSearchParams('page=3')).logs.length, 5);
+assert.equal(auditLogList(db, new URLSearchParams('type=member_join')).total, 0);
+assert.equal(auditLogList(db, new URLSearchParams('q=새 제목')).total, 25);
+assert.equal(auditLogList(db, new URLSearchParams('page=Infinity')).page, 1);
+console.log(
+  'PASS: compact classified logs, original nicknames after withdrawal, join dates, automatic withdrawal attribution, restricted fields and ten-row pagination',
 );

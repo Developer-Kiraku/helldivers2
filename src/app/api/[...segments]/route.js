@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { randomUUID } from 'node:crypto';
 import { transaction, readStore, audit } from '@/lib/server/store';
 import { config } from '@/lib/server/config';
+import { auditLogList } from '@/lib/server/audit-logs.mjs';
 import {
   postSnapshot,
   postHistoryDetails,
@@ -179,8 +180,8 @@ async function handler(request, context) {
         if (actor.role === 'operator')
           fail(403, '메인 운영자는 직접 탈퇴할 수 없습니다. 운영권 이전 후 처리해주세요.');
         if (input.confirm !== true) fail(400, '탈퇴 확인이 필요합니다.');
-        withdrawMember(db, actor, 'self');
-        audit(db, actor.id, 'user.withdraw', actor.id);
+        const logDetails = withdrawMember(db, actor, 'self');
+        audit(db, actor.id, 'user.withdraw', actor.id, logDetails);
         return { ok: true };
       }
       if (path === 'posts' && method === 'POST') {
@@ -281,6 +282,10 @@ async function handler(request, context) {
           if (input.value) db.votes.push({ postId: post.id, userId: actor.id, value: input.value });
           return { post: serializePost(db, post, actor) };
         }
+      }
+      if (path === 'admin/logs' && method === 'GET') {
+        if (!isStaff(actor.role)) fail(403, '로그 확인은 운영진만 이용할 수 있습니다.');
+        return auditLogList(db, new URL(request.url).searchParams);
       }
       if (segments[0] === 'admin' && segments[1] === 'post-history' && method === 'GET') {
         if (!isStaff(actor.role)) fail(403, '게시글 변경 이력은 운영진만 볼 수 있습니다.');

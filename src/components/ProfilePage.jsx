@@ -152,7 +152,7 @@ export default function ProfilePage() {
               <div className="staff-profile-links">
                 <Link href="/admin/users">회원 리스트 →</Link>
                 <Link href="/admin/approvals">요청 승인 목록 →</Link>
-                <Link href="/admin/post-history">게시글 변경 이력 →</Link>
+                <Link href="/admin/logs">로그 확인 →</Link>
               </div>
             )}
           </section>

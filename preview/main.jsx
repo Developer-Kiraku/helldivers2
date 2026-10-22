@@ -4,7 +4,7 @@ import { UIProvider } from '../src/components/ui';
 import { createRoot } from 'react-dom/client';
 import { useEffect, useState } from 'react';
 import PageSkeleton from '../src/components/PageSkeleton';
-import PostHistoryPage from '../src/components/PostHistoryPage';
+import AuditLogPage from '../src/components/AuditLogPage';
 import { PreviewRouter, usePathname, useRouter } from './router';
 import { PreviewProvider, useCommunity, accounts } from './provider';
 import { nicknamePattern, nicknameFormatMessage, nicknameTakenMessage } from '../src/lib/nicknames';
@@ -103,8 +103,11 @@ function App() {
   else if (!user) page = <LoginPage />;
   else if (path === '/') page = <HomePage />;
   else if (path === '/profile') page = <ProfilePage />;
-  else if (path === '/admin/post-history' && ['operator', 'deputy'].includes(user.role))
-    page = <PostHistoryPage />;
+  else if (
+    ['/admin/logs', '/admin/post-history'].includes(path) &&
+    ['operator', 'deputy'].includes(user.role)
+  )
+    page = <AuditLogPage />;
   else if (path === '/admin/users' && ['operator', 'deputy'].includes(user.role))
     page = <MembersPage />;
   else if (

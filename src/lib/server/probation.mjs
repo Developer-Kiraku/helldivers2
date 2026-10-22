@@ -36,6 +36,11 @@ export function approveApprentice(user, actorId, at = new Date().toISOString()) 
 }
 
 export function withdrawMember(db, user, reason, at = new Date().toISOString()) {
+  const logDetails = {
+    actorNickname: user.nickname,
+    targetNickname: user.nickname,
+    targetCreatedAt: user.createdAt,
+  };
   user.status = 'withdrawn';
   user.nickname = `탈퇴회원_${user.id.slice(-8)}`;
   user.photo = '';
@@ -46,6 +51,7 @@ export function withdrawMember(db, user, reason, at = new Date().toISOString()) 
   user.withdrawalReason = reason;
   user.updatedAt = at;
   db.sessions = db.sessions.filter((session) => session.userId !== user.id);
+  return logDetails;
 }
 
 // Runs before every transaction and on the server's minute timer.
@@ -59,13 +65,13 @@ export function settleProbation(db, at = new Date().toISOString()) {
       changed = true;
     }
     if (Date.parse(user.probationExpiresAt) > Date.parse(at)) continue;
-    withdrawMember(db, user, 'probation_expired', at);
+    const logDetails = withdrawMember(db, user, 'probation_expired', at);
     db.audit.push({
       id: randomUUID(),
       actorId: null,
       action: 'user.withdraw.probation_expired',
       targetId: user.id,
-      details: { deadline: user.probationExpiresAt },
+      details: { ...logDetails, actorNickname: '시스템', deadline: user.probationExpiresAt },
       createdAt: at,
     });
     changed = true;

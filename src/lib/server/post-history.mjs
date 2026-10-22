@@ -10,6 +10,7 @@ export function postSnapshot(post) {
   return {
     board: post.board,
     authorId: post.authorId,
+    createdAt: post.createdAt || null,
     title: post.title,
     category: post.category,
     content: postText(post),
@@ -23,6 +24,7 @@ export function postHistoryDetails(actor, before, after = null, extra = {}) {
   return {
     actorNickname: actor.nickname,
     actorRole: actor.role,
+    targetCreatedAt: before.createdAt,
     before,
     after,
     changedFields: after

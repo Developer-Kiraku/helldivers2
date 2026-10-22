@@ -1,10 +1,6 @@
 @use '../tokens' as t;
 
 /* Shared article/feed sharing dialog. */
-.ui-modal.post-history-modal.rt-DialogContent {
-  width: min(var(--hd-size-1160), calc(100vw - var(--hd-size-28)));
-  max-width: var(--hd-size-1160);
-}
 .share-post-summary {
   color: var(--hd-color-text-muted);
   font-size: var(--hd-font-size-14);
