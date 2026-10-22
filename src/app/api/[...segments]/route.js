@@ -5,6 +5,13 @@ import { randomUUID } from 'node:crypto';
 import { transaction, readStore, audit } from '@/lib/server/store';
 import { config } from '@/lib/server/config';
 import {
+  postSnapshot,
+  postHistoryDetails,
+  postHistoryList,
+  historyEntry,
+  postHistoryActions,
+} from '@/lib/server/post-history.mjs';
+import {
   fail,
   AppError,
   requireUser,
@@ -211,16 +218,30 @@ async function handler(request, context) {
           if (actor.id !== post.authorId) fail(403, '본인이 작성한 게시글만 수정할 수 있습니다.');
           if (post.board === 'notice' && !isStaff(actor.role))
             fail(403, '공지사항 수정 권한이 없습니다.');
+          const before = postSnapshot(post);
           Object.assign(post, cleanPost(input, post.board), { updatedAt: now() });
-          audit(db, actor.id, 'post.update', post.id);
+          audit(
+            db,
+            actor.id,
+            'post.update',
+            post.id,
+            postHistoryDetails(actor, before, postSnapshot(post)),
+          );
           return { post: serializePost(db, post, actor) };
         }
         if (segments.length === 2 && method === 'DELETE') {
           if (!canDeletePost(actor, author)) fail(403, '게시글을 삭제할 권한이 없습니다.');
+          const before = postSnapshot(post);
           post.deletedAt = now();
-          audit(db, actor.id, 'post.delete', post.id, {
-            reason: typeof input.reason === 'string' ? input.reason.slice(0, 1000) : '직접 삭제',
-          });
+          audit(
+            db,
+            actor.id,
+            'post.delete',
+            post.id,
+            postHistoryDetails(actor, before, null, {
+              reason: typeof input.reason === 'string' ? input.reason.slice(0, 1000) : '직접 삭제',
+            }),
+          );
           return { ok: true };
         }
         if (segments[2] === 'comments' && segments.length === 3 && method === 'POST') {
@@ -259,6 +280,17 @@ async function handler(request, context) {
           );
           if (input.value) db.votes.push({ postId: post.id, userId: actor.id, value: input.value });
           return { post: serializePost(db, post, actor) };
+        }
+      }
+      if (segments[0] === 'admin' && segments[1] === 'post-history' && method === 'GET') {
+        if (!isStaff(actor.role)) fail(403, '게시글 변경 이력은 운영진만 볼 수 있습니다.');
+        if (segments.length === 2) return postHistoryList(db, new URL(request.url).searchParams);
+        if (segments.length === 3) {
+          const entry = db.audit.find(
+            (entry) => entry.id === segments[2] && postHistoryActions.includes(entry.action),
+          );
+          if (!entry) fail(404, '변경 이력을 찾을 수 없습니다.');
+          return { log: historyEntry(db, entry, true) };
         }
       }
       if (path === 'admin/users' && method === 'GET') {
@@ -396,8 +428,19 @@ async function handler(request, context) {
             fail(409, '현재 회원 등급 또는 요청자 상태가 변경되어 승인할 수 없습니다.');
           if (item.type === 'post_delete') {
             const post = postForId(db, item.targetId);
+            const before = postSnapshot(post);
             post.deletedAt = now();
-            audit(db, actor.id, 'post.delete.approved', post.id, { requestId: item.id });
+            audit(
+              db,
+              actor.id,
+              'post.delete.approved',
+              post.id,
+              postHistoryDetails(actor, before, null, {
+                requestId: item.id,
+                reason: item.reason,
+                requesterNickname: requester.nickname,
+              }),
+            );
           } else {
             if (target.status !== 'active') fail(409, '이미 탈퇴하거나 강퇴된 회원입니다.');
             target.status = 'expelled';

@@ -8,6 +8,7 @@ import { useCommunity } from './CommunityProvider';
 import { loadKakaoShare, shareMessage } from '@/lib/kakao-share';
 import { site } from '@/lib/site.mjs';
 import { Send } from 'lucide-react';
+import { postSummary } from '@/lib/post-summary.mjs';
 
 export default function PostShare({ post, iconOnly = false }) {
   const { notify } = useCommunity();
@@ -84,6 +85,7 @@ export default function PostShare({ post, iconOnly = false }) {
       {open && (
         <Modal title="게시글 공유" onClose={() => setOpen(false)}>
           <p className="share-post-title">{post.title}</p>
+          <p className="share-post-summary">{postSummary(post)}</p>
           <p className="field-hint">공유받은 게시글은 로그인 후 확인할 수 있어요.</p>
           <div className="post-share-options">
             <Button

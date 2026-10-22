@@ -72,6 +72,10 @@ function MobileBrandHeader({ signedIn, logout, role }) {
                   <Icon name="approvals" />
                   요청 승인 목록
                 </Link>
+                <Link href="/admin/post-history" onClick={() => setOpen(false)}>
+                  <Icon name="approvals" />
+                  게시글 변경 이력
+                </Link>
               </>
             )}
             <div className="full-menu-divider" />
@@ -191,6 +195,13 @@ export default function Shell({ children, previewSkeleton = false }) {
               <Link href="/admin/approvals" className={active('/admin/approvals') ? 'active' : ''}>
                 <Icon name="approvals" />
                 <span>요청 승인 목록</span>
+              </Link>
+              <Link
+                href="/admin/post-history"
+                className={active('/admin/post-history') ? 'active' : ''}
+              >
+                <Icon name="approvals" />
+                <span>게시글 변경 이력</span>
               </Link>
             </>
           )}

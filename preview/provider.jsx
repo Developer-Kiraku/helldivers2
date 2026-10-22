@@ -130,6 +130,8 @@ export function PreviewProvider({ children }) {
   const api = useCallback(
     async (path, options = {}) => {
       if (options.method && options.method !== 'GET') return blocked();
+      if (path.startsWith('admin/post-history?'))
+        return { logs: [], total: 0, page: 1, pageCount: 1 };
       if (path === 'admin/users')
         return {
           users: accounts.map((target) => ({ ...target, ...memberCapabilities(user, target) })),

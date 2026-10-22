@@ -101,6 +101,43 @@ body:has(.guest-content) {
   max-width: var(--hd-size-1160);
   margin: auto;
 }
+.post-history-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--hd-space-16);
+}
+.post-history-filters label {
+  display: grid;
+  gap: var(--hd-space-8);
+  flex: 1;
+  min-width: var(--hd-size-150);
+}
+.post-history-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--hd-space-16);
+  margin-top: var(--hd-space-24);
+}
+.post-history-comparison {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--hd-size-310)), 1fr));
+  gap: var(--hd-space-20);
+}
+.post-history-snapshot {
+  min-width: 0;
+  padding: var(--hd-space-16);
+  border: var(--hd-size-1) solid var(--hd-color-palette-404849);
+  border-radius: var(--hd-radius-6);
+  overflow-wrap: anywhere;
+}
+.post-history-snapshot .preserve-lines {
+  max-height: var(--hd-size-400);
+  overflow: auto;
+  font-size: var(--hd-font-size-14);
+  line-height: var(--hd-leading-1-9);
+}
 .admin-search {
   max-width: var(--hd-size-310);
   font-size: var(--hd-font-size-14);

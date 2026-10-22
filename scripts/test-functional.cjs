@@ -108,6 +108,7 @@ const draft = (board = 'talk', title = '기능 검증 글') => ({
 });
 async function run() {
   await import('./test-application-url.mjs');
+  await import('./test-post-sharing-history.mjs');
   await import('./test-owner-setup.mjs');
   await import('./test-post-html.mjs');
   await import('./test-tiptap.mjs');
@@ -136,6 +137,7 @@ async function run() {
       '/admin/users',
       '/admin/requests',
       '/admin/approvals',
+      '/admin/post-history',
     ]) {
       const { response } = await guest.call(route, 'GET', undefined, 307);
       assert.equal(new URL(response.headers.get('location'), origin).pathname, '/login');
@@ -371,14 +373,18 @@ async function run() {
     for (const board of ['notice', 'guide', 'talk', 'qna']) {
       const post = sharedBoards[board][0];
       assert.match(post.sharePath, /^\/s\/[A-Za-z0-9_-]{16}$/);
-      const anonymous = await guest.call(post.sharePath, 'GET', undefined, 307);
-      assert.equal(new URL(anonymous.response.headers.get('location'), origin).pathname, '/login');
+      const anonymous = await guest.call(post.sharePath);
       assert.match(anonymous.response.headers.get('cache-control'), /no-store/);
       assert.match(anonymous.response.headers.get('set-cookie'), /HttpOnly/);
-      assert.ok(
-        !anonymous.data.includes(post.title),
-        'Private post text must not leak from short links',
+      const { JSDOM } = await import('jsdom');
+      const preview = new JSDOM(anonymous.data).window.document;
+      const { postSummary } = await import('../src/lib/post-summary.mjs');
+      assert.equal(preview.querySelector('meta[property="og:title"]').content, post.title);
+      assert.equal(
+        preview.querySelector('meta[property="og:description"]').content,
+        postSummary(post),
       );
+      assert.equal(preview.querySelector('a').getAttribute('href'), '/login');
       const pendingCookie = anonymous.response.headers.get('set-cookie').split(';')[0];
       const returning = client(`${member.cookie}; ${pendingCookie}`);
       const destination = await returning.call('/', 'GET', undefined, 307);
@@ -517,6 +523,34 @@ async function run() {
     await apprentice.call(`/api/posts/${post.id}`, 'PATCH', draft(), 403);
     await deputy.call(`/api/posts/${post.id}`, 'DELETE', {}, 403);
     await apprentice.call(`/api/posts/${post.id}`, 'DELETE', {}, 403);
+    await guest.call('/api/admin/post-history', 'GET', undefined, 401);
+    await member.call('/api/admin/post-history', 'GET', undefined, 403);
+    await apprentice.call('/api/admin/post-history', 'GET', undefined, 403);
+    await member.call('/admin/post-history', 'GET', undefined, 307);
+    await admin.call('/admin/post-history');
+    const history = (
+      await admin.call('/api/admin/post-history?q=' + encodeURIComponent('수정된 글'))
+    ).data;
+    const updated = history.logs.find((entry) => entry.postId === post.id);
+    assert.ok(updated);
+    assert.ok(!('before' in updated));
+    const detailPath = '/api/admin/post-history/' + updated.id;
+    await guest.call(detailPath, 'GET', undefined, 401);
+    await member.call(detailPath, 'GET', undefined, 403);
+    await deputy.call('/admin/post-history');
+    const revision = (await deputy.call(detailPath)).data.log;
+    assert.equal(revision.before.title, post.title);
+    assert.equal(revision.after.title, '수정된 글');
+    assert.equal(revision.actorNickname, '헬다이버');
+    assert.deepEqual(revision.changedFields, ['title']);
+    await admin.call('/api/admin/post-history/missing', 'GET', undefined, 404);
+    const deletedHistory = (await deputy.call('/api/admin/post-history?action=post.delete')).data;
+    const removed = deletedHistory.logs.find((entry) => entry.postId === removable.id);
+    assert.ok(removed.deleted);
+    assert.equal(
+      (await admin.call('/api/admin/post-history/' + removed.id)).data.log.before.title,
+      '공유 삭제 검증',
+    );
     await member.call('/api/posts', 'POST', { ...draft(), category: '없는 분류' }, 400);
     await member.call(
       '/api/posts',
@@ -709,6 +743,16 @@ async function run() {
     });
     await admin.call(`${requests}/${req.id}/review`, 'POST', { decision: 'approved' }, 409);
     await member.call(`/api/posts/${post.id}`, 'GET', undefined, 404);
+    const approvedHistory = (
+      await admin.call('/api/admin/post-history?action=post.delete.approved')
+    ).data;
+    const approvedDelete = approvedHistory.logs.find((entry) => entry.postId === post.id);
+    assert.equal(approvedDelete.reason, '게시글 검토');
+    assert.equal(approvedDelete.requesterNickname, '부운영자');
+    const deletedRevision = (await admin.call('/api/admin/post-history/' + approvedDelete.id)).data
+      .log;
+    assert.equal(deletedRevision.before.title, '수정된 글');
+    assert.equal(deletedRevision.after, null);
     assert.equal(
       (await admin.call('/api/admin/approvals')).data.requests.find((r) => r.id === req.id).status,
       'approved',
@@ -827,6 +871,7 @@ async function run() {
     ];
     await fs.writeFile(file, JSON.stringify(db));
     await start(file);
+    assert.equal((await admin.call(detailPath)).data.log.before.title, post.title);
     assert.deepEqual(
       (await member.call(`/api/posts/${photoPost.id}`)).data.post.images,
       reorderedPhotos,

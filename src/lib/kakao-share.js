@@ -1,3 +1,4 @@
+import { postSummary } from './post-summary.mjs';
 // JavaScript keys are public browser keys; REST API credentials stay on the server.
 export const kakaoJavaScriptKey = '3d1f509c6041af3403927f3ed4883fed';
 let sdkPromise;
@@ -45,7 +46,7 @@ export function shareMessage(post, url, imageUrl) {
     objectType: 'feed',
     content: {
       title: post.title.slice(0, 100),
-      description: '직장인 헬다이버즈 커뮤니티 · 로그인 후 게시글을 확인해주세요.',
+      description: postSummary(post),
       imageUrl,
       link: { mobileWebUrl: url, webUrl: url },
     },
