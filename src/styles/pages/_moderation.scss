@@ -126,7 +126,7 @@ body:has(.guest-content) {
   flex-wrap: wrap;
   margin-bottom: var(--hd-space-16);
 }
-.audit-log-toolbar > .ui-select {
+.audit-log-toolbar > .ui-select.rt-SelectTrigger {
   width: var(--hd-size-150);
 }
 .audit-log-toolbar .ui-input {
