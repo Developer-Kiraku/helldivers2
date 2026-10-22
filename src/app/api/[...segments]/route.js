@@ -330,7 +330,12 @@ async function handler(request, context) {
           target.status = 'expelled';
           target.updatedAt = now();
           db.sessions = db.sessions.filter((session) => session.userId !== target.id);
-          audit(db, actor.id, 'user.expel', target.id, { reason });
+          audit(db, actor.id, 'user.expel', target.id, {
+            reason,
+            actorNickname: actor.nickname,
+            targetNickname: target.nickname,
+            targetCreatedAt: target.createdAt,
+          });
           return { ok: true };
         }
         if (segments.length === 3 && method === 'PATCH') {
@@ -451,7 +456,13 @@ async function handler(request, context) {
             target.status = 'expelled';
             target.updatedAt = now();
             db.sessions = db.sessions.filter((session) => session.userId !== target.id);
-            audit(db, actor.id, 'user.expel.approved', target.id, { requestId: item.id });
+            audit(db, actor.id, 'user.expel.approved', target.id, {
+              requestId: item.id,
+              reason: item.reason,
+              actorNickname: actor.nickname,
+              targetNickname: target.nickname,
+              targetCreatedAt: target.createdAt,
+            });
           }
         }
         item.status = input.decision;

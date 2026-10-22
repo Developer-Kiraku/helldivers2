@@ -184,9 +184,6 @@ function StandardBoardEditor({ board, id = null }) {
           {(!id || current?.poll) && (
             <PollEditor value={poll} onChange={setPoll} existing={current?.poll} />
           )}
-          {board === 'notice' && (
-            <p className="muted-callout">운영자·부운영자 전용 작성 화면입니다.</p>
-          )}
           <p className="form-error" role="alert">
             {error}
           </p>

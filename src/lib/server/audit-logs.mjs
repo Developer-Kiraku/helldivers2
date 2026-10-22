@@ -1,7 +1,10 @@
 import { auditActionTypes } from '../audit-log-types.mjs';
 
 export function auditLogEntry(db, entry) {
-  const type = auditActionTypes[entry.action];
+  const type =
+    entry.action === 'user.withdraw' && entry.actorId && entry.actorId !== entry.targetId
+      ? 'member_expel'
+      : auditActionTypes[entry.action];
   const details = entry.details || {};
   const actor = db.users.find((user) => user.id === entry.actorId);
   const member = type.startsWith('member_');
@@ -9,6 +12,10 @@ export function auditLogEntry(db, entry) {
     ? db.users.find((user) => user.id === entry.targetId)
     : db.posts.find((post) => post.id === entry.targetId);
   const snapshot = details.after || details.before;
+  const request = details.requestId
+    ? (db.requests || []).find((item) => item.id === details.requestId)
+    : null;
+  const reason = typeof details.reason === 'string' ? details.reason.trim() : '';
   const nickname = (user) => (user?.status === 'withdrawn' ? '탈퇴한 회원' : user?.nickname);
   return {
     id: entry.id,
@@ -21,6 +28,10 @@ export function auditLogEntry(db, entry) {
       ? details.targetNickname || nickname(target) || '정보 없음'
       : snapshot?.title || target?.title || '정보 없음',
     targetCreatedAt: details.targetCreatedAt || snapshot?.createdAt || target?.createdAt || null,
+    reason:
+      reason ||
+      request?.reason ||
+      (entry.action === 'user.withdraw.probation_expired' ? '견습 승인 기한 만료' : ''),
   };
 }
 export function auditLogList(db, parameters) {

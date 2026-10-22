@@ -2,6 +2,16 @@ import { postSummary } from './post-summary.mjs';
 // JavaScript keys are public browser keys; REST API credentials stay on the server.
 export const kakaoJavaScriptKey = '3d1f509c6041af3403927f3ed4883fed';
 let sdkPromise;
+export function isMobileShareDevice(client) {
+  return Boolean(
+    client.userAgentData?.mobile ||
+    /Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Mobile/i.test(client.userAgent || '') ||
+    (client.platform === 'MacIntel' && client.maxTouchPoints > 1),
+  );
+}
+export function supportsKakaoWebShare(sdk, browser) {
+  return typeof sdk?.Share?.sendDefault === 'function' && typeof browser.open === 'function';
+}
 export function loadKakaoShare() {
   if (!sdkPromise)
     sdkPromise = new Promise((resolve, reject) => {

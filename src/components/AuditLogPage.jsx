@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useCommunity } from './CommunityProvider';
 import { Button, Input, Select } from './ui';
 import { auditLogTypes } from '@/lib/audit-log-types.mjs';
@@ -21,6 +21,7 @@ const date = (value, withTime = false) =>
 export default function AuditLogPage() {
   const { api, role } = useCommunity();
   const [type, setType] = useState('all');
+  const [expanded, setExpanded] = useState({});
   const [draft, setDraft] = useState(''),
     [query, setQuery] = useState('');
   const [page, setPage] = useState(1),
@@ -31,6 +32,7 @@ export default function AuditLogPage() {
     if (!isStaff(role)) return;
     let alive = true;
     setLoading(true);
+    setExpanded({});
     setError('');
     const parameters = new URLSearchParams({
       type: type === 'all' ? '' : type,
@@ -129,26 +131,50 @@ export default function AuditLogPage() {
               </tr>
             ) : (
               data.logs.map((entry) => (
-                <tr key={entry.id}>
-                  <td>
-                    {auditLogTypes[entry.type]}
-                    {entry.automatic ? ' (자동)' : ''}
-                  </td>
-                  <td>
-                    <time dateTime={entry.executedAt}>{date(entry.executedAt, true)}</time>
-                  </td>
-                  <td>{entry.actorNickname}</td>
-                  <td className="audit-log-target" title={entry.targetName}>
-                    {entry.targetName}
-                  </td>
-                  <td>
-                    {entry.targetCreatedAt ? (
-                      <time dateTime={entry.targetCreatedAt}>{date(entry.targetCreatedAt)}</time>
-                    ) : (
-                      '정보 없음'
-                    )}
-                  </td>
-                </tr>
+                <Fragment key={entry.id}>
+                  <tr>
+                    <td>
+                      {auditLogTypes[entry.type]}
+                      {entry.automatic ? ' (자동)' : ''}
+                      {entry.reason && (
+                        <Button
+                          type="button"
+                          className="audit-log-reason-toggle"
+                          aria-label={`${entry.targetName} 사유 ${expanded[entry.id] ? '접기' : '보기'}`}
+                          aria-expanded={Boolean(expanded[entry.id])}
+                          aria-controls={`log-reason-${entry.id}`}
+                          onClick={() =>
+                            setExpanded((value) => ({ ...value, [entry.id]: !value[entry.id] }))
+                          }
+                        >
+                          사유 {expanded[entry.id] ? '▴' : '▾'}
+                        </Button>
+                      )}
+                    </td>
+                    <td>
+                      <time dateTime={entry.executedAt}>{date(entry.executedAt, true)}</time>
+                    </td>
+                    <td>{entry.actorNickname}</td>
+                    <td className="audit-log-target" title={entry.targetName}>
+                      {entry.targetName}
+                    </td>
+                    <td>
+                      {entry.targetCreatedAt ? (
+                        <time dateTime={entry.targetCreatedAt}>{date(entry.targetCreatedAt)}</time>
+                      ) : (
+                        '정보 없음'
+                      )}
+                    </td>
+                  </tr>
+                  {entry.reason && expanded[entry.id] && (
+                    <tr className="audit-log-reason-row" id={`log-reason-${entry.id}`}>
+                      <td colSpan={5}>
+                        <strong>사유</strong>
+                        <p>{entry.reason}</p>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               ))
             )}
           </tbody>

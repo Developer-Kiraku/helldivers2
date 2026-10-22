@@ -5,7 +5,12 @@ import Modal from './Modal';
 import Icon from './Icon';
 import KakaoSymbol from './KakaoSymbol';
 import { useCommunity } from './CommunityProvider';
-import { loadKakaoShare, shareMessage } from '@/lib/kakao-share';
+import {
+  loadKakaoShare,
+  shareMessage,
+  isMobileShareDevice,
+  supportsKakaoWebShare,
+} from '@/lib/kakao-share';
 import { site } from '@/lib/site.mjs';
 import { Send } from 'lucide-react';
 import { postSummary } from '@/lib/post-summary.mjs';
@@ -16,10 +21,13 @@ export default function PostShare({ post, iconOnly = false }) {
     [url, setUrl] = useState('');
   const [ready, setReady] = useState(false),
     [error, setError] = useState('');
+  const [mobile, setMobile] = useState(false);
   const input = useRef(null);
   useEffect(() => {
     if (!open) return;
     let alive = true;
+    const mobileDevice = isMobileShareDevice(navigator);
+    setMobile(mobileDevice);
     // Pages is a hash-router preview; its links must retain the repository path.
     const preview = location.hostname.endsWith('github.io');
     setUrl(
@@ -30,7 +38,12 @@ export default function PostShare({ post, iconOnly = false }) {
     setError('');
     setReady(false);
     loadKakaoShare()
-      .then(() => {
+      .then((sdk) => {
+        if (
+          typeof sdk?.Share?.sendDefault !== 'function' ||
+          (!mobileDevice && !supportsKakaoWebShare(sdk, window))
+        )
+          throw Error('이 브라우저에서는 카카오톡 공유를 사용할 수 없습니다. URL을 복사해주세요.');
         if (alive) setReady(true);
       })
       .catch((error) => {
@@ -86,17 +99,19 @@ export default function PostShare({ post, iconOnly = false }) {
         <Modal title="게시글 공유" onClose={() => setOpen(false)}>
           <p className="share-post-title">{post.title}</p>
           <p className="share-post-summary">{postSummary(post)}</p>
-          <p className="field-hint">공유받은 게시글은 로그인 후 확인할 수 있어요.</p>
-          <div className="post-share-options">
-            <Button
-              type="button"
-              className="kakao-share-button"
-              disabled={!ready || !url}
-              onClick={kakaoShare}
-            >
-              <KakaoSymbol size={20} />
-              {ready ? '카카오톡 공유' : '카카오 연결 중…'}
-            </Button>
+          <div className={`post-share-options ${!mobile && !ready ? 'single-option' : ''}`}>
+            {(mobile || ready) && (
+              <Button
+                type="button"
+                className="kakao-share-button"
+                disabled={!ready || !url}
+                onClick={kakaoShare}
+                aria-busy={!ready}
+              >
+                <KakaoSymbol size={20} />
+                {mobile ? '카카오톡 공유' : '카카오톡 공유 (PC)'}
+              </Button>
+            )}
             <Button type="button" disabled={!url} onClick={copy}>
               <Icon name="link" size={18} />
               URL 복사하기

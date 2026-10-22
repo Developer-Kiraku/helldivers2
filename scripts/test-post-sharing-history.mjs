@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 import { postSummary } from '../src/lib/post-summary.mjs';
-import { shareMessage } from '../src/lib/kakao-share.js';
+import {
+  shareMessage,
+  isMobileShareDevice,
+  supportsKakaoWebShare,
+} from '../src/lib/kakao-share.js';
 import { sharePreview } from '../src/lib/server/share-preview.mjs';
 import { auditLogList } from '../src/lib/server/audit-logs.mjs';
 import { withdrawMember, settleProbation, startProbation } from '../src/lib/server/probation.mjs';
@@ -125,6 +129,7 @@ assert.deepEqual(
     'id',
     'targetCreatedAt',
     'targetName',
+    'reason',
     'type',
   ].sort(),
 );
@@ -152,4 +157,51 @@ assert.equal(auditLogList(db, new URLSearchParams('q=새 제목')).total, 25);
 assert.equal(auditLogList(db, new URLSearchParams('page=Infinity')).page, 1);
 console.log(
   'PASS: compact classified logs, original nicknames after withdrawal, join dates, automatic withdrawal attribution, restricted fields and ten-row pagination',
+);
+membership.users.push({ id: 'operator', nickname: '운영자', role: 'operator', status: 'active' });
+membership.requests = [{ id: 'expel-request', reason: '운영 규칙 위반' }];
+membership.audit.push({
+  id: 'expel1',
+  action: 'user.expel.approved',
+  actorId: 'operator',
+  targetId: member.id,
+  createdAt: joinedAt,
+  details: { requestId: 'expel-request', targetNickname: '강퇴대원', targetCreatedAt: joinedAt },
+});
+membership.audit.push({
+  id: 'expel2',
+  action: 'user.expel',
+  actorId: 'operator',
+  targetId: member.id,
+  createdAt: joinedAt,
+  details: { reason: '직접 강퇴 사유' },
+});
+membership.audit.push({
+  id: 'legacy-forced',
+  action: 'user.withdraw',
+  actorId: 'operator',
+  targetId: member.id,
+  createdAt: joinedAt,
+  details: {},
+});
+const expulsions = auditLogList(membership, new URLSearchParams('type=member_expel'));
+assert.equal(expulsions.total, 3);
+assert.equal(expulsions.logs.find((entry) => entry.id === 'expel1').reason, '운영 규칙 위반');
+assert.equal(expulsions.logs.find((entry) => entry.id === 'expel2').reason, '직접 강퇴 사유');
+assert.equal(expulsions.logs.find((entry) => entry.id === 'legacy-forced').type, 'member_expel');
+assert.equal(
+  isMobileShareDevice({ userAgent: 'Mozilla Windows NT Chrome', platform: 'Win32' }),
+  false,
+);
+assert.equal(isMobileShareDevice({ userAgent: 'Mozilla Android Mobile' }), true);
+assert.equal(isMobileShareDevice({ userAgent: 'Mozilla iPhone' }), true);
+assert.equal(
+  isMobileShareDevice({ userAgent: 'Mozilla Mac', platform: 'MacIntel', maxTouchPoints: 5 }),
+  true,
+);
+assert.equal(supportsKakaoWebShare({ Share: { sendDefault() {} } }, { open() {} }), true);
+assert.equal(supportsKakaoWebShare({ Share: {} }, { open() {} }), false);
+assert.equal(supportsKakaoWebShare({ Share: { sendDefault() {} } }, {}), false);
+console.log(
+  'PASS: direct/approved expulsion labels, legacy requests and reasons, mobile device detection and desktop SDK capability checks',
 );

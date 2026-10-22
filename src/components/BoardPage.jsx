@@ -210,16 +210,6 @@ function StandardBoardPage({ board }) {
             </Button>
           )}
         </div>
-        {!isFeed && (
-          <p className="muted-callout">
-            {board === 'notice'
-              ? '공지사항 작성은 운영자와 부운영자만 가능합니다.'
-              : '로그인한 모든 회원이 공략을 작성할 수 있습니다. 분류는 관리자 페이지에서 관리합니다.'}
-          </p>
-        )}
-        <p className="design-note">
-          회원 전용 게시판 · 게시글과 변경 내용은 JSON 저장소에 보관됩니다.
-        </p>
         {filterOpen && (
           <BoardSearchFilter
             value={filters}

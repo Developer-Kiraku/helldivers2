@@ -20,6 +20,9 @@
   gap: var(--hd-space-12);
   margin: var(--hd-space-22) 0;
 }
+.post-share-options.single-option {
+  grid-template-columns: 1fr;
+}
 .post-share-options .ui-button {
   min-height: var(--hd-size-46);
   font-size: var(--hd-font-size-14);

@@ -131,7 +131,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-      <p className="design-note">비공식 팬 커뮤니티 · 회원 전용 작전실</p>
     </div>
   );
 }

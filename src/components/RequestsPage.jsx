@@ -172,10 +172,6 @@ export default function RequestsPage() {
                 </>
               )}
             </dl>
-            <details className="request-json">
-              <summary>요청 데이터 보기</summary>
-              <pre>{JSON.stringify(item, null, 2)}</pre>
-            </details>
             <footer>
               {item.board && (
                 <ActionLink

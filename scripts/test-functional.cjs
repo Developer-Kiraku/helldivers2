@@ -109,6 +109,7 @@ const draft = (board = 'talk', title = '기능 검증 글') => ({
 async function run() {
   await import('./test-application-url.mjs');
   await import('./test-post-sharing-history.mjs');
+  await import('./test-admin-share-ui.mjs');
   await import('./test-owner-setup.mjs');
   await import('./test-post-html.mjs');
   await import('./test-tiptap.mjs');
@@ -144,6 +145,11 @@ async function run() {
       assert.equal(new URL(response.headers.get('location'), origin).pathname, '/login');
     }
     await guest.call('/login');
+    const sharingHeaders = (await guest.call('/login')).response.headers;
+    assert.match(
+      sharingHeaders.get('content-security-policy'),
+      /form-action 'self' https:\/\/kauth\.kakao\.com https:\/\/sharer\.kakao\.com(?:;|$)/,
+    );
     await guest.call('/signup');
     await guest.call('/api/bootstrap', 'GET', undefined, 401);
     await guest.call('/api/admin/requests', 'GET', undefined, 401);
@@ -820,6 +826,11 @@ async function run() {
     assert.equal(expelled.canExpel, false);
     assert.equal(expelled.canChangeRole, false);
     assert.equal(expelled.canApprove, false);
+    const expelLogs = (await admin.call('/api/admin/logs?type=member_expel')).data.logs;
+    const expelledLog = expelLogs.find((entry) => entry.targetName === '견습헬다이버');
+    assert.equal(expelledLog.reason, '강퇴 승인 테스트');
+    assert.equal(expelledLog.actorNickname, '라미아');
+    assert.ok(expelledLog.targetCreatedAt);
     await admin.call(`/api/posts/${notice.id}`, 'DELETE', {});
     await deputy.call(`/api/posts/${notice.id}`, 'GET', undefined, 404);
     const own = (await member.call('/api/posts', 'POST', draft())).data.post;

@@ -15,7 +15,7 @@ const config = {
           {
             key: 'Content-Security-Policy',
             value:
-              "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self' https://kauth.kakao.com",
+              "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self' https://kauth.kakao.com https://sharer.kakao.com",
           },
         ],
       },

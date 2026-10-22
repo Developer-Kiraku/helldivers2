@@ -330,10 +330,7 @@ const RichTextEditor = forwardRef(function RichTextEditor(
         aria-label="본문 이미지 선택"
       />
       {processingImage && <p role="status">이미지를 축소·압축하고 있습니다…</p>}
-      <p className="field-hint">
-        글자 크기 12~72px · 1px 단위 / 유튜브 주소 붙여넣기로 삽입 / 이미지 최대 5개 · 원본 최대
-        20MB · 가로 1,600px 초과 시 자동 축소·압축
-      </p>
+      <p className="field-hint">이미지 최대 5장 · JPG·PNG·WebP · 장당 최대 20MB</p>
       {dialog && (
         <Modal
           title={dialog === 'youtube' ? '유튜브 동영상 넣기' : '본문에 링크 넣기'}
