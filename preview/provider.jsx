@@ -130,6 +130,13 @@ export function PreviewProvider({ children }) {
   const api = useCallback(
     async (path, options = {}) => {
       if (options.method && options.method !== 'GET') return blocked();
+      if (path === 'integrations/kakao') return { javaScriptKey: '', configured: false };
+      if (path === 'admin/api-keys')
+        return {
+          kakao: { javaScriptKey: '', configured: false, source: '미리보기' },
+          serverKeys: [],
+          origin: 'https://helldivers2.onrender.com',
+        };
       if (path.startsWith('admin/logs?') || path.startsWith('admin/post-history?'))
         return { logs: [], total: 0, page: 1, pageCount: 1 };
       if (path === 'admin/users')

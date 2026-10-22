@@ -4,6 +4,7 @@ import { UIProvider } from '../src/components/ui';
 import { createRoot } from 'react-dom/client';
 import { useEffect, useState } from 'react';
 import PageSkeleton from '../src/components/PageSkeleton';
+import ApiKeysPage from '../src/components/ApiKeysPage';
 import AuditLogPage from '../src/components/AuditLogPage';
 import { PreviewRouter, usePathname, useRouter } from './router';
 import { PreviewProvider, useCommunity, accounts } from './provider';
@@ -102,6 +103,7 @@ function App() {
   else if (path === '/signup') page = <SignupPage />;
   else if (!user) page = <LoginPage />;
   else if (path === '/') page = <HomePage />;
+  else if (path === '/admin/api-keys' && user.role === 'operator') page = <ApiKeysPage />;
   else if (path === '/profile') page = <ProfilePage />;
   else if (
     ['/admin/logs', '/admin/post-history'].includes(path) &&

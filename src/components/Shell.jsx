@@ -76,6 +76,12 @@ function MobileBrandHeader({ signedIn, logout, role }) {
                   <Icon name="approvals" />
                   로그 확인
                 </Link>
+                {role === 'operator' && (
+                  <Link href="/admin/api-keys" onClick={() => setOpen(false)}>
+                    <Icon name="approvals" />
+                    API 키 관리
+                  </Link>
+                )}
               </>
             )}
             <div className="full-menu-divider" />
@@ -200,6 +206,12 @@ export default function Shell({ children, previewSkeleton = false }) {
                 <Icon name="approvals" />
                 <span>로그 확인</span>
               </Link>
+              {role === 'operator' && (
+                <Link href="/admin/api-keys" className={active('/admin/api-keys') ? 'active' : ''}>
+                  <Icon name="approvals" />
+                  <span>API 키 관리</span>
+                </Link>
+              )}
             </>
           )}
         </nav>

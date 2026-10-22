@@ -153,6 +153,7 @@ export default function ProfilePage() {
                 <Link href="/admin/users">회원 리스트 →</Link>
                 <Link href="/admin/approvals">요청 승인 목록 →</Link>
                 <Link href="/admin/logs">로그 확인 →</Link>
+                {user?.role === 'operator' && <Link href="/admin/api-keys">API 키 관리 →</Link>}
               </div>
             )}
           </section>

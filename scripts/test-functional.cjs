@@ -148,7 +148,7 @@ async function run() {
     const sharingHeaders = (await guest.call('/login')).response.headers;
     assert.match(
       sharingHeaders.get('content-security-policy'),
-      /form-action 'self' https:\/\/kauth\.kakao\.com https:\/\/sharer\.kakao\.com(?:;|$)/,
+      /form-action 'self' https:\/\/kauth\.kakao\.com https:\/\/sharer\.kakao\.com https:\/\/accounts\.kakao\.com(?:;|$)/,
     );
     await guest.call('/signup');
     await guest.call('/api/bootstrap', 'GET', undefined, 401);
@@ -311,6 +311,26 @@ async function run() {
     assert.equal(tenPhotos.images.length, 10);
     await apprentice.call(`/api/posts/${tenPhotos.id}`, 'DELETE', {});
     await member.call(`/api/posts/${tenPhotos.id}`, 'GET', undefined, 404);
+    await admin.call('/admin/api-keys');
+    await deputy.call('/admin/api-keys', 'GET', undefined, 307);
+    await guest.call('/api/admin/api-keys', 'GET', undefined, 401);
+    for (const other of [member, deputy]) {
+      await other.call('/api/admin/api-keys', 'GET', undefined, 403);
+      await other.call('/api/admin/api-keys', 'PATCH', { javaScriptKey: 'a'.repeat(32) }, 403);
+    }
+    const initialKeys = (await admin.call('/api/admin/api-keys')).data;
+    assert.equal(initialKeys.kakao.configured, true);
+    assert.ok(initialKeys.serverKeys.every((item) => !('value' in item)));
+    await admin.call('/api/admin/api-keys', 'PATCH', { javaScriptKey: 'invalid' }, 400);
+    const newKey = 'b'.repeat(32);
+    await admin.call('/api/admin/api-keys', 'PATCH', { javaScriptKey: ' ' + newKey + ' ' });
+    assert.equal((await member.call('/api/integrations/kakao')).data.javaScriptKey, newKey);
+    await admin.call('/api/admin/api-keys', 'PATCH', { javaScriptKey: '' });
+    assert.equal((await member.call('/api/integrations/kakao')).data.configured, false);
+    await admin.call('/api/admin/api-keys', 'PATCH', {
+      javaScriptKey: initialKeys.kakao.javaScriptKey,
+    });
+    assert.ok((await admin.call('/api/admin/api-keys')).data.updatedAt);
     await admin.call('/admin/users');
     await admin.call('/admin/requests', 'GET', undefined, 307);
     await admin.call('/admin/approvals');

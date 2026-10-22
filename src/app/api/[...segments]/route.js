@@ -1,3 +1,4 @@
+import { apiKeySettings, kakaoShareSettings } from '@/lib/server/api-keys';
 import { boards } from '@/lib/data';
 import { createPoll, castBallot, serializePoll, pollClosed } from '@/lib/server/polls';
 import { NextResponse } from 'next/server';
@@ -167,6 +168,27 @@ async function handler(request, context) {
     }
     const result = await transaction((db) => {
       const actor = requireUser(db, token);
+      if (path === 'integrations/kakao' && method === 'GET') {
+        const { javaScriptKey, configured } = kakaoShareSettings(db);
+        return { javaScriptKey, configured };
+      }
+      if (path === 'admin/api-keys') {
+        if (actor.role !== 'operator') fail(403, '메인 운영자만 API 키를 관리할 수 있습니다.');
+        if (method === 'GET') return apiKeySettings(db);
+        if (method === 'PATCH') {
+          if (typeof input.javaScriptKey !== 'string') fail(400, 'JavaScript 키를 입력해주세요.');
+          const key = input.javaScriptKey.trim();
+          if (key && !/^[a-f0-9]{32}$/i.test(key))
+            fail(400, 'JavaScript 키는 32자리 영문·숫자(16진수)입니다.');
+          db.integrationSettings = {
+            ...db.integrationSettings,
+            kakaoJavaScriptKey: key,
+            updatedAt: now(),
+          };
+          audit(db, actor.id, 'settings.api_keys.update', 'kakao', { configured: Boolean(key) });
+          return apiKeySettings(db);
+        }
+      }
       if (path === 'bootstrap' && method === 'GET') return bootstrap(db, actor);
       if (path === 'profile' && method === 'PATCH') {
         if (input.nickname !== undefined)

@@ -205,3 +205,30 @@ assert.equal(supportsKakaoWebShare({ Share: { sendDefault() {} } }, {}), false);
 console.log(
   'PASS: direct/approved expulsion labels, legacy requests and reasons, mobile device detection and desktop SDK capability checks',
 );
+
+const { sendKakaoShare, loadKakaoShare } = await import('../src/lib/kakao-share.js');
+const popupBrowser = { open: () => null };
+const savedOpen = popupBrowser.open;
+assert.throws(
+  () => sendKakaoShare({ Share: { sendDefault: () => popupBrowser.open() } }, {}, popupBrowser),
+  /차단/,
+);
+assert.equal(popupBrowser.open, savedOpen);
+assert.throws(
+  () =>
+    sendKakaoShare(
+      {
+        Share: {
+          sendDefault: () => {
+            throw Error('SDK error');
+          },
+        },
+      },
+      {},
+      popupBrowser,
+    ),
+  /SDK error/,
+);
+assert.equal(popupBrowser.open, savedOpen);
+await assert.rejects(loadKakaoShare(''), /키가 등록되지/);
+console.log('PASS: blocked popup feedback, window.open restoration and missing-key rejection');

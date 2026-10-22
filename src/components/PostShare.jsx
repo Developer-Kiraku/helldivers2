@@ -7,6 +7,7 @@ import KakaoSymbol from './KakaoSymbol';
 import { useCommunity } from './CommunityProvider';
 import {
   loadKakaoShare,
+  sendKakaoShare,
   shareMessage,
   isMobileShareDevice,
   supportsKakaoWebShare,
@@ -16,7 +17,7 @@ import { Send } from 'lucide-react';
 import { postSummary } from '@/lib/post-summary.mjs';
 
 export default function PostShare({ post, iconOnly = false }) {
-  const { notify } = useCommunity();
+  const { notify, api } = useCommunity();
   const [open, setOpen] = useState(false),
     [url, setUrl] = useState('');
   const [ready, setReady] = useState(false),
@@ -37,7 +38,8 @@ export default function PostShare({ post, iconOnly = false }) {
     );
     setError('');
     setReady(false);
-    loadKakaoShare()
+    api('integrations/kakao')
+      .then(({ javaScriptKey }) => loadKakaoShare(javaScriptKey))
       .then((sdk) => {
         if (
           typeof sdk?.Share?.sendDefault !== 'function' ||
@@ -52,7 +54,7 @@ export default function PostShare({ post, iconOnly = false }) {
     return () => {
       alive = false;
     };
-  }, [open, post.id, post.board, post.sharePath]);
+  }, [open, post.id, post.board, post.sharePath, api]);
   function kakaoShare() {
     try {
       const imageUrl = new URL(
@@ -61,10 +63,13 @@ export default function PostShare({ post, iconOnly = false }) {
           ? `${location.origin}${location.pathname}`
           : `${location.origin}/`,
       ).href;
-      window.Kakao.Share.sendDefault(shareMessage(post, url, imageUrl));
-    } catch {
+      const payload = shareMessage(post, url, imageUrl);
+      if (mobile) window.Kakao.Share.sendDefault(payload);
+      else sendKakaoShare(window.Kakao, payload, window);
+    } catch (error) {
       setError(
-        '카카오 공유를 열지 못했습니다. 팝업 허용 및 카카오 앱의 웹 도메인 설정을 확인해주세요.',
+        error.message ||
+          '카카오 공유를 열지 못했습니다. 팝업 허용 및 카카오 앱의 웹 도메인 설정을 확인해주세요.',
       );
     }
   }
@@ -109,7 +114,7 @@ export default function PostShare({ post, iconOnly = false }) {
                 aria-busy={!ready}
               >
                 <KakaoSymbol size={20} />
-                {mobile ? '카카오톡 공유' : '카카오톡 공유 (PC)'}
+                카카오톡 공유
               </Button>
             )}
             <Button type="button" disabled={!url} onClick={copy}>

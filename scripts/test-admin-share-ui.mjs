@@ -70,22 +70,25 @@ try {
   window.__community = {
     role: 'operator',
     notify() {},
-    api: async () => ({
-      logs: [
-        {
-          id: 'reason-log',
-          type: 'member_expel',
-          actorNickname: '운영자',
-          targetName: '강퇴대원',
-          executedAt: '2026-10-22T10:00:00Z',
-          targetCreatedAt: '2026-10-01T00:00:00Z',
-          reason: '<script>unsafe</script> 사유',
-        },
-      ],
-      total: 1,
-      page: 1,
-      pageCount: 1,
-    }),
+    api: async (path) =>
+      path === 'integrations/kakao'
+        ? { javaScriptKey: 'a'.repeat(32) }
+        : {
+            logs: [
+              {
+                id: 'reason-log',
+                type: 'member_expel',
+                actorNickname: '운영자',
+                targetName: '강퇴대원',
+                executedAt: '2026-10-22T10:00:00Z',
+                targetCreatedAt: '2026-10-01T00:00:00Z',
+                reason: '<script>unsafe</script> 사유',
+              },
+            ],
+            total: 1,
+            page: 1,
+            pageCount: 1,
+          },
   };
   root = createRoot(document.getElementById('test'));
   await React.act(async () => root.render(React.createElement(AuditLogPage)));
@@ -117,14 +120,14 @@ try {
   const post = { id: 'post', board: 'guide', title: '공유 제목', content: '공유 요약' };
   await React.act(async () => root.render(React.createElement(PostShare, { post })));
   await click(button('공유'));
-  assert.ok(button('카카오톡 공유 (PC)'));
-  await click(button('카카오톡 공유 (PC)'));
+  assert.ok(button('카카오톡 공유'));
+  await click(button('카카오톡 공유'));
   assert.equal(sent.length, 1);
   assert.equal(sent[0].content.description, '공유 요약');
   await click(button('닫기'));
   delete sdk.Share.sendDefault;
   await click(button('공유'));
-  assert.ok(!button('카카오톡 공유 (PC)'));
+  assert.ok(!button('카카오톡 공유'));
   assert.ok(button('URL 복사하기'));
   await click(button('닫기'));
   Object.defineProperty(navigator, 'userAgent', {
