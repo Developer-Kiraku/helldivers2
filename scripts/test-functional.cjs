@@ -312,6 +312,15 @@ async function run() {
     await apprentice.call(`/api/posts/${tenPhotos.id}`, 'DELETE', {});
     await member.call(`/api/posts/${tenPhotos.id}`, 'GET', undefined, 404);
     await admin.call('/admin/api-keys');
+    for (const [account, visible] of [
+      [admin, true],
+      [deputy, false],
+      [member, false],
+      [apprentice, false],
+    ]) {
+      const page = (await account.call('/profile')).data;
+      assert.equal(page.includes('href="/admin/api-keys"'), visible);
+    }
     await deputy.call('/admin/api-keys', 'GET', undefined, 307);
     await guest.call('/api/admin/api-keys', 'GET', undefined, 401);
     for (const other of [member, deputy]) {
@@ -654,6 +663,34 @@ async function run() {
     assert.equal(voted.likes, 0);
     assert.equal(voted.dislikes, 1);
     assert.equal(voted.myVote, -1);
+    const voteLogTitle = '추천 로그 검증 전용 글';
+    const voteLogPost = (await admin.call('/api/posts', 'POST', draft('talk', voteLogTitle))).data
+      .post;
+    for (const value of [0, 1, 1, 0, 0, -1, -1, 0, 1, -1])
+      await member.call(`/api/posts/${voteLogPost.id}/vote`, 'POST', { value });
+    const voteQuery = encodeURIComponent(voteLogTitle);
+    const voteLogs = (await admin.call(`/api/admin/logs?q=${voteQuery}`)).data;
+    assert.equal(voteLogs.total, 6);
+    for (const [type, count] of [
+      ['post_like', 2],
+      ['post_dislike', 2],
+      ['post_like_cancel', 1],
+      ['post_dislike_cancel', 1],
+    ]) {
+      const filtered = (await deputy.call(`/api/admin/logs?type=${type}&q=${voteQuery}`)).data;
+      assert.equal(filtered.total, count);
+      assert.ok(
+        filtered.logs.every(
+          (entry) =>
+            entry.type === type &&
+            entry.targetName === voteLogTitle &&
+            entry.actorNickname === profile.nickname &&
+            entry.targetCreatedAt === voteLogPost.createdAt,
+        ),
+      );
+    }
+    await member.call(`/api/posts/${voteLogPost.id}/vote`, 'POST', { value: 2 }, 400);
+    assert.equal((await admin.call(`/api/admin/logs?q=${voteQuery}`)).data.total, 6);
     // Polls keep ballots separate from recommendation votes and never expose anonymous identities.
     const pollDraft = {
       question: '오늘의 작전 시간?',

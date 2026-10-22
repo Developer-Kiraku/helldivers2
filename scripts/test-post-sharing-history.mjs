@@ -232,3 +232,30 @@ assert.throws(
 assert.equal(popupBrowser.open, savedOpen);
 await assert.rejects(loadKakaoShare(''), /키가 등록되지/);
 console.log('PASS: blocked popup feedback, window.open restoration and missing-key rejection');
+
+const voteHistory = {
+  users: [{ id: 'voter', nickname: '탈퇴한 회원', status: 'withdrawn' }],
+  posts: [],
+  audit: ['like', 'dislike', 'like_cancel', 'dislike_cancel'].map((action, index) => ({
+    id: `vote-${index}`,
+    action: `post.vote.${action}`,
+    actorId: 'voter',
+    targetId: 'removed-post',
+    createdAt: `2026-10-23T10:00:0${index}Z`,
+    details: {
+      actorNickname: '원래 대원',
+      targetTitle: '원래 글 제목',
+      targetCreatedAt: '2026-10-01T00:00:00Z',
+    },
+  })),
+};
+for (const type of ['post_like', 'post_dislike', 'post_like_cancel', 'post_dislike_cancel']) {
+  const result = auditLogList(voteHistory, new URLSearchParams({ type, q: '원래 대원' }));
+  assert.equal(result.total, 1);
+  assert.equal(result.logs[0].targetName, '원래 글 제목');
+  assert.equal(result.logs[0].targetCreatedAt, '2026-10-01T00:00:00Z');
+  assert.equal(result.logs[0].actorNickname, '원래 대원');
+}
+console.log(
+  'PASS: classified vote/cancellation history retains original nickname, title and post creation date',
+);

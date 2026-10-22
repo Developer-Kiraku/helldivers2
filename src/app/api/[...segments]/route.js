@@ -298,10 +298,30 @@ async function handler(request, context) {
           if (![0, 1, -1].includes(input.value)) fail(400, '추천 값을 확인해주세요.');
           if (post.board === 'helstagram' && input.value === -1)
             fail(400, '헬스타그램은 좋아요만 사용할 수 있습니다.');
+          const previousValue =
+            db.votes.find((vote) => vote.userId === actor.id && vote.postId === post.id)?.value ||
+            0;
           db.votes = db.votes.filter(
             (vote) => !(vote.userId === actor.id && vote.postId === post.id),
           );
           if (input.value) db.votes.push({ postId: post.id, userId: actor.id, value: input.value });
+          if (previousValue !== input.value) {
+            const action =
+              input.value === 1
+                ? 'like'
+                : input.value === -1
+                  ? 'dislike'
+                  : previousValue === 1
+                    ? 'like_cancel'
+                    : 'dislike_cancel';
+            audit(db, actor.id, `post.vote.${action}`, post.id, {
+              actorNickname: actor.nickname,
+              targetTitle: post.title,
+              targetCreatedAt: post.createdAt,
+              previousValue,
+              value: input.value,
+            });
+          }
           return { post: serializePost(db, post, actor) };
         }
       }

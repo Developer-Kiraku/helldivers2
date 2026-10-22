@@ -26,7 +26,7 @@ export function auditLogEntry(db, entry) {
       details.actorNickname || (entry.actorId ? nickname(actor) || '정보 없음' : '시스템'),
     targetName: member
       ? details.targetNickname || nickname(target) || '정보 없음'
-      : snapshot?.title || target?.title || '정보 없음',
+      : details.targetTitle || snapshot?.title || target?.title || '정보 없음',
     targetCreatedAt: details.targetCreatedAt || snapshot?.createdAt || target?.createdAt || null,
     reason:
       reason ||
