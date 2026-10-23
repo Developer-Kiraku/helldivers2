@@ -101,6 +101,12 @@ export function CommunityProvider({ children, initialUser = null }) {
     await refresh();
     return data.post.id;
   }
+  async function setViewRole(role) {
+    const data = await api('profile/view-role', { method: 'POST', body: { role } });
+    setUser(data.user);
+    await refresh();
+    router.refresh();
+  }
   const signedIn = Boolean(user),
     role = user?.role || null,
     profile = user ? { nickname: user.nickname, photo: user.photo } : { nickname: '', photo: '' };
@@ -110,6 +116,8 @@ export function CommunityProvider({ children, initialUser = null }) {
         user,
         signedIn,
         role,
+        actualRole: user?.actualRole || role,
+        setViewRole,
         profile,
         posts,
         stats,

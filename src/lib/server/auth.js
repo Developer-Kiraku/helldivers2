@@ -1,4 +1,5 @@
 import { validSharePath } from './share-links.mjs';
+import { presentationUser, viewRoleCookie } from '../view-role.mjs';
 import 'server-only';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -41,6 +42,7 @@ export function publicUser(user) {
     id: user.id,
     loginId: user.loginId || null,
     role: user.role,
+    actualRole: user.actualRole || user.role,
     nickname: user.nickname,
     photo: user.photo,
     kakao: user.kakao ? { id: user.kakao.id, connectedAt: user.kakao.connectedAt } : null,
@@ -80,18 +82,24 @@ export function createSession(db, user) {
   user.lastLoginAt = now;
   return token;
 }
-export const setSessionCookie = (response, token) =>
+export const setSessionCookie = (response, token) => {
   response.cookies.set(config.cookie, token, {
     ...cookieOptions,
     maxAge: config.sessionHours * 3600,
   });
-export const clearSessionCookie = (response) =>
+  response.cookies.set(viewRoleCookie, '', { ...cookieOptions, maxAge: 0 });
+};
+export const clearSessionCookie = (response) => {
   response.cookies.set(config.cookie, '', { ...cookieOptions, maxAge: 0 });
+  response.cookies.set(viewRoleCookie, '', { ...cookieOptions, maxAge: 0 });
+};
 export async function getCurrentUser() {
   const cookieStore = await cookies();
   const token = cookieStore.get(config.cookie)?.value;
   if (!token) return null;
-  return readStore((db) => publicUser(userForToken(db, token)));
+  return readStore((db) =>
+    publicUser(presentationUser(userForToken(db, token), cookieStore.get(viewRoleCookie)?.value)),
+  );
 }
 export async function requirePageUser(roles) {
   const user = await getCurrentUser();

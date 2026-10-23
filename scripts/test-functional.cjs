@@ -311,6 +311,46 @@ async function run() {
     assert.equal(tenPhotos.images.length, 10);
     await apprentice.call(`/api/posts/${tenPhotos.id}`, 'DELETE', {});
     await member.call(`/api/posts/${tenPhotos.id}`, 'GET', undefined, 404);
+    // Preview cookies affect presentation only and never change stored membership.
+    await guest.call('/api/profile/view-role', 'POST', { role: 'member' }, 401);
+    for (const other of [member, deputy, apprentice])
+      await other.call('/api/profile/view-role', 'POST', { role: 'operator' }, 403);
+    await admin.call('/api/profile/view-role', 'POST', { role: 'guest' }, 400);
+    const viewing = client(admin.cookie);
+    for (const role of ['deputy', 'member', 'apprentice']) {
+      const result = await viewing.call('/api/profile/view-role', 'POST', { role });
+      const viewCookie = result.response.headers
+        .getSetCookie()
+        .find((value) => value.startsWith('hd_view_role='));
+      assert.match(viewCookie, /HttpOnly/);
+      assert.match(viewCookie, /SameSite=lax/i);
+      viewing.cookie = admin.cookie + '; ' + viewCookie.split(';')[0];
+      const screen = (await viewing.call('/api/bootstrap')).data;
+      assert.equal(screen.user.role, role);
+      assert.equal(screen.user.actualRole, 'operator');
+      assert.equal((await admin.call('/api/auth/me')).data.user.role, 'operator');
+      const dashboard = (await viewing.call('/')).data;
+      assert.ok(dashboard.includes('화면 확인용 회원등급'));
+      assert.ok(!dashboard.includes('href="/admin/api-keys"'));
+      await viewing.call('/api/admin/api-keys', 'GET', undefined, 403);
+      await viewing.call('/admin/api-keys', 'GET', undefined, 307);
+      await viewing.call('/api/profile', 'PATCH', { nickname: '변경되면안됨' }, 403);
+      await viewing.call('/api/posts', 'POST', draft(), 403);
+      await viewing.call('/api/ai/polish', 'POST', {}, 403);
+      await viewing.call('/api/admin/users', 'GET', undefined, role === 'deputy' ? 200 : 403);
+    }
+    const restoredView = await viewing.call('/api/profile/view-role', 'POST', { role: 'operator' });
+    assert.equal(restoredView.data.user.role, 'operator');
+    assert.ok(
+      restoredView.response.headers
+        .getSetCookie()
+        .some((value) => value.startsWith('hd_view_role=;') && value.includes('Max-Age=0')),
+    );
+    viewing.cookie = admin.cookie;
+    await viewing.call('/api/admin/api-keys');
+    const forgedPreview = client(member.cookie + '; hd_view_role=operator');
+    assert.equal((await forgedPreview.call('/api/bootstrap')).data.user.role, 'member');
+    await forgedPreview.call('/api/admin/api-keys', 'GET', undefined, 403);
     await admin.call('/admin/api-keys');
     for (const [account, visible] of [
       [admin, true],

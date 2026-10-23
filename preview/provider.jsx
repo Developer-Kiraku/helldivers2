@@ -1,3 +1,4 @@
+import { presentationUser } from '../src/lib/view-role.mjs';
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { posts as examples } from '../src/lib/data';
 import { isStaff, outranks, memberCapabilities } from '../src/lib/roles';
@@ -82,13 +83,32 @@ export function PreviewProvider({ children }) {
     }),
     [toast, setToast] = useState('');
   const timer = useRef(null);
-  const user = accounts.find((item) => item.loginId === account) || null;
+  const [viewRole, changeViewRole] = useState(() => {
+    try {
+      return sessionStorage.getItem('hd-pages-view-role') || 'operator';
+    } catch {
+      return 'operator';
+    }
+  });
+  const actualUser = accounts.find((item) => item.loginId === account) || null;
+  const user = presentationUser(actualUser, viewRole);
+  async function setViewRole(role) {
+    if (actualUser?.role !== 'operator') return;
+    changeViewRole(role);
+    try {
+      sessionStorage.setItem('hd-pages-view-role', role);
+    } catch {}
+  }
   const notify = useCallback((message) => {
     clearTimeout(timer.current);
     setToast(message);
     timer.current = setTimeout(() => setToast(''), 4000);
   }, []);
   function chooseAccount(loginId) {
+    changeViewRole('operator');
+    try {
+      sessionStorage.removeItem('hd-pages-view-role');
+    } catch {}
     setAccount(loginId || 'guest');
     try {
       sessionStorage.setItem('hd-pages-account', loginId || 'guest');
@@ -222,6 +242,8 @@ export function PreviewProvider({ children }) {
     user,
     signedIn: Boolean(user),
     role: user?.role || null,
+    actualRole: actualUser?.role || null,
+    setViewRole,
     profile: user || { nickname: '', photo: '' },
     posts,
     stats: { totalMembers: 4, onlineMembers: 3 },

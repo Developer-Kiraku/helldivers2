@@ -1,6 +1,6 @@
 'use client';
 import Nickname from './Nickname';
-import { Button } from './ui';
+import { Button, Select } from './ui';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -132,7 +132,8 @@ const menu = [
 export default function Shell({ children, previewSkeleton = false }) {
   const pathname = usePathname(),
     router = useRouter();
-  const { signedIn, role, profile, logout } = useCommunity();
+  const { signedIn, role, actualRole, setViewRole, notify, profile, logout } = useCommunity();
+  const [roleBusy, setRoleBusy] = useState(false);
   const [device, setDevice] = useState('pc'),
     [isFrame, setIsFrame] = useState(false),
     [previewRoute, setPreviewRoute] = useState(pathname);
@@ -246,31 +247,61 @@ export default function Shell({ children, previewSkeleton = false }) {
           <section className="preview-controls">
             <span>
               {roleLabels[role]} · <Nickname own />
+              {actualRole === 'operator' && role !== actualRole ? ' · 화면 확인 중' : ''}
             </span>
-            <div className="segmented" aria-label="화면 크기">
-              <Button
-                className={device === 'pc' ? 'selected' : ''}
-                onClick={() => {
-                  setDevice('pc');
-                  if (previewRoute !== pathname) router.push(previewRoute);
-                }}
-              >
-                <Icon name="desktop" size={16} />
-                PC
-              </Button>
-              <Button
-                className={device === 'mobile' ? 'selected' : ''}
-                onClick={() => setDevice('mobile')}
-              >
-                <Icon name="mobile" size={16} />
-                모바일
-              </Button>
+            <div className="preview-control-groups">
+              {actualRole === 'operator' && (
+                <label className="view-role-selector">
+                  <span>화면 등급</span>
+                  <Select
+                    aria-label="화면 확인용 회원등급"
+                    value={role}
+                    disabled={roleBusy}
+                    onChange={async (event) => {
+                      setRoleBusy(true);
+                      try {
+                        await setViewRole(event.target.value);
+                      } catch (error) {
+                        notify(error.message);
+                      } finally {
+                        setRoleBusy(false);
+                      }
+                    }}
+                  >
+                    {Object.entries(roleLabels).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                        {value === 'operator' ? ' (실제 등급)' : ''}
+                      </option>
+                    ))}
+                  </Select>
+                </label>
+              )}
+              <div className="segmented" aria-label="화면 크기">
+                <Button
+                  className={device === 'pc' ? 'selected' : ''}
+                  onClick={() => {
+                    setDevice('pc');
+                    if (previewRoute !== pathname) router.push(previewRoute);
+                  }}
+                >
+                  <Icon name="desktop" size={16} />
+                  PC
+                </Button>
+                <Button
+                  className={device === 'mobile' ? 'selected' : ''}
+                  onClick={() => setDevice('mobile')}
+                >
+                  <Icon name="mobile" size={16} />
+                  모바일
+                </Button>
+              </div>
             </div>
           </section>
         )}
         {mobile ? (
           <div className="phone-preview">
-            <iframe ref={frame} src={previewRoute} title="전체 사이트 모바일 화면" />
+            <iframe key={role} ref={frame} src={previewRoute} title="전체 사이트 모바일 화면" />
           </div>
         ) : (
           <main id="main-content" className="page-content">

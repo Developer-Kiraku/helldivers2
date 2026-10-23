@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { presentationUser, viewRoleCookie } from '@/lib/view-role.mjs';
 import { readStore, transaction, audit } from '@/lib/server/store';
 import { AppError, requireUser, verifyOrigin } from '@/lib/server/auth';
 import { config } from '@/lib/server/config';
@@ -15,6 +16,8 @@ export async function POST(request) {
     verifyOrigin(request);
     const token = request.cookies.get(config.cookie)?.value;
     const actor = await readStore((db) => requireUser(db, token));
+    if (presentationUser(actor, request.cookies.get(viewRoleCookie)?.value)?.actualRole)
+      throw new AppError(403, '화면 확인 중에는 AI 보정을 실행할 수 없습니다.');
     const raw = await request.text();
     if (Buffer.byteLength(raw) > 100000) throw new AppError(413, '보정 요청이 너무 큽니다.');
     let input;

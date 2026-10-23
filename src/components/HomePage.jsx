@@ -102,7 +102,7 @@ export default function HomePage() {
           <Link href="/boards/talk">전체 보기 ↗</Link>
         </header>
         <div className="talk-preview-grid">
-          {posts.talk.slice(0, 5).map((post) => (
+          {posts.talk.slice(0, 6).map((post) => (
             <Link key={post.id} className="talk-preview-card" href={`/boards/talk/${post.id}`}>
               <small>
                 {post.category}

@@ -1,4 +1,5 @@
 import { apiKeySettings, kakaoShareSettings } from '@/lib/server/api-keys';
+import { presentationUser, viewRoleCookie, viewRoles } from '@/lib/view-role.mjs';
 import { boards } from '@/lib/data';
 import { createPoll, castBallot, serializePoll, pollClosed } from '@/lib/server/polls';
 import { NextResponse } from 'next/server';
@@ -23,6 +24,7 @@ import {
   createSession,
   setSessionCookie,
   clearSessionCookie,
+  cookieOptions,
   verifyOrigin,
 } from '@/lib/server/auth';
 import { tokenHash, verifyPassword, hashPassword } from '@/lib/server/passwords';
@@ -95,6 +97,22 @@ async function handler(request, context) {
     const method = request.method;
     if (!['GET', 'HEAD'].includes(method)) verifyOrigin(request);
     const token = request.cookies.get(config.cookie)?.value;
+    const viewRole = request.cookies.get(viewRoleCookie)?.value;
+    if (path === 'profile/view-role' && method === 'POST') {
+      const input = await readJsonRequest(request, 1024);
+      if (!viewRoles.includes(input.role)) fail(400, '화면 등급을 확인해주세요.');
+      const user = await readStore((db) => {
+        const actor = requireUser(db, token);
+        if (actor.role !== 'operator') fail(403, '총관리자만 화면 등급을 변경할 수 있습니다.');
+        return publicUser(presentationUser(actor, input.role));
+      });
+      const response = json({ user });
+      response.cookies.set(viewRoleCookie, input.role === 'operator' ? '' : input.role, {
+        ...cookieOptions,
+        ...(input.role === 'operator' ? { maxAge: 0 } : {}),
+      });
+      return response;
+    }
     if (path === 'auth/login' && method === 'POST') {
       if (!config.demoAuth)
         fail(403, '임시 계정 로그인이 비활성화되어 있습니다. 카카오로 로그인해주세요.');
@@ -135,7 +153,7 @@ async function handler(request, context) {
     if (path === 'auth/me' && method === 'GET')
       return readStore((db) =>
         json({
-          user: publicUser(userForToken(db, token)),
+          user: publicUser(presentationUser(userForToken(db, token), viewRole)),
           demoAuthEnabled: config.demoAuth,
           kakaoConfigured: Boolean(config.kakaoClientId && config.kakaoRedirectUri),
         }),
@@ -144,6 +162,11 @@ async function handler(request, context) {
       method === 'GET'
         ? {}
         : await readJsonRequest(request, path === 'profile' ? 1300000 : 13000000);
+    if (method !== 'GET')
+      await readStore((db) => {
+        if (presentationUser(requireUser(db, token), viewRole)?.actualRole)
+          fail(403, '화면 확인 중에는 변경할 수 없습니다. 실제 등급으로 돌아온 뒤 이용해주세요.');
+      });
     if (
       (path === 'profile' && method === 'PATCH' && input.photo !== undefined) ||
       (path === 'posts' && method === 'POST') ||
@@ -167,7 +190,7 @@ async function handler(request, context) {
           : await normalizePostImages(input, board);
     }
     const result = await transaction((db) => {
-      const actor = requireUser(db, token);
+      const actor = presentationUser(requireUser(db, token), viewRole);
       if (path === 'integrations/kakao' && method === 'GET') {
         const { javaScriptKey, configured } = kakaoShareSettings(db);
         return { javaScriptKey, configured };
