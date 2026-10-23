@@ -39,6 +39,8 @@ import {
   Smartphone,
   ArrowUpRight,
   ClipboardCheck,
+  ScrollText,
+  KeyRound,
   PencilLine,
 } from 'lucide-react';
 import { SiDiscord, SiKakaotalk, SiYoutube } from '@icons-pack/react-simple-icons';
@@ -54,6 +56,8 @@ const icons = {
   user: UserRound,
   users: UsersRound,
   approvals: ClipboardCheck,
+  logs: ScrollText,
+  keys: KeyRound,
   shield: ShieldCheck,
   lock: LockKeyhole,
   arrow: ArrowRight,

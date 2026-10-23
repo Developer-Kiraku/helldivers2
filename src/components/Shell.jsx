@@ -73,12 +73,12 @@ function MobileBrandHeader({ signedIn, logout, role }) {
                   요청 승인 목록
                 </Link>
                 <Link href="/admin/logs" onClick={() => setOpen(false)}>
-                  <Icon name="approvals" />
+                  <Icon name="logs" />
                   로그 확인
                 </Link>
                 {role === 'operator' && (
                   <Link href="/admin/api-keys" onClick={() => setOpen(false)}>
-                    <Icon name="approvals" />
+                    <Icon name="keys" />
                     API 키 관리
                   </Link>
                 )}
@@ -204,12 +204,12 @@ export default function Shell({ children, previewSkeleton = false }) {
                 <span>요청 승인 목록</span>
               </Link>
               <Link href="/admin/logs" className={active('/admin/logs') ? 'active' : ''}>
-                <Icon name="approvals" />
+                <Icon name="logs" />
                 <span>로그 확인</span>
               </Link>
               {role === 'operator' && (
                 <Link href="/admin/api-keys" className={active('/admin/api-keys') ? 'active' : ''}>
-                  <Icon name="approvals" />
+                  <Icon name="keys" />
                   <span>API 키 관리</span>
                 </Link>
               )}
