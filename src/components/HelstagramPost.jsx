@@ -12,6 +12,7 @@ import PostShare from './PostShare';
 import ModerationActions from './ModerationActions';
 import PostPoll from './PostPoll';
 import YoutubeVideo from './YoutubeVideo';
+import PostMaps from './PostMaps';
 import usePostLike from '../hooks/usePostLike';
 
 const number = (value) => Number(value || 0).toLocaleString('ko-KR');
@@ -117,6 +118,7 @@ export default function HelstagramPost({ post, detail = false }) {
       <div className="helsta-media">
         <PhotoCarousel images={post.images} title={post.title} onPhotoDoubleClick={doubleLike} />
         <YoutubeVideo url={post.youtubeUrl} title={post.title} />
+        <PostMaps maps={post.maps} />
       </div>
       <div className="helsta-post-body">
         <div className="helsta-actions">
@@ -153,7 +155,7 @@ export default function HelstagramPost({ post, detail = false }) {
           </span>
         </div>
         <p className="helsta-like-count" aria-live="polite">
-          좋아요 {number(like.count)}개
+          좋아요 {number(like.count)}개{detail && <span> · 조회 {number(post.views)}</span>}
         </p>
         <div className="helsta-caption">
           <strong>

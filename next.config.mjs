@@ -20,6 +20,10 @@ const config = {
         ],
       },
       {
+        source: '/maps/embed',
+        headers: [{ key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' }],
+      },
+      {
         source: '/api/:path*',
         headers: [{ key: 'Cache-Control', value: 'private, no-store, max-age=0' }],
       },

@@ -12,6 +12,7 @@ import AiPolish from './AiPolish';
 import { prepareUpload } from '@/lib/image-upload.mjs';
 import { youtubeEmbedUrl } from '@/lib/editor-format.mjs';
 import YoutubeVideo from './YoutubeVideo';
+import MapAttachmentsEditor from './MapAttachmentsEditor';
 
 export default function PhotoPostEditor({ id = null }) {
   const { posts, addPost, api, refresh, notify } = useCommunity();
@@ -24,6 +25,7 @@ export default function PhotoPostEditor({ id = null }) {
     [processing, setProcessing] = useState(false),
     [error, setError] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [maps, setMaps] = useState([]);
   const input = useRef(null),
     initialized = useRef(null),
     router = useRouter();
@@ -35,6 +37,7 @@ export default function PhotoPostEditor({ id = null }) {
       setCategory(current.category);
       setImages(current.images || []);
       setYoutubeUrl(current.youtubeUrl || '');
+      setMaps(current.maps || []);
     }
   }, [current]);
   async function selectPhotos(event) {
@@ -71,8 +74,8 @@ export default function PhotoPostEditor({ id = null }) {
       setError('올바른 유튜브 주소를 입력해주세요.');
       return;
     }
-    if (!images.length && !youtubeUrl.trim()) {
-      setError('사진 또는 유튜브 영상을 첨부해주세요.');
+    if (!images.length && !youtubeUrl.trim() && !maps.length) {
+      setError('사진, 유튜브 영상 또는 지도를 첨부해주세요.');
       return;
     }
     setBusy(true);
@@ -84,6 +87,7 @@ export default function PhotoPostEditor({ id = null }) {
         category,
         images,
         youtubeUrl: youtubeUrl.trim(),
+        maps,
         bodyHtml: '',
       };
       if (id) {
@@ -210,6 +214,7 @@ export default function PhotoPostEditor({ id = null }) {
                 )}
                 <YoutubeVideo url={youtubeUrl} />
               </div>
+              <MapAttachmentsEditor value={maps} onChange={setMaps} disabled={busy || processing} />
               <div className="field">
                 <Label htmlFor="photo-category">분류</Label>
                 <Select

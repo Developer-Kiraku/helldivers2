@@ -4,11 +4,13 @@ import { ArrowLeft, Camera } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import AccessGate from './AccessGate';
 import HelstagramPost from './HelstagramPost';
+import usePostView from '../hooks/usePostView';
 import './helstagram.scss';
 
 export default function HelstagramDetail({ id }) {
   const { posts } = useCommunity();
   const post = posts.helstagram.find((item) => item.id === id || item.id === `helstagram-${id}`);
+  usePostView(post?.id);
   return (
     <AccessGate>
       <div className="helstagram-page helsta-detail-page">

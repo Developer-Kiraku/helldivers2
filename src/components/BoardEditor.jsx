@@ -13,6 +13,7 @@ import IdentityStrip from './IdentityStrip';
 import Icon from './Icon';
 import RichTextEditor from './RichTextEditor';
 import AiPolish from './AiPolish';
+import MapAttachmentsEditor from './MapAttachmentsEditor';
 
 export default function BoardEditor(props) {
   return props.board === 'helstagram' ? (
@@ -32,6 +33,7 @@ function StandardBoardEditor({ board, id = null }) {
   const [category, setCategory] = useState(config.categories[0]);
   const [title, setTitle] = useState('');
   const [pinned, setPinned] = useState(false);
+  const [maps, setMaps] = useState([]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [processingImages, setProcessingImages] = useState(false);
@@ -40,13 +42,14 @@ function StandardBoardEditor({ board, id = null }) {
     setTitle(current.title);
     setCategory(current.category);
     setPinned(Boolean(current.pinned));
+    setMaps(current.maps || []);
   }, [current?.id]);
 
   async function publish(event) {
     event.preventDefault();
     if (busy || processingImages) return;
     const { content: body, images, bodyHtml } = editor.current.getDraft();
-    if (!title.trim() || (!body && !images.length)) {
+    if (!title.trim() || (!body && !images.length && !maps.length)) {
       setError('제목과 본문을 입력해주세요.');
       return;
     }
@@ -60,6 +63,7 @@ function StandardBoardEditor({ board, id = null }) {
         content: body,
         bodyHtml,
         images,
+        maps,
         ...(!id
           ? {
               poll: poll
@@ -171,6 +175,11 @@ function StandardBoardEditor({ board, id = null }) {
             initialPost={current}
             notify={notify}
             onProcessingChange={setProcessingImages}
+          />
+          <MapAttachmentsEditor
+            value={maps}
+            onChange={setMaps}
+            disabled={busy || processingImages}
           />
           <AiPolish
             board={board}

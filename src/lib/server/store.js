@@ -2,6 +2,7 @@ import 'server-only';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { setTimeout as delay } from 'node:timers/promises';
 import { config } from './config';
 import { hashPassword } from './passwords';
 import { posts as samplePosts } from '../data';
@@ -85,7 +86,25 @@ async function atomicWrite(db) {
   await fs.mkdir(path.dirname(config.dataFile), { recursive: true });
   const temporary = `${config.dataFile}.${process.pid}.${randomUUID()}.tmp`;
   await fs.writeFile(temporary, JSON.stringify(db, null, 2), { encoding: 'utf8', mode: 0o600 });
-  await fs.rename(temporary, config.dataFile);
+  try {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        await fs.rename(temporary, config.dataFile);
+        break;
+      } catch (error) {
+        // Windows scanners can briefly lock the destination during atomic replacement.
+        if (
+          process.platform !== 'win32' ||
+          !['EPERM', 'EACCES', 'EBUSY'].includes(error.code) ||
+          attempt >= 5
+        )
+          throw error;
+        await delay(20 * 2 ** attempt);
+      }
+    }
+  } finally {
+    await fs.rm(temporary, { force: true });
+  }
 }
 
 async function load() {

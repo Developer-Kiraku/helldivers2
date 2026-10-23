@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useCommunity } from './CommunityProvider';
 import { Button, Input, Label } from './ui';
+import MapKeysSettings from './MapKeysSettings';
 export default function ApiKeysPage() {
   const { api, role, notify } = useCommunity();
   const [data, setData] = useState(null),
@@ -107,6 +108,7 @@ export default function ApiKeysPage() {
               </p>
             </details>
           </form>
+          <MapKeysSettings initial={data.maps} origin={data.origin} />
           <section className="panel api-key-panel">
             <h2>서버 키 상태</h2>
             {data.serverKeys.map((item) => (

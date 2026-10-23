@@ -100,7 +100,15 @@ const draft = (board = 'talk', title = '기능 검증 글') => ({
   board,
   title,
   category:
-    board === 'notice' ? '공지' : board === 'guide' ? '무기' : board === 'qna' ? '질문' : '잡담',
+    board === 'notice'
+      ? '공지'
+      : board === 'guide'
+        ? '무기'
+        : board === 'qna'
+          ? '질문'
+          : board === 'helstagram'
+            ? '스크린샷'
+            : '잡담',
   content: '임시 JSON에 저장되는 본문',
   bodyHtml:
     '<p>본문 <a href="https://example.com">링크</a><script>alert(1)</script><img src=x onerror=alert(1)></p>',
@@ -109,6 +117,8 @@ const draft = (board = 'talk', title = '기능 검증 글') => ({
 async function run() {
   await import('./test-application-url.mjs');
   await import('./test-post-sharing-history.mjs');
+  await import('./test-post-maps.mjs');
+  await import('./test-post-views.mjs');
   await import('./test-admin-share-ui.mjs');
   await import('./test-owner-setup.mjs');
   await import('./test-post-html.mjs');
@@ -380,6 +390,124 @@ async function run() {
       javaScriptKey: initialKeys.kakao.javaScriptKey,
     });
     assert.ok((await admin.call('/api/admin/api-keys')).data.updatedAt);
+    await guest.call('/api/maps/search?q=test', 'GET', undefined, 401);
+    await member.call('/api/maps/search?q=x', 'GET', undefined, 400);
+    await member.call('/api/maps/search?q=test', 'GET', undefined, 502);
+    await guest.call('/maps/embed?provider=google&address=test', 'GET', undefined, 401);
+    await deputy.call('/api/admin/api-keys', 'PATCH', { googleMapsEmbedKey: 'a'.repeat(32) }, 403);
+    await admin.call('/api/admin/api-keys', 'PATCH', { googleMapsEmbedKey: 'invalid key' }, 400);
+    const mapKeys = (await admin.call('/api/admin/api-keys')).data.maps;
+    await admin.call('/api/admin/api-keys', 'PATCH', {
+      kakaoMapsJavaScriptKey: 'c'.repeat(32),
+      googleMapsEmbedKey: 'd'.repeat(32),
+    });
+    assert.deepEqual((await member.call('/api/integrations/maps')).data, {
+      kakaoConfigured: false,
+      googleConfigured: true,
+    });
+    assert.equal(
+      (await admin.call('/api/admin/api-keys')).data.kakao.javaScriptKey,
+      initialKeys.kakao.javaScriptKey,
+    );
+    const qnaCountBeforeMaps = (await member.call('/api/bootstrap')).data.posts.qna.length;
+    const placeMap = {
+      provider: 'kakao',
+      address: '서울특별시 중구 세종대로 110',
+      lat: 37.5665,
+      lng: 126.978,
+    };
+    const linkMap = { provider: 'kakao', address: '서울시청', url: 'https://kko.to/example' };
+    const googleMap = {
+      provider: 'google',
+      address: '서울시청',
+      embedUrl: 'https://www.google.com/maps/embed?pb=%211m2%212m1',
+    };
+    const viewedMapIds = [];
+    for (const board of ['talk', 'guide', 'qna', 'notice', 'helstagram']) {
+      const author = board === 'notice' ? admin : member;
+      const item = (
+        await author.call('/api/posts', 'POST', {
+          ...draft(board, '지도 첨부 검증'),
+          content: '',
+          bodyHtml: '',
+          images: [],
+          maps: [placeMap, googleMap, linkMap],
+        })
+      ).data.post;
+      assert.deepEqual(item.maps, [placeMap, googleMap, linkMap]);
+      viewedMapIds.push({ id: item.id, author });
+      const loadedMap = (await author.call(`/api/posts/${item.id}`)).data.post;
+      assert.deepEqual(loadedMap.maps, item.maps);
+      assert.equal(loadedMap.views, 0);
+      await guest.call(`/api/posts/${item.id}/view`, 'POST', {}, 401);
+      const concurrentViews = await Promise.all(
+        Array.from({ length: 5 }, () => author.call(`/api/posts/${item.id}/view`, 'POST', {})),
+      );
+      assert.ok(concurrentViews.every(({ data }) => data.views === 1));
+      assert.equal((await apprentice.call(`/api/posts/${item.id}/view`, 'POST', {})).data.views, 2);
+      const viewed = (await author.call(`/api/posts/${item.id}`)).data.post;
+      assert.equal(viewed.views, 2);
+      assert.ok(!('viewReceipts' in viewed));
+      assert.equal(
+        (await author.call('/api/bootstrap')).data.posts[board].find((p) => p.id === item.id).views,
+        2,
+      );
+      await author.call(`/api/posts/${item.id}`, 'PATCH', {
+        ...draft(board, '지도 수정 검증'),
+        images: [],
+        maps: [googleMap],
+      });
+      assert.equal((await author.call(`/api/posts/${item.id}`)).data.post.maps.length, 1);
+      await author.call(`/api/posts/${item.id}`, 'PATCH', {
+        ...draft(board, '지도 삭제 검증'),
+        images: [],
+        ...(board === 'helstagram'
+          ? { youtubeUrl: 'https://www.youtube.com/watch?v=abcdefghijk' }
+          : {}),
+        maps: [],
+      });
+      assert.deepEqual((await author.call(`/api/posts/${item.id}`)).data.post.maps, []);
+    }
+    await member.call(
+      '/api/posts',
+      'POST',
+      { ...draft(), maps: [{ ...placeMap, lat: '37' }] },
+      400,
+    );
+    await member.call('/api/posts', 'POST', { ...draft(), maps: Array(4).fill(placeMap) }, 400);
+    await member.call(
+      '/api/posts',
+      'POST',
+      { ...draft(), maps: [{ ...linkMap, url: 'https://map.kakao.com.evil.example/location' }] },
+      400,
+    );
+    await member.call('/api/posts/missing-post/view', 'POST', {}, 404);
+    await member.call(
+      '/api/posts',
+      'POST',
+      { ...draft(), maps: [{ ...googleMap, embedUrl: 'https://evil.example/maps/embed?pb=!1' }] },
+      400,
+    );
+    await member.call(
+      '/maps/embed?provider=kakao&address=test&lat=NaN&lng=127',
+      'GET',
+      undefined,
+      400,
+    );
+    const frame = await member.call('/maps/embed?' + new URLSearchParams(placeMap));
+    assert.equal(frame.response.headers.get('referrer-policy'), 'strict-origin-when-cross-origin');
+    assert.match(frame.data, /new kakao.maps.LatLng/);
+    const googleFrame = (
+      await member.call(
+        '/maps/embed?' + new URLSearchParams({ provider: 'google', address: '서울시청' }),
+      )
+    ).data;
+    assert.ok(googleFrame.includes('www.google.com/maps/embed/v1/place'));
+    await admin.call('/api/admin/api-keys', 'PATCH', {
+      kakaoMapsJavaScriptKey: mapKeys.kakaoJavaScriptKey,
+      googleMapsEmbedKey: mapKeys.googleEmbedKey,
+    });
+
     await admin.call('/admin/users');
     await admin.call('/admin/requests', 'GET', undefined, 307);
     await admin.call('/admin/approvals');
@@ -480,12 +608,13 @@ async function run() {
     const removable = (await member.call('/api/posts', 'POST', draft('talk', '공유 삭제 검증')))
       .data.post;
     await member.call('/api/posts/' + removable.id, 'DELETE');
+    await member.call('/api/posts/' + removable.id + '/view', 'POST', {}, 404);
     await member.call(removable.sharePath, 'GET', undefined, 404);
     const untrustedReturn = await client(
       `${member.cookie}; hd_shared_post=https%3A%2F%2Funtrusted.example`,
     ).call('/');
     assert.equal(untrustedReturn.response.status, 200);
-    assert.equal(sharedBoards.qna.length, 18);
+    assert.equal(sharedBoards.qna.length, qnaCountBeforeMaps + 1);
     const rich = (
       await member.call('/api/posts', 'POST', {
         ...draft('guide', 'HTML 영상 검증'),
@@ -992,6 +1121,10 @@ async function run() {
     ];
     await fs.writeFile(file, JSON.stringify(db));
     await start(file);
+    for (const { id, author } of viewedMapIds) {
+      assert.equal((await member.call(`/api/posts/${id}`)).data.post.views, 2);
+      assert.equal((await author.call(`/api/posts/${id}/view`, 'POST', {})).data.views, 2);
+    }
     assert.equal((await admin.call(detailPath)).data.log.before.title, post.title);
     assert.deepEqual(
       (await member.call(`/api/posts/${photoPost.id}`)).data.post.images,

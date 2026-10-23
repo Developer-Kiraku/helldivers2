@@ -41,6 +41,7 @@ import {
   ClipboardCheck,
   ScrollText,
   KeyRound,
+  MapPin,
   PencilLine,
 } from 'lucide-react';
 import { SiDiscord, SiKakaotalk, SiYoutube } from '@icons-pack/react-simple-icons';
@@ -58,6 +59,7 @@ const icons = {
   approvals: ClipboardCheck,
   logs: ScrollText,
   keys: KeyRound,
+  map: MapPin,
   shield: ShieldCheck,
   lock: LockKeyhole,
   arrow: ArrowRight,

@@ -21,7 +21,7 @@ try {
   await build({
     stdin: {
       contents:
-        "export {default as PostShare} from './src/components/PostShare'; export {default as AuditLogPage} from './src/components/AuditLogPage';",
+        "export {default as PostShare} from './src/components/PostShare'; export {default as AuditLogPage} from './src/components/AuditLogPage'; export {default as MapAttachmentsEditor} from './src/components/MapAttachmentsEditor'; export {default as usePostView} from './src/hooks/usePostView';",
       resolveDir: process.cwd(),
       loader: 'js',
     },
@@ -55,7 +55,9 @@ try {
       },
     ],
   });
-  const { PostShare, AuditLogPage } = require(path.join(dir, 'ui.cjs'));
+  const { PostShare, AuditLogPage, MapAttachmentsEditor, usePostView } = require(
+    path.join(dir, 'ui.cjs'),
+  );
   const flush = () =>
     React.act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -142,6 +144,118 @@ try {
   window.open = undefined;
   await click(button('공유'));
   assert.equal(button('카카오톡 공유').disabled, false);
+  let attachedMaps = [];
+  window.__community.api = async (path) =>
+    path === 'integrations/maps'
+      ? { kakaoConfigured: true, googleConfigured: false }
+      : {
+          results: [
+            {
+              provider: 'kakao',
+              name: '서울시청',
+              address: '서울특별시 중구 세종대로 110',
+              lat: 37.5665,
+              lng: 126.978,
+            },
+          ],
+        };
+  function MapsHarness() {
+    const [maps, setMaps] = React.useState([]);
+    attachedMaps = maps;
+    return React.createElement(MapAttachmentsEditor, { value: maps, onChange: setMaps });
+  }
+  const changeInput = async (element, value) => {
+    await React.act(async () => {
+      Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set.call(
+        element,
+        value,
+      );
+      element.dispatchEvent(new window.Event('input', { bubbles: true }));
+    });
+    await flush();
+  };
+  await React.act(async () => root.render(React.createElement(MapsHarness)));
+  await click(button('지도 첨부'));
+  await changeInput(document.getElementById('map-address'), '서울시청');
+  await click(button('주소 검색'));
+  assert.equal(button('선택한 지도 첨부').disabled, false);
+  assert.ok(document.querySelector('iframe'));
+  await click(document.querySelector('.map-search-results button'));
+  assert.ok(
+    document.querySelector('iframe').getAttribute('src').includes('/maps/embed?provider=kakao'),
+  );
+  await click(button('선택한 지도 첨부'));
+  assert.equal(attachedMaps.length, 1);
+  assert.equal(attachedMaps[0].provider, 'kakao');
+  assert.equal(attachedMaps[0].lat, 37.5665);
+  assert.equal(attachedMaps[0].lng, 126.978);
+  assert.ok(!('url' in attachedMaps[0]));
+  await click(document.querySelector('.attached-map button'));
+  assert.equal(attachedMaps.length, 0);
+  await click(button('지도 첨부'));
+  await changeInput(document.getElementById('map-address'), 'https://place.map.kakao.com/18577297');
+  await click(button('주소 검색'));
+  assert.equal(document.querySelector('iframe'), null);
+  assert.ok(document.querySelector('[role="alert"]').textContent.includes('도로명·지번 주소'));
+  assert.equal(button('선택한 지도 첨부').disabled, true);
+  await changeInput(document.getElementById('map-address'), '서울시청');
+  await React.act(async () => {
+    const select = document.getElementById('map-provider');
+    select.value = 'google';
+    select.dispatchEvent(new window.Event('change', { bubbles: true }));
+  });
+  await click(button('지도 미리보기'));
+  assert.ok(document.querySelector('[role="alert"]').textContent.includes('키가 아직 없습니다'));
+  await changeInput(
+    document.querySelector('input[aria-label="Google 지도 퍼가기 HTML 또는 주소"]'),
+    '<iframe src="https://www.google.com/maps/embed?pb=!1m2!2m1"></iframe>',
+  );
+  await click(button('지도 미리보기'));
+  await click(button('선택한 지도 첨부'));
+  assert.equal(attachedMaps[0].provider, 'google');
+  assert.ok(attachedMaps[0].embedUrl.startsWith('https://www.google.com/maps/embed?pb='));
+  console.log(
+    'PASS: map picker address selection, preview, attachment/removal and key-free Google embed fallback',
+  );
+  const viewCalls = [],
+    viewUpdates = [];
+  window.__community = {
+    ready: false,
+    signedIn: true,
+    user: { id: 'member' },
+    api: async (route, options) => {
+      viewCalls.push({ route, method: options.method });
+      return { views: 7 };
+    },
+    updatePostViews: (id, views) => viewUpdates.push({ id, views }),
+    notify: (message) => {
+      throw Error(message);
+    },
+  };
+  function ViewHarness({ id }) {
+    usePostView(id);
+    return null;
+  }
+  await React.act(async () => root.render(React.createElement(ViewHarness, { id: 'post-1' })));
+  assert.equal(viewCalls.length, 0);
+  window.__community.ready = true;
+  await React.act(async () => root.render(React.createElement(ViewHarness, { id: 'post-1' })));
+  await flush();
+  assert.deepEqual(viewCalls, [{ route: 'posts/post-1/view', method: 'POST' }]);
+  assert.deepEqual(viewUpdates, [{ id: 'post-1', views: 7 }]);
+  await React.act(async () => root.render(React.createElement(ViewHarness, { id: 'post-1' })));
+  assert.equal(viewCalls.length, 1);
+  window.__community.user.actualRole = 'operator';
+  await React.act(async () => root.render(React.createElement(ViewHarness, { id: 'post-2' })));
+  assert.equal(viewCalls.length, 1);
+  delete window.__community.user.actualRole;
+  await React.act(async () => root.render(React.createElement(ViewHarness, { id: 'post-2' })));
+  await flush();
+  assert.equal(viewCalls.length, 2);
+  assert.deepEqual(viewUpdates[1], { id: 'post-2', views: 7 });
+  console.log(
+    'PASS: detail view recording waits for authentication, updates shared counts, avoids render loops and skips role previews',
+  );
   console.log(
     'PASS: reason toggle accessibility and escaping, desktop sharing readiness and synchronous SDK call, unsupported desktop hiding, always-visible mobile button',
   );

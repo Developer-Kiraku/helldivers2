@@ -1,4 +1,4 @@
-import { apiKeySettings, kakaoShareSettings } from '@/lib/server/api-keys';
+import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/api-keys';
 import { presentationUser, viewRoleCookie, viewRoles } from '@/lib/view-role.mjs';
 import { boards } from '@/lib/data';
 import { createPoll, castBallot, serializePoll, pollClosed } from '@/lib/server/polls';
@@ -45,6 +45,7 @@ import { approveApprentice, startProbation, withdrawMember } from '@/lib/server/
 import { approvalList } from '@/lib/approvals';
 import { readJsonRequest } from '@/lib/server/request-json';
 import { reserveLoginAttempt } from '@/lib/server/login-throttle.mjs';
+import { recordPostView } from '@/lib/server/post-views.mjs';
 import {
   normalizeUploadedImage,
   normalizePostImages,
@@ -191,6 +192,13 @@ async function handler(request, context) {
     }
     const result = await transaction((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
+      if (path === 'integrations/maps' && method === 'GET') {
+        const settings = mapSettings(db);
+        return {
+          kakaoConfigured: Boolean(settings.kakaoJavaScriptKey && config.kakaoClientId),
+          googleConfigured: Boolean(settings.googleEmbedKey),
+        };
+      }
       if (path === 'integrations/kakao' && method === 'GET') {
         const { javaScriptKey, configured } = kakaoShareSettings(db);
         return { javaScriptKey, configured };
@@ -199,16 +207,29 @@ async function handler(request, context) {
         if (actor.role !== 'operator') fail(403, '메인 운영자만 API 키를 관리할 수 있습니다.');
         if (method === 'GET') return apiKeySettings(db);
         if (method === 'PATCH') {
-          if (typeof input.javaScriptKey !== 'string') fail(400, 'JavaScript 키를 입력해주세요.');
-          const key = input.javaScriptKey.trim();
-          if (key && !/^[a-f0-9]{32}$/i.test(key))
-            fail(400, 'JavaScript 키는 32자리 영문·숫자(16진수)입니다.');
+          const fields = ['javaScriptKey', 'kakaoMapsJavaScriptKey', 'googleMapsEmbedKey'];
+          if (!fields.some((field) => input[field] !== undefined))
+            fail(400, '변경할 API 키를 입력해주세요.');
+          const changes = {};
+          for (const field of fields) {
+            if (input[field] === undefined) continue;
+            if (typeof input[field] !== 'string') fail(400, '올바른 API 키를 입력해주세요.');
+            const key = input[field].trim();
+            const valid =
+              field === 'googleMapsEmbedKey'
+                ? /^[A-Za-z0-9_-]{20,200}$/.test(key)
+                : /^[a-f0-9]{32}$/i.test(key);
+            if (key && !valid) fail(400, 'API 키 형식을 확인해주세요.');
+            changes[field === 'javaScriptKey' ? 'kakaoJavaScriptKey' : field] = key;
+          }
           db.integrationSettings = {
             ...db.integrationSettings,
-            kakaoJavaScriptKey: key,
+            ...changes,
             updatedAt: now(),
           };
-          audit(db, actor.id, 'settings.api_keys.update', 'kakao', { configured: Boolean(key) });
+          audit(db, actor.id, 'settings.api_keys.update', 'integrations', {
+            fields: Object.keys(changes),
+          });
           return apiKeySettings(db);
         }
       }
@@ -253,6 +274,8 @@ async function handler(request, context) {
       if (segments[0] === 'posts' && segments[1]) {
         const post = postForId(db, segments[1]);
         const author = db.users.find((user) => user.id === post.authorId);
+        if (segments.length === 3 && segments[2] === 'view' && method === 'POST')
+          return { views: recordPostView(post, actor.id) };
         if (segments.length === 2 && method === 'GET')
           return {
             post: serializePost(db, post, actor),

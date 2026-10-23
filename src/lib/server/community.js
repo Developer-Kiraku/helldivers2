@@ -43,8 +43,9 @@ export function canRequest(actor, target) {
 export function serializePost(db, post, viewer) {
   const author = db.users.find((user) => user.id === post.authorId);
   const votes = db.votes.filter((vote) => vote.postId === post.id);
+  const { viewReceipts, ...publicPost } = post;
   return {
-    ...post,
+    ...publicPost,
     sharePath: postSharePath(post),
     poll: serializePoll(db, post.poll, viewer),
     author: author?.status === 'withdrawn' ? '탈퇴한 회원' : author?.nickname || '탈퇴한 회원',

@@ -15,7 +15,11 @@ export function postText(post) {
 export function postSummary(post, limit = 120) {
   const characters = Array.from(postText(post).replace(/\s+/g, ' ').trim());
   if (!characters.length)
-    return post.youtubeUrl ? '영상이 첨부된 게시글입니다.' : '사진이 첨부된 게시글입니다.';
+    return post.maps?.length
+      ? `지도: ${post.maps[0].address}`.slice(0, limit)
+      : post.youtubeUrl
+        ? '영상이 첨부된 게시글입니다.'
+        : '사진이 첨부된 게시글입니다.';
   return characters.length > limit
     ? characters.slice(0, limit - 1).join('') + '…'
     : characters.join('');

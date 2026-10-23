@@ -19,6 +19,7 @@ export function kakaoShareSettings(db) {
 export function apiKeySettings(db) {
   return {
     kakao: kakaoShareSettings(db),
+    maps: mapSettings(db),
     serverKeys: [
       { name: '카카오 로그인 · REST API 키', configured: Boolean(config.kakaoClientId) },
       {
@@ -30,5 +31,15 @@ export function apiKeySettings(db) {
     ],
     origin: config.origin,
     updatedAt: db.integrationSettings?.updatedAt || null,
+  };
+}
+export function mapSettings(db) {
+  return {
+    kakaoJavaScriptKey:
+      db.integrationSettings?.kakaoMapsJavaScriptKey ??
+      process.env.KAKAO_MAPS_JAVASCRIPT_KEY ??
+      kakaoShareSettings(db).javaScriptKey,
+    googleEmbedKey:
+      db.integrationSettings?.googleMapsEmbedKey ?? process.env.GOOGLE_MAPS_EMBED_KEY ?? '',
   };
 }

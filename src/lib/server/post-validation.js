@@ -3,6 +3,7 @@ import { sanitizePostHtml } from './post-html.mjs';
 import { youtubeEmbedUrl } from '../editor-format.mjs';
 import { boards } from '../data';
 import { fail } from './auth';
+import { normalizeMaps } from '../post-maps.mjs';
 
 export function validImage(value, allowLocal = false, max = 900000, allowRemote = false) {
   if (typeof value !== 'string' || value.length > max)
@@ -51,15 +52,21 @@ export function cleanPost(input, board) {
   if (typeof youtubeInput !== 'string' || youtubeInput.length > 2048)
     fail(400, '유효한 유튜브 주소를 입력해주세요.');
   const youtubeUrl = youtubeInput.trim() ? youtubeEmbedUrl(youtubeInput) : '';
+  let maps;
+  try {
+    maps = normalizeMaps(input.maps ?? []);
+  } catch (error) {
+    fail(400, error.message);
+  }
   if (youtubeInput.trim() && !youtubeUrl) fail(400, '유효한 유튜브 주소를 입력해주세요.');
-  if (board === 'helstagram' && !images.length && !youtubeUrl)
-    fail(400, '사진 또는 유튜브 영상을 첨부해주세요.');
+  if (board === 'helstagram' && !images.length && !youtubeUrl && !maps.length)
+    fail(400, '사진, 유튜브 영상 또는 지도를 첨부해주세요.');
   if (board === 'helstagram' && images.reduce((size, image) => size + image.length, 0) > 10000000)
     fail(400, '사진 전체 크기를 줄여주세요.');
   const raw = typeof input.bodyHtml === 'string' ? input.bodyHtml : '';
   if (raw.length > 12000000) fail(400, '본문 크기가 너무 큽니다.');
   const bodyHtml = sanitizePostHtml(raw, images);
-  if (!content && !images.length && !youtubeUrl && !bodyHtml.includes('<iframe '))
+  if (!content && !images.length && !youtubeUrl && !maps.length && !bodyHtml.includes('<iframe '))
     fail(400, '본문을 입력해주세요.');
   return {
     title,
@@ -67,6 +74,7 @@ export function cleanPost(input, board) {
     content,
     bodyHtml,
     images,
+    ...(input.maps !== undefined ? { maps } : {}),
     ...(board === 'helstagram' ? { youtubeUrl } : {}),
     ...(board === 'notice' && input.pinned !== undefined ? { pinned: input.pinned } : {}),
   };

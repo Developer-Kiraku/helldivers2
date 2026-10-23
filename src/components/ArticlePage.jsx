@@ -17,6 +17,8 @@ import Icon from './Icon';
 import VoteButtons from './VoteButtons';
 import ModerationActions from './ModerationActions';
 import HelstagramDetail from './HelstagramDetail';
+import PostMaps from './PostMaps';
+import usePostView from '../hooks/usePostView';
 export default function ArticlePage({ board, id }) {
   return board === 'helstagram' ? (
     <HelstagramDetail id={id} />
@@ -27,6 +29,7 @@ export default function ArticlePage({ board, id }) {
 function StandardArticlePage({ board, id }) {
   const { posts, profile, api, notify } = useCommunity();
   const post = posts[board].find((item) => item.id === id || item.id === `${board}-${id}`);
+  usePostView(post?.id);
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [comments, setComments] = useState([]),
     [draft, setDraft] = useState(''),
@@ -92,6 +95,7 @@ function StandardArticlePage({ board, id }) {
                   <Nickname name={post.author} role={post.authorRole} own={post.own} />
                 </span>
                 <time>{post.date}</time>
+                <span>조회 {Number(post.views || 0).toLocaleString('ko-KR')}</span>
                 <span>댓글 {comments.length}</span>
               </div>
               <div className="article-copy">
@@ -116,6 +120,7 @@ function StandardArticlePage({ board, id }) {
                   </>
                 )}
               </div>
+              <PostMaps maps={post.maps} />
               {post.poll && <PostPoll key={post.id} post={post} />}
               <div className="article-votes">
                 <VoteButtons

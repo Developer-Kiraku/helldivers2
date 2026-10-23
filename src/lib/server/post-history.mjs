@@ -17,6 +17,7 @@ export function postSnapshot(post) {
     bodyHash: digest(post.bodyHtml),
     images: (post.images || []).map(digest),
     youtubeUrl: post.youtubeUrl || '',
+    maps: post.maps || [],
     pinned: Boolean(post.pinned),
   };
 }

@@ -21,6 +21,18 @@ export function CommunityProvider({ children, initialUser = null }) {
     setToast(message);
     timer.current = setTimeout(() => setToast(''), 3500);
   }, []);
+  const updatePostViews = useCallback((postId, views) => {
+    setPosts((current) =>
+      Object.fromEntries(
+        Object.entries(current).map(([board, items]) => [
+          board,
+          items.map((post) =>
+            post.id === postId ? { ...post, views: Math.max(post.views || 0, views) } : post,
+          ),
+        ]),
+      ),
+    );
+  }, []);
   const api = useCallback(
     async (path, options = {}) => {
       const response = await fetch(`/api/${path}`, {
@@ -125,6 +137,7 @@ export function CommunityProvider({ children, initialUser = null }) {
         notify,
         api,
         refresh,
+        updatePostViews,
         login,
         logout,
         updateProfile,

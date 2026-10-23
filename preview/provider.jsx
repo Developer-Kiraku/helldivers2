@@ -149,8 +149,12 @@ export function PreviewProvider({ children }) {
   const allPosts = Object.values(posts).flat();
   const api = useCallback(
     async (path, options = {}) => {
+      if (/^posts\/[^/]+\/view$/.test(path) && options.method === 'POST')
+        return { views: allPosts.find((post) => post.id === path.split('/')[1])?.views || 0 };
       if (options.method && options.method !== 'GET') return blocked();
       if (path === 'integrations/kakao') return { javaScriptKey: '', configured: false };
+      if (path === 'integrations/maps') return { kakaoConfigured: false, googleConfigured: false };
+      if (path.startsWith('maps/search?')) throw Error('주소 검색은 운영 사이트에서 이용해주세요.');
       if (path === 'admin/api-keys')
         return {
           kakao: { javaScriptKey: '', configured: false, source: '미리보기' },
@@ -251,6 +255,7 @@ export function PreviewProvider({ children }) {
     notify,
     api,
     refresh: async () => {},
+    updatePostViews: useCallback(() => {}, []),
     login,
     logout,
     updateProfile: blocked,
