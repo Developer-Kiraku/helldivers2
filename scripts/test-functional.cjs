@@ -627,10 +627,11 @@ async function run() {
       await member.call('/api/posts/' + rich.id, 'PATCH', {
         ...draft('guide', 'HTML 영상 수정'),
         bodyHtml:
-          '<p><span style="font-size:17px">세밀한 글자</span></p><iframe src="https://youtu.be/M7lc1UVf-VE?t=62"></iframe><iframe src="https://attacker.example"></iframe><script>alert(1)</script>',
+          '<p><span style="font-size:17px"><strong><em><u><s>세밀한 글자</s></u></em></strong></span></p><iframe src="https://youtu.be/M7lc1UVf-VE?t=62"></iframe><iframe src="https://attacker.example"></iframe><script>alert(1)</script>',
       })
     ).data.post;
     assert.match(richEdit.bodyHtml, /font-size:17px/);
+    assert.ok(richEdit.bodyHtml.includes('<strong><em><u><s>세밀한 글자</s></u></em></strong>'));
     assert.match(richEdit.bodyHtml, /start=62/);
     assert.ok(!/attacker|script/.test(richEdit.bodyHtml));
     assert.equal(

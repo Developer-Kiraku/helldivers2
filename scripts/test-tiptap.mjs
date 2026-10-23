@@ -37,6 +37,38 @@ loaded
   .run();
 assert.equal(loaded.can().undo(), false);
 loaded.destroy();
+const formatted = make('<p>서식 검증</p>');
+formatted.commands.selectAll();
+for (const [mark, command, tag] of [
+  ['bold', 'toggleBold', 'strong'],
+  ['italic', 'toggleItalic', 'em'],
+  ['underline', 'toggleUnderline', 'u'],
+  ['strike', 'toggleStrike', 's'],
+]) {
+  formatted.commands[command]();
+  assert.equal(formatted.isActive(mark), true);
+  assert.ok(formatted.getHTML().includes(`<${tag}>`));
+}
+const formattedSaved = sanitizePostHtml(cleanEditorHtml(formatted.getHTML()));
+const formattedRestored = make(formattedSaved);
+formattedRestored.commands.selectAll();
+for (const mark of ['bold', 'italic', 'underline', 'strike'])
+  assert.equal(formattedRestored.isActive(mark), true);
+formattedRestored.commands.setFontSize('23px');
+formattedRestored.commands.unsetAllMarks();
+assert.equal(formattedRestored.getHTML(), '<p>서식 검증</p>');
+formattedRestored.commands.undo();
+assert.match(formattedRestored.getHTML(), /font-size: 23px/);
+for (const mark of ['bold', 'italic', 'underline', 'strike'])
+  assert.equal(formattedRestored.isActive(mark), true);
+formatted.commands.toggleStrike();
+assert.equal(formatted.isActive('strike'), false);
+assert.equal(formatted.isActive('bold'), true);
+formatted.commands.setTextSelection(formatted.state.doc.content.size - 1);
+formatted.commands.insertContent(' 이어쓰기');
+assert.match(formatted.getHTML(), /이어쓰기<\/u>/);
+formatted.destroy();
+formattedRestored.destroy();
 const first = make('<p><span style="font-size:17px">기존 본문</span></p>');
 first.commands.selectAll();
 first.commands.setFontSize('19px');

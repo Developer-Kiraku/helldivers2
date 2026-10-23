@@ -10,6 +10,13 @@ import { minFontSize, maxFontSize, youtubeEmbedUrl } from '@/lib/editor-format.m
 import { htmlTextSegments, replaceHtmlText } from '@/lib/ai-draft.mjs';
 import { prepareUpload } from '@/lib/image-upload.mjs';
 
+const textFormats = [
+  { mark: 'bold', command: 'toggleBold', label: '굵게', shortcut: 'Ctrl+B / ⌘B' },
+  { mark: 'italic', command: 'toggleItalic', label: '기울임', shortcut: 'Ctrl+I / ⌘I' },
+  { mark: 'underline', command: 'toggleUnderline', label: '밑줄', shortcut: 'Ctrl+U / ⌘U' },
+  { mark: 'strike', command: 'toggleStrike', label: '취소선', shortcut: 'Ctrl+Shift+S / ⌘Shift+S' },
+];
+
 const RichTextEditor = forwardRef(function RichTextEditor(
   { initialPost, notify, onProcessingChange },
   ref,
@@ -65,6 +72,7 @@ const RichTextEditor = forwardRef(function RichTextEditor(
       editor
         ? {
             size: parseInt(editor.getAttributes('textStyle').fontSize) || 14,
+            ...Object.fromEntries(textFormats.map(({ mark }) => [mark, editor.isActive(mark)])),
             bulletList: editor.isActive('bulletList'),
             undo: editor.can().undo(),
             redo: editor.can().redo(),
@@ -251,11 +259,37 @@ const RichTextEditor = forwardRef(function RichTextEditor(
               ))}
             </Select>
           </div>
+          {textFormats.map(({ mark, command, label, shortcut }) => (
+            <Button
+              key={mark}
+              type="button"
+              disabled={sourceMode || !editor}
+              aria-label={label}
+              aria-pressed={Boolean(state?.[mark])}
+              title={`${label} (${shortcut})`}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => format(command)}
+            >
+              <Icon name={mark} size={16} />
+              {label}
+            </Button>
+          ))}
+          <Button
+            type="button"
+            disabled={sourceMode || !editor}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => format('unsetAllMarks')}
+            title="선택한 글자의 서식 지우기"
+          >
+            <Icon name="clear-format" size={16} />
+            서식 지우기
+          </Button>
           <Button
             type="button"
             disabled={sourceMode || !editor}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => format('toggleBulletList')}
+            aria-pressed={Boolean(state?.bulletList)}
           >
             <Icon name="list" size={16} />
             목록
