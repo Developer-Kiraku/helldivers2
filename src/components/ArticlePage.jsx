@@ -136,7 +136,7 @@ function StandardArticlePage({ board, id }) {
                   <Icon name="back" size={15} />
                   목록으로
                 </Link>
-                <PostShare post={post} />
+                {board !== 'report' && <PostShare post={post} />}
               </footer>
             </article>
             <section className="comment-panel">

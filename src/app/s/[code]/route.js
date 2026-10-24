@@ -5,6 +5,7 @@ import { cookieOptions, userForToken } from '@/lib/server/auth';
 import { postSharePath, validSharePath } from '@/lib/server/share-links.mjs';
 import { boards } from '@/lib/data';
 import { sharePreview } from '@/lib/server/share-preview.mjs';
+import { canReadPost } from '@/lib/post-access.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -25,10 +26,13 @@ export async function GET(request, { params }) {
       (post) => !post.deletedAt && boards[post.board] && postSharePath(post) === path,
     );
     if (matches.length !== 1) return null;
+    const viewer = userForToken(db, request.cookies.get(config.cookie)?.value);
+    // Private reports never publish a title or excerpt to link-preview crawlers.
+    if (!canReadPost(matches[0], viewer)) return null;
     return {
       post: matches[0],
       target: `/boards/${matches[0].board}/${encodeURIComponent(matches[0].id)}`,
-      signedIn: Boolean(userForToken(db, request.cookies.get(config.cookie)?.value)),
+      signedIn: Boolean(viewer),
     };
   });
   if (!result) return missing();

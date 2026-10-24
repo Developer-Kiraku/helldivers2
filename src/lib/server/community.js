@@ -1,4 +1,5 @@
 import { postSharePath } from './share-links.mjs';
+import { canReadPost } from '../post-access.mjs';
 import { serializePoll } from './polls';
 import 'server-only';
 import { outranks } from '../roles';
@@ -41,6 +42,7 @@ export function canRequest(actor, target) {
   return actor.role === 'deputy' && target && outranks(actor.role, target.role);
 }
 export function serializePost(db, post, viewer) {
+  if (!canReadPost(post, viewer)) fail(404, '게시글을 찾을 수 없습니다.');
   const author = db.users.find((user) => user.id === post.authorId);
   const votes = db.votes.filter((vote) => vote.postId === post.id);
   const { viewReceipts, ...publicPost } = post;

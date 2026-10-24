@@ -17,6 +17,12 @@ export const boards = {
     description: '함께하는 대원들에게 전하는 운영진의 소식입니다.',
     categories: ['공지', '모임', '기타'],
   },
+  report: {
+    label: '진리부 신고',
+    eyebrow: 'MINISTRY OF TRUTH',
+    description: '작성자 본인과 부운영자 이상만 제목과 내용을 볼 수 있습니다.',
+    categories: ['신고', '문의', '기타'],
+  },
   guide: {
     label: '공략브리핑',
     eyebrow: 'FIELD MANUAL',
@@ -47,6 +53,7 @@ const row = (id, category, title, author, comments, likes, content, extra = {}) 
 });
 
 export const posts = {
+  report: [],
   helstagram: [],
   qna: [],
   notice: [

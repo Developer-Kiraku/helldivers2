@@ -191,6 +191,7 @@ async function run() {
         assert.equal(new URL(r.response.headers.get('location'), origin).pathname, '/');
       }
     }
+    await require('./test-private-reports.cjs')({ guest, admin, deputy, member, apprentice });
     const aiDraft = { board: 'talk', title: '테스트', segments: ['맞춤뻡을 고쳐줘'] };
     await guest.call('/api/ai/polish', 'POST', aiDraft, 401);
     await member.call('/api/ai/polish', 'POST', aiDraft, 403, {

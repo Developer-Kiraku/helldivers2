@@ -128,6 +128,7 @@ const menu = [
   { href: '/boards/talk', label: '헬다이버톡', icon: 'talk' },
   { href: '/boards/helstagram', label: '헬스타그램', icon: 'camera' },
   { href: '/boards/qna', label: '질문상담실', icon: 'question' },
+  { href: '/boards/report', label: '진리부 신고', icon: 'shield' },
 ];
 export default function Shell({ children, previewSkeleton = false }) {
   const pathname = usePathname(),

@@ -119,7 +119,7 @@ function App() {
     page = <RequestsPage />;
   else if (
     pieces[0] === 'boards' &&
-    ['notice', 'guide', 'talk', 'qna', 'helstagram'].includes(pieces[1])
+    ['notice', 'report', 'guide', 'talk', 'qna', 'helstagram'].includes(pieces[1])
   ) {
     const board = pieces[1];
     page = !pieces[2] ? (

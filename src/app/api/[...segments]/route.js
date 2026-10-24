@@ -1,6 +1,7 @@
 import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/api-keys';
 import { presentationUser, viewRoleCookie, viewRoles } from '@/lib/view-role.mjs';
 import { boards } from '@/lib/data';
+import { canReadPost } from '@/lib/post-access.mjs';
 import { createPoll, castBallot, serializePoll, pollClosed } from '@/lib/server/polls';
 import { NextResponse } from 'next/server';
 import { randomUUID } from 'node:crypto';
@@ -69,7 +70,7 @@ function bootstrap(db, actor) {
       Object.keys(boards).map((board) => [
         board,
         db.posts
-          .filter((post) => post.board === board && !post.deletedAt)
+          .filter((post) => post.board === board && !post.deletedAt && canReadPost(post, actor))
           .sort(
             (a, b) => Number(b.pinned) - Number(a.pinned) || b.createdAt.localeCompare(a.createdAt),
           )
@@ -177,6 +178,7 @@ async function handler(request, context) {
         const actor = requireUser(db, token);
         if (path === 'profile') return null;
         const post = method === 'PATCH' ? postForId(db, segments[1]) : null;
+        if (post && !canReadPost(post, actor)) fail(404, '게시글을 찾을 수 없습니다.');
         if (post && actor.id !== post.authorId)
           fail(403, '본인이 작성한 게시글만 수정할 수 있습니다.');
         const targetBoard = post?.board || input.board;
@@ -273,6 +275,7 @@ async function handler(request, context) {
       }
       if (segments[0] === 'posts' && segments[1]) {
         const post = postForId(db, segments[1]);
+        if (!canReadPost(post, actor)) fail(404, '게시글을 찾을 수 없습니다.');
         const author = db.users.find((user) => user.id === post.authorId);
         if (segments.length === 3 && segments[2] === 'view' && method === 'POST')
           return { views: recordPostView(post, actor.id) };
