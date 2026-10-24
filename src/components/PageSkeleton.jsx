@@ -71,6 +71,20 @@ export default function PageSkeleton({ path }) {
   const board = route.startsWith('/boards/');
   const article = board && !editor && route.split('/').filter(Boolean).length > 2;
   const feed = /^\/boards\/(talk|qna|helstagram)$/.test(route);
+  const photo = route.startsWith('/boards/helstagram') && !editor;
+  const layout = auth
+    ? `auth-page sk-auth-page ${route === '/signup' ? 'signup-page' : ''}`
+    : photo
+      ? `sk-helstagram-page ${article ? 'sk-helstagram-detail' : ''}`
+      : board
+        ? 'board-page'
+        : route === '/profile'
+          ? 'profile-page'
+          : route.startsWith('/admin/')
+            ? `admin-page ${route === '/admin/api-keys' ? 'api-keys-page' : ''}`
+            : route === '/'
+              ? 'home-page'
+              : '';
   let content;
   if (auth)
     content = (
@@ -91,7 +105,7 @@ export default function PageSkeleton({ path }) {
   else if (route === '/')
     content = (
       <>
-        <div className="sk-card sk-hero">
+        <div className="sk-card sk-hero hero">
           <Block className="sk-title" />
           <Block className="sk-title" />
           <Block className="sk-description" />
@@ -136,23 +150,28 @@ export default function PageSkeleton({ path }) {
   else if (route === '/boards/helstagram')
     content = (
       <div className="sk-helstagram">
-        <div className="sk-controls">
-          <Block className="sk-control" />
-          <Block className="sk-control" />
-        </div>
-        <div className="sk-stack">
-          {[0, 1].map((i) => (
-            <div key={i} className="sk-stack">
-              <div className="sk-author">
-                <Block className="sk-avatar" />
-                <Block className="sk-name" />
+        <div className="sk-helstagram-main">
+          <div className="sk-controls">
+            <Block className="sk-control" />
+            <Block className="sk-control" />
+          </div>
+          <div className="sk-stack">
+            {[0, 1].map((i) => (
+              <div key={i} className="sk-stack">
+                <div className="sk-author">
+                  <Block className="sk-avatar" />
+                  <Block className="sk-name" />
+                </div>
+                <Block className="sk-media" />
+                <Block className="sk-short" />
+                <Block />
               </div>
-              <Block className="sk-media" />
-              <Block className="sk-short" />
-              <Block />
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+        <aside className="sk-helstagram-sidebar">
+          <Card />
+        </aside>
       </div>
     );
   else if (article)
@@ -213,11 +232,16 @@ export default function PageSkeleton({ path }) {
         </div>
         <Block className="sk-control" />
         {feed ? (
-          <>
-            <Card />
-            <Card />
-            <Card />
-          </>
+          <div className="sk-feed-layout">
+            <div className="sk-stack">
+              <Card />
+              <Card />
+              <Card />
+            </div>
+            <aside>
+              <Card />
+            </aside>
+          </div>
         ) : (
           <Rows />
         )}
@@ -225,7 +249,7 @@ export default function PageSkeleton({ path }) {
     );
   return (
     <section
-      className={`page-skeleton ${auth ? 'sk-auth-page' : ''}`}
+      className={`page-skeleton ${layout}`}
       role="status"
       aria-label="페이지를 불러오는 중"
       aria-busy="true"

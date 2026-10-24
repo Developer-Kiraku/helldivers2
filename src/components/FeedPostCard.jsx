@@ -89,6 +89,7 @@ function StandardFeedPostCard({ post, board }) {
           <Nickname name={post.author} role={post.authorRole} own={post.own} />
         </span>
         <span>· {post.date}</span>
+        <span>조회 {Number(post.views || 0).toLocaleString('ko-KR')}</span>
       </div>
       {board === 'helstagram' && <PhotoCarousel images={post.images} title={post.title} />}
       <h2>

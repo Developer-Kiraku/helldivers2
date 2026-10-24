@@ -30,6 +30,15 @@ try {
       poll: { question: '확인', options: ['찬성', '반대'] },
     })
   ).data.post;
+  const views = await Promise.all(
+    Array.from({ length: 5 }, () => member.call(`/api/posts/${post.id}/view`, 'POST', {})),
+  );
+  assert.ok(views.every(({ data }) => data.views === 1));
+  assert.equal((await admin.call(`/api/posts/${post.id}/view`, 'POST', {})).data.views, 2);
+  assert.equal(
+    (await member.call('/api/bootstrap')).data.posts.qna.find((item) => item.id === post.id).views,
+    2,
+  );
   await admin.call(`/api/posts/${post.id}/poll`, 'POST', { choices: [post.poll.options[0].id] });
   await admin.call(`/api/posts/${post.id}/comments`, 'POST', { body: 'PostgreSQL 댓글' });
   await admin.call('/api/admin/users/u-user2/approve', 'POST', {});
@@ -38,6 +47,9 @@ try {
   const persisted = (await member.call(`/api/posts/${post.id}`)).data;
   assert.equal(persisted.comments[0].body, 'PostgreSQL 댓글');
   assert.equal(persisted.post.poll.totalVoters, 1);
+  assert.equal(persisted.post.views, 2);
+  assert.ok(!('viewReceipts' in persisted.post));
+  assert.equal((await member.call(`/api/posts/${post.id}/view`, 'POST', {})).data.views, 2);
   assert.equal(
     (await admin.call('/api/admin/users')).data.users.find((user) => user.id === 'u-user2').role,
     'member',

@@ -222,7 +222,7 @@ try {
   window.__community = {
     ready: false,
     signedIn: true,
-    user: { id: 'member' },
+    user: { id: 'member', role: 'member', actualRole: 'member' },
     api: async (route, options) => {
       viewCalls.push({ route, method: options.method });
       return { views: 7 };
@@ -248,13 +248,23 @@ try {
   window.__community.user.actualRole = 'operator';
   await React.act(async () => root.render(React.createElement(ViewHarness, { id: 'post-2' })));
   assert.equal(viewCalls.length, 1);
-  delete window.__community.user.actualRole;
+  window.__community.user.actualRole = 'member';
   await React.act(async () => root.render(React.createElement(ViewHarness, { id: 'post-2' })));
   await flush();
   assert.equal(viewCalls.length, 2);
   assert.deepEqual(viewUpdates[1], { id: 'post-2', views: 7 });
+  for (const role of ['operator', 'deputy', 'apprentice']) {
+    window.__community.user = { id: role, role, actualRole: role };
+    const previous = viewCalls.length;
+    await React.act(async () =>
+      root.render(React.createElement(ViewHarness, { id: `${role}-post` })),
+    );
+    await flush();
+    assert.equal(viewCalls.length, previous + 1);
+    assert.deepEqual(viewUpdates.at(-1), { id: `${role}-post`, views: 7 });
+  }
   console.log(
-    'PASS: detail view recording waits for authentication, updates shared counts, avoids render loops and skips role previews',
+    'PASS: serialized actualRole records views for all four real member roles, skips role previews, waits for authentication and avoids render loops',
   );
   console.log(
     'PASS: reason toggle accessibility and escaping, desktop sharing readiness and synchronous SDK call, unsupported desktop hiding, always-visible mobile button',

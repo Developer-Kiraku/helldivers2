@@ -187,7 +187,13 @@ function StandardBoardPage({ board }) {
                     <Nickname name={post.author} role={post.authorRole} own={post.own} />
                   </span>
                 </span>
-                <time>{post.date === '방금 전' ? post.date : post.date.slice(5)}</time>
+                <time>
+                  {post.date === '방금 전' ? post.date : post.date.slice(5)}
+                  <span className="board-mobile-views">
+                    {' '}
+                    · 조회 {Number(post.views || 0).toLocaleString('ko-KR')}
+                  </span>
+                </time>
                 <span className="desktop-metric">{post.views}</span>
                 <span className="desktop-metric">{post.likes}</span>
               </Link>

@@ -4,7 +4,7 @@ import { useCommunity } from '../components/CommunityProvider';
 
 export default function usePostView(postId) {
   const { api, ready, signedIn, user, updatePostViews, notify } = useCommunity();
-  const viewingRole = Boolean(user?.actualRole);
+  const viewingRole = Boolean(user?.actualRole && user.actualRole !== user.role);
   useEffect(() => {
     if (!postId || !ready || !signedIn || viewingRole) return;
     let active = true;

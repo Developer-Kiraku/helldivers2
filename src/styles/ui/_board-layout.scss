@@ -53,6 +53,14 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.board-mobile-views {
+  display: none;
+}
+@media (max-width:#{t.breakpoint('desktop')}) {
+  .board-mobile-views {
+    display: block;
+  }
+}
 @media (min-width:#{t.breakpoint('desktop-start')}) {
   .board-columns > :not(:nth-child(3)) {
     text-align: center;

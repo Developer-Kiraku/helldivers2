@@ -155,7 +155,7 @@ export default function HelstagramPost({ post, detail = false }) {
           </span>
         </div>
         <p className="helsta-like-count" aria-live="polite">
-          좋아요 {number(like.count)}개{detail && <span> · 조회 {number(post.views)}</span>}
+          좋아요 {number(like.count)}개<span> · 조회 {number(post.views)}</span>
         </p>
         <div className="helsta-caption">
           <strong>

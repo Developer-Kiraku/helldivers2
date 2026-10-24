@@ -27,6 +27,7 @@
   box-sizing: border-box;
 }
 html {
+  scrollbar-gutter: stable;
   min-width: var(--hd-size-320);
   scroll-behavior: smooth;
 }

@@ -99,12 +99,14 @@ try {
           content: '본문',
           myVote: 0,
           likes: 0,
+          views: 12,
           comments: 0,
         },
       }),
     ),
   );
   const heart = () => document.querySelector('.helsta-like');
+  assert.ok(document.querySelector('.helsta-like-count').textContent.includes('조회 12'));
   await React.act(async () => {
     heart().click();
     heart().click();
