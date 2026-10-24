@@ -113,7 +113,7 @@ export default function PhotoPostEditor({ id = null }) {
         <header className="page-heading">
           <div>
             <div className="eyebrow">MOMENTS FROM THE DROP</div>
-            <h1>{id ? '게시글 수정' : '오늘의 순간 공유하기'}</h1>
+            <h1>헬스타그램 {id ? '수정' : '글쓰기'}</h1>
             <p>사진이나 유튜브 영상으로 나만의 강하 기록을 남겨보세요.</p>
           </div>
         </header>

@@ -1,5 +1,5 @@
 import StarterKit from '@tiptap/starter-kit';
-import { TextStyle, FontSize } from '@tiptap/extension-text-style';
+import { TextStyle, FontSize, Color } from '@tiptap/extension-text-style';
 import Youtube from '@tiptap/extension-youtube';
 import Image from '@tiptap/extension-image';
 import TextAlign from '@tiptap/extension-text-align';
@@ -45,6 +45,7 @@ export function communityEditorExtensions() {
     }),
     TextStyle,
     FontSize,
+    Color,
     TextAlign.configure({ types: ['heading', 'paragraph'] }),
     Image.configure({ allowBase64: true }),
     CommunityYoutube.configure({ nocookie: true, autoplay: false, addPasteHandler: false }),

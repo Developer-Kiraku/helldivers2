@@ -5,6 +5,7 @@ import {
   youtubeAttributes,
   minFontSize,
   maxFontSize,
+  normalizeTextColor,
 } from './editor-format.mjs';
 
 export function cleanEditorHtml(raw) {
@@ -20,7 +21,8 @@ export function cleanEditorHtml(raw) {
       align = node.style.textAlign,
       weight = node.style.fontWeight,
       italic = node.style.fontStyle,
-      decoration = node.style.textDecoration;
+      decoration = node.style.textDecoration,
+      color = normalizeTextColor(node.style.color);
     node.removeAttribute('style');
     if (/^\d+px$/.test(size) && parseInt(size) >= minFontSize && parseInt(size) <= maxFontSize)
       node.style.fontSize = size;
@@ -28,6 +30,7 @@ export function cleanEditorHtml(raw) {
     if (/^(bold|normal|[1-9]00)$/.test(weight)) node.style.fontWeight = weight;
     if (/^(italic|normal)$/.test(italic)) node.style.fontStyle = italic;
     if (/^(underline|line-through|none)$/.test(decoration)) node.style.textDecoration = decoration;
+    if (color) node.style.color = color;
   }
   for (const frame of fragment.querySelectorAll('iframe')) {
     const src = youtubeEmbedUrl(frame.getAttribute('src'));

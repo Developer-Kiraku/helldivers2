@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { youtubeEmbedUrl } from '../src/lib/editor-format.mjs';
+import { normalizeTextColor, youtubeEmbedUrl } from '../src/lib/editor-format.mjs';
 import { sanitizePostHtml } from '../src/lib/server/post-html.mjs';
 
 const video = 'M7lc1UVf-VE',
@@ -39,6 +39,26 @@ for (const size of [12, 13, 17, 24, 48, 72])
   );
 for (const size of [0, 11, 73, 1000])
   assert.ok(!sanitizePostHtml(`<span style="font-size:${size}px">a</span>`).includes('font-size'));
+assert.equal(normalizeTextColor('#AbC'), '#aabbcc');
+assert.equal(normalizeTextColor('rgb(101, 175, 255)'), '#65afff');
+for (const color of [
+  'rgb(999, 0, 0)',
+  'transparent',
+  'var(--secret)',
+  'url(https://attacker.example)',
+])
+  assert.equal(normalizeTextColor(color), '');
+for (const color of ['#65afff', 'rgb(101, 175, 255)'])
+  assert.ok(
+    sanitizePostHtml(`<span style="color:${color}">색상</span>`).includes(`color:${color}`),
+  );
+for (const color of [
+  'transparent',
+  'var(--secret)',
+  'url(https://attacker.example)',
+  'expression(alert(1))',
+])
+  assert.ok(!sanitizePostHtml(`<span style="color:${color}">색상</span>`).includes('style='));
 console.log(
   'PASS: YouTube URL variants and start time, strict iframe origins, HTML XSS filtering, precise persisted font sizes',
 );

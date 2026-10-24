@@ -13,6 +13,10 @@ export function sanitizePostHtml(raw, images = []) {
     allowedStyles: {
       '*': {
         'font-size': [/^(?:1[2-9]|[2-6]\d|7[0-2])px$/],
+        color: [
+          /^#[a-f0-9]{3}(?:[a-f0-9]{3})?$/i,
+          /^rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)$/,
+        ],
         'text-align': [/^(?:left|center|right|justify)$/],
         'font-weight': [/^(?:bold|normal|[1-9]00)$/],
         'font-style': [/^(?:italic|normal)$/],

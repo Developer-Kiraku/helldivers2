@@ -1,12 +1,18 @@
 'use client';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
+import { BubbleMenu } from '@tiptap/react/menus';
 import { communityEditorExtensions } from '@/lib/tiptap-extensions';
 import { Button, Input, Label, Select, TextArea } from './ui';
 import Modal from './Modal';
 import Icon from './Icon';
 import { cleanEditorHtml } from '@/lib/editor-html';
-import { minFontSize, maxFontSize, youtubeEmbedUrl } from '@/lib/editor-format.mjs';
+import {
+  minFontSize,
+  maxFontSize,
+  normalizeTextColor,
+  youtubeEmbedUrl,
+} from '@/lib/editor-format.mjs';
 import { htmlTextSegments, replaceHtmlText } from '@/lib/ai-draft.mjs';
 import { prepareUpload } from '@/lib/image-upload.mjs';
 
@@ -16,6 +22,91 @@ const textFormats = [
   { mark: 'underline', command: 'toggleUnderline', label: '밑줄', shortcut: 'Ctrl+U / ⌘U' },
   { mark: 'strike', command: 'toggleStrike', label: '취소선', shortcut: 'Ctrl+Shift+S / ⌘Shift+S' },
 ];
+
+function TextControls({ state, disabled, compact = false, applyFontSize, applyColor, format }) {
+  const sizeProps = {
+    'aria-label': compact ? '선택 글자 크기' : '글자 크기',
+    value: String(state?.size || 14),
+    disabled,
+    onChange: (event) => applyFontSize(event.target.value),
+  };
+  const sizes = Array.from(
+    { length: maxFontSize - minFontSize + 1 },
+    (_, index) => index + minFontSize,
+  ).map((size) => (
+    <option key={size} value={String(size)}>
+      {size}px
+    </option>
+  ));
+  return (
+    <>
+      <div className="editor-font-size">
+        {compact ? (
+          <select className="editor-size-select" {...sizeProps}>
+            {sizes}
+          </select>
+        ) : (
+          <Select {...sizeProps}>{sizes}</Select>
+        )}
+      </div>
+      <label className="editor-text-color">
+        <span>글자 색상</span>
+        <input
+          type="color"
+          aria-label={compact ? '선택 글자 색상' : '글자 색상'}
+          value={normalizeTextColor(state?.color) || '#e6eee2'}
+          disabled={disabled}
+          onInput={(event) => applyColor(event.currentTarget.value)}
+          onChange={(event) => applyColor(event.target.value)}
+        />
+      </label>
+      {textFormats.map(({ mark, command, label, shortcut }) => (
+        <Button
+          key={mark}
+          type="button"
+          disabled={disabled}
+          aria-label={compact ? `선택 글자 ${label}` : label}
+          aria-pressed={Boolean(state?.[mark])}
+          title={`${label} (${shortcut})`}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => format(command)}
+        >
+          <Icon name={mark} size={16} />
+          {!compact && label}
+        </Button>
+      ))}
+      <Button
+        type="button"
+        disabled={disabled}
+        aria-label={compact ? '선택 글자 서식 지우기' : '서식 지우기'}
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={() => format('unsetAllMarks')}
+        title="선택한 글자의 크기·색상·서식 지우기"
+      >
+        <Icon name="clear-format" size={16} />
+        {!compact && '서식 지우기'}
+      </Button>
+    </>
+  );
+}
+
+function selectionMenuPadding() {
+  const header = document.querySelector('.mobile-brand-header')?.getBoundingClientRect();
+  const nav = document.querySelector('.mobile-nav')?.getBoundingClientRect();
+  return {
+    top: header?.height ? Math.max(12, header.bottom + 12) : 12,
+    bottom: nav?.height ? Math.max(12, window.innerHeight - nav.top + 12) : 12,
+    left: 12,
+    right: 12,
+  };
+}
+const selectionMenuOptions = {
+  strategy: 'fixed',
+  placement: 'top',
+  offset: 8,
+  flip: () => ({ padding: selectionMenuPadding() }),
+  shift: () => ({ padding: selectionMenuPadding(), crossAxis: true }),
+};
 
 const RichTextEditor = forwardRef(function RichTextEditor(
   { initialPost, notify, onProcessingChange },
@@ -72,6 +163,7 @@ const RichTextEditor = forwardRef(function RichTextEditor(
       editor
         ? {
             size: parseInt(editor.getAttributes('textStyle').fontSize) || 14,
+            color: editor.getAttributes('textStyle').color || '',
             ...Object.fromEntries(textFormats.map(({ mark }) => [mark, editor.isActive(mark)])),
             bulletList: editor.isActive('bulletList'),
             undo: editor.can().undo(),
@@ -152,6 +244,10 @@ const RichTextEditor = forwardRef(function RichTextEditor(
         .setFontSize(size + 'px')
         .run();
   }
+  function applyColor(value) {
+    const color = normalizeTextColor(value);
+    if (color) editor?.chain().focus().setColor(color).run();
+  }
   function toggleSource() {
     if (!editor) return;
     if (sourceMode) editor.commands.setContent(cleanEditorHtml(source));
@@ -221,6 +317,26 @@ const RichTextEditor = forwardRef(function RichTextEditor(
   }
   return (
     <div className="rich-text-composer">
+      {editor && !sourceMode && (
+        <BubbleMenu
+          editor={editor}
+          updateDelay={100}
+          resizeDelay={40}
+          options={selectionMenuOptions}
+          appendTo={() => editor.view.dom.closest('.community-theme') || document.body}
+          className="editor-toolbar editor-selection-toolbar"
+          role="toolbar"
+          aria-label="선택한 글자 편집"
+        >
+          <TextControls
+            state={state}
+            compact
+            applyFontSize={applyFontSize}
+            applyColor={applyColor}
+            format={format}
+          />
+        </BubbleMenu>
+      )}
       <div className="editor-toolbar" aria-label="본문 편집 도구">
         <div className="editor-mode-switch">
           <Button
@@ -242,48 +358,13 @@ const RichTextEditor = forwardRef(function RichTextEditor(
           </Button>
         </div>
         <div className="editor-format-controls" aria-disabled={sourceMode || !editor}>
-          <div className="editor-font-size">
-            <Select
-              aria-label="글자 크기"
-              value={String(state?.size || 14)}
-              disabled={sourceMode || !editor}
-              onChange={(event) => applyFontSize(event.target.value)}
-            >
-              {Array.from(
-                { length: maxFontSize - minFontSize + 1 },
-                (_, index) => index + minFontSize,
-              ).map((size) => (
-                <option key={size} value={String(size)}>
-                  {size}px
-                </option>
-              ))}
-            </Select>
-          </div>
-          {textFormats.map(({ mark, command, label, shortcut }) => (
-            <Button
-              key={mark}
-              type="button"
-              disabled={sourceMode || !editor}
-              aria-label={label}
-              aria-pressed={Boolean(state?.[mark])}
-              title={`${label} (${shortcut})`}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => format(command)}
-            >
-              <Icon name={mark} size={16} />
-              {label}
-            </Button>
-          ))}
-          <Button
-            type="button"
+          <TextControls
+            state={state}
             disabled={sourceMode || !editor}
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => format('unsetAllMarks')}
-            title="선택한 글자의 서식 지우기"
-          >
-            <Icon name="clear-format" size={16} />
-            서식 지우기
-          </Button>
+            applyFontSize={applyFontSize}
+            applyColor={applyColor}
+            format={format}
+          />
           <Button
             type="button"
             disabled={sourceMode || !editor}

@@ -22,6 +22,25 @@ export const editorTags = [
 ];
 export const minFontSize = 12,
   maxFontSize = 72;
+
+export function normalizeTextColor(value) {
+  const color = String(value || '')
+    .trim()
+    .toLowerCase();
+  if (/^#[a-f0-9]{6}$/.test(color)) return color;
+  if (/^#[a-f0-9]{3}$/.test(color))
+    return '#' + [...color.slice(1)].map((char) => char + char).join('');
+  const match = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/.exec(color);
+  if (match && match.slice(1).every((part) => Number(part) <= 255))
+    return (
+      '#' +
+      match
+        .slice(1)
+        .map((part) => Number(part).toString(16).padStart(2, '0'))
+        .join('')
+    );
+  return '';
+}
 export function youtubeEmbedUrl(value) {
   try {
     const url = new URL(String(value).trim());
