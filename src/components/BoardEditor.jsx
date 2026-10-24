@@ -98,25 +98,33 @@ function StandardBoardEditor({ board, id = null }) {
         <header className="page-heading">
           <div>
             <div className="eyebrow">
-              {board === 'notice' ? 'COMMAND ANNOUNCEMENT' : 'SHARE YOUR INTEL'}
+              {board === 'report'
+                ? config.eyebrow
+                : board === 'notice'
+                  ? 'COMMAND ANNOUNCEMENT'
+                  : 'SHARE YOUR INTEL'}
             </div>
             <h1>
               {id
                 ? '게시글 수정'
-                : board === 'notice'
-                  ? '새 공지 작성'
-                  : board === 'guide'
-                    ? '공략 나누기'
-                    : board === 'qna'
-                      ? '동료에게 질문하기'
-                      : '오늘의 이야기'}
+                : board === 'report'
+                  ? '진리부 신고 작성'
+                  : board === 'notice'
+                    ? '새 공지 작성'
+                    : board === 'guide'
+                      ? '공략 나누기'
+                      : board === 'qna'
+                        ? '동료에게 질문하기'
+                        : '오늘의 이야기'}
             </h1>
             <p>
-              {board === 'notice'
-                ? '대원들에게 필요한 소식을 전해주세요.'
-                : board === 'qna'
-                  ? '궁금한 상황과 시도한 방법을 함께 적어주세요.'
-                  : '동료들과 나눌 이야기를 들려주세요.'}
+              {board === 'report'
+                ? config.description
+                : board === 'notice'
+                  ? '대원들에게 필요한 소식을 전해주세요.'
+                  : board === 'qna'
+                    ? '궁금한 상황과 시도한 방법을 함께 적어주세요.'
+                    : '동료들과 나눌 이야기를 들려주세요.'}
             </p>
           </div>
         </header>
