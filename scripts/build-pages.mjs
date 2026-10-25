@@ -42,7 +42,7 @@ const result = await build({
         plugin.onLoad({ filter: /\.(jsx|js|css)$/ }, async ({ path: filename }) => {
           if (!filename.startsWith(path.join(root, 'src'))) return;
           let contents = await fs.readFile(filename, 'utf8');
-          contents = contents.replace(/(["'])\/(images|fonts)\//g, '$1./$2/');
+          contents = contents.replace(/([`"'])\/(images|fonts|emoticons)\//g, '$1./$2/');
           if (filename.endsWith('Shell.jsx'))
             contents = contents.replace(
               'src={previewRoute}',
@@ -64,6 +64,9 @@ await fs.cp(path.join(root, 'public/images'), path.join(destination, 'images'), 
   recursive: true,
 });
 await fs.cp(path.join(root, 'public/fonts'), path.join(destination, 'fonts'), { recursive: true });
+await fs.cp(path.join(root, 'public/emoticons'), path.join(destination, 'emoticons'), {
+  recursive: true,
+});
 const [script, details] = Object.entries(result.metafile.outputs).find(
   ([filename, output]) => filename.endsWith('.js') && output.entryPoint === 'preview/main.jsx',
 );

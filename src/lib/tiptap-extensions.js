@@ -1,4 +1,6 @@
 import StarterKit from '@tiptap/starter-kit';
+import { Node } from '@tiptap/core';
+import { emoticonForId, emoticonForSrc } from './emoticons.mjs';
 import { TextStyle, FontSize, Color } from '@tiptap/extension-text-style';
 import Youtube from '@tiptap/extension-youtube';
 import Image from '@tiptap/extension-image';
@@ -29,6 +31,39 @@ const CommunityYoutube = Youtube.extend({
     return ['div', { 'data-youtube-video': '' }, ['iframe', youtubeAttributes(url.href)]];
   },
 });
+const Emoticon = Node.create({
+  name: 'emoticon',
+  priority: 110,
+  inline: true,
+  group: 'inline',
+  atom: true,
+  addAttributes() {
+    return { id: { default: null } };
+  },
+  parseHTML() {
+    return [
+      {
+        tag: 'img',
+        getAttrs: (element) => {
+          const item = emoticonForSrc(element.getAttribute('src'));
+          return item ? { id: item.id } : false;
+        },
+      },
+    ];
+  },
+  renderHTML({ node }) {
+    const item = emoticonForId(node.attrs.id);
+    return item
+      ? [
+          'img',
+          { src: item.src, alt: item.label, class: 'post-emoticon', 'data-emoticon': item.id },
+        ]
+      : ['span'];
+  },
+  renderText({ node }) {
+    return emoticonForId(node.attrs.id)?.token || '';
+  },
+});
 
 export function communityEditorExtensions() {
   return [
@@ -44,6 +79,7 @@ export function communityEditorExtensions() {
       },
     }),
     TextStyle,
+    Emoticon,
     FontSize,
     Color,
     TextAlign.configure({ types: ['heading', 'paragraph'] }),

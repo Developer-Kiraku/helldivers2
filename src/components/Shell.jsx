@@ -10,7 +10,7 @@ import Icon from './Icon';
 import { useCommunity } from './CommunityProvider';
 import { DiscordLink, KakaoChatLink } from './CommunityLinks';
 import { isStaff, roleLabels } from '@/lib/roles';
-import { LogIn, LogOut, Menu } from 'lucide-react';
+import { LogIn, LogOut, Menu, ChevronDown } from 'lucide-react';
 import Modal from './Modal';
 import MobileBottomNav from './MobileBottomNav';
 
@@ -135,6 +135,10 @@ export default function Shell({ children, previewSkeleton = false }) {
     router = useRouter();
   const { signedIn, role, actualRole, setViewRole, notify, profile, logout } = useCommunity();
   const [roleBusy, setRoleBusy] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
+  useEffect(() => {
+    setAdminOpen(localStorage.getItem('hd_admin_menu_open') === 'true');
+  }, []);
   const [device, setDevice] = useState('pc'),
     [isFrame, setIsFrame] = useState(false),
     [previewRoute, setPreviewRoute] = useState(pathname);
@@ -195,25 +199,47 @@ export default function Shell({ children, previewSkeleton = false }) {
           ))}
           {isStaff(role) && (
             <>
-              <div className="nav-section-caption">운영 관리</div>
-              <Link href="/admin/users" className={active('/admin/users') ? 'active' : ''}>
-                <Icon name="users" />
-                <span>회원 리스트</span>
-              </Link>
-              <Link href="/admin/approvals" className={active('/admin/approvals') ? 'active' : ''}>
-                <Icon name="approvals" />
-                <span>요청 승인 목록</span>
-              </Link>
-              <Link href="/admin/logs" className={active('/admin/logs') ? 'active' : ''}>
-                <Icon name="logs" />
-                <span>로그 확인</span>
-              </Link>
-              {role === 'operator' && (
-                <Link href="/admin/api-keys" className={active('/admin/api-keys') ? 'active' : ''}>
-                  <Icon name="keys" />
-                  <span>API 키 관리</span>
+              <Button
+                type="button"
+                className="admin-menu-toggle"
+                aria-expanded={adminOpen}
+                aria-controls="desktop-admin-menu"
+                onClick={() => {
+                  const next = !adminOpen;
+                  setAdminOpen(next);
+                  localStorage.setItem('hd_admin_menu_open', String(next));
+                }}
+              >
+                <Icon name="shield" />
+                <span>운영 관리</span>
+                <ChevronDown size={17} className={adminOpen ? 'is-open' : ''} />
+              </Button>
+              <div id="desktop-admin-menu" hidden={!adminOpen} className="admin-menu-items">
+                <Link href="/admin/users" className={active('/admin/users') ? 'active' : ''}>
+                  <Icon name="users" />
+                  <span>회원 리스트</span>
                 </Link>
-              )}
+                <Link
+                  href="/admin/approvals"
+                  className={active('/admin/approvals') ? 'active' : ''}
+                >
+                  <Icon name="approvals" />
+                  <span>요청 승인 목록</span>
+                </Link>
+                <Link href="/admin/logs" className={active('/admin/logs') ? 'active' : ''}>
+                  <Icon name="logs" />
+                  <span>로그 확인</span>
+                </Link>
+                {role === 'operator' && (
+                  <Link
+                    href="/admin/api-keys"
+                    className={active('/admin/api-keys') ? 'active' : ''}
+                  >
+                    <Icon name="keys" />
+                    <span>API 키 관리</span>
+                  </Link>
+                )}
+              </div>
             </>
           )}
         </nav>

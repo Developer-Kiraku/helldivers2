@@ -2,6 +2,8 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
+import { EmoticonPicker } from './Emoticons';
+import { emoticonForSrc } from '@/lib/emoticons.mjs';
 import { communityEditorExtensions } from '@/lib/tiptap-extensions';
 import { Button, Input, Label, Select, TextArea } from './ui';
 import Modal from './Modal';
@@ -115,6 +117,7 @@ const RichTextEditor = forwardRef(function RichTextEditor(
   const imageInput = useRef(null),
     initialized = useRef(false);
   const pendingImages = useRef(0);
+  const emoticonSelection = useRef(null);
   const [processingImage, setProcessingImage] = useState(false);
   const [sourceMode, setSourceMode] = useState(false),
     [source, setSource] = useState('');
@@ -214,7 +217,13 @@ const RichTextEditor = forwardRef(function RichTextEditor(
         const bodyHtml = cleanEditorHtml(sourceMode ? source : editor?.getHTML() || '');
         const root = document.createElement('div');
         root.innerHTML = bodyHtml;
-        const images = [...root.querySelectorAll('img')].map((image) => image.getAttribute('src'));
+        const images = [...root.querySelectorAll('img')]
+          .map((image) => image.getAttribute('src'))
+          .filter((src) => !emoticonForSrc(src));
+        for (const image of root.querySelectorAll('img')) {
+          const item = emoticonForSrc(image.getAttribute('src'));
+          if (item) image.replaceWith(document.createTextNode(item.token));
+        }
         const video = root.querySelector('iframe');
         for (const line of root.querySelectorAll('br'))
           line.replaceWith(document.createTextNode('\n'));
@@ -358,6 +367,23 @@ const RichTextEditor = forwardRef(function RichTextEditor(
           </Button>
         </div>
         <div className="editor-format-controls" aria-disabled={sourceMode || !editor}>
+          <EmoticonPicker
+            disabled={sourceMode || !editor}
+            onOpen={() => {
+              emoticonSelection.current = {
+                from: editor.state.selection.from,
+                to: editor.state.selection.to,
+              };
+            }}
+            onSelect={(item) =>
+              editor
+                .chain()
+                .focus()
+                .setTextSelection(emoticonSelection.current)
+                .insertContent({ type: 'emoticon', attrs: { id: item.id } })
+                .run()
+            }
+          />
           <TextControls
             state={state}
             disabled={sourceMode || !editor}

@@ -119,6 +119,7 @@ async function run() {
   await import('./test-post-sharing-history.mjs');
   await import('./test-post-maps.mjs');
   await import('./test-post-views.mjs');
+  await import('./test-emoticons.mjs');
   await import('./test-admin-share-ui.mjs');
   await import('./test-owner-setup.mjs');
   await import('./test-post-html.mjs');
@@ -192,6 +193,7 @@ async function run() {
       }
     }
     await require('./test-private-reports.cjs')({ guest, admin, deputy, member, apprentice });
+    await require('./test-emoticons-http.cjs')({ admin, deputy, member });
     const aiDraft = { board: 'talk', title: '테스트', segments: ['맞춤뻡을 고쳐줘'] };
     await guest.call('/api/ai/polish', 'POST', aiDraft, 401);
     await member.call('/api/ai/polish', 'POST', aiDraft, 403, {

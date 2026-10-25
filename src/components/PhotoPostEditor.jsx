@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { EmoticonInput } from './Emoticons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { boards } from '@/lib/data';
@@ -243,7 +244,7 @@ export default function PhotoPostEditor({ id = null }) {
               </div>
               <div className="field">
                 <Label htmlFor="photo-caption">이야기</Label>
-                <TextArea
+                <EmoticonInput
                   id="photo-caption"
                   value={content}
                   onChange={(event) => setContent(event.target.value)}

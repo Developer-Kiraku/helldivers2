@@ -66,7 +66,14 @@ export function cleanPost(input, board) {
   const raw = typeof input.bodyHtml === 'string' ? input.bodyHtml : '';
   if (raw.length > 12000000) fail(400, '본문 크기가 너무 큽니다.');
   const bodyHtml = sanitizePostHtml(raw, images);
-  if (!content && !images.length && !youtubeUrl && !maps.length && !bodyHtml.includes('<iframe '))
+  if (
+    !content &&
+    !images.length &&
+    !youtubeUrl &&
+    !maps.length &&
+    !bodyHtml.includes('<iframe ') &&
+    !bodyHtml.includes('data-emoticon=')
+  )
     fail(400, '본문을 입력해주세요.');
   return {
     title,

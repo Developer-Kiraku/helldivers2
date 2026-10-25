@@ -35,6 +35,7 @@ try {
     platform: 'node',
     format: 'cjs',
     packages: 'external',
+    alias: { '@': path.resolve('src') },
     jsx: 'automatic',
     loader: { '.scss': 'empty' },
     plugins: [
@@ -54,7 +55,7 @@ try {
             contents: args.path.endsWith('/CommunityProvider')
               ? `export const useCommunity=()=>globalThis.__helstaTest;`
               : args.path === './ui'
-                ? `import React from 'react';export const Button=({type='submit',...props})=><button type={type} {...props}/>;export const Input=React.forwardRef((props,ref)=><input ref={ref} {...props}/>);`
+                ? `import React from 'react';export const Button=({type='submit',...props})=><button type={type} {...props}/>;export const Input=React.forwardRef((props,ref)=><input ref={ref} {...props}/>);export const TextArea=React.forwardRef((props,ref)=><textarea ref={ref} {...props}/>);`
                 : args.path === 'next/link'
                   ? `export default function Link(props){return <a {...props}/>}`
                   : args.path === './PhotoCarousel'

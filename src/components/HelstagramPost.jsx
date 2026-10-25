@@ -7,6 +7,7 @@ import { Button, Input } from './ui';
 import { useCommunity } from './CommunityProvider';
 import Avatar from './Avatar';
 import Nickname from './Nickname';
+import { EmoticonInput, EmoticonText } from './Emoticons';
 import PhotoCarousel from './PhotoCarousel';
 import PostShare from './PostShare';
 import ModerationActions from './ModerationActions';
@@ -170,7 +171,7 @@ export default function HelstagramPost({ post, detail = false }) {
           )}
           {post.content && (
             <p>
-              {caption}
+              <EmoticonText text={caption} />
               {!expanded && post.content.length > 160 && (
                 <Button
                   type="button"
@@ -199,7 +200,9 @@ export default function HelstagramPost({ post, detail = false }) {
                   <strong>
                     <Nickname name={item.author} role={item.authorRole} own={item.own} />
                   </strong>{' '}
-                  <span>{item.body}</span>
+                  <span>
+                    <EmoticonText text={item.body} />
+                  </span>
                 </li>
               ))}
             </ul>
@@ -221,7 +224,7 @@ export default function HelstagramPost({ post, detail = false }) {
           {error}
         </p>
         <form className="helsta-comment-form" onSubmit={comment}>
-          <Input
+          <EmoticonInput
             ref={input}
             aria-label={`${post.title} 댓글 작성`}
             placeholder="댓글 달기…"

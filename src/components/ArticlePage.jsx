@@ -1,5 +1,6 @@
 'use client';
 import Nickname from './Nickname';
+import { EmoticonInput, EmoticonText } from './Emoticons';
 import PhotoCarousel from './PhotoCarousel';
 import PostShare from './PostShare';
 import PostPoll from './PostPoll';
@@ -102,13 +103,17 @@ function StandardArticlePage({ board, id }) {
                 {board === 'helstagram' ? (
                   <>
                     <PhotoCarousel images={post.images} title={post.title} />
-                    <p className="preserve-lines">{post.content}</p>
+                    <p className="preserve-lines">
+                      <EmoticonText text={post.content} />
+                    </p>
                   </>
                 ) : post.bodyHtml ? (
                   <div dangerouslySetInnerHTML={{ __html: post.bodyHtml }} />
                 ) : (
                   <>
-                    <p className="preserve-lines">{post.content}</p>
+                    <p className="preserve-lines">
+                      <EmoticonText text={post.content} />
+                    </p>
                     {post.images?.map((src, index) => (
                       <img
                         className="article-image"
@@ -163,7 +168,9 @@ function StandardArticlePage({ board, id }) {
                           />
                         </strong>
                       </div>
-                      <p>{comment.body}</p>
+                      <p className="preserve-lines">
+                        <EmoticonText text={comment.body} />
+                      </p>
                       <time>{new Date(comment.createdAt).toLocaleString('ko-KR')}</time>
                     </li>
                   ))}
@@ -171,7 +178,7 @@ function StandardArticlePage({ board, id }) {
               )}
               <form onSubmit={addComment}>
                 <Label htmlFor="comment-body">댓글 작성</Label>
-                <TextArea
+                <EmoticonInput
                   id="comment-body"
                   placeholder="동료에게 따뜻한 한마디를 남겨주세요."
                   value={draft}

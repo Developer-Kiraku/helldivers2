@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import { emoticonForSrc } from './emoticons.mjs';
 import {
   editorTags,
   youtubeEmbedUrl,
@@ -11,11 +12,39 @@ import {
 export function cleanEditorHtml(raw) {
   const fragment = DOMPurify.sanitize(raw, {
     ALLOWED_TAGS: editorTags,
-    ALLOWED_ATTR: ['href', 'src', 'alt', 'style', 'target', 'rel', 'title'],
+    ALLOWED_ATTR: [
+      'href',
+      'src',
+      'alt',
+      'style',
+      'target',
+      'rel',
+      'title',
+      'class',
+      'data-emoticon',
+    ],
     ALLOW_DATA_ATTR: false,
     ALLOW_ARIA_ATTR: false,
     RETURN_DOM_FRAGMENT: true,
   });
+  for (const image of fragment.querySelectorAll('img')) {
+    const item = emoticonForSrc(image.getAttribute('src'));
+    image.removeAttribute('class');
+    image.removeAttribute('data-emoticon');
+    if (item) {
+      for (const attr of [...image.attributes]) image.removeAttribute(attr.name);
+      image.setAttribute('src', item.src);
+      image.setAttribute('alt', item.label);
+      image.setAttribute('class', 'post-emoticon');
+      image.setAttribute('data-emoticon', item.id);
+    }
+  }
+  for (const node of fragment.querySelectorAll('[class],[data-emoticon]')) {
+    if (node.tagName !== 'IMG' || !emoticonForSrc(node.getAttribute('src'))) {
+      node.removeAttribute('class');
+      node.removeAttribute('data-emoticon');
+    }
+  }
   for (const node of fragment.querySelectorAll('[style]')) {
     const size = node.style.fontSize,
       align = node.style.textAlign,

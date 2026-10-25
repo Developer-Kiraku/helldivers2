@@ -1,5 +1,6 @@
 'use client';
 import Nickname from './Nickname';
+import { EmoticonInput, EmoticonText } from './Emoticons';
 import PhotoCarousel from './PhotoCarousel';
 
 import Link from 'next/link';
@@ -101,7 +102,9 @@ function StandardFeedPostCard({ post, board }) {
           {post.poll.closed ? '투표 마감' : '투표 진행 중'} · {post.poll.totalVoters}명 참여
         </Link>
       )}
-      <p className="preserve-lines">{post.content}</p>
+      <p className="preserve-lines">
+        <EmoticonText text={post.content} />
+      </p>
       {board !== 'helstagram' && image && (
         <Link href={href} className="post-image">
           <img src={image} alt="게시글 첨부 이미지" />
@@ -165,7 +168,9 @@ function StandardFeedPostCard({ post, board }) {
                             />
                           </strong>
                         </div>
-                        <p className="preserve-lines">{comment.body}</p>
+                        <p className="preserve-lines">
+                          <EmoticonText text={comment.body} />
+                        </p>
                         <time dateTime={comment.createdAt}>
                           {new Date(comment.createdAt).toLocaleString('ko-KR', {
                             timeZone: 'Asia/Seoul',
@@ -197,7 +202,7 @@ function StandardFeedPostCard({ post, board }) {
             )}
             <form onSubmit={addComment}>
               <Label htmlFor={`${panelId}-draft`}>댓글 작성</Label>
-              <TextArea
+              <EmoticonInput
                 id={`${panelId}-draft`}
                 value={draft}
                 onChange={(event) => setDraft(event.target.value)}

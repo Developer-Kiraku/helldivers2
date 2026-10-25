@@ -1,4 +1,5 @@
 import sanitizeHtml from 'sanitize-html';
+import { emoticonForSrc } from '../emoticons.mjs';
 import { editorTags, youtubeEmbedUrl, youtubeAttributes } from '../editor-format.mjs';
 
 export function sanitizePostHtml(raw, images = []) {
@@ -7,7 +8,7 @@ export function sanitizePostHtml(raw, images = []) {
     allowedAttributes: {
       '*': ['style'],
       a: ['href', 'target', 'rel'],
-      img: ['src', 'alt'],
+      img: ['src', 'alt', 'class', 'data-emoticon'],
       iframe: ['src', 'title', 'loading', 'allow', 'allowfullscreen', 'referrerpolicy', 'class'],
     },
     allowedStyles: {
@@ -27,6 +28,15 @@ export function sanitizePostHtml(raw, images = []) {
     allowedSchemesByTag: { img: ['data', 'https'], iframe: ['https'] },
     allowProtocolRelative: false,
     transformTags: {
+      img: (tag, attrs) => {
+        const item = emoticonForSrc(attrs.src);
+        return {
+          tagName: 'img',
+          attribs: item
+            ? { src: item.src, alt: item.label, class: 'post-emoticon', 'data-emoticon': item.id }
+            : { src: attrs.src || '', alt: attrs.alt || '' },
+        };
+      },
       a: (tag, attrs) => ({
         tagName: 'a',
         attribs: { href: attrs.href || '', target: '_blank', rel: 'noopener noreferrer' },
@@ -38,7 +48,9 @@ export function sanitizePostHtml(raw, images = []) {
       }),
     },
     exclusiveFilter: (frame) =>
-      (frame.tag === 'img' && !images.includes(frame.attribs.src)) ||
+      (frame.tag === 'img' &&
+        !images.includes(frame.attribs.src) &&
+        !emoticonForSrc(frame.attribs.src)) ||
       (frame.tag === 'iframe' && !frame.attribs.src),
   });
 }

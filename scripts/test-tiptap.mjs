@@ -30,6 +30,27 @@ const make = (content) =>
     content,
   });
 const loaded = make('');
+const sticker = make('<p>앞 뒤</p>');
+sticker
+  .chain()
+  .setTextSelection(3)
+  .insertContent({ type: 'emoticon', attrs: { id: '03' } })
+  .run();
+assert.match(sticker.getHTML(), /data-emoticon="03"/);
+assert.ok(sticker.getText().includes(':hd03:'));
+const stickerHtml = sanitizePostHtml(cleanEditorHtml(sticker.getHTML()));
+assert.match(stickerHtml, /src="\/emoticons\/03.webp"/);
+const stickerRestored = make(stickerHtml);
+let stickerNodes = 0;
+stickerRestored.state.doc.descendants((node) => {
+  if (node.type.name === 'emoticon') stickerNodes++;
+});
+assert.equal(stickerNodes, 1);
+assert.match(stickerRestored.getHTML(), /class="post-emoticon"/);
+sticker.commands.undo();
+assert.ok(!sticker.getHTML().includes('/emoticons/'));
+sticker.destroy();
+stickerRestored.destroy();
 loaded
   .chain()
   .setContent('<p>저장된 본문</p>', { emitUpdate: false })
