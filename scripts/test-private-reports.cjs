@@ -21,7 +21,9 @@ module.exports = async function testPrivateReports({ guest, admin, deputy, membe
   ]) {
     const post = (await author.call('/api/posts', 'POST', draft)).data.post;
     reports.push([author, post]);
-    await author.call(`/api/posts/${post.id}/comments`, 'POST', { body: '비공개 댓글 검증' });
+    const comment = (
+      await author.call(`/api/posts/${post.id}/comments`, 'POST', { body: '비공개 댓글 검증' })
+    ).data.comment;
     for (const viewer of new Set([author, admin, deputy])) {
       const detail = (await viewer.call(`/api/posts/${post.id}`)).data;
       assert.equal(detail.post.title, draft.title);
@@ -38,6 +40,8 @@ module.exports = async function testPrivateReports({ guest, admin, deputy, membe
       ['', 'DELETE', {}],
       ['/view', 'POST', {}],
       ['/comments', 'POST', { body: '접근 금지 댓글' }],
+      [`/comments/${comment.id}`, 'PATCH', { body: '접근 금지 수정' }],
+      [`/comments/${comment.id}`, 'DELETE', {}],
       ['/vote', 'POST', { value: 1 }],
       ['/poll', 'POST', { choices: [] }],
       ['/poll', 'PATCH', { close: true }],

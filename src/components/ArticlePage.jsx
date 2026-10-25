@@ -1,6 +1,7 @@
 'use client';
 import Nickname from './Nickname';
 import { EmoticonInput, EmoticonText } from './Emoticons';
+import CommentContent from './CommentContent';
 import PhotoCarousel from './PhotoCarousel';
 import PostShare from './PostShare';
 import PostPoll from './PostPoll';
@@ -168,9 +169,17 @@ function StandardArticlePage({ board, id }) {
                           />
                         </strong>
                       </div>
-                      <p className="preserve-lines">
-                        <EmoticonText text={comment.body} />
-                      </p>
+                      <CommentContent
+                        comment={comment}
+                        postId={post.id}
+                        onChange={(updated) =>
+                          setComments((current) =>
+                            updated
+                              ? current.map((item) => (item.id === comment.id ? updated : item))
+                              : current.filter((item) => item.id !== comment.id),
+                          )
+                        }
+                      />
                       <time>{new Date(comment.createdAt).toLocaleString('ko-KR')}</time>
                     </li>
                   ))}

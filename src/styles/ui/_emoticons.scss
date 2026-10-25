@@ -85,6 +85,23 @@
 .helsta-comment-form {
   align-items: flex-end;
 }
+.comment-content {
+  min-width: 0;
+  width: 100%;
+}
+.comment-owner-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--hd-space-8);
+  margin: var(--hd-space-6) 0;
+}
+.comment-owner-actions > .ui-button {
+  height: auto;
+  min-height: var(--hd-size-32);
+  padding: var(--hd-space-4) var(--hd-space-8);
+  font-size: var(--hd-font-size-12);
+}
 @media (max-width:#{t.breakpoint('mobile')}) {
   .emoticon-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));

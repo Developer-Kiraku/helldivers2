@@ -8,6 +8,7 @@ import { useCommunity } from './CommunityProvider';
 import Avatar from './Avatar';
 import Nickname from './Nickname';
 import { EmoticonInput, EmoticonText } from './Emoticons';
+import CommentContent from './CommentContent';
 import PhotoCarousel from './PhotoCarousel';
 import PostShare from './PostShare';
 import ModerationActions from './ModerationActions';
@@ -200,9 +201,17 @@ export default function HelstagramPost({ post, detail = false }) {
                   <strong>
                     <Nickname name={item.author} role={item.authorRole} own={item.own} />
                   </strong>{' '}
-                  <span>
-                    <EmoticonText text={item.body} />
-                  </span>
+                  <CommentContent
+                    comment={item}
+                    postId={post.id}
+                    onChange={(updated) =>
+                      setComments((current) =>
+                        updated
+                          ? current.map((comment) => (comment.id === item.id ? updated : comment))
+                          : current.filter((comment) => comment.id !== item.id),
+                      )
+                    }
+                  />
                 </li>
               ))}
             </ul>

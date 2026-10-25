@@ -330,6 +330,27 @@ async function handler(request, context) {
           db.comments.push(comment);
           return { comment: serializeComment(db, comment, actor) };
         }
+        if (
+          segments[2] === 'comments' &&
+          segments.length === 4 &&
+          ['PATCH', 'DELETE'].includes(method)
+        ) {
+          const comment = db.comments.find(
+            (item) => item.id === segments[3] && item.postId === post.id && !item.deletedAt,
+          );
+          if (!comment) fail(404, '댓글을 찾을 수 없습니다.');
+          if (comment.authorId !== actor.id)
+            fail(403, '본인이 작성한 댓글만 수정하거나 삭제할 수 있습니다.');
+          if (method === 'DELETE') {
+            comment.deletedAt = now();
+            return { ok: true };
+          }
+          const text = typeof input.body === 'string' ? input.body.trim() : '';
+          if (!text || text.length > 1000) fail(400, '댓글은 1~1,000자로 입력해주세요.');
+          comment.body = text;
+          comment.updatedAt = now();
+          return { comment: serializeComment(db, comment, actor) };
+        }
         if (segments[2] === 'poll' && segments.length === 3 && ['POST', 'PATCH'].includes(method)) {
           if (!post.poll) fail(404, '투표를 찾을 수 없습니다.');
           if (method === 'PATCH') {

@@ -1,6 +1,7 @@
 'use client';
 import Nickname from './Nickname';
 import { EmoticonInput, EmoticonText } from './Emoticons';
+import CommentContent from './CommentContent';
 import PhotoCarousel from './PhotoCarousel';
 
 import Link from 'next/link';
@@ -168,9 +169,18 @@ function StandardFeedPostCard({ post, board }) {
                             />
                           </strong>
                         </div>
-                        <p className="preserve-lines">
-                          <EmoticonText text={comment.body} />
-                        </p>
+                        <CommentContent
+                          comment={comment}
+                          postId={post.id}
+                          onChange={(updated) => {
+                            setComments((current) =>
+                              updated
+                                ? current.map((item) => (item.id === comment.id ? updated : item))
+                                : current.filter((item) => item.id !== comment.id),
+                            );
+                            if (!updated) setCount((current) => Math.max(0, current - 1));
+                          }}
+                        />
                         <time dateTime={comment.createdAt}>
                           {new Date(comment.createdAt).toLocaleString('ko-KR', {
                             timeZone: 'Asia/Seoul',
