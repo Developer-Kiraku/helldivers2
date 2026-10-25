@@ -13,27 +13,27 @@ module.exports = async function ({ admin, member, deputy }) {
       board,
       category,
       title: '이모티콘 저장 검증',
-      content: '안녕 :hd01:',
+      content: '안녕 :hd42:',
       images: board === 'helstagram' ? ['/images/helldivers-logo.png'] : [],
       bodyHtml:
         board === 'helstagram'
           ? ''
-          : '<p>안녕 <img src="/emoticons/01.webp" onerror="bad()" class="evil"></p>',
+          : '<p>안녕 <img src="/emoticons/42.webp" onerror="bad()" class="evil"></p>',
     };
     const created = (await actor.call('/api/posts', 'POST', draft)).data.post;
-    assert.equal(created.content, '안녕 :hd01:');
+    assert.equal(created.content, '안녕 :hd42:');
     if (board !== 'helstagram') {
       assert.ok(created.bodyHtml.includes('class="post-emoticon"'));
       assert.ok(!/onerror|evil/.test(created.bodyHtml));
       assert.equal(created.images.length, 0);
       await actor.call(`/api/posts/${created.id}`, 'PATCH', {
         ...draft,
-        content: ':hd40:',
-        bodyHtml: '<p><img src="/emoticons/40.webp"></p>',
+        content: ':hd50:',
+        bodyHtml: '<p><img src="/emoticons/50.webp"></p>',
       });
       assert.ok(
         (await actor.call(`/api/posts/${created.id}`)).data.post.bodyHtml.includes(
-          '/emoticons/40.webp',
+          '/emoticons/50.webp',
         ),
       );
     }
@@ -54,9 +54,9 @@ module.exports = async function ({ admin, member, deputy }) {
     }
     await deputy.call(endpoint, 'PATCH', { body: '   ' }, 400);
     await deputy.call(endpoint, 'PATCH', { body: '가'.repeat(1001) }, 400);
-    const edited = (await deputy.call(endpoint, 'PATCH', { body: '수정했어요 :hd01:' })).data
+    const edited = (await deputy.call(endpoint, 'PATCH', { body: '수정했어요 :hd42:' })).data
       .comment;
-    assert.equal(edited.body, '수정했어요 :hd01:');
+    assert.equal(edited.body, '수정했어요 :hd42:');
     assert.ok(edited.updatedAt);
     assert.equal(
       (await actor.call(`/api/posts/${created.id}`)).data.comments.at(-1).body,

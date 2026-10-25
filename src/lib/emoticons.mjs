@@ -39,8 +39,18 @@ const captions = [
   '교통사고!',
   '눈 마주침',
   '우린 친구지?',
+  '최세트 · 햄버거가 목에 걸렸어 ㅠㅠ',
+  '희두 · 엉덩이 어디 있어?',
+  '이오 · 소중한 내 알 ㅠㅠ',
+  'mouse · 또 회식이야 ㅠㅠ',
+  '브 · 어휴 내 엉덩이',
+  '최부장 · 탐스럽다',
+  '오소리 · 니하오~',
+  'woong · 부끄러운 요리',
+  '라미아 · 내 개소리 재료들',
+  '브 · 아군킬이 부족하군',
 ];
-export const emoticonGroups = ['기본 감정', '적 캐릭터', '강하 상황', '공감 밈'];
+export const emoticonGroups = ['기본 감정', '적 캐릭터', '강하 상황', '공감 밈', '대원 밈'];
 export const emoticons = captions.map((label, index) => {
   const id = String(index + 1).padStart(2, '0');
   return {
@@ -55,7 +65,7 @@ export const emoticonForId = (id) => emoticons.find((item) => item.id === id);
 export const emoticonForSrc = (src) => emoticons.find((item) => item.src === src);
 export function emoticonParts(value) {
   return String(value || '')
-    .split(/(:hd(?:0[1-9]|[1-3]\d|40):)/g)
+    .split(/(:hd\d{2}:)/g)
     .filter(Boolean)
     .map((text) => ({
       text,

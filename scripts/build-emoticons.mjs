@@ -1,5 +1,7 @@
 import fs from 'node:fs/promises';
 import sharp from 'sharp';
+const pngDirectory = process.argv[2];
+if (pngDirectory) await fs.mkdir(pngDirectory, { recursive: true });
 await fs.mkdir('public/emoticons', { recursive: true });
 for (const [sheetIndex, sheet] of ['A', 'B', 'C', 'D'].entries()) {
   const source = `assets/emoticons/atlas-${sheet}.png`;
@@ -29,6 +31,11 @@ for (const [sheetIndex, sheet] of ['A', 'B', 'C', 'D'].entries()) {
     const right = Math.round(((col + 1) * width) / 5),
       bottom = row === 0 ? separators[col] : height;
     const id = String(sheetIndex * 10 + index + 1).padStart(2, '0');
+    if (pngDirectory)
+      await sharp(source)
+        .extract({ left, top, width: right - left, height: bottom - top })
+        .png()
+        .toFile(`${pngDirectory}/${id}.png`);
     await sharp(source)
       .extract({ left, top, width: right - left, height: bottom - top })
       .resize(256, 256, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
@@ -36,4 +43,15 @@ for (const [sheetIndex, sheet] of ['A', 'B', 'C', 'D'].entries()) {
       .toFile(`public/emoticons/${id}.webp`);
   }
 }
-console.log('Built 40 transparent 256px emoticons.');
+for (let id = 41; id <= 50; id++) {
+  const source = `assets/emoticons/members/${id}.png`;
+  if (!(await sharp(source).metadata()).hasAlpha) throw Error(`${source}: alpha channel required`);
+  await sharp(source)
+    .resize(256, 256, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .webp({ quality: 92 })
+    .toFile(`public/emoticons/${id}.webp`);
+  if (pngDirectory) await fs.copyFile(source, `${pngDirectory}/${id}.png`);
+}
+console.log(
+  'Built 50 transparent 256px emoticons.' + (pngDirectory ? ` PNGs: ${pngDirectory}` : ''),
+);
