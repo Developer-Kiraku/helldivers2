@@ -1,5 +1,6 @@
 'use client';
 import Nickname from './Nickname';
+import { LoadoutDisplay } from './Loadout';
 import { EmoticonInput, EmoticonText } from './Emoticons';
 import CommentContent from './CommentContent';
 import PhotoCarousel from './PhotoCarousel';
@@ -101,6 +102,7 @@ function StandardArticlePage({ board, id }) {
                 <span>댓글 {comments.length}</span>
               </div>
               <div className="article-copy">
+                {board === 'loadout' && <LoadoutDisplay value={post.loadout} />}
                 {board === 'helstagram' ? (
                   <>
                     <PhotoCarousel images={post.images} title={post.title} />

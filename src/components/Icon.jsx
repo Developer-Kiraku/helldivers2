@@ -48,6 +48,7 @@ import {
 } from 'lucide-react';
 import { SiDiscord, SiKakaotalk, SiYoutube } from '@icons-pack/react-simple-icons';
 const icons = {
+  crosshair: Crosshair,
   undo: Undo2,
   redo: Redo2,
   code: CodeXml,

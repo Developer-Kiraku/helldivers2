@@ -26,7 +26,10 @@ const editor = new Editor({
   content: commentDocument(original),
 });
 assert.equal(commentText(editor.getJSON()), original);
-assert.equal(editor.view.dom.querySelectorAll('img').length, 2);
+assert.equal(
+  editor.view.dom.querySelectorAll('img.post-emoticon, .equipment-inline > img').length,
+  2,
+);
 assert.ok(editor.view.dom.textContent.includes(gear.label));
 assert.ok(!editor.view.dom.textContent.includes(gear.token));
 editor.commands.setContent(commentDocument('앞뒤'));
@@ -45,7 +48,10 @@ const restored = new Editor({
   extensions: commentExtensions(1000),
   content: commentDocument(commentText(editor.getJSON())),
 });
-assert.equal(restored.view.dom.querySelectorAll('img').length, 2);
+assert.equal(
+  restored.view.dom.querySelectorAll('img.post-emoticon, .equipment-inline > img').length,
+  2,
+);
 editor.commands.setContent(commentDocument('a'.repeat(1000)));
 editor.commands.insertContent('b');
 assert.equal(commentText(editor.getJSON()).length, 1000);

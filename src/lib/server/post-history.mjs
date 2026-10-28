@@ -18,6 +18,7 @@ export function postSnapshot(post) {
     images: (post.images || []).map(digest),
     youtubeUrl: post.youtubeUrl || '',
     maps: post.maps || [],
+    ...(post.loadout ? { loadout: post.loadout } : {}),
     pinned: Boolean(post.pinned),
   };
 }

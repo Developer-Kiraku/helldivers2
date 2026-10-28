@@ -197,6 +197,7 @@ async function run() {
     await require('./test-private-reports.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-emoticons-http.cjs')({ admin, deputy, member });
     await require('./test-equipment-http.cjs')({ admin, member });
+    await require('./test-loadout-http.cjs')({ guest, member, deputy });
     const aiDraft = { board: 'talk', title: '테스트', segments: ['맞춤뻡을 고쳐줘'] };
     await guest.call('/api/ai/polish', 'POST', aiDraft, 401);
     await member.call('/api/ai/polish', 'POST', aiDraft, 403, {

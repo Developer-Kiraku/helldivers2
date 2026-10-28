@@ -125,6 +125,7 @@ const menu = [
   { href: '/', label: '대시보드', icon: 'home' },
   { href: '/boards/notice', label: '공지사항', icon: 'flag' },
   { href: '/boards/guide', label: '공략브리핑', icon: 'target' },
+  { href: '/boards/loadout', label: '로드아웃', icon: 'crosshair' },
   { href: '/boards/talk', label: '헬다이버톡', icon: 'talk' },
   { href: '/boards/helstagram', label: '헬스타그램', icon: 'camera' },
   { href: '/boards/qna', label: '질문상담실', icon: 'question' },

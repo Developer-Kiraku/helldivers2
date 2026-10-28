@@ -1,6 +1,6 @@
 const entities = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
 import { emoticonParts } from './emoticons.mjs';
-import { equipmentParts } from './equipment.mjs';
+import { equipmentParts, equipmentForId } from './equipment.mjs';
 export function postText(post) {
   const plain = typeof post.content === 'string' ? post.content : '';
   if (plain.trim())
@@ -24,6 +24,19 @@ export function postText(post) {
     });
 }
 export function postSummary(post, limit = 120) {
+  if (post.loadout) {
+    const value = post.loadout;
+    return `${post.category} · ${[
+      value.primary,
+      value.secondary,
+      value.throwable,
+      ...(value.stratagems || []),
+      value.armor,
+    ]
+      .map((id) => equipmentForId(id)?.label)
+      .filter(Boolean)
+      .join(' · ')} · ${value.armorClass}`.slice(0, limit);
+  }
   const characters = Array.from(postText(post).replace(/\s+/g, ' ').trim());
   if (!characters.length)
     return post.maps?.length

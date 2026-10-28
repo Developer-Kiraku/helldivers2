@@ -1,5 +1,6 @@
 'use client';
 import Nickname from './Nickname';
+import { LoadoutDisplay } from './Loadout';
 import { ActionLink, Button, Input } from './ui';
 
 import Link from 'next/link';
@@ -153,6 +154,25 @@ function StandardBoardPage({ board }) {
               )}
             </section>
           </div>
+        ) : board === 'loadout' ? (
+          <section className="loadout-list" aria-label="로드아웃 목록">
+            {visiblePosts.map((post) => (
+              <article className="loadout-card" key={post.id}>
+                <Link href={`/boards/loadout/${post.id}`}>
+                  <span className="badge">{post.category}</span>
+                  <h2>{post.title}</h2>
+                  <LoadoutDisplay value={post.loadout} />
+                </Link>
+                <p>
+                  <Nickname name={post.author} role={post.authorRole} own={post.own} /> ·{' '}
+                  {post.date} · 댓글 {post.comments} · 추천 {post.likes}
+                </p>
+              </article>
+            ))}
+            {!filtered.length && (
+              <div className="empty-state">아직 로드아웃이 없습니다. 첫 세팅을 공유해보세요.</div>
+            )}
+          </section>
         ) : (
           <section className="board-table" aria-label={`${config.label} 목록`}>
             <div className="board-columns table-head" aria-hidden="true">

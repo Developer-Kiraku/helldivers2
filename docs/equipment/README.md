@@ -21,3 +21,7 @@
 멜타 지뢰의 손잡이가 달린 원형 외형은 Sony 작성자의 [Xbox Wire 공식 소개 이미지](https://news.xbox.com/en-us/2026/08/07/helldivers-2-x-warhammer-40000-warbond-xbox/)와 대조했습니다. AI로 형태를 재생성하지 않고 고해상도 게임 렌더를 사용합니다.
 
 갱신 시 `src/lib/equipment-catalog.mjs`, 이 출처 기록, 실제 파일을 함께 업데이트하고 `node scripts/test-equipment.mjs` 및 전체 기능 검증을 실행합니다.
+
+## 공통 목록 관리
+
+장비 이름·아이콘 경로·분류·선택 가능 여부는 src/lib/equipment-catalog.mjs 한 곳에서 관리합니다. 글/댓글과 로드아웃 선택창은 src/lib/equipment.mjs의 selectableEquipment를 공통으로 사용합니다. 로드아웃에는 장비 ID만 저장하며 표시명과 이미지는 같은 목록에서 조회합니다. 미션용 스트라타젬은 selectable: false로 유지합니다. 갑옷 종류와 종족/슬롯 규칙은 src/lib/loadout.mjs에서 관리합니다. 별도 관리 페이지는 없습니다.

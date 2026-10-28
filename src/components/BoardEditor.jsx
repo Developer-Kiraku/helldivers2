@@ -14,6 +14,8 @@ import Icon from './Icon';
 import RichTextEditor from './RichTextEditor';
 import AiPolish from './AiPolish';
 import MapAttachmentsEditor from './MapAttachmentsEditor';
+import { LoadoutFields } from './Loadout';
+import { emptyLoadout, normalizeLoadout } from '@/lib/loadout.mjs';
 
 export default function BoardEditor(props) {
   return props.board === 'helstagram' ? (
@@ -34,6 +36,7 @@ function StandardBoardEditor({ board, id = null }) {
   const [title, setTitle] = useState('');
   const [pinned, setPinned] = useState(false);
   const [maps, setMaps] = useState([]);
+  const [loadout, setLoadout] = useState(emptyLoadout);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [processingImages, setProcessingImages] = useState(false);
@@ -43,13 +46,14 @@ function StandardBoardEditor({ board, id = null }) {
     setCategory(current.category);
     setPinned(Boolean(current.pinned));
     setMaps(current.maps || []);
+    if (current.loadout) setLoadout(current.loadout);
   }, [current?.id]);
 
   async function publish(event) {
     event.preventDefault();
     if (busy || processingImages) return;
     const { content: body, images, bodyHtml } = editor.current.getDraft();
-    if (!title.trim() || (!body && !images.length && !maps.length)) {
+    if (!title.trim() || (board !== 'loadout' && !body && !images.length && !maps.length)) {
       setError('제목과 본문을 입력해주세요.');
       return;
     }
@@ -58,6 +62,7 @@ function StandardBoardEditor({ board, id = null }) {
     try {
       const draft = {
         title: title.trim(),
+        ...(board === 'loadout' ? { loadout: normalizeLoadout(loadout) } : {}),
         category,
         ...(board === 'notice' ? { pinned } : {}),
         content: body,
@@ -108,7 +113,7 @@ function StandardBoardEditor({ board, id = null }) {
           <div className="editor-fields">
             <div className="field">
               <Label htmlFor="category">
-                분류 <span>*</span>
+                {board === 'loadout' ? '종족' : '분류'} <span>*</span>
               </Label>
               <Select
                 id="category"
@@ -150,8 +155,17 @@ function StandardBoardEditor({ board, id = null }) {
               </p>
             </div>
           )}
+          {board === 'loadout' && (
+            <LoadoutFields value={loadout} onChange={setLoadout} disabled={busy} />
+          )}
           <Label className="field-label">
-            본문 <span>*</span>
+            {board === 'loadout' ? (
+              '세팅 설명 (선택)'
+            ) : (
+              <>
+                본문 <span>*</span>
+              </>
+            )}
           </Label>
           <RichTextEditor
             key={id || board}

@@ -13,6 +13,9 @@ const byId = new Map(equipment.map((item) => [item.id, item]));
 const bySrc = new Map(equipment.map((item) => [item.src, item]));
 export const equipmentForId = (id) => byId.get(id);
 export const equipmentForSrc = (src) => bySrc.get(src);
+// Shared catalog access for post/comment pickers and loadout slots.
+export const selectableEquipment = (group) =>
+  equipment.filter((item) => item.selectable !== false && (!group || item.group === group));
 export function equipmentParts(value) {
   return String(value || '')
     .split(/(:gear-[a-z0-9-]+:)/g)

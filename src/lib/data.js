@@ -1,4 +1,11 @@
+import { loadoutFactions } from './loadout.mjs';
 export const boards = {
+  loadout: {
+    label: '로드아웃',
+    eyebrow: 'READY TO DROP',
+    description: '종족에 맞춘 나만의 장비 세팅을 공유하세요.',
+    categories: loadoutFactions,
+  },
   helstagram: {
     label: '헬스타그램',
     eyebrow: 'MOMENTS FROM THE DROP',
@@ -53,6 +60,7 @@ const row = (id, category, title, author, comments, likes, content, extra = {}) 
 });
 
 export const posts = {
+  loadout: [],
   report: [],
   helstagram: [],
   qna: [],

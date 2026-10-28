@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Crosshair } from 'lucide-react';
-import { equipment, equipmentGroups } from '@/lib/equipment.mjs';
+import { selectableEquipment, equipmentGroups } from '@/lib/equipment.mjs';
 import { Button, Input } from './ui';
 import Modal from './Modal';
 
@@ -13,15 +13,21 @@ export function EquipmentIcon({ item }) {
     </span>
   );
 }
-export function EquipmentPicker({ onSelect, onOpen, disabled = false }) {
+export function EquipmentPicker({
+  onSelect,
+  onOpen,
+  disabled = false,
+  fixedGroup,
+  label = '장비 아이콘',
+  excludeIds = [],
+}) {
   const [open, setOpen] = useState(false);
   const [group, setGroup] = useState('primary');
   const [search, setSearch] = useState('');
   const query = search.trim().toLocaleLowerCase();
-  const matches = equipment.filter(
+  const matches = selectableEquipment(fixedGroup || group).filter(
     (item) =>
-      item.selectable !== false &&
-      item.group === group &&
+      !excludeIds.includes(item.id) &&
       `${item.label} ${item.name}`.toLocaleLowerCase().includes(query),
   );
   return (
@@ -37,23 +43,25 @@ export function EquipmentPicker({ onSelect, onOpen, disabled = false }) {
         }}
       >
         <Crosshair size={17} />
-        장비 아이콘
+        {label}
       </Button>
       {open && (
-        <Modal title="장비 아이콘" className="equipment-modal" onClose={() => setOpen(false)}>
-          <div className="category-tabs" aria-label="장비 분류">
-            {equipmentGroups.map(([id, label]) => (
-              <Button
-                key={id}
-                type="button"
-                className={group === id ? 'selected' : ''}
-                aria-pressed={group === id}
-                onClick={() => setGroup(id)}
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
+        <Modal title={label} className="equipment-modal" onClose={() => setOpen(false)}>
+          {!fixedGroup && (
+            <div className="category-tabs" aria-label="장비 분류">
+              {equipmentGroups.map(([id, label]) => (
+                <Button
+                  key={id}
+                  type="button"
+                  className={group === id ? 'selected' : ''}
+                  aria-pressed={group === id}
+                  onClick={() => setGroup(id)}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+          )}
           <Input
             aria-label="장비 이름 검색"
             placeholder="장비 이름 검색 (한국어 / English)"

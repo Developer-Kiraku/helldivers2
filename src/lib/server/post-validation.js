@@ -4,6 +4,7 @@ import { youtubeEmbedUrl } from '../editor-format.mjs';
 import { boards } from '../data';
 import { fail } from './auth';
 import { normalizeMaps } from '../post-maps.mjs';
+import { normalizeLoadout } from '../loadout.mjs';
 
 export function validImage(value, allowLocal = false, max = 900000, allowRemote = false) {
   if (typeof value !== 'string' || value.length > max)
@@ -33,6 +34,14 @@ export function validImage(value, allowLocal = false, max = 900000, allowRemote 
 }
 export function cleanPost(input, board) {
   if (!boards[board]) fail(400, '게시판을 확인해주세요.');
+  let loadout;
+  if (board === 'loadout') {
+    try {
+      loadout = normalizeLoadout(input.loadout);
+    } catch (error) {
+      fail(400, error.message);
+    }
+  }
   if (input.pinned !== undefined && typeof input.pinned !== 'boolean')
     fail(400, '상단 고정 여부를 확인해주세요.');
   if (input.pinned === true && board !== 'notice')
@@ -67,6 +76,7 @@ export function cleanPost(input, board) {
   if (raw.length > 12000000) fail(400, '본문 크기가 너무 큽니다.');
   const bodyHtml = sanitizePostHtml(raw, images);
   if (
+    !loadout &&
     !content &&
     !images.length &&
     !youtubeUrl &&
@@ -78,6 +88,7 @@ export function cleanPost(input, board) {
     fail(400, '본문을 입력해주세요.');
   return {
     title,
+    ...(loadout ? { loadout } : {}),
     category: input.category,
     content,
     bodyHtml,
