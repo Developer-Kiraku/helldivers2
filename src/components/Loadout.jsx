@@ -8,11 +8,11 @@ export function LoadoutDisplay({ value }) {
   if (!value) return null;
   const slots = [
     ...loadoutSlots.slice(0, 3).map(([key, label]) => [label, value[key]]),
-    ...value.stratagems.map((id, i) => [`스트라타젬 ${i + 1}`, id]),
     [`${value.armorClass} · 갑옷 옵션`, value.armor],
+    ...value.stratagems.map((id, i) => [`스트라타젬 ${i + 1}`, id]),
   ];
   return (
-    <section className="loadout-display" aria-label="장비 세팅">
+    <section className="loadout-display loadout-summary" aria-label="장비 세팅">
       {slots.map(([label, id]) => (
         <div className="loadout-slot" key={label}>
           <strong>{label}</strong>

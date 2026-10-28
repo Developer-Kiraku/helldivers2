@@ -25,6 +25,9 @@
   gap: var(--hd-space-12);
   margin: var(--hd-space-16) 0;
 }
+.loadout-summary {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 .loadout-slot {
   display: flex;
   flex-direction: column;
