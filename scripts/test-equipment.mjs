@@ -9,6 +9,7 @@ import {
   equipmentHtml,
   equipmentMatchesSearch,
   selectableEquipment,
+  stratagemKinds,
 } from '../src/lib/equipment.mjs';
 import { sanitizePostHtml } from '../src/lib/server/post-html.mjs';
 import { postSummary } from '../src/lib/post-summary.mjs';
@@ -39,6 +40,18 @@ const selectableStratagems = equipment.filter(
   (item) => item.group === 'stratagem' && item.selectable !== false,
 );
 assert.equal(selectableStratagems.length, 95);
+const sortedStratagems = selectableEquipment('stratagem');
+const kinds = stratagemKinds.map(([id]) => id);
+assert.deepEqual([...new Set(sortedStratagems.map((item) => item.kind))], kinds);
+assert.equal(new Set(sortedStratagems.map((item) => item.id)).size, 95);
+for (const id of ['stratagem-amw-20-apex', 'stratagem-las-44-nova']) {
+  assert.equal(equipmentForId(id).kind, 'support');
+}
+assert.equal(equipmentForId('stratagem-eagle-cluster-bomb').label, '이글 집속탄');
+assert.equal(equipmentForId('armor-med-kit').label, '구급 키트');
+for (const item of equipment) {
+  for (const alias of item.searchAliases || []) assert.ok(equipmentMatchesSearch(item, alias));
+}
 for (const name of [
   'Reinforce',
   'Resupply',

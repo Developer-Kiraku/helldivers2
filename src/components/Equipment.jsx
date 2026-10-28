@@ -1,7 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Crosshair } from 'lucide-react';
-import { selectableEquipment, equipmentGroups, equipmentMatchesSearch } from '@/lib/equipment.mjs';
+import {
+  selectableEquipment,
+  equipmentGroups,
+  equipmentMatchesSearch,
+  stratagemKinds,
+} from '@/lib/equipment.mjs';
 import { Button, Input } from './ui';
 import Modal from './Modal';
 
@@ -65,21 +70,28 @@ export function EquipmentPicker({
             {matches.length}개
           </div>
           <div className="equipment-grid">
-            {matches.map((item) => (
-              <div className="equipment-choice" key={item.id}>
-                <Button
-                  type="button"
-                  aria-label={item.label}
-                  title={item.name}
-                  onClick={() => {
-                    onSelect(item);
-                    setOpen(false);
-                  }}
-                >
-                  <EquipmentIcon item={item} />
-                </Button>
-                {item.group === 'armor' && <ArmorDetails id={item.id} />}
-              </div>
+            {matches.map((item, index) => (
+              <Fragment key={item.id}>
+                {item.group === 'stratagem' && item.kind !== matches[index - 1]?.kind && (
+                  <h2 className="equipment-kind-heading">
+                    {stratagemKinds.find(([id]) => id === item.kind)?.[1]}
+                  </h2>
+                )}
+                <div className="equipment-choice">
+                  <Button
+                    type="button"
+                    aria-label={item.label}
+                    title={item.name}
+                    onClick={() => {
+                      onSelect(item);
+                      setOpen(false);
+                    }}
+                  >
+                    <EquipmentIcon item={item} />
+                  </Button>
+                  {item.group === 'armor' && <ArmorDetails id={item.id} />}
+                </div>
+              </Fragment>
             ))}
           </div>
           {!matches.length && <p>검색 결과가 없습니다.</p>}
