@@ -13,6 +13,50 @@
   min-width: 0;
   flex: 1;
 }
+.comment-editor-frame {
+  position: relative;
+  border: var(--hd-size-1) solid var(--hd-color-border);
+  border-radius: var(--hd-radius-8);
+  background: var(--hd-color-input);
+  color: var(--hd-color-input-text);
+}
+.comment-editor-frame[data-empty='true']::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  top: var(--hd-space-12);
+  left: var(--hd-space-12);
+  right: var(--hd-space-12);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.comment-editor-frame[aria-disabled='true'] {
+  opacity: 0.5;
+}
+.comment-editor-frame:focus-within {
+  outline: var(--hd-size-1) solid currentColor;
+}
+.comment-visual-editor {
+  min-height: var(--hd-size-80);
+  max-height: 40vh;
+  overflow-y: auto;
+  padding: var(--hd-space-12);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  outline: none;
+  line-height: 1.6;
+}
+.comment-visual-editor p {
+  margin: 0;
+}
+.comment-visual-editor img.post-emoticon {
+  width: var(--hd-size-90);
+  height: var(--hd-size-90);
+  object-fit: contain;
+  vertical-align: middle;
+}
+.comment-visual-editor .ProseMirror-selectednode {
+  outline: var(--hd-size-1) solid currentColor;
+}
 .emoticon-input > .emoticon-trigger {
   margin-top: var(--hd-space-6);
   margin-right: var(--hd-space-6);

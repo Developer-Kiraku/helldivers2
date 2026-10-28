@@ -32,7 +32,7 @@ const CommunityYoutube = Youtube.extend({
     return ['div', { 'data-youtube-video': '' }, ['iframe', youtubeAttributes(url.href)]];
   },
 });
-const Emoticon = Node.create({
+export const Emoticon = Node.create({
   name: 'emoticon',
   priority: 110,
   inline: true,
@@ -66,7 +66,7 @@ const Emoticon = Node.create({
   },
 });
 
-const Equipment = Node.create({
+export const Equipment = Node.create({
   name: 'equipment',
   priority: 120,
   inline: true,

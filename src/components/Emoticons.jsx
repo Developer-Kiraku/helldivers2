@@ -1,8 +1,10 @@
 'use client';
-import { forwardRef, useRef, useState } from 'react';
+import { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import { emoticons, emoticonGroups, emoticonParts } from '@/lib/emoticons.mjs';
-import { Button, TextArea } from './ui';
+import { Button } from './ui';
 import Modal from './Modal';
+import { useEditor, EditorContent } from '@tiptap/react';
+import { commentDocument, commentText, commentExtensions } from '@/lib/comment-editor';
 import { Smile } from 'lucide-react';
 import { equipmentParts } from '@/lib/equipment.mjs';
 import { EquipmentIcon, EquipmentPicker } from './Equipment';
@@ -89,57 +91,83 @@ export function EmoticonPicker({ onSelect, disabled = false, onOpen }) {
     </>
   );
 }
-export const EmoticonInput = forwardRef(function EmoticonInput({ value, onChange, ...props }, ref) {
-  const input = useRef(null),
-    selection = useRef(null);
+export const EmoticonInput = forwardRef(function EmoticonInput(
+  { value = '', onChange, ...props },
+  ref,
+) {
+  const selection = useRef(null);
+  const latest = useRef(onChange);
+  latest.current = onChange;
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: commentExtensions(props.maxLength),
+    content: commentDocument(value),
+    editable: !props.disabled && !props.readOnly,
+    autofocus: props.autoFocus ? 'end' : false,
+    editorProps: {
+      attributes: {
+        role: 'textbox',
+        'aria-multiline': 'true',
+        'aria-label': props['aria-label'] || '댓글 작성',
+        'aria-required': String(Boolean(props.required)),
+        ...(props.id ? { id: props.id } : {}),
+        class: 'comment-visual-editor',
+      },
+      handlePaste(view, event) {
+        const text = event.clipboardData?.getData('text/plain');
+        if (text === undefined) return false;
+        event.preventDefault();
+        editor.commands.insertContent(commentDocument(text).content);
+        return true;
+      },
+    },
+    onUpdate: ({ editor: current }) =>
+      latest.current({ target: { value: commentText(current.getJSON()) } }),
+  });
+  useEffect(() => {
+    if (editor && commentText(editor.getJSON()) !== value) {
+      editor.commands.setContent(commentDocument(value), { emitUpdate: false });
+    }
+  }, [editor, value]);
+  useEffect(() => {
+    editor?.setEditable(!props.disabled && !props.readOnly);
+  }, [editor, props.disabled, props.readOnly]);
+  useImperativeHandle(ref, () => ({ focus: () => editor?.commands.focus() }), [editor]);
+  function remember() {
+    if (editor)
+      selection.current = { from: editor.state.selection.from, to: editor.state.selection.to };
+  }
   function insert(item) {
-    const start = selection.current?.start ?? value.length;
-    const end = selection.current?.end ?? start;
-    const next = value.slice(0, start) + item.token + value.slice(end);
-    if (props.maxLength && next.length > props.maxLength) return;
-    onChange({ target: { value: next } });
-    requestAnimationFrame(() => {
-      input.current?.focus();
-      input.current?.setSelectionRange(start + item.token.length, start + item.token.length);
-    });
+    if (!editor) return;
+    const chain = editor.chain().focus();
+    if (selection.current) chain.setTextSelection(selection.current);
+    chain
+      .insertContent({
+        type: item.token.startsWith(':gear-') ? 'equipment' : 'emoticon',
+        attrs: { id: item.id },
+      })
+      .run();
   }
   return (
     <div className="emoticon-input">
-      <TextArea
-        {...props}
-        ref={(node) => {
-          input.current = node;
-          if (typeof ref === 'function') ref(node);
-          else if (ref) ref.current = node;
-        }}
-        value={value}
-        onChange={onChange}
-      />
+      <div
+        className="comment-editor-frame"
+        data-placeholder={props.placeholder}
+        data-empty={!value}
+        aria-disabled={Boolean(props.disabled)}
+      >
+        <EditorContent editor={editor} />
+      </div>
       <EmoticonPicker
-        disabled={props.disabled}
-        onOpen={() => {
-          selection.current = {
-            start: input.current?.selectionStart ?? value.length,
-            end: input.current?.selectionEnd ?? value.length,
-          };
-        }}
+        disabled={props.disabled || props.readOnly || !editor}
+        onOpen={remember}
         onSelect={insert}
       />
       <EquipmentPicker
-        disabled={props.disabled}
-        onOpen={() => {
-          selection.current = {
-            start: input.current?.selectionStart ?? value.length,
-            end: input.current?.selectionEnd ?? value.length,
-          };
-        }}
+        disabled={props.disabled || props.readOnly || !editor}
+        onOpen={remember}
         onSelect={insert}
       />
-      {/:(?:hd\d{2}|gear-[a-z0-9-]+):/.test(value) && (
-        <div className="emoticon-draft-preview" aria-label="이모티콘 미리보기">
-          <EmoticonText text={value} />
-        </div>
-      )}
     </div>
   );
 });

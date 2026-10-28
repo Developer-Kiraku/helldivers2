@@ -125,6 +125,7 @@ async function run() {
   await import('./test-owner-setup.mjs');
   await import('./test-post-html.mjs');
   await import('./test-tiptap.mjs');
+  await import('./test-comment-editor.mjs');
   await import('./test-ai-polish.mjs');
   await import('./test-image-upload.mjs');
   await import('./test-auth-security.mjs');
