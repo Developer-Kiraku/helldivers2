@@ -166,12 +166,25 @@
   max-height: 50vh;
   overflow-y: auto;
 }
-.equipment-grid > .ui-button {
+.equipment-grid .equipment-choice > .ui-button:first-child {
   height: auto;
   min-width: 0;
   padding: 0;
   border: var(--hd-size-1) solid var(--hd-color-border);
   background: var(--hd-color-input);
+}
+.equipment-choice {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.equipment-choice > .ui-button:first-child {
+  width: 100%;
+  flex: 1;
+}
+.equipment-choice > .armor-details-button {
+  width: 100%;
+  min-height: var(--hd-size-36);
 }
 .equipment-grid .equipment-inline {
   margin: 0;

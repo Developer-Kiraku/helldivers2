@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { equipmentForId } from '@/lib/equipment.mjs';
-import { EquipmentIcon } from './Equipment';
+import { EquipmentIcon } from './EquipmentIcon';
 import { Button } from './ui';
 import Modal from './Modal';
 

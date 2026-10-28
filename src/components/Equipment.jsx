@@ -5,14 +5,10 @@ import { selectableEquipment, equipmentGroups } from '@/lib/equipment.mjs';
 import { Button, Input } from './ui';
 import Modal from './Modal';
 
-export function EquipmentIcon({ item }) {
-  return (
-    <span className="equipment-inline" data-equipment={item.id}>
-      <img src={item.src} alt="" loading="lazy" width="240" height="160" />
-      <span>{item.label}</span>
-    </span>
-  );
-}
+import { EquipmentIcon } from './EquipmentIcon';
+export { EquipmentIcon } from './EquipmentIcon';
+import ArmorDetails from './ArmorDetails';
+
 export function EquipmentPicker({
   onSelect,
   onOpen,
@@ -73,18 +69,20 @@ export function EquipmentPicker({
           </div>
           <div className="equipment-grid">
             {matches.map((item) => (
-              <Button
-                key={item.id}
-                type="button"
-                aria-label={item.label}
-                title={item.name}
-                onClick={() => {
-                  onSelect(item);
-                  setOpen(false);
-                }}
-              >
-                <EquipmentIcon item={item} />
-              </Button>
+              <div className="equipment-choice" key={item.id}>
+                <Button
+                  type="button"
+                  aria-label={item.label}
+                  title={item.name}
+                  onClick={() => {
+                    onSelect(item);
+                    setOpen(false);
+                  }}
+                >
+                  <EquipmentIcon item={item} />
+                </Button>
+                {item.group === 'armor' && <ArmorDetails id={item.id} />}
+              </div>
             ))}
           </div>
           {!matches.length && <p>검색 결과가 없습니다.</p>}
