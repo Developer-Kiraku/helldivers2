@@ -33,12 +33,37 @@
 }
 .loadout-fields .loadout-slot {
   justify-content: flex-start;
+  align-items: stretch;
 }
 .loadout-fields .emoticon-trigger {
+  width: 100%;
+  min-height: var(--hd-size-40);
   white-space: nowrap;
   gap: var(--hd-space-4);
   font-size: var(--hd-font-size-12);
   padding: var(--hd-space-8);
+}
+.loadout-fields .ui-select {
+  width: 100%;
+  min-width: 0;
+  height: var(--hd-size-40);
+  font-size: var(--hd-font-size-12);
+}
+.loadout-equipment-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--hd-size-160);
+  width: 100%;
+  border-radius: var(--hd-radius-8);
+  background: var(--hd-color-input);
+}
+.community-theme .loadout-equipment-preview .equipment-inline {
+  width: 100%;
+  margin: 0;
+}
+.loadout-equipment-preview .loadout-empty {
+  width: 100%;
 }
 .loadout-slot {
   display: flex;

@@ -2,7 +2,7 @@
 import { EquipmentIcon, EquipmentPicker } from './Equipment';
 import { equipmentForId } from '@/lib/equipment.mjs';
 import { armorClasses, loadoutSlots } from '@/lib/loadout.mjs';
-import { Label, Select } from './ui';
+import { Select } from './ui';
 import ArmorDetails from './ArmorDetails';
 
 export function LoadoutDisplay({ value, compact = false }) {
@@ -35,11 +35,13 @@ export function LoadoutFields({ value, onChange, disabled }) {
   const slot = (group, label, id, select, excluded = []) => (
     <div className="loadout-slot" key={label}>
       <strong>{label}</strong>
-      {equipmentForId(id) ? (
-        <EquipmentIcon item={equipmentForId(id)} />
-      ) : (
-        <span className="loadout-empty">선택 전</span>
-      )}
+      <div className="loadout-equipment-preview">
+        {equipmentForId(id) ? (
+          <EquipmentIcon item={equipmentForId(id)} />
+        ) : (
+          <span className="loadout-empty">선택 전</span>
+        )}
+      </div>
       <EquipmentPicker
         fixedGroup={group}
         label={label}
@@ -48,19 +50,16 @@ export function LoadoutFields({ value, onChange, disabled }) {
         onSelect={(item) => select(item.id)}
       />
       {group === 'armor' && (
-        <>
-          <Label htmlFor="armor-class">갑옷 종류</Label>
-          <Select
-            id="armor-class"
-            value={value.armorClass}
-            onChange={(event) => onChange({ ...value, armorClass: event.target.value })}
-          >
-            {armorClasses.map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </Select>
-          <ArmorDetails id={id} disabled={disabled} />
-        </>
+        <Select
+          id="armor-class"
+          aria-label="갑옷 종류"
+          value={value.armorClass}
+          onChange={(event) => onChange({ ...value, armorClass: event.target.value })}
+        >
+          {armorClasses.map((name) => (
+            <option key={name}>{name}</option>
+          ))}
+        </Select>
       )}
     </div>
   );
