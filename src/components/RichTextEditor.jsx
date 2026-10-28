@@ -3,6 +3,8 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState }
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import { EmoticonPicker } from './Emoticons';
+import { EquipmentPicker } from './Equipment';
+import { equipmentForId, equipmentForSrc } from '@/lib/equipment.mjs';
 import { emoticonForSrc } from '@/lib/emoticons.mjs';
 import { communityEditorExtensions } from '@/lib/tiptap-extensions';
 import { Button, Input, Label, Select, TextArea } from './ui';
@@ -219,7 +221,11 @@ const RichTextEditor = forwardRef(function RichTextEditor(
         root.innerHTML = bodyHtml;
         const images = [...root.querySelectorAll('img')]
           .map((image) => image.getAttribute('src'))
-          .filter((src) => !emoticonForSrc(src));
+          .filter((src) => !emoticonForSrc(src) && !equipmentForSrc(src));
+        for (const badge of root.querySelectorAll('span[data-equipment]')) {
+          const item = equipmentForId(badge.getAttribute('data-equipment'));
+          if (item) badge.replaceWith(document.createTextNode(item.token));
+        }
         for (const image of root.querySelectorAll('img')) {
           const item = emoticonForSrc(image.getAttribute('src'));
           if (item) image.replaceWith(document.createTextNode(item.token));
@@ -381,6 +387,23 @@ const RichTextEditor = forwardRef(function RichTextEditor(
                 .focus()
                 .setTextSelection(emoticonSelection.current)
                 .insertContent({ type: 'emoticon', attrs: { id: item.id } })
+                .run()
+            }
+          />
+          <EquipmentPicker
+            disabled={sourceMode || !editor}
+            onOpen={() => {
+              emoticonSelection.current = {
+                from: editor.state.selection.from,
+                to: editor.state.selection.to,
+              };
+            }}
+            onSelect={(item) =>
+              editor
+                .chain()
+                .focus()
+                .setTextSelection(emoticonSelection.current)
+                .insertContent({ type: 'equipment', attrs: { id: item.id } })
                 .run()
             }
           />

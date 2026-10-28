@@ -1,6 +1,7 @@
 import StarterKit from '@tiptap/starter-kit';
 import { Node } from '@tiptap/core';
 import { emoticonForId, emoticonForSrc } from './emoticons.mjs';
+import { equipmentForId } from './equipment.mjs';
 import { TextStyle, FontSize, Color } from '@tiptap/extension-text-style';
 import Youtube from '@tiptap/extension-youtube';
 import Image from '@tiptap/extension-image';
@@ -65,6 +66,42 @@ const Emoticon = Node.create({
   },
 });
 
+const Equipment = Node.create({
+  name: 'equipment',
+  priority: 120,
+  inline: true,
+  group: 'inline',
+  atom: true,
+  addAttributes() {
+    return { id: { default: null } };
+  },
+  parseHTML() {
+    return [
+      {
+        tag: 'span[data-equipment]',
+        getAttrs: (element) => {
+          const item = equipmentForId(element.getAttribute('data-equipment'));
+          return item ? { id: item.id } : false;
+        },
+      },
+    ];
+  },
+  renderHTML({ node }) {
+    const item = equipmentForId(node.attrs.id);
+    return item
+      ? [
+          'span',
+          { class: 'equipment-inline', 'data-equipment': item.id },
+          ['img', { src: item.src, alt: '' }],
+          ['span', {}, item.label],
+        ]
+      : ['span'];
+  },
+  renderText({ node }) {
+    return equipmentForId(node.attrs.id)?.token || '';
+  },
+});
+
 export function communityEditorExtensions() {
   return [
     StarterKit.configure({
@@ -80,6 +117,7 @@ export function communityEditorExtensions() {
     }),
     TextStyle,
     Emoticon,
+    Equipment,
     FontSize,
     Color,
     TextAlign.configure({ types: ['heading', 'paragraph'] }),

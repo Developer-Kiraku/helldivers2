@@ -72,7 +72,8 @@ export function cleanPost(input, board) {
     !youtubeUrl &&
     !maps.length &&
     !bodyHtml.includes('<iframe ') &&
-    !bodyHtml.includes('data-emoticon=')
+    !bodyHtml.includes('data-emoticon=') &&
+    !bodyHtml.includes('data-equipment=')
   )
     fail(400, '본문을 입력해주세요.');
   return {

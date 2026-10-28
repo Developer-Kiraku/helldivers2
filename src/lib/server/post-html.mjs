@@ -1,13 +1,17 @@
 import sanitizeHtml from 'sanitize-html';
+import { parseDocument } from 'htmlparser2';
+import { findAll, replaceElement, getOuterHTML } from 'domutils';
+import { equipmentForId, equipmentForSrc, equipmentHtml } from '../equipment.mjs';
 import { emoticonForSrc } from '../emoticons.mjs';
 import { editorTags, youtubeEmbedUrl, youtubeAttributes } from '../editor-format.mjs';
 
 export function sanitizePostHtml(raw, images = []) {
-  return sanitizeHtml(raw, {
+  const clean = sanitizeHtml(raw, {
     allowedTags: editorTags.filter((tag) => tag !== 'font'),
     allowedAttributes: {
       '*': ['style'],
       a: ['href', 'target', 'rel'],
+      span: ['data-equipment'],
       img: ['src', 'alt', 'class', 'data-emoticon'],
       iframe: ['src', 'title', 'loading', 'allow', 'allowfullscreen', 'referrerpolicy', 'class'],
     },
@@ -50,7 +54,20 @@ export function sanitizePostHtml(raw, images = []) {
     exclusiveFilter: (frame) =>
       (frame.tag === 'img' &&
         !images.includes(frame.attribs.src) &&
+        !equipmentForSrc(frame.attribs.src) &&
         !emoticonForSrc(frame.attribs.src)) ||
       (frame.tag === 'iframe' && !frame.attribs.src),
   });
+  if (!clean.includes('data-equipment=')) return clean;
+  // Only catalog IDs can produce badges. Rebuild every child and label after sanitizing.
+  const document = parseDocument(clean);
+  for (const node of findAll(
+    (node) => node.name === 'span' && node.attribs?.['data-equipment'],
+    document.children,
+  )) {
+    const item = equipmentForId(node.attribs['data-equipment']);
+    if (item) replaceElement(node, parseDocument(equipmentHtml(item)).children[0]);
+    else delete node.attribs['data-equipment'];
+  }
+  return getOuterHTML(document, { encodeEntities: 'utf8', emptyAttrs: true });
 }

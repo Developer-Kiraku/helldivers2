@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify';
 import { emoticonForSrc } from './emoticons.mjs';
+import { equipmentForId, equipmentHtml } from './equipment.mjs';
 import {
   editorTags,
   youtubeEmbedUrl,
@@ -22,6 +23,7 @@ export function cleanEditorHtml(raw) {
       'title',
       'class',
       'data-emoticon',
+      'data-equipment',
     ],
     ALLOW_DATA_ATTR: false,
     ALLOW_ARIA_ATTR: false,
@@ -80,6 +82,14 @@ export function cleanEditorHtml(raw) {
     span.style.cssText = font.style.cssText;
     span.append(...font.childNodes);
     font.replaceWith(span);
+  }
+  for (const node of fragment.querySelectorAll('[data-equipment]')) {
+    const item = node.tagName === 'SPAN' && equipmentForId(node.getAttribute('data-equipment'));
+    if (item) {
+      const template = document.createElement('template');
+      template.innerHTML = equipmentHtml(item);
+      node.replaceWith(template.content);
+    } else node.removeAttribute('data-equipment');
   }
   const root = document.createElement('div');
   root.append(fragment);

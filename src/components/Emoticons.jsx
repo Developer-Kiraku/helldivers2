@@ -4,6 +4,8 @@ import { emoticons, emoticonGroups, emoticonParts } from '@/lib/emoticons.mjs';
 import { Button, TextArea } from './ui';
 import Modal from './Modal';
 import { Smile } from 'lucide-react';
+import { equipmentParts } from '@/lib/equipment.mjs';
+import { EquipmentIcon, EquipmentPicker } from './Equipment';
 
 export function EmoticonText({ text }) {
   return emoticonParts(text).map((part, index) =>
@@ -18,7 +20,13 @@ export function EmoticonText({ text }) {
         loading="lazy"
       />
     ) : (
-      part.text
+      equipmentParts(part.text).map((piece, offset) =>
+        piece.equipment ? (
+          <EquipmentIcon key={`${index}-${offset}`} item={piece.equipment} />
+        ) : (
+          piece.text
+        ),
+      )
     ),
   );
 }
@@ -117,7 +125,17 @@ export const EmoticonInput = forwardRef(function EmoticonInput({ value, onChange
         }}
         onSelect={insert}
       />
-      {/:hd\d{2}:/.test(value) && (
+      <EquipmentPicker
+        disabled={props.disabled}
+        onOpen={() => {
+          selection.current = {
+            start: input.current?.selectionStart ?? value.length,
+            end: input.current?.selectionEnd ?? value.length,
+          };
+        }}
+        onSelect={insert}
+      />
+      {/:(?:hd\d{2}|gear-[a-z0-9-]+):/.test(value) && (
         <div className="emoticon-draft-preview" aria-label="이모티콘 미리보기">
           <EmoticonText text={value} />
         </div>

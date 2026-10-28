@@ -1,10 +1,17 @@
 const entities = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
 import { emoticonParts } from './emoticons.mjs';
+import { equipmentParts } from './equipment.mjs';
 export function postText(post) {
   const plain = typeof post.content === 'string' ? post.content : '';
   if (plain.trim())
     return emoticonParts(plain)
-      .map((part) => (part.emoticon ? `[${part.emoticon.label}]` : part.text))
+      .map((part) =>
+        part.emoticon
+          ? `[${part.emoticon.label}]`
+          : equipmentParts(part.text)
+              .map((piece) => (piece.equipment ? `[${piece.equipment.label}]` : piece.text))
+              .join(''),
+      )
       .join('');
   return String(post.bodyHtml || '')
     .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '')

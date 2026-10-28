@@ -4,7 +4,10 @@ function textNodes(root) {
   const nodes = [];
   while (walker.nextNode()) {
     const node = walker.currentNode;
-    if (node.textContent.trim() && !node.parentElement.closest('script,style,iframe,pre,code'))
+    if (
+      node.textContent.trim() &&
+      !node.parentElement.closest('script,style,iframe,pre,code,[data-equipment]')
+    )
       nodes.push(node);
   }
   return nodes;

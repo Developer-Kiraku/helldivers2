@@ -1,0 +1,2489 @@
+{
+  "checkedAt": "2026-10-28",
+  "items": [
+    {
+      "id": "primary-ar-2-coyote",
+      "group": "primary",
+      "label": "AR-2 코요테",
+      "name": "AR-2 Coyote",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-AR-2_Coyote_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ar-2-coyote",
+      "src": "/equipment/primary-ar-2-coyote.webp"
+    },
+    {
+      "id": "primary-ar-11-arbitrator",
+      "group": "primary",
+      "label": "AR-11 중재자",
+      "name": "AR-11 Arbitrator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-AR-11_Arbitrator_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ar-11-arbitrator",
+      "src": "/equipment/primary-ar-11-arbitrator.webp"
+    },
+    {
+      "id": "primary-ar-23-liberator",
+      "group": "primary",
+      "label": "AR-23 리버레이터",
+      "name": "AR-23 Liberator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-AR-23_Liberator_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ar-23-liberator",
+      "src": "/equipment/primary-ar-23-liberator.webp"
+    },
+    {
+      "id": "primary-ar-23a-liberator-carbine",
+      "group": "primary",
+      "label": "AR-23A 리버레이터 카빈",
+      "name": "AR-23A Liberator Carbine",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-AR-23A_Liberator_Carbine_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ar-23a-liberator-carbine",
+      "src": "/equipment/primary-ar-23a-liberator-carbine.webp"
+    },
+    {
+      "id": "primary-ar-23c-liberator-concussive",
+      "group": "primary",
+      "label": "AR-23C 리버레이터 (충격탄형)",
+      "name": "AR-23C Liberator Concussive",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-AR-23C_Liberator_Concussive_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ar-23c-liberator-concussive",
+      "src": "/equipment/primary-ar-23c-liberator-concussive.webp"
+    },
+    {
+      "id": "primary-ar-23p-liberator-penetrator",
+      "group": "primary",
+      "label": "AR-23P 리버레이터 페네트레이터",
+      "name": "AR-23P Liberator Penetrator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/AR-23P_Liberator_Penetrator_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ar-23p-liberator-penetrator",
+      "src": "/equipment/primary-ar-23p-liberator-penetrator.webp"
+    },
+    {
+      "id": "primary-ar-32-pacifier",
+      "group": "primary",
+      "label": "AR-32 패시파이어",
+      "name": "AR-32 Pacifier",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1920px-AR-32_Pacifier_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ar-32-pacifier",
+      "src": "/equipment/primary-ar-32-pacifier.webp"
+    },
+    {
+      "id": "primary-ar-59-suppressor",
+      "group": "primary",
+      "label": "AR-59 서프레서",
+      "name": "AR-59 Suppressor",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-AR-59_Suppressor_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ar-59-suppressor",
+      "src": "/equipment/primary-ar-59-suppressor.webp"
+    },
+    {
+      "id": "primary-ar-61-tenderizer",
+      "group": "primary",
+      "label": "AR-61 텐더라이저",
+      "name": "AR-61 Tenderizer",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-AR-61_Tenderizer_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ar-61-tenderizer",
+      "src": "/equipment/primary-ar-61-tenderizer.webp"
+    },
+    {
+      "id": "primary-ar-gl-21-one-two",
+      "group": "primary",
+      "label": "AR/GL-21 원-투",
+      "name": "AR/GL-21 One-Two",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-AR-GL-21_One_Two_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ar-gl-21-one-two",
+      "src": "/equipment/primary-ar-gl-21-one-two.webp"
+    },
+    {
+      "id": "primary-arc-12-blitzer",
+      "group": "primary",
+      "label": "ARC-12 블리처",
+      "name": "ARC-12 Blitzer",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-ARC-12_Blitzer_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/arc-12-blitzer",
+      "src": "/equipment/primary-arc-12-blitzer.webp"
+    },
+    {
+      "id": "primary-br-14-adjudicator",
+      "group": "primary",
+      "label": "BR-14 어저디케이터",
+      "name": "BR-14 Adjudicator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-BR-14_Adjudicator_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/br-14-adjudicator",
+      "src": "/equipment/primary-br-14-adjudicator.webp"
+    },
+    {
+      "id": "primary-cb-9-exploding-crossbow",
+      "group": "primary",
+      "label": "CB-9 폭발형 석궁",
+      "name": "CB-9 Exploding Crossbow",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1920px-CB-9_Exploding_Crossbow_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/cb-9-exploding-crossbow",
+      "src": "/equipment/primary-cb-9-exploding-crossbow.webp"
+    },
+    {
+      "id": "primary-dbs-2-double-freedom",
+      "group": "primary",
+      "label": "DBS-2 더블 프리덤",
+      "name": "DBS-2 Double Freedom",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-DBS-2_Shotgun_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/dbs-2-double-freedom",
+      "src": "/equipment/primary-dbs-2-double-freedom.webp"
+    },
+    {
+      "id": "primary-flam-66-torcher",
+      "group": "primary",
+      "label": "FLAM-66 토처",
+      "name": "FLAM-66 Torcher",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-FLAM-66_Torcher_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/flam-66-torcher",
+      "src": "/equipment/primary-flam-66-torcher.webp"
+    },
+    {
+      "id": "primary-gl-15-evictor",
+      "group": "primary",
+      "label": "GL-15 이빅터",
+      "name": "GL-15 Evictor",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-GL-15_Evictor_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/gl-15-evictor",
+      "src": "/equipment/primary-gl-15-evictor.webp"
+    },
+    {
+      "id": "primary-jar-5-dominator",
+      "group": "primary",
+      "label": "JAR-5 도미네이터",
+      "name": "JAR-5 Dominator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-JAR-5_Dominator_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/jar-5-dominator",
+      "src": "/equipment/primary-jar-5-dominator.webp"
+    },
+    {
+      "id": "primary-las-5-scythe",
+      "group": "primary",
+      "label": "LAS-5 사이스",
+      "name": "LAS-5 Scythe",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-LAS-5_Scythe_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/las-5-scythe",
+      "src": "/equipment/primary-las-5-scythe.webp"
+    },
+    {
+      "id": "primary-las-16-sickle",
+      "group": "primary",
+      "label": "LAS-16 시클",
+      "name": "LAS-16 Sickle",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-LAS-16_Sickle_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/las-16-sickle",
+      "src": "/equipment/primary-las-16-sickle.webp"
+    },
+    {
+      "id": "primary-las-17-double-edge-sickle",
+      "group": "primary",
+      "label": "LAS-17 더블-엣지 시클",
+      "name": "LAS-17 Double-Edge Sickle",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-LAS-17_Double-Edge_Sickle_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/las-17-double-edge-sickle",
+      "src": "/equipment/primary-las-17-double-edge-sickle.webp"
+    },
+    {
+      "id": "primary-m7s-smg",
+      "group": "primary",
+      "label": "M7S SMG",
+      "name": "M7S SMG",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-M7S_SMG_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/m7s-smg",
+      "src": "/equipment/primary-m7s-smg.webp"
+    },
+    {
+      "id": "primary-m90a-shotgun",
+      "group": "primary",
+      "label": "M90A 샷건",
+      "name": "M90A Shotgun",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-M90A_Shotgun_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/m90a-shotgun",
+      "src": "/equipment/primary-m90a-shotgun.webp"
+    },
+    {
+      "id": "primary-ma5c-assault-rifle",
+      "group": "primary",
+      "label": "MA5C 돌격소총",
+      "name": "MA5C Assault Rifle",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-MA5C_Assault_Rifle_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/ma5c-assault-rifle",
+      "src": "/equipment/primary-ma5c-assault-rifle.webp"
+    },
+    {
+      "id": "primary-mp-98-knight",
+      "group": "primary",
+      "label": "MP-98 나이트",
+      "name": "MP-98 Knight",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1920px-MP-98_Knight_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/mp-98-knight",
+      "src": "/equipment/primary-mp-98-knight.webp"
+    },
+    {
+      "id": "primary-plas-1-scorcher",
+      "group": "primary",
+      "label": "PLAS-1 스코처",
+      "name": "PLAS-1 Scorcher",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-PLAS-1_Scorcher_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/plas-1-scorcher",
+      "src": "/equipment/primary-plas-1-scorcher.webp"
+    },
+    {
+      "id": "primary-plas-39-accelerator-rifle",
+      "group": "primary",
+      "label": "PLAS-39 가속 소총",
+      "name": "PLAS-39 Accelerator Rifle",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-PLAS-39_Accelerator_Rifle_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/plas-39-accelerator-rifle",
+      "src": "/equipment/primary-plas-39-accelerator-rifle.webp"
+    },
+    {
+      "id": "primary-plas-101-purifier",
+      "group": "primary",
+      "label": "PLAS-101 퓨리파이어",
+      "name": "PLAS-101 Purifier",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-PLAS-101_Purifier_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/plas-101-purifier",
+      "src": "/equipment/primary-plas-101-purifier.webp"
+    },
+    {
+      "id": "primary-r-2-amendment",
+      "group": "primary",
+      "label": "R-2 어멘드먼트",
+      "name": "R-2 Amendment",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1920px-R-2_Amendment_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/r-2-amendment",
+      "src": "/equipment/primary-r-2-amendment.webp"
+    },
+    {
+      "id": "primary-r-4-hyena",
+      "group": "primary",
+      "label": "R-4 하이에나",
+      "name": "R-4 Hyena",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-R-4_Hyena_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/r-4-hyena",
+      "src": "/equipment/primary-r-4-hyena.webp"
+    },
+    {
+      "id": "primary-r-6-deadeye",
+      "group": "primary",
+      "label": "R-6 데드아이",
+      "name": "R-6 Deadeye",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-R-6_Deadeye_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/r-6-deadeye",
+      "src": "/equipment/primary-r-6-deadeye.webp"
+    },
+    {
+      "id": "primary-r-36-eruptor",
+      "group": "primary",
+      "label": "R-36 이럽터",
+      "name": "R-36 Eruptor",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-R-36_Eruptor_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/r-36-eruptor",
+      "src": "/equipment/primary-r-36-eruptor.webp"
+    },
+    {
+      "id": "primary-r-63-diligence",
+      "group": "primary",
+      "label": "R-63 딜리전스",
+      "name": "R-63 Diligence",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-R-63_Diligence_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/r-63-diligence",
+      "src": "/equipment/primary-r-63-diligence.webp"
+    },
+    {
+      "id": "primary-r-63cs-diligence-counter-sniper",
+      "group": "primary",
+      "label": "R-63CS 딜리전스 카운터 스나이퍼",
+      "name": "R-63CS Diligence Counter Sniper",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-R-63CS_Diligence_Counter_Sniper_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/r-63cs-diligence-counter-sniper",
+      "src": "/equipment/primary-r-63cs-diligence-counter-sniper.webp"
+    },
+    {
+      "id": "primary-r-72-censor",
+      "group": "primary",
+      "label": "R-72 센서",
+      "name": "R-72 Censor",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-R-72_Censor_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/r-72-censor",
+      "src": "/equipment/primary-r-72-censor.webp"
+    },
+    {
+      "id": "primary-r-2124-constitution",
+      "group": "primary",
+      "label": "R-2124 컨스티튜션",
+      "name": "R-2124 Constitution",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-R-2124_Constitution_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/r-2124-constitution",
+      "src": "/equipment/primary-r-2124-constitution.webp"
+    },
+    {
+      "id": "primary-r-40-k-hot-shot-marksman-rifle",
+      "group": "primary",
+      "label": "R/40-K Hot-Shot Marksman Rifle",
+      "name": "R/40-K Hot-Shot Marksman Rifle",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-R-40-K_Hot-Shot_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/r-40-k-hot-shot-marksman-rifle",
+      "src": "/equipment/primary-r-40-k-hot-shot-marksman-rifle.webp"
+    },
+    {
+      "id": "primary-sg-8-punisher",
+      "group": "primary",
+      "label": "SG-8 퍼니셔",
+      "name": "SG-8 Punisher",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1920px-SG-8_Punisher_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sg-8-punisher",
+      "src": "/equipment/primary-sg-8-punisher.webp"
+    },
+    {
+      "id": "primary-sg-8p-punisher-plasma",
+      "group": "primary",
+      "label": "SG-8P 퍼니셔 플라즈마",
+      "name": "SG-8P Punisher Plasma",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1920px-SG-8P_Punisher_Plasma_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sg-8p-punisher-plasma",
+      "src": "/equipment/primary-sg-8p-punisher-plasma.webp"
+    },
+    {
+      "id": "primary-sg-8s-slugger",
+      "group": "primary",
+      "label": "SG-8S 슬러거",
+      "name": "SG-8S Slugger",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SG-8S_Slugger_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sg-8s-slugger",
+      "src": "/equipment/primary-sg-8s-slugger.webp"
+    },
+    {
+      "id": "primary-sg-20-halt",
+      "group": "primary",
+      "label": "SG-20 홀트",
+      "name": "SG-20 Halt",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SG-20_Halt_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sg-20-halt",
+      "src": "/equipment/primary-sg-20-halt.webp"
+    },
+    {
+      "id": "primary-sg-97-sweeper",
+      "group": "primary",
+      "label": "SG-97 스위퍼",
+      "name": "SG-97 Sweeper",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/640px-SG-97_Shotgun_Primary_Render-640x199.webp",
+      "source": "https://divershub.app/database/weapons/sg-97-sweeper",
+      "src": "/equipment/primary-sg-97-sweeper.webp"
+    },
+    {
+      "id": "primary-sg-225-breaker",
+      "group": "primary",
+      "label": "SG-225 브레이커",
+      "name": "SG-225 Breaker",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SG-225_Breaker_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sg-225-breaker",
+      "src": "/equipment/primary-sg-225-breaker.webp"
+    },
+    {
+      "id": "primary-sg-225ie-breaker-incendiary",
+      "group": "primary",
+      "label": "SG-225IE 브레이커 소이탄",
+      "name": "SG-225IE Breaker Incendiary",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SG-225IE_Breaker_Incendiary_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sg-225ie-breaker-incendiary",
+      "src": "/equipment/primary-sg-225ie-breaker-incendiary.webp"
+    },
+    {
+      "id": "primary-sg-225sp-breaker-spray-and-pray",
+      "group": "primary",
+      "label": "SG-225SP 브레이커 스프레이 앤 프레이",
+      "name": "SG-225SP Breaker Spray&Pray",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SG-225SP_Breaker_Spray%26Pray_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sg-225sp-breaker-spray-and-pray",
+      "src": "/equipment/primary-sg-225sp-breaker-spray-and-pray.webp"
+    },
+    {
+      "id": "primary-sg-451-cookout",
+      "group": "primary",
+      "label": "SG-451 쿡아웃",
+      "name": "SG-451 Cookout",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SG-451_Cookout_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sg-451-cookout",
+      "src": "/equipment/primary-sg-451-cookout.webp"
+    },
+    {
+      "id": "primary-smg-32-reprimand",
+      "group": "primary",
+      "label": "SMG-32 리프리맨드",
+      "name": "SMG-32 Reprimand",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SMG-32_Reprimand_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/smg-32-reprimand",
+      "src": "/equipment/primary-smg-32-reprimand.webp"
+    },
+    {
+      "id": "primary-smg-37-defender",
+      "group": "primary",
+      "label": "SMG-37 디펜더",
+      "name": "SMG-37 Defender",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SMG-37_Defender_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/smg-37-defender",
+      "src": "/equipment/primary-smg-37-defender.webp"
+    },
+    {
+      "id": "primary-smg-72-pummeler",
+      "group": "primary",
+      "label": "SMG-72 퍼멜러",
+      "name": "SMG-72 Pummeler",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SMG-72_Pummeler_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/smg-72-pummeler",
+      "src": "/equipment/primary-smg-72-pummeler.webp"
+    },
+    {
+      "id": "primary-smg-203-gallant",
+      "group": "primary",
+      "label": "SMG-203 갤런트",
+      "name": "SMG-203 Gallant",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SMG-203_Gallant_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/smg-203-gallant",
+      "src": "/equipment/primary-smg-203-gallant.webp"
+    },
+    {
+      "id": "primary-smg-flam-34-stoker",
+      "group": "primary",
+      "label": "SMG/FLAM-34 스토커",
+      "name": "SMG/FLAM-34 Stoker",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/SMGFLAM-34_Stoker_Primary_Icon-384x183.webp",
+      "source": "https://divershub.app/database/weapons/smg-flam-34-stoker",
+      "src": "/equipment/primary-smg-flam-34-stoker.webp"
+    },
+    {
+      "id": "primary-sta-11-smg",
+      "group": "primary",
+      "label": "StA-11 SMG",
+      "name": "StA-11 SMG",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-StA-11_SMG_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sta-11-smg",
+      "src": "/equipment/primary-sta-11-smg.webp"
+    },
+    {
+      "id": "primary-sta-52-assault-rifle",
+      "group": "primary",
+      "label": "StA-52 돌격소총",
+      "name": "StA-52 Assault Rifle",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-StA-52_Assault_Rifle_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sta-52-assault-rifle",
+      "src": "/equipment/primary-sta-52-assault-rifle.webp"
+    },
+    {
+      "id": "primary-vg-70-variable",
+      "group": "primary",
+      "label": "VG-70 가변",
+      "name": "VG-70 Variable",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1920px-VG-70_Variable_Primary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/vg-70-variable",
+      "src": "/equipment/primary-vg-70-variable.webp"
+    },
+    {
+      "id": "secondary-cqc-2-saber",
+      "group": "secondary",
+      "label": "CQC-2 세이버",
+      "name": "CQC-2 Saber",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-CQC-2_Saber_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/cqc-2-saber",
+      "src": "/equipment/secondary-cqc-2-saber.webp"
+    },
+    {
+      "id": "secondary-cqc-5-combat-hatchet",
+      "group": "secondary",
+      "label": "CQC-5 전투 손도끼",
+      "name": "CQC-5 Combat Hatchet",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-CQC-5_Combat_Hatchet_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/cqc-5-combat-hatchet",
+      "src": "/equipment/secondary-cqc-5-combat-hatchet.webp"
+    },
+    {
+      "id": "secondary-cqc-19-stun-lance",
+      "group": "secondary",
+      "label": "CQC-19 스턴 랜스",
+      "name": "CQC-19 Stun Lance",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-CQC-19_Stun_Lance_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/cqc-19-stun-lance",
+      "src": "/equipment/secondary-cqc-19-stun-lance.webp"
+    },
+    {
+      "id": "secondary-cqc-30-stun-baton",
+      "group": "secondary",
+      "label": "CQC-30 스턴 배턴",
+      "name": "CQC-30 Stun Baton",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-CQC-30_Stun_Baton_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/cqc-30-stun-baton",
+      "src": "/equipment/secondary-cqc-30-stun-baton.webp"
+    },
+    {
+      "id": "secondary-cqc-42-machete",
+      "group": "secondary",
+      "label": "CQC-42 마체테",
+      "name": "CQC-42 Machete",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-CQC-42_Machete_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/cqc-42-machete",
+      "src": "/equipment/secondary-cqc-42-machete.webp"
+    },
+    {
+      "id": "secondary-cqc-73-entrenchment-tool",
+      "group": "secondary",
+      "label": "CQC-73 참호 공구",
+      "name": "CQC-73 Entrenchment Tool",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/354px-CQC-72_Entrenchment_Tool_Support_Render-354x481.webp",
+      "source": "https://divershub.app/database/weapons/cqc-73-entrenchment-tool",
+      "src": "/equipment/secondary-cqc-73-entrenchment-tool.webp"
+    },
+    {
+      "id": "secondary-gp-20-ultimatum",
+      "group": "secondary",
+      "label": "GP-20 울티메이텀",
+      "name": "GP-20 Ultimatum",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Ultimatum-800x450.webp",
+      "source": "https://divershub.app/database/weapons/gp-20-ultimatum",
+      "src": "/equipment/secondary-gp-20-ultimatum.webp"
+    },
+    {
+      "id": "secondary-gp-31-grenade-pistol",
+      "group": "secondary",
+      "label": "GP-31 유탄 권총",
+      "name": "GP-31 Grenade Pistol",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-GP-31_Grenade_Pistol_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/gp-31-grenade-pistol",
+      "src": "/equipment/secondary-gp-31-grenade-pistol.webp"
+    },
+    {
+      "id": "secondary-las-7-dagger",
+      "group": "secondary",
+      "label": "LAS-7 대거",
+      "name": "LAS-7 Dagger",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/LAS-7_Dagger_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/las-7-dagger",
+      "src": "/equipment/secondary-las-7-dagger.webp"
+    },
+    {
+      "id": "secondary-las-58-talon",
+      "group": "secondary",
+      "label": "LAS-58 탈론",
+      "name": "LAS-58 Talon",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-LAS-58_Talon_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/las-58-talon",
+      "src": "/equipment/secondary-las-58-talon.webp"
+    },
+    {
+      "id": "secondary-m6c-socom-pistol",
+      "group": "secondary",
+      "label": "M6C/SOCOM 권총",
+      "name": "M6C/SOCOM Pistol",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-M6C_SOCOM_Pistol_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/m6c-socom-pistol",
+      "src": "/equipment/secondary-m6c-socom-pistol.webp"
+    },
+    {
+      "id": "secondary-p-2-peacemaker",
+      "group": "secondary",
+      "label": "P-2 피스메이커",
+      "name": "P-2 Peacemaker",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-P-2_Peacemaker_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/p-2-peacemaker",
+      "src": "/equipment/secondary-p-2-peacemaker.webp"
+    },
+    {
+      "id": "secondary-p-4-senator",
+      "group": "secondary",
+      "label": "P-4 세네터",
+      "name": "P-4 Senator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/640px-P-4_Senator_Secondary_Render-640x360.webp",
+      "source": "https://divershub.app/database/weapons/p-4-senator",
+      "src": "/equipment/secondary-p-4-senator.webp"
+    },
+    {
+      "id": "secondary-p-11-stim-pistol",
+      "group": "secondary",
+      "label": "P-11 스팀 권총",
+      "name": "P-11 Stim Pistol",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-P-11_Stim_Pistol_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/p-11-stim-pistol",
+      "src": "/equipment/secondary-p-11-stim-pistol.webp"
+    },
+    {
+      "id": "secondary-p-19-redeemer",
+      "group": "secondary",
+      "label": "P-19 레디머",
+      "name": "P-19 Redeemer",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-P-19_Redeemer_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/p-19-redeemer",
+      "src": "/equipment/secondary-p-19-redeemer.webp"
+    },
+    {
+      "id": "secondary-p-33-missile-pistol",
+      "group": "secondary",
+      "label": "P-33 미사일 권총",
+      "name": "P-33 Missile Pistol",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/P-33_Missile_Pistol_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/p-33-missile-pistol",
+      "src": "/equipment/secondary-p-33-missile-pistol.webp"
+    },
+    {
+      "id": "secondary-p-34-breacher",
+      "group": "secondary",
+      "label": "P-34 브리처",
+      "name": "P-34 Breacher",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-P-34_Breacher_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/p-34-breacher",
+      "src": "/equipment/secondary-p-34-breacher.webp"
+    },
+    {
+      "id": "secondary-p-35-re-educator",
+      "group": "secondary",
+      "label": "P-35 재교육자",
+      "name": "P-35 Re-Educator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-P-35_Re-Educator_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/p-35-re-educator",
+      "src": "/equipment/secondary-p-35-re-educator.webp"
+    },
+    {
+      "id": "secondary-p-69-veto",
+      "group": "secondary",
+      "label": "P-69 베토",
+      "name": "P-69 Veto",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/P-69_Veto_Secondary_Icon-301x181.webp",
+      "source": "https://divershub.app/database/weapons/p-69-veto",
+      "src": "/equipment/secondary-p-69-veto.webp"
+    },
+    {
+      "id": "secondary-p-72-crisper",
+      "group": "secondary",
+      "label": "P-72 크리스퍼",
+      "name": "P-72 Crisper",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-P-72_Crisper_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/p-72-crisper",
+      "src": "/equipment/secondary-p-72-crisper.webp"
+    },
+    {
+      "id": "secondary-p-92-warrant",
+      "group": "secondary",
+      "label": "P-92 워런트",
+      "name": "P-92 Warrant",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1920px-P-92_Warrant_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/p-92-warrant",
+      "src": "/equipment/secondary-p-92-warrant.webp"
+    },
+    {
+      "id": "secondary-p-113-verdict",
+      "group": "secondary",
+      "label": "P-113 버딕트",
+      "name": "P-113 Verdict",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/640px-P-113_Verdict_Secondary_Render-640x360.webp",
+      "source": "https://divershub.app/database/weapons/p-113-verdict",
+      "src": "/equipment/secondary-p-113-verdict.webp"
+    },
+    {
+      "id": "secondary-p-40-k-bolt-pistol",
+      "group": "secondary",
+      "label": "P/40-K 볼트 권총",
+      "name": "P/40-K Bolt Pistol",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-P-40-K_Bolt_Pistol_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/p-40-k-bolt-pistol",
+      "src": "/equipment/secondary-p-40-k-bolt-pistol.webp"
+    },
+    {
+      "id": "secondary-plas-15-loyalist",
+      "group": "secondary",
+      "label": "PLAS-15 로열리스트",
+      "name": "PLAS-15 Loyalist",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-PLAS-15_Loyalist_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/plas-15-loyalist",
+      "src": "/equipment/secondary-plas-15-loyalist.webp"
+    },
+    {
+      "id": "secondary-sg-22-bushwhacker",
+      "group": "secondary",
+      "label": "SG-22 부시와커",
+      "name": "SG-22 Bushwhacker",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/1280px-SG-22_Bushwhacker_Secondary_Render-800x450.webp",
+      "source": "https://divershub.app/database/weapons/sg-22-bushwhacker",
+      "src": "/equipment/secondary-sg-22-bushwhacker.webp"
+    },
+    {
+      "id": "throwable-g-3-smoke",
+      "group": "throwable",
+      "label": "G-3 스모크",
+      "name": "G-3 Smoke",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-3%20Smoke-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-3-smoke",
+      "src": "/equipment/throwable-g-3-smoke.webp"
+    },
+    {
+      "id": "throwable-g-4-gas",
+      "group": "throwable",
+      "label": "G-4 가스",
+      "name": "G-4 Gas",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-4%20Gas-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-4-gas",
+      "src": "/equipment/throwable-g-4-gas.webp"
+    },
+    {
+      "id": "throwable-g-6-frag",
+      "group": "throwable",
+      "label": "G-6 프래그",
+      "name": "G-6 Frag",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/g-6-frag-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-6-frag",
+      "src": "/equipment/throwable-g-6-frag.webp"
+    },
+    {
+      "id": "throwable-g-7-pineapple",
+      "group": "throwable",
+      "label": "G-7 파인애플",
+      "name": "G-7 Pineapple",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-7%20Pineapple-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-7-pineapple",
+      "src": "/equipment/throwable-g-7-pineapple.webp"
+    },
+    {
+      "id": "throwable-g-8-immolation",
+      "group": "throwable",
+      "label": "G-8 소각",
+      "name": "G-8 Immolation",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/720px-G-8_Immolation_Throwable_Render-720x720.webp",
+      "source": "https://divershub.app/database/weapons/g-8-immolation",
+      "src": "/equipment/throwable-g-8-immolation.webp"
+    },
+    {
+      "id": "throwable-g-10-incendiary",
+      "group": "throwable",
+      "label": "G-10 인센디어리",
+      "name": "G-10 Incendiary",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-10%20Incendiary-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-10-incendiary",
+      "src": "/equipment/throwable-g-10-incendiary.webp"
+    },
+    {
+      "id": "throwable-g-12-high-explosive",
+      "group": "throwable",
+      "label": "G-12 고폭 수류탄",
+      "name": "G-12 High Explosive",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-12%20High%20Explosive-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-12-high-explosive",
+      "src": "/equipment/throwable-g-12-high-explosive.webp"
+    },
+    {
+      "id": "throwable-g-13-incendiary-impact",
+      "group": "throwable",
+      "label": "G-13 인센디어리 임팩트",
+      "name": "G-13 Incendiary Impact",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-13%20Incendiary%20Impact-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-13-incendiary-impact",
+      "src": "/equipment/throwable-g-13-incendiary-impact.webp"
+    },
+    {
+      "id": "throwable-g-16-impact",
+      "group": "throwable",
+      "label": "G-16 임팩트",
+      "name": "G-16 Impact",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-16%20Impact-1-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-16-impact",
+      "src": "/equipment/throwable-g-16-impact.webp"
+    },
+    {
+      "id": "throwable-g-23-stun",
+      "group": "throwable",
+      "label": "G-23 스턴",
+      "name": "G-23 Stun",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-23%20Stun-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-23-stun",
+      "src": "/equipment/throwable-g-23-stun.webp"
+    },
+    {
+      "id": "throwable-g-31-arc",
+      "group": "throwable",
+      "label": "G-31 아크",
+      "name": "G-31 Arc",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-31%20Arc-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-31-arc",
+      "src": "/equipment/throwable-g-31-arc.webp"
+    },
+    {
+      "id": "throwable-g-48-giga-grenade",
+      "group": "throwable",
+      "label": "G-48 기가 그레네이드",
+      "name": "G-48 Giga Grenade",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/AGM-17_Giga_Grenade_Throwable_Icon-243x260.webp",
+      "source": "https://divershub.app/database/weapons/g-48-giga-grenade",
+      "src": "/equipment/throwable-g-48-giga-grenade.webp"
+    },
+    {
+      "id": "throwable-g-50-seeker",
+      "group": "throwable",
+      "label": "G-50 시커",
+      "name": "G-50 Seeker",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-50%20Seeker-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-50-seeker",
+      "src": "/equipment/throwable-g-50-seeker.webp"
+    },
+    {
+      "id": "throwable-g-60-anti-tank-seeker",
+      "group": "throwable",
+      "label": "G-60 대전차 추적기",
+      "name": "G-60 Anti-Tank Seeker",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/720px-G-60_Anti-Tank_Seeker_Throwable_Render-720x720.webp",
+      "source": "https://divershub.app/database/weapons/g-60-anti-tank-seeker",
+      "src": "/equipment/throwable-g-60-anti-tank-seeker.webp"
+    },
+    {
+      "id": "throwable-g-89-smokescreen",
+      "group": "throwable",
+      "label": "G-89 연막탄",
+      "name": "G-89 Smokescreen",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-89%20Smokescreen-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-89-smokescreen",
+      "src": "/equipment/throwable-g-89-smokescreen.webp"
+    },
+    {
+      "id": "throwable-g-109-urchin",
+      "group": "throwable",
+      "label": "G-109 어친",
+      "name": "G-109 Urchin",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-109%20Urchin-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-109-urchin",
+      "src": "/equipment/throwable-g-109-urchin.webp"
+    },
+    {
+      "id": "throwable-g-123-thermite",
+      "group": "throwable",
+      "label": "G-123 테르마이트",
+      "name": "G-123 Thermite",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-123%20Thermite-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-123-thermite",
+      "src": "/equipment/throwable-g-123-thermite.webp"
+    },
+    {
+      "id": "throwable-g-142-pyrotech",
+      "group": "throwable",
+      "label": "G-142 파이로텍",
+      "name": "G-142 Pyrotech",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-142%20Pyrotech-1-716x400.webp",
+      "source": "https://divershub.app/database/weapons/g-142-pyrotech",
+      "src": "/equipment/throwable-g-142-pyrotech.webp"
+    },
+    {
+      "id": "throwable-g-40-k-melta-mine",
+      "group": "throwable",
+      "label": "G/40-K 멜타 지뢰",
+      "name": "G/40-K Melta Mine",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/G-40-K_Melta_Mine_Throwable_Render-800x800.webp",
+      "source": "https://divershub.app/database/weapons/g-40-k-melta-mine",
+      "src": "/equipment/throwable-g-40-k-melta-mine.webp"
+    },
+    {
+      "id": "throwable-g-sh-39-shield",
+      "group": "throwable",
+      "label": "G/SH-39 실드",
+      "name": "G/SH-39 Shield",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/720px-G-SH-39_Shield_Throwable_Render-720x720.webp",
+      "source": "https://divershub.app/database/weapons/g-sh-39-shield",
+      "src": "/equipment/throwable-g-sh-39-shield.webp"
+    },
+    {
+      "id": "throwable-k-2-throwing-knife",
+      "group": "throwable",
+      "label": "K-2 투척 단검",
+      "name": "K-2 Throwing Knife",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/K-2%20Throwing%20Knife-716x400.webp",
+      "source": "https://divershub.app/database/weapons/k-2-throwing-knife",
+      "src": "/equipment/throwable-k-2-throwing-knife.webp"
+    },
+    {
+      "id": "throwable-ted-63-dynamite",
+      "group": "throwable",
+      "label": "TED-63 다이너마이트",
+      "name": "TED-63 Dynamite",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/TED-63%20Dynamite-716x400.webp",
+      "source": "https://divershub.app/database/weapons/ted-63-dynamite",
+      "src": "/equipment/throwable-ted-63-dynamite.webp"
+    },
+    {
+      "id": "throwable-tm-1-lure-mine",
+      "group": "throwable",
+      "label": "TM-1 유인 지뢰",
+      "name": "TM-1 Lure Mine",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/TM-1%20Lure%20Mine-716x400.webp",
+      "source": "https://divershub.app/database/weapons/tm-1-lure-mine",
+      "src": "/equipment/throwable-tm-1-lure-mine.webp"
+    },
+    {
+      "id": "stratagem-40-k-meltagun",
+      "group": "stratagem",
+      "label": "40-K 멜타건",
+      "name": "40-K Meltagun",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Meltagun_Stratagem_Icon_Inline.svg",
+      "source": "https://divershub.app/database/stratagems/40-k-meltagun",
+      "src": "/equipment/stratagem-40-k-meltagun.webp"
+    },
+    {
+      "id": "stratagem-ac-8-autocannon",
+      "group": "stratagem",
+      "label": "AC-8 오토캐논",
+      "name": "AC-8 Autocannon",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Autocannon_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/ac-8-autocannon",
+      "src": "/equipment/stratagem-ac-8-autocannon.webp"
+    },
+    {
+      "id": "stratagem-apw-1-anti-materiel-rifle",
+      "group": "stratagem",
+      "label": "APW-1 대물 저격소총",
+      "name": "APW-1 Anti-Materiel Rifle",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Anti-Materiel_Rifle_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/apw-1-anti-materiel-rifle",
+      "src": "/equipment/stratagem-apw-1-anti-materiel-rifle.webp"
+    },
+    {
+      "id": "stratagem-arc-3-arc-thrower",
+      "group": "stratagem",
+      "label": "ARC-3 아크 발사기",
+      "name": "ARC-3 Arc Thrower",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Arc_Thrower_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/arc-3-arc-thrower",
+      "src": "/equipment/stratagem-arc-3-arc-thrower.webp"
+    },
+    {
+      "id": "stratagem-b-flam-80-cremator",
+      "group": "stratagem",
+      "label": "B/FLAM-80 크리메이터",
+      "name": "B/FLAM-80 Cremator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/B-FLAM-80_Cremator_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/b-flam-80-cremator",
+      "src": "/equipment/stratagem-b-flam-80-cremator.webp"
+    },
+    {
+      "id": "stratagem-b-md-c4-pack",
+      "group": "stratagem",
+      "label": "B/MD C4 팩",
+      "name": "B/MD C4 Pack",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/C4_Pack_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/b-md-c4-pack",
+      "src": "/equipment/stratagem-b-md-c4-pack.webp"
+    },
+    {
+      "id": "stratagem-cqc-1-one-true-flag",
+      "group": "stratagem",
+      "label": "CQC-1 원 트루 플래그",
+      "name": "CQC-1 One True Flag",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/One_True_Flag_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/cqc-1-one-true-flag",
+      "src": "/equipment/stratagem-cqc-1-one-true-flag.webp"
+    },
+    {
+      "id": "stratagem-cqc-9-defoliation-tool",
+      "group": "stratagem",
+      "label": "CQC-9 벌목기",
+      "name": "CQC-9 Defoliation Tool",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Defoliation_Tool_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/cqc-9-defoliation-tool",
+      "src": "/equipment/stratagem-cqc-9-defoliation-tool.webp"
+    },
+    {
+      "id": "stratagem-cqc-20-breaching-hammer",
+      "group": "stratagem",
+      "label": "CQC-20 돌파 해머",
+      "name": "CQC-20 Breaching Hammer",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Breaching_Hammer_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/cqc-20-breaching-hammer",
+      "src": "/equipment/stratagem-cqc-20-breaching-hammer.webp"
+    },
+    {
+      "id": "stratagem-eat-17-expendable-anti-tank",
+      "group": "stratagem",
+      "label": "EAT-17 일회용 대전차 발사기",
+      "name": "EAT-17 Expendable Anti-Tank",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Expendable_Anti-Tank_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eat-17-expendable-anti-tank",
+      "src": "/equipment/stratagem-eat-17-expendable-anti-tank.webp"
+    },
+    {
+      "id": "stratagem-eat-411-leveller",
+      "group": "stratagem",
+      "label": "EAT-411 레벨러",
+      "name": "EAT-411 Leveller",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Leveller_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eat-411-leveller",
+      "src": "/equipment/stratagem-eat-411-leveller.webp"
+    },
+    {
+      "id": "stratagem-eat-700-expendable-napalm",
+      "group": "stratagem",
+      "label": "EAT-700 일회용 네이팜",
+      "name": "EAT-700 Expendable Napalm",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Expendable_Napalm_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eat-700-expendable-napalm",
+      "src": "/equipment/stratagem-eat-700-expendable-napalm.webp"
+    },
+    {
+      "id": "stratagem-faf-14-spear",
+      "group": "stratagem",
+      "label": "FAF-14 스피어",
+      "name": "FAF-14 Spear",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Spear_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/faf-14-spear",
+      "src": "/equipment/stratagem-faf-14-spear.webp"
+    },
+    {
+      "id": "stratagem-flam-40-flamethrower",
+      "group": "stratagem",
+      "label": "FLAM-40 화염방사기",
+      "name": "FLAM-40 Flamethrower",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Flamethrower_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/flam-40-flamethrower",
+      "src": "/equipment/stratagem-flam-40-flamethrower.webp"
+    },
+    {
+      "id": "stratagem-gl-21-grenade-launcher",
+      "group": "stratagem",
+      "label": "GL-21 유탄발사기",
+      "name": "GL-21 Grenade Launcher",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Grenade_Launcher_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/gl-21-grenade-launcher",
+      "src": "/equipment/stratagem-gl-21-grenade-launcher.webp"
+    },
+    {
+      "id": "stratagem-gl-28-belt-fed-grenade-launcher",
+      "group": "stratagem",
+      "label": "GL-28 벨트급 유탄발사기",
+      "name": "GL-28 Belt-Fed Grenade Launcher",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Belt-Fed_Grenade_Launcher_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/gl-28-belt-fed-grenade-launcher",
+      "src": "/equipment/stratagem-gl-28-belt-fed-grenade-launcher.webp"
+    },
+    {
+      "id": "stratagem-gl-52-de-escalator",
+      "group": "stratagem",
+      "label": "GL-52 디에스컬레이터",
+      "name": "GL-52 De-Escalator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/De-Escalator_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/gl-52-de-escalator",
+      "src": "/equipment/stratagem-gl-52-de-escalator.webp"
+    },
+    {
+      "id": "stratagem-gr-8-recoilless-rifle",
+      "group": "stratagem",
+      "label": "GR-8 무반동 라이플",
+      "name": "GR-8 Recoilless Rifle",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Recoilless_Rifle_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/gr-8-recoilless-rifle",
+      "src": "/equipment/stratagem-gr-8-recoilless-rifle.webp"
+    },
+    {
+      "id": "stratagem-las-98-laser-cannon",
+      "group": "stratagem",
+      "label": "LAS-98 레이저 캐논",
+      "name": "LAS-98 Laser Cannon",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Laser_Cannon_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/las-98-laser-cannon",
+      "src": "/equipment/stratagem-las-98-laser-cannon.webp"
+    },
+    {
+      "id": "stratagem-las-99-quasar-cannon",
+      "group": "stratagem",
+      "label": "LAS-99 퀘이사 캐논",
+      "name": "LAS-99 Quasar Cannon",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Quasar_Cannon_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/las-99-quasar-cannon",
+      "src": "/equipment/stratagem-las-99-quasar-cannon.webp"
+    },
+    {
+      "id": "stratagem-m-105-stalwart",
+      "group": "stratagem",
+      "label": "M-105 스톨워트",
+      "name": "M-105 Stalwart",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Stalwart_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/m-105-stalwart",
+      "src": "/equipment/stratagem-m-105-stalwart.webp"
+    },
+    {
+      "id": "stratagem-m-1000-maxigun",
+      "group": "stratagem",
+      "label": "M-1000 맥시건",
+      "name": "M-1000 Maxigun",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Maxigun_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/m-1000-maxigun",
+      "src": "/equipment/stratagem-m-1000-maxigun.webp"
+    },
+    {
+      "id": "stratagem-mg-43-machine-gun",
+      "group": "stratagem",
+      "label": "MG-43 기관총",
+      "name": "MG-43 Machine Gun",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/MG-43%20Machine%20Gun.svg",
+      "source": "https://divershub.app/database/stratagems/mg-43-machine-gun",
+      "src": "/equipment/stratagem-mg-43-machine-gun.webp"
+    },
+    {
+      "id": "stratagem-mg-206-heavy-machine-gun",
+      "group": "stratagem",
+      "label": "MG-206 중기관총",
+      "name": "MG-206 Heavy Machine Gun",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Heavy_Machine_Gun_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/mg-206-heavy-machine-gun",
+      "src": "/equipment/stratagem-mg-206-heavy-machine-gun.webp"
+    },
+    {
+      "id": "stratagem-mgx-42-bullet-storm",
+      "group": "stratagem",
+      "label": "MGX-42 탄환 폭풍",
+      "name": "MGX-42 Bullet Storm",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Bullet_Storm_Stratagem_Icon_Background.svg",
+      "source": "https://divershub.app/database/stratagems/mgx-42-bullet-storm",
+      "src": "/equipment/stratagem-mgx-42-bullet-storm.webp"
+    },
+    {
+      "id": "stratagem-mls-4x-commando",
+      "group": "stratagem",
+      "label": "MLS-4X 커맨도",
+      "name": "MLS-4X Commando",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Commando_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/mls-4x-commando",
+      "src": "/equipment/stratagem-mls-4x-commando.webp"
+    },
+    {
+      "id": "stratagem-ms-11-solo-silo",
+      "group": "stratagem",
+      "label": "MS-11 솔로 사일로",
+      "name": "MS-11 Solo Silo",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Solo_Silo_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/ms-11-solo-silo",
+      "src": "/equipment/stratagem-ms-11-solo-silo.webp"
+    },
+    {
+      "id": "stratagem-plas-45-epoch",
+      "group": "stratagem",
+      "label": "PLAS-45 에포크",
+      "name": "PLAS-45 Epoch",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Epoch_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/plas-45-epoch",
+      "src": "/equipment/stratagem-plas-45-epoch.webp"
+    },
+    {
+      "id": "stratagem-rl-77-airburst-rocket-launcher",
+      "group": "stratagem",
+      "label": "RL-77 에어버스트 로켓런처",
+      "name": "RL-77 Airburst Rocket Launcher",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Airburst_Rocket_Launcher_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/rl-77-airburst-rocket-launcher",
+      "src": "/equipment/stratagem-rl-77-airburst-rocket-launcher.webp"
+    },
+    {
+      "id": "stratagem-rs-422-railgun",
+      "group": "stratagem",
+      "label": "RS-422 레일건",
+      "name": "RS-422 Railgun",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Railgun_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/rs-422-railgun",
+      "src": "/equipment/stratagem-rs-422-railgun.webp"
+    },
+    {
+      "id": "stratagem-s-11-speargun",
+      "group": "stratagem",
+      "label": "S-11 스피어건",
+      "name": "S-11 Speargun",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Speargun_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/s-11-speargun",
+      "src": "/equipment/stratagem-s-11-speargun.webp"
+    },
+    {
+      "id": "stratagem-sta-x3-w-a-s-p-launcher",
+      "group": "stratagem",
+      "label": "StA-X3 W.A.S.P. 발사기",
+      "name": "StA-X3 W.A.S.P. Launcher",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/W.A.S.P._Launcher_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/sta-x3-w-a-s-p-launcher",
+      "src": "/equipment/stratagem-sta-x3-w-a-s-p-launcher.webp"
+    },
+    {
+      "id": "stratagem-tx-41-sterilizer",
+      "group": "stratagem",
+      "label": "TX-41 살균기",
+      "name": "TX-41 Sterilizer",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Sterilizer_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/tx-41-sterilizer",
+      "src": "/equipment/stratagem-tx-41-sterilizer.webp"
+    },
+    {
+      "id": "stratagem-eagle-110mm-rocket-pods",
+      "group": "stratagem",
+      "label": "이글 110mm 로켓포드",
+      "name": "Eagle 110mm Rocket Pods",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Eagle_110mm_Rocket_Pods_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eagle-110mm-rocket-pods",
+      "src": "/equipment/stratagem-eagle-110mm-rocket-pods.webp"
+    },
+    {
+      "id": "stratagem-eagle-500kg-bomb",
+      "group": "stratagem",
+      "label": "Eagle 500kg 폭탄",
+      "name": "Eagle 500kg Bomb",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Eagle_500kg_Bomb_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eagle-500kg-bomb",
+      "src": "/equipment/stratagem-eagle-500kg-bomb.webp"
+    },
+    {
+      "id": "stratagem-eagle-airstrike",
+      "group": "stratagem",
+      "label": "이글 항공폭격",
+      "name": "Eagle Airstrike",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Eagle_Airstrike_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eagle-airstrike",
+      "src": "/equipment/stratagem-eagle-airstrike.webp"
+    },
+    {
+      "id": "stratagem-eagle-cluster-bomb",
+      "group": "stratagem",
+      "label": "이글 클러스터 폭탄",
+      "name": "Eagle Cluster Bomb",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Eagle_Cluster_Bomb_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eagle-cluster-bomb",
+      "src": "/equipment/stratagem-eagle-cluster-bomb.webp"
+    },
+    {
+      "id": "stratagem-eagle-gas-airstrike",
+      "group": "stratagem",
+      "label": "이글 가스 공습",
+      "name": "Eagle Gas Airstrike",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Eagle_Gas_Airstrike_Stratagem_Icon_Background.svg",
+      "source": "https://divershub.app/database/stratagems/eagle-gas-airstrike",
+      "src": "/equipment/stratagem-eagle-gas-airstrike.webp"
+    },
+    {
+      "id": "stratagem-eagle-napalm-airstrike",
+      "group": "stratagem",
+      "label": "이글 네이팜 공습",
+      "name": "Eagle Napalm Airstrike",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Eagle_Napalm_Airstrike_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eagle-napalm-airstrike",
+      "src": "/equipment/stratagem-eagle-napalm-airstrike.webp"
+    },
+    {
+      "id": "stratagem-eagle-smoke-strike",
+      "group": "stratagem",
+      "label": "이글 연막 스트라이크",
+      "name": "Eagle Smoke Strike",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Eagle_Smoke_Strike_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eagle-smoke-strike",
+      "src": "/equipment/stratagem-eagle-smoke-strike.webp"
+    },
+    {
+      "id": "stratagem-eagle-strafing-run",
+      "group": "stratagem",
+      "label": "이글 기총 사격",
+      "name": "Eagle Strafing Run",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Eagle_Strafing_Run_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eagle-strafing-run",
+      "src": "/equipment/stratagem-eagle-strafing-run.webp"
+    },
+    {
+      "id": "stratagem-orbital-120mm-he-barrage",
+      "group": "stratagem",
+      "label": "오비탈 120mm 고폭 포격",
+      "name": "Orbital 120mm HE Barrage",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_120mm_HE_Barrage_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-120mm-he-barrage",
+      "src": "/equipment/stratagem-orbital-120mm-he-barrage.webp"
+    },
+    {
+      "id": "stratagem-orbital-380mm-he-barrage",
+      "group": "stratagem",
+      "label": "궤도 380mm 고폭 포격",
+      "name": "Orbital 380mm HE Barrage",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_380mm_HE_Barrage_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-380mm-he-barrage",
+      "src": "/equipment/stratagem-orbital-380mm-he-barrage.webp"
+    },
+    {
+      "id": "stratagem-orbital-airburst-strike",
+      "group": "stratagem",
+      "label": "궤도 공중폭발 공격",
+      "name": "Orbital Airburst Strike",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_Airburst_Strike_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-airburst-strike",
+      "src": "/equipment/stratagem-orbital-airburst-strike.webp"
+    },
+    {
+      "id": "stratagem-orbital-ems-strike",
+      "group": "stratagem",
+      "label": "궤도 EMS 스트라이크",
+      "name": "Orbital EMS Strike",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_EMS_Strike_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-ems-strike",
+      "src": "/equipment/stratagem-orbital-ems-strike.webp"
+    },
+    {
+      "id": "stratagem-orbital-gas-strike",
+      "group": "stratagem",
+      "label": "궤도 가스 스트라이크",
+      "name": "Orbital Gas Strike",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_Gas_Strike_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-gas-strike",
+      "src": "/equipment/stratagem-orbital-gas-strike.webp"
+    },
+    {
+      "id": "stratagem-orbital-gatling-barrage",
+      "group": "stratagem",
+      "label": "오비탈 개틀링 포격",
+      "name": "Orbital Gatling Barrage",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_Gatling_Barrage_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-gatling-barrage",
+      "src": "/equipment/stratagem-orbital-gatling-barrage.webp"
+    },
+    {
+      "id": "stratagem-orbital-laser",
+      "group": "stratagem",
+      "label": "궤도 레이저",
+      "name": "Orbital Laser",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_Laser_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-laser",
+      "src": "/equipment/stratagem-orbital-laser.webp"
+    },
+    {
+      "id": "stratagem-orbital-napalm-barrage",
+      "group": "stratagem",
+      "label": "궤도 네이팜 포격",
+      "name": "Orbital Napalm Barrage",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_Napalm_Barrage_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-napalm-barrage",
+      "src": "/equipment/stratagem-orbital-napalm-barrage.webp"
+    },
+    {
+      "id": "stratagem-orbital-precision-strike",
+      "group": "stratagem",
+      "label": "궤도 정밀 타격",
+      "name": "Orbital Precision Strike",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_Precision_Strike_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-precision-strike",
+      "src": "/equipment/stratagem-orbital-precision-strike.webp"
+    },
+    {
+      "id": "stratagem-orbital-railcannon-strike",
+      "group": "stratagem",
+      "label": "궤도 레일캐논 스트라이크",
+      "name": "Orbital Railcannon Strike",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_Railcannon_Strike_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-railcannon-strike",
+      "src": "/equipment/stratagem-orbital-railcannon-strike.webp"
+    },
+    {
+      "id": "stratagem-orbital-smoke-strike",
+      "group": "stratagem",
+      "label": "궤도 연막 타격",
+      "name": "Orbital Smoke Strike",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_Smoke_Strike_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-smoke-strike",
+      "src": "/equipment/stratagem-orbital-smoke-strike.webp"
+    },
+    {
+      "id": "stratagem-orbital-walking-barrage",
+      "group": "stratagem",
+      "label": "오비탈 전진 포격",
+      "name": "Orbital Walking Barrage",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_Walking_Barrage_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-walking-barrage",
+      "src": "/equipment/stratagem-orbital-walking-barrage.webp"
+    },
+    {
+      "id": "stratagem-a-ac-8-autocannon-sentry",
+      "group": "stratagem",
+      "label": "A/AC-8 오토캐논 센트리",
+      "name": "A/AC-8 Autocannon Sentry",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Autocannon_Sentry_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/a-ac-8-autocannon-sentry",
+      "src": "/equipment/stratagem-a-ac-8-autocannon-sentry.webp"
+    },
+    {
+      "id": "stratagem-a-arc-3-tesla-tower",
+      "group": "stratagem",
+      "label": "A/ARC-3 테슬라 타워",
+      "name": "A/ARC-3 Tesla Tower",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Tesla_Tower_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/a-arc-3-tesla-tower",
+      "src": "/equipment/stratagem-a-arc-3-tesla-tower.webp"
+    },
+    {
+      "id": "stratagem-a-flam-40-flame-sentry",
+      "group": "stratagem",
+      "label": "A/FLAM-40 화염 센트리",
+      "name": "A/FLAM-40 Flame Sentry",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Flame_Sentry_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/a-flam-40-flame-sentry",
+      "src": "/equipment/stratagem-a-flam-40-flame-sentry.webp"
+    },
+    {
+      "id": "stratagem-a-g-16-gatling-sentry",
+      "group": "stratagem",
+      "label": "A/G-16 개틀링 센트리",
+      "name": "A/G-16 Gatling Sentry",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Gatling_Sentry_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/a-g-16-gatling-sentry",
+      "src": "/equipment/stratagem-a-g-16-gatling-sentry.webp"
+    },
+    {
+      "id": "stratagem-a-gm-17-gas-mortar-sentry",
+      "group": "stratagem",
+      "label": "A/GM-17 가스 박격포 센트리",
+      "name": "A/GM-17 Gas Mortar Sentry",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/AGM-17_Gas_Mortar_Sentry.svg",
+      "source": "https://divershub.app/database/stratagems/a-gm-17-gas-mortar-sentry",
+      "src": "/equipment/stratagem-a-gm-17-gas-mortar-sentry.webp"
+    },
+    {
+      "id": "stratagem-a-las-98-laser-sentry",
+      "group": "stratagem",
+      "label": "A/LAS-98 레이저 센트리",
+      "name": "A/LAS-98 Laser Sentry",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Laser_Sentry_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/a-las-98-laser-sentry",
+      "src": "/equipment/stratagem-a-las-98-laser-sentry.webp"
+    },
+    {
+      "id": "stratagem-a-m-12-mortar-sentry",
+      "group": "stratagem",
+      "label": "A/M-12 박격포 센트리",
+      "name": "A/M-12 Mortar Sentry",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Mortar_Sentry_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/a-m-12-mortar-sentry",
+      "src": "/equipment/stratagem-a-m-12-mortar-sentry.webp"
+    },
+    {
+      "id": "stratagem-a-m-23-ems-mortar-sentry",
+      "group": "stratagem",
+      "label": "A/M-23 EMS 박격포 센트리",
+      "name": "A/M-23 EMS Mortar Sentry",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/EMS_Mortar_Sentry_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/a-m-23-ems-mortar-sentry",
+      "src": "/equipment/stratagem-a-m-23-ems-mortar-sentry.webp"
+    },
+    {
+      "id": "stratagem-a-mg-43-machine-gun-sentry",
+      "group": "stratagem",
+      "label": "A/MG-43 기관총 센트리",
+      "name": "A/MG-43 Machine Gun Sentry",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Machine_Gun_Sentry_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/a-mg-43-machine-gun-sentry",
+      "src": "/equipment/stratagem-a-mg-43-machine-gun-sentry.webp"
+    },
+    {
+      "id": "stratagem-a-mls-4x-rocket-sentry",
+      "group": "stratagem",
+      "label": "A/MLS-4X 로켓 센트리",
+      "name": "A/MLS-4X Rocket Sentry",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Rocket_Sentry_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/a-mls-4x-rocket-sentry",
+      "src": "/equipment/stratagem-a-mls-4x-rocket-sentry.webp"
+    },
+    {
+      "id": "stratagem-e-at-12-anti-tank-emplacement",
+      "group": "stratagem",
+      "label": "E/AT-12 대전차 포진지",
+      "name": "E/AT-12 Anti-Tank Emplacement",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Anti-Tank_Emplacement_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/e-at-12-anti-tank-emplacement",
+      "src": "/equipment/stratagem-e-at-12-anti-tank-emplacement.webp"
+    },
+    {
+      "id": "stratagem-e-gl-21-grenadier-battlement",
+      "group": "stratagem",
+      "label": "E/GL-21 그레네이더 방벽",
+      "name": "E/GL-21 Grenadier Battlement",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Grenadier_Battlement_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/e-gl-21-grenadier-battlement",
+      "src": "/equipment/stratagem-e-gl-21-grenadier-battlement.webp"
+    },
+    {
+      "id": "stratagem-e-mg-101-hmg-emplacement",
+      "group": "stratagem",
+      "label": "E/MG-101 HMG 포대",
+      "name": "E/MG-101 HMG Emplacement",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/HMG_Emplacement_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/e-mg-101-hmg-emplacement",
+      "src": "/equipment/stratagem-e-mg-101-hmg-emplacement.webp"
+    },
+    {
+      "id": "stratagem-fx-12-shield-generator-relay",
+      "group": "stratagem",
+      "label": "FX-12 실드 생성기 중계기",
+      "name": "FX-12 Shield Generator Relay",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Shield_Generator_Relay_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/fx-12-shield-generator-relay",
+      "src": "/equipment/stratagem-fx-12-shield-generator-relay.webp"
+    },
+    {
+      "id": "stratagem-md-6-anti-personnel-minefield",
+      "group": "stratagem",
+      "label": "MD-6 대인지뢰 지대",
+      "name": "MD-6 Anti-Personnel Minefield",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Anti-Personnel_Minefield_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/md-6-anti-personnel-minefield",
+      "src": "/equipment/stratagem-md-6-anti-personnel-minefield.webp"
+    },
+    {
+      "id": "stratagem-md-8-gas-mines",
+      "group": "stratagem",
+      "label": "MD-8 가스 지뢰",
+      "name": "MD-8 Gas Mines",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Gas_Mines_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/md-8-gas-mines",
+      "src": "/equipment/stratagem-md-8-gas-mines.webp"
+    },
+    {
+      "id": "stratagem-md-17-anti-tank-mines",
+      "group": "stratagem",
+      "label": "MD-17 대전차 지뢰",
+      "name": "MD-17 Anti-Tank Mines",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Anti-Tank_Mines_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/md-17-anti-tank-mines",
+      "src": "/equipment/stratagem-md-17-anti-tank-mines.webp"
+    },
+    {
+      "id": "stratagem-md-i4-incendiary-mines",
+      "group": "stratagem",
+      "label": "MD-I4 소이탄 지뢰",
+      "name": "MD-I4 Incendiary Mines",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Incendiary_Mines_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/md-i4-incendiary-mines",
+      "src": "/equipment/stratagem-md-i4-incendiary-mines.webp"
+    },
+    {
+      "id": "stratagem-ax-ar-23-guard-dog",
+      "group": "stratagem",
+      "label": "AX/AR-23 가드독",
+      "name": "AX/AR-23 Guard Dog",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Guard_Dog_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/ax-ar-23-guard-dog",
+      "src": "/equipment/stratagem-ax-ar-23-guard-dog.webp"
+    },
+    {
+      "id": "stratagem-ax-arc-3-k-9",
+      "group": "stratagem",
+      "label": "AX/ARC-3 K-9",
+      "name": "AX/ARC-3 K-9",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/K-9_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/ax-arc-3-k-9",
+      "src": "/equipment/stratagem-ax-arc-3-k-9.webp"
+    },
+    {
+      "id": "stratagem-ax-flam-75-hot-dog",
+      "group": "stratagem",
+      "label": "AX/FLAM-75 핫도그",
+      "name": "AX/FLAM-75 Hot Dog",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Hot_Dog_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/ax-flam-75-hot-dog",
+      "src": "/equipment/stratagem-ax-flam-75-hot-dog.webp"
+    },
+    {
+      "id": "stratagem-ax-las-5-rover",
+      "group": "stratagem",
+      "label": "AX/LAS-5 로버",
+      "name": "AX/LAS-5 Rover",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Rover_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/ax-las-5-rover",
+      "src": "/equipment/stratagem-ax-las-5-rover.webp"
+    },
+    {
+      "id": "stratagem-ax-tx-13-dog-breath",
+      "group": "stratagem",
+      "label": "AX/TX-13 도그 브레스",
+      "name": "AX/TX-13 Dog Breath",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Dog_Breath_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/ax-tx-13-dog-breath",
+      "src": "/equipment/stratagem-ax-tx-13-dog-breath.webp"
+    },
+    {
+      "id": "stratagem-b-1-supply-pack",
+      "group": "stratagem",
+      "label": "B-1 보급 팩",
+      "name": "B-1 Supply Pack",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Supply_Pack_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/b-1-supply-pack",
+      "src": "/equipment/stratagem-b-1-supply-pack.webp"
+    },
+    {
+      "id": "stratagem-b-100-portable-hellbomb",
+      "group": "stratagem",
+      "label": "B-100 휴대용 헬밤",
+      "name": "B-100 Portable Hellbomb",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Portable_Hellbomb_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/b-100-portable-hellbomb",
+      "src": "/equipment/stratagem-b-100-portable-hellbomb.webp"
+    },
+    {
+      "id": "stratagem-lift-182-warp-pack",
+      "group": "stratagem",
+      "label": "LIFT-182 워프 팩",
+      "name": "LIFT-182 Warp Pack",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Warp_Pack_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/lift-182-warp-pack",
+      "src": "/equipment/stratagem-lift-182-warp-pack.webp"
+    },
+    {
+      "id": "stratagem-lift-850-jump-pack",
+      "group": "stratagem",
+      "label": "LIFT-850 점프 팩",
+      "name": "LIFT-850 Jump Pack",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Jump_Pack_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/lift-850-jump-pack",
+      "src": "/equipment/stratagem-lift-850-jump-pack.webp"
+    },
+    {
+      "id": "stratagem-lift-860-hover-pack",
+      "group": "stratagem",
+      "label": "LIFT-860 호버팩",
+      "name": "LIFT-860 Hover Pack",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Hover_Pack_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/lift-860-hover-pack",
+      "src": "/equipment/stratagem-lift-860-hover-pack.webp"
+    },
+    {
+      "id": "stratagem-sh-20-ballistic-shield-backpack",
+      "group": "stratagem",
+      "label": "SH-20 방탄 방패 백팩",
+      "name": "SH-20 Ballistic Shield Backpack",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Ballistic_Shield_Backpack_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/sh-20-ballistic-shield-backpack",
+      "src": "/equipment/stratagem-sh-20-ballistic-shield-backpack.webp"
+    },
+    {
+      "id": "stratagem-sh-32-shield-generator-pack",
+      "group": "stratagem",
+      "label": "SH-32 실드 제너레이터 팩",
+      "name": "SH-32 Shield Generator Pack",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Shield_Generator_Pack_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/sh-32-shield-generator-pack",
+      "src": "/equipment/stratagem-sh-32-shield-generator-pack.webp"
+    },
+    {
+      "id": "stratagem-sh-51-directional-shield",
+      "group": "stratagem",
+      "label": "SH-51 방향성 실드",
+      "name": "SH-51 Directional Shield",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Directional_Shield_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/sh-51-directional-shield",
+      "src": "/equipment/stratagem-sh-51-directional-shield.webp"
+    },
+    {
+      "id": "stratagem-exo-45-patriot-exosuit",
+      "group": "stratagem",
+      "label": "EXO-45 패트리어트 엑소슈트",
+      "name": "EXO-45 Patriot Exosuit",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Patriot_Exosuit_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/exo-45-patriot-exosuit",
+      "src": "/equipment/stratagem-exo-45-patriot-exosuit.webp"
+    },
+    {
+      "id": "stratagem-exo-49-emancipator-exosuit",
+      "group": "stratagem",
+      "label": "EXO-49 이맨시페이터 엑소슈트",
+      "name": "EXO-49 Emancipator Exosuit",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Emancipator_Exosuit_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/exo-49-emancipator-exosuit",
+      "src": "/equipment/stratagem-exo-49-emancipator-exosuit.webp"
+    },
+    {
+      "id": "stratagem-exo-51-lumberer-exosuit",
+      "group": "stratagem",
+      "label": "EXO-51 럼버러 엑소슈트",
+      "name": "EXO-51 Lumberer Exosuit",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Lumberer_Exosuit_Stratagem_Icon_Background.svg",
+      "source": "https://divershub.app/database/stratagems/exo-51-lumberer-exosuit",
+      "src": "/equipment/stratagem-exo-51-lumberer-exosuit.webp"
+    },
+    {
+      "id": "stratagem-exo-55-breakthrough-exosuit",
+      "group": "stratagem",
+      "label": "EXO-55 브레이크스루 엑소슈트",
+      "name": "EXO-55 Breakthrough Exosuit",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Breakthrough_Exosuit_Stratagem_Icon_Background.svg",
+      "source": "https://divershub.app/database/stratagems/exo-55-breakthrough-exosuit",
+      "src": "/equipment/stratagem-exo-55-breakthrough-exosuit.webp"
+    },
+    {
+      "id": "stratagem-m-103-supply-frv",
+      "group": "stratagem",
+      "label": "M-103 보급 FRV",
+      "name": "M-103 Supply FRV",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Supply_FRV_Stratagem_Icon_Background.svg",
+      "source": "https://divershub.app/database/stratagems/m-103-supply-frv",
+      "src": "/equipment/stratagem-m-103-supply-frv.webp"
+    },
+    {
+      "id": "stratagem-m-104-incinerator-frv",
+      "group": "stratagem",
+      "label": "M-104 인시네레이터 FRV",
+      "name": "M-104 Incinerator FRV",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Incinerator_FRV_Stratagem_Icon_Background.svg",
+      "source": "https://divershub.app/database/stratagems/m-104-incinerator-frv",
+      "src": "/equipment/stratagem-m-104-incinerator-frv.webp"
+    },
+    {
+      "id": "stratagem-td-110-maelstrom",
+      "group": "stratagem",
+      "label": "TD-110 마엘스트롬",
+      "name": "TD-110 Maelstrom",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Maelstrom_Stratagem_Icon_Background.svg",
+      "source": "https://divershub.app/database/stratagems/td-110-maelstrom",
+      "src": "/equipment/stratagem-td-110-maelstrom.webp"
+    },
+    {
+      "id": "stratagem-td-220-bastion-mk-xvi",
+      "group": "stratagem",
+      "label": "TD-220 바스티온 MK XVI",
+      "name": "TD-220 Bastion MK XVI",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Bastion_MK_XVI_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/td-220-bastion-mk-xvi",
+      "src": "/equipment/stratagem-td-220-bastion-mk-xvi.webp"
+    },
+    {
+      "id": "stratagem-call-in-super-destroyer",
+      "group": "stratagem",
+      "label": "슈퍼 디스트로이어 호출",
+      "name": "Call In Super Destroyer",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Call_In_Super_Destroyer_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/call-in-super-destroyer",
+      "src": "/equipment/stratagem-call-in-super-destroyer.webp"
+    },
+    {
+      "id": "stratagem-cargo-container",
+      "group": "stratagem",
+      "label": "카고 컨테이너",
+      "name": "Cargo Container",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Cargo_Container_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/cargo-container",
+      "src": "/equipment/stratagem-cargo-container.webp"
+    },
+    {
+      "id": "stratagem-dark-fluid-vessel",
+      "group": "stratagem",
+      "label": "다크 플루이드 베슬",
+      "name": "Dark Fluid Vessel",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Dark_Fluid_Vessel_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/dark-fluid-vessel",
+      "src": "/equipment/stratagem-dark-fluid-vessel.webp"
+    },
+    {
+      "id": "stratagem-eagle-rearm",
+      "group": "stratagem",
+      "label": "이글 재보급",
+      "name": "Eagle Rearm",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Eagle_Rearm_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/eagle-rearm",
+      "src": "/equipment/stratagem-eagle-rearm.webp"
+    },
+    {
+      "id": "stratagem-hive-breaker-drill",
+      "group": "stratagem",
+      "label": "하이브 브레이커 드릴",
+      "name": "Hive Breaker Drill",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Hive_Breaker_Drill.svg",
+      "source": "https://divershub.app/database/stratagems/hive-breaker-drill",
+      "src": "/equipment/stratagem-hive-breaker-drill.webp"
+    },
+    {
+      "id": "stratagem-nux-223-hellbomb",
+      "group": "stratagem",
+      "label": "NUX-223 지옥폭탄",
+      "name": "NUX-223 Hellbomb",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Hellbomb_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/nux-223-hellbomb",
+      "src": "/equipment/stratagem-nux-223-hellbomb.webp"
+    },
+    {
+      "id": "stratagem-orbital-illumination-flare",
+      "group": "stratagem",
+      "label": "궤도 조명 플레어",
+      "name": "Orbital Illumination Flare",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Orbital_Illumination_Flare_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/orbital-illumination-flare",
+      "src": "/equipment/stratagem-orbital-illumination-flare.webp"
+    },
+    {
+      "id": "stratagem-prospecting-drill",
+      "group": "stratagem",
+      "label": "탐사 드릴",
+      "name": "Prospecting Drill",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Prospecting_Drill_Stratagem_Icon-1.svg",
+      "source": "https://divershub.app/database/stratagems/prospecting-drill",
+      "src": "/equipment/stratagem-prospecting-drill.webp"
+    },
+    {
+      "id": "stratagem-reinforce",
+      "group": "stratagem",
+      "label": "증원",
+      "name": "Reinforce",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Reinforce_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/reinforce",
+      "src": "/equipment/stratagem-reinforce.webp"
+    },
+    {
+      "id": "stratagem-reinforcement-pods",
+      "group": "stratagem",
+      "label": "증원 포드",
+      "name": "Reinforcement Pods",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Reinforcement_Pods_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/reinforcement-pods",
+      "src": "/equipment/stratagem-reinforcement-pods.webp"
+    },
+    {
+      "id": "stratagem-resupply",
+      "group": "stratagem",
+      "label": "보급",
+      "name": "Resupply",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Resupply_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/resupply",
+      "src": "/equipment/stratagem-resupply.webp"
+    },
+    {
+      "id": "stratagem-seaf-artillery",
+      "group": "stratagem",
+      "label": "SEAF 포병",
+      "name": "SEAF Artillery",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/SEAF_Artillery_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/seaf-artillery",
+      "src": "/equipment/stratagem-seaf-artillery.webp"
+    },
+    {
+      "id": "stratagem-seismic-probe",
+      "group": "stratagem",
+      "label": "지진 탐사기",
+      "name": "Seismic Probe",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Seismic_Probe_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/seismic-probe",
+      "src": "/equipment/stratagem-seismic-probe.webp"
+    },
+    {
+      "id": "stratagem-sos-beacon",
+      "group": "stratagem",
+      "label": "SoS 비콘",
+      "name": "SoS Beacon",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/SOS_Beacon_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/sos-beacon",
+      "src": "/equipment/stratagem-sos-beacon.webp"
+    },
+    {
+      "id": "stratagem-sssd-delivery",
+      "group": "stratagem",
+      "label": "SSSD 투하",
+      "name": "SSSD Delivery",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Start_Upload_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/sssd-delivery",
+      "src": "/equipment/stratagem-sssd-delivery.webp"
+    },
+    {
+      "id": "stratagem-super-earth-flag",
+      "group": "stratagem",
+      "label": "슈퍼 어스 깃발",
+      "name": "Super Earth Flag",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Super_Earth_Flag_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/super-earth-flag",
+      "src": "/equipment/stratagem-super-earth-flag.webp"
+    },
+    {
+      "id": "stratagem-tectonic-drill",
+      "group": "stratagem",
+      "label": "테크토닉 드릴",
+      "name": "Tectonic Drill",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Prospecting_Drill_Stratagem_Icon.svg",
+      "source": "https://divershub.app/database/stratagems/tectonic-drill",
+      "src": "/equipment/stratagem-tectonic-drill.webp"
+    },
+    {
+      "id": "stratagem-upload-data",
+      "group": "stratagem",
+      "label": "데이터 업로드",
+      "name": "Upload Data",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Upload%20Stratagem%20Icon.svg",
+      "source": "https://divershub.app/database/stratagems/upload-data",
+      "src": "/equipment/stratagem-upload-data.webp"
+    },
+    {
+      "id": "armor-acclimated",
+      "group": "armor",
+      "label": "적응형",
+      "name": "Acclimated",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Acclimated_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/ac-2-obedient",
+      "src": "/equipment/armor-acclimated.webp"
+    },
+    {
+      "id": "armor-adreno-defibrillator",
+      "group": "armor",
+      "label": "아드레노-제세동기",
+      "name": "Adreno-Defibrillator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Adreno-Defibrillator_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/ad-11-livewire",
+      "src": "/equipment/armor-adreno-defibrillator.webp"
+    },
+    {
+      "id": "armor-advanced-filtration",
+      "group": "armor",
+      "label": "고급 여과 시스템",
+      "name": "Advanced Filtration",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Advanced_Filtration_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/af-50-noxious-ranger",
+      "src": "/equipment/armor-advanced-filtration.webp"
+    },
+    {
+      "id": "armor-extra-padding",
+      "group": "armor",
+      "label": "추가 패딩",
+      "name": "Extra Padding",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Extra_Padding_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/b-08-light-gunner",
+      "src": "/equipment/armor-extra-padding.webp"
+    },
+    {
+      "id": "armor-blunt-force-mitigation",
+      "group": "armor",
+      "label": "충격 완화",
+      "name": "Blunt-Force Mitigation",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Blunt-Force_Mitigation_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/bfm-16-tanker",
+      "src": "/equipment/armor-blunt-force-mitigation.webp"
+    },
+    {
+      "id": "armor-ballistic-padding",
+      "group": "armor",
+      "label": "발리스틱 패딩",
+      "name": "Ballistic Padding",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Ballistic_Padding_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/bp-32-jackboot",
+      "src": "/equipment/armor-ballistic-padding.webp"
+    },
+    {
+      "id": "armor-engineering-kit",
+      "group": "armor",
+      "label": "엔지니어링 키트",
+      "name": "Engineering Kit",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Engineering_Kit_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/ce-07-demolition-specialist",
+      "src": "/equipment/armor-engineering-kit.webp"
+    },
+    {
+      "id": "armor-med-kit",
+      "group": "armor",
+      "label": "메드킷",
+      "name": "Med-Kit",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Med-Kit_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/cm-21-trench-paramedic",
+      "src": "/equipment/armor-med-kit.webp"
+    },
+    {
+      "id": "armor-concussive-padding-hazmat",
+      "group": "armor",
+      "label": "충격 완화 패드, 방호복",
+      "name": "Concussive Padding, Hazmat",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Concussive_Padding_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/cph-26-commandant",
+      "src": "/equipment/armor-concussive-padding-hazmat.webp"
+    },
+    {
+      "id": "armor-scout",
+      "group": "armor",
+      "label": "스카우트",
+      "name": "Scout",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Scout_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/cw-4-arctic-ranger",
+      "src": "/equipment/armor-scout.webp"
+    },
+    {
+      "id": "armor-desert-stormer",
+      "group": "armor",
+      "label": "데저트 스톰러",
+      "name": "Desert Stormer",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Desert_Stormer_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/ds-10-big-game-hunter",
+      "src": "/equipment/armor-desert-stormer.webp"
+    },
+    {
+      "id": "armor-electrical-conduit",
+      "group": "armor",
+      "label": "전기 도관",
+      "name": "Electrical Conduit",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Electrical_Conduit_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/ex-00-prototype-x",
+      "src": "/equipment/armor-electrical-conduit.webp"
+    },
+    {
+      "id": "armor-fortified",
+      "group": "armor",
+      "label": "강화",
+      "name": "Fortified",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Fortified_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/fs-38-eradicator",
+      "src": "/equipment/armor-fortified.webp"
+    },
+    {
+      "id": "armor-gunslinger",
+      "group": "armor",
+      "label": "건슬링거",
+      "name": "Gunslinger",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Gunslinger_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/gs-11-democracys-deputy",
+      "src": "/equipment/armor-gunslinger.webp"
+    },
+    {
+      "id": "armor-inflammable",
+      "group": "armor",
+      "label": "난연",
+      "name": "Inflammable",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Inflammable_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/i-09-heatseeker",
+      "src": "/equipment/armor-inflammable.webp"
+    },
+    {
+      "id": "armor-integrated-explosives",
+      "group": "armor",
+      "label": "일체형 폭발물",
+      "name": "Integrated Explosives",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Integrated_Explosives_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/ie-57-hell-bent",
+      "src": "/equipment/armor-integrated-explosives.webp"
+    },
+    {
+      "id": "armor-oxygenator",
+      "group": "armor",
+      "label": "산소 발생기",
+      "name": "Oxygenator",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Oxygenator_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/o-3-free-spirit",
+      "src": "/equipment/armor-oxygenator.webp"
+    },
+    {
+      "id": "armor-peak-physique",
+      "group": "armor",
+      "label": "절정의 체격",
+      "name": "Peak Physique",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Peak_Physique_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/ph-9-predator",
+      "src": "/equipment/armor-peak-physique.webp"
+    },
+    {
+      "id": "armor-reinforced-epaulettes",
+      "group": "armor",
+      "label": "강화 에폴렛",
+      "name": "Reinforced Epaulettes",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Reinforced_Epaulettes_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/re-1861-parade-commander",
+      "src": "/equipment/armor-reinforced-epaulettes.webp"
+    },
+    {
+      "id": "armor-rock-solid",
+      "group": "armor",
+      "label": "록 솔리드",
+      "name": "Rock Solid",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Rock_Solid_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/rs-20-constrictor",
+      "src": "/equipment/armor-rock-solid.webp"
+    },
+    {
+      "id": "armor-reduced-signature",
+      "group": "armor",
+      "label": "시그니처 감소",
+      "name": "Reduced Signature",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Reduced_Signature_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/rs-89-shadow-paragon",
+      "src": "/equipment/armor-reduced-signature.webp"
+    },
+    {
+      "id": "armor-servo-assisted",
+      "group": "armor",
+      "label": "서보 어시스트",
+      "name": "Servo-Assisted",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Servo-Assisted_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/sc-37-legionnaire",
+      "src": "/equipment/armor-servo-assisted.webp"
+    },
+    {
+      "id": "armor-siege-ready",
+      "group": "armor",
+      "label": "시즈-레디",
+      "name": "Siege-Ready",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Siege-Ready_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/sr-24-street-scout",
+      "src": "/equipment/armor-siege-ready.webp"
+    },
+    {
+      "id": "armor-unflinching",
+      "group": "armor",
+      "label": "불굴",
+      "name": "Unflinching",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Unflinching_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/uf-16-inspector",
+      "src": "/equipment/armor-unflinching.webp"
+    },
+    {
+      "id": "armor-feet-first",
+      "group": "armor",
+      "label": "피트 퍼스트",
+      "name": "Feet First",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Feet_First_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/a-9-helljumper",
+      "src": "/equipment/armor-feet-first.webp"
+    },
+    {
+      "id": "armor-democracy-protects",
+      "group": "armor",
+      "label": "민주주의가 지킨다",
+      "name": "Democracy Protects",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Democracy_Protects_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/b-22-model-citizen",
+      "src": "/equipment/armor-democracy-protects.webp"
+    },
+    {
+      "id": "armor-kinetic-displacement-mitigation",
+      "group": "armor",
+      "label": "운동량 전이 완화",
+      "name": "Kinetic Displacement Mitigation",
+      "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Kinetic_Displacement_Mitigation_Armor_Passive_Icon.svg",
+      "source": "https://divershub.app/database/armor/kdm-500-outrider",
+      "src": "/equipment/armor-kinetic-displacement-mitigation.webp"
+    },
+    {
+      "id": "booster-hellpod-space-optimization",
+      "group": "booster",
+      "label": "헬포드 공간 최적화",
+      "name": "Hellpod Space Optimization",
+      "image": "https://helldivers.wiki.gg/images/Hellpod_Space_Optimization_Booster_Icon.svg?7aa15a",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-hellpod-space-optimization.webp"
+    },
+    {
+      "id": "booster-vitality-enhancement",
+      "group": "booster",
+      "label": "생명력 증진",
+      "name": "Vitality Enhancement",
+      "image": "https://helldivers.wiki.gg/images/Vitality_Enhancement_Booster_Icon.svg?16b440",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-vitality-enhancement.webp"
+    },
+    {
+      "id": "booster-uav-recon-booster",
+      "group": "booster",
+      "label": "UAV 정찰 부스터",
+      "name": "UAV Recon Booster",
+      "image": "https://helldivers.wiki.gg/images/UAV_Recon_Booster_Booster_Icon.svg?ce1f67",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-uav-recon-booster.webp"
+    },
+    {
+      "id": "booster-stamina-enhancement",
+      "group": "booster",
+      "label": "스태미나 증진",
+      "name": "Stamina Enhancement",
+      "image": "https://helldivers.wiki.gg/images/Stamina_Enhancement_Booster_Icon.svg?f12c0f",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-stamina-enhancement.webp"
+    },
+    {
+      "id": "booster-muscle-enhancement",
+      "group": "booster",
+      "label": "근육 증진",
+      "name": "Muscle Enhancement",
+      "image": "https://helldivers.wiki.gg/images/Muscle_Enhancement_Booster_Icon.svg?4a47f5",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-muscle-enhancement.webp"
+    },
+    {
+      "id": "booster-increased-reinforcement-budget",
+      "group": "booster",
+      "label": "증원 예산 증액",
+      "name": "Increased Reinforcement Budget",
+      "image": "https://helldivers.wiki.gg/images/Increased_Reinforcement_Budget_Booster_Icon.svg?cb9eaf",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-increased-reinforcement-budget.webp"
+    },
+    {
+      "id": "booster-flexible-reinforcement-budget",
+      "group": "booster",
+      "label": "유동적 증원 예산",
+      "name": "Flexible Reinforcement Budget",
+      "image": "https://helldivers.wiki.gg/images/Flexible_Reinforcement_Budget_Booster_Icon.svg?32cacf",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-flexible-reinforcement-budget.webp"
+    },
+    {
+      "id": "booster-localization-confusion",
+      "group": "booster",
+      "label": "국지적 혼란",
+      "name": "Localization Confusion",
+      "image": "https://helldivers.wiki.gg/images/Localization_Confusion_Booster_Icon.svg?3b4fcb",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-localization-confusion.webp"
+    },
+    {
+      "id": "booster-expert-extraction-pilot",
+      "group": "booster",
+      "label": "숙련된 탈출 조종사",
+      "name": "Expert Extraction Pilot",
+      "image": "https://helldivers.wiki.gg/images/Expert_Extraction_Pilot_Booster_Icon.svg?cd8ab7",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-expert-extraction-pilot.webp"
+    },
+    {
+      "id": "booster-motivational-shocks",
+      "group": "booster",
+      "label": "동기 부여 충격",
+      "name": "Motivational Shocks",
+      "image": "https://helldivers.wiki.gg/images/Motivational_Shocks_Booster_Icon.svg?2bde36",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-motivational-shocks.webp"
+    },
+    {
+      "id": "booster-experimental-infusion",
+      "group": "booster",
+      "label": "실험용 주입",
+      "name": "Experimental Infusion",
+      "image": "https://helldivers.wiki.gg/images/Experimental_Infusion_Booster_Icon.svg?b953d8",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-experimental-infusion.webp"
+    },
+    {
+      "id": "booster-firebomb-hellpods",
+      "group": "booster",
+      "label": "화염폭탄 헬포드",
+      "name": "Firebomb Hellpods",
+      "image": "https://helldivers.wiki.gg/images/Firebomb_Hellpods_Booster_Icon.svg?98993c",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-firebomb-hellpods.webp"
+    },
+    {
+      "id": "booster-dead-sprint",
+      "group": "booster",
+      "label": "죽음의 질주",
+      "name": "Dead Sprint",
+      "image": "https://helldivers.wiki.gg/images/Dead_Sprint_Booster_Icon.svg?7fe9b8",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-dead-sprint.webp"
+    },
+    {
+      "id": "booster-armed-resupply-pods",
+      "group": "booster",
+      "label": "무장 재보급 헬포드",
+      "name": "Armed Resupply Pods",
+      "image": "https://helldivers.wiki.gg/images/Armed_Resupply_Pods_Booster_Icon.svg?34d6c9",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-armed-resupply-pods.webp"
+    },
+    {
+      "id": "booster-sample-extricator",
+      "group": "booster",
+      "label": "샘플 추출기",
+      "name": "Sample Extricator",
+      "image": "https://helldivers.wiki.gg/images/Sample_Extricator_Booster_Icon.svg?39ba8b",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-sample-extricator.webp"
+    },
+    {
+      "id": "booster-sample-scanner",
+      "group": "booster",
+      "label": "샘플 스캐너",
+      "name": "Sample Scanner",
+      "image": "https://helldivers.wiki.gg/images/Sample_Scanner_Booster_Icon.svg?71d8c8",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-sample-scanner.webp"
+    },
+    {
+      "id": "booster-stun-pods",
+      "group": "booster",
+      "label": "기절 헬포드",
+      "name": "Stun Pods",
+      "image": "https://helldivers.wiki.gg/images/Stun_Pods_Booster_Icon.svg?60fda5",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-stun-pods.webp"
+    },
+    {
+      "id": "booster-concealed-insertion",
+      "group": "booster",
+      "label": "은폐 투입",
+      "name": "Concealed Insertion",
+      "image": "https://helldivers.wiki.gg/images/Concealed_Insertion_Booster_Icon.svg?6274da",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-concealed-insertion.webp"
+    },
+    {
+      "id": "booster-surplus-eat-allocation",
+      "group": "booster",
+      "label": "잉여 EAT 할당",
+      "name": "Surplus EAT Allocation",
+      "image": "https://helldivers.wiki.gg/images/Surplus_EAT_Allocation_Booster_Icon.svg?3b9771",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-surplus-eat-allocation.webp"
+    },
+    {
+      "id": "booster-integrated-extinguishers",
+      "group": "booster",
+      "label": "내장 소화기",
+      "name": "Integrated Extinguishers",
+      "image": "https://helldivers.wiki.gg/images/Integrated_Extinguishers_Booster_Icon.svg?391451",
+      "source": "https://helldivers.wiki.gg/wiki/Boosters",
+      "src": "/equipment/booster-integrated-extinguishers.webp"
+    },
+    {
+      "id": "primary-ar-23l-liberator-legacy",
+      "group": "primary",
+      "label": "AR-23L 리버레이터 레거시",
+      "name": "AR-23L Liberator Legacy",
+      "image": "https://helldivers.wiki.gg/images/AR-23L_Liberator_Primary_Render.png?ee6b7e",
+      "source": "https://helldivers.wiki.gg/wiki/AR-23L_Liberator_Legacy",
+      "src": "/equipment/primary-ar-23l-liberator-legacy.webp"
+    },
+    {
+      "id": "primary-r-40-sightliner",
+      "group": "primary",
+      "label": "R-40 사이트라이너",
+      "name": "R-40 Sightliner",
+      "image": "https://helldivers.wiki.gg/images/R-40_Sightliner_Primary_Render.png?1d243b",
+      "source": "https://helldivers.wiki.gg/wiki/R-40_Sightliner",
+      "src": "/equipment/primary-r-40-sightliner.webp"
+    },
+    {
+      "id": "primary-las-13-trident",
+      "group": "primary",
+      "label": "LAS-13 트라이던트",
+      "name": "LAS-13 Trident",
+      "image": "https://helldivers.wiki.gg/images/LAS-13_Trident_Primary_Render.png?615ace",
+      "source": "https://helldivers.wiki.gg/wiki/LAS-13_Trident",
+      "src": "/equipment/primary-las-13-trident.webp"
+    },
+    {
+      "id": "primary-las-12-sai",
+      "group": "primary",
+      "label": "LAS-12 사이",
+      "name": "LAS-12 Sai",
+      "image": "https://helldivers.wiki.gg/images/LAS-12_Sai_Primary_Render.png?c4a072",
+      "source": "https://helldivers.wiki.gg/wiki/LAS-12_Sai",
+      "src": "/equipment/primary-las-12-sai.webp"
+    },
+    {
+      "id": "secondary-p-44-mist",
+      "group": "secondary",
+      "label": "P-44 미스트",
+      "name": "P-44 Mist",
+      "image": "https://helldivers.wiki.gg/images/P-44_Mist_Secondary_Render.png?8a61cf",
+      "source": "https://helldivers.wiki.gg/wiki/P-44_Mist",
+      "src": "/equipment/secondary-p-44-mist.webp"
+    },
+    {
+      "id": "throwable-g-11-caltrops",
+      "group": "throwable",
+      "label": "G-11 캘트롭스",
+      "name": "G-11 Caltrops",
+      "image": "https://helldivers.wiki.gg/images/G-11_Caltrops_Throwable_Render.png?a67b12",
+      "source": "https://helldivers.wiki.gg/wiki/G-11_Caltrops",
+      "src": "/equipment/throwable-g-11-caltrops.webp"
+    },
+    {
+      "id": "armor-stationary-shroud",
+      "group": "armor",
+      "label": "정지 은폐",
+      "name": "Stationary Shroud",
+      "image": "https://helldivers.wiki.gg/images/Stationary_Shroud_Armor_Passive_Icon.svg?bfe5b7",
+      "source": "https://helldivers.wiki.gg/wiki/Stationary_Shroud",
+      "src": "/equipment/armor-stationary-shroud.webp"
+    },
+    {
+      "id": "armor-true-grit",
+      "group": "armor",
+      "label": "불굴의 투지",
+      "name": "True Grit",
+      "image": "https://helldivers.wiki.gg/images/True_Grit_Armor_Passive_Icon.svg?4e2218",
+      "source": "https://helldivers.wiki.gg/wiki/True_Grit",
+      "src": "/equipment/armor-true-grit.webp"
+    },
+    {
+      "id": "armor-concussive-padding-grenadier",
+      "group": "armor",
+      "label": "충격 완화 패드, 척탄병",
+      "name": "Concussive Padding, Grenadier",
+      "image": "https://helldivers.wiki.gg/images/Concussive_Padding_Armor_Passive_Icon.svg?9c420d",
+      "source": "https://helldivers.wiki.gg/wiki/Concussive_Padding,_Grenadier",
+      "src": "/equipment/armor-concussive-padding-grenadier.webp"
+    },
+    {
+      "id": "armor-concussive-padding-reinforced",
+      "group": "armor",
+      "label": "충격 완화 패드, 강화",
+      "name": "Concussive Padding, Reinforced",
+      "image": "https://helldivers.wiki.gg/images/Concussive_Padding_Armor_Passive_Icon.svg?9c420d",
+      "source": "https://helldivers.wiki.gg/wiki/Concussive_Padding,_Reinforced",
+      "src": "/equipment/armor-concussive-padding-reinforced.webp"
+    },
+    {
+      "id": "armor-supplemental-adrenaline",
+      "group": "armor",
+      "label": "보조 아드레날린",
+      "name": "Supplemental Adrenaline",
+      "image": "https://helldivers.wiki.gg/images/Supplemental_Adrenaline_Armor_Passive_Icon.svg?85c93e",
+      "source": "https://helldivers.wiki.gg/wiki/Supplemental_Adrenaline",
+      "src": "/equipment/armor-supplemental-adrenaline.webp"
+    },
+    {
+      "id": "stratagem-amw-20-apex",
+      "group": "stratagem",
+      "label": "AMW-20 에이펙스",
+      "name": "AMW-20 Apex",
+      "image": "https://helldivers.wiki.gg/images/Apex_Stratagem_Icon_Background.svg?ff81dc",
+      "source": "https://helldivers.wiki.gg/wiki/AMW-20_Apex",
+      "src": "/equipment/stratagem-amw-20-apex.webp"
+    },
+    {
+      "id": "stratagem-las-44-nova",
+      "group": "stratagem",
+      "label": "LAS-44 노바",
+      "name": "LAS-44 Nova",
+      "image": "https://helldivers.wiki.gg/images/Nova_Stratagem_Icon_Background.svg?44e1ea",
+      "source": "https://helldivers.wiki.gg/wiki/LAS-44_Nova",
+      "src": "/equipment/stratagem-las-44-nova.webp"
+    },
+    {
+      "id": "stratagem-m-102-gunner-frv",
+      "group": "stratagem",
+      "label": "M-102 거너 고속 정찰 차량",
+      "name": "M-102 Gunner FRV",
+      "image": "https://helldivers.wiki.gg/images/Fast_Recon_Vehicle_Stratagem_Icon_Background.svg?d9bba1",
+      "source": "https://helldivers.wiki.gg/wiki/M-102_Gunner_FRV",
+      "src": "/equipment/stratagem-m-102-gunner-frv.webp"
+    },
+    {
+      "id": "stratagem-activate-e-711-extraction-drill",
+      "group": "stratagem",
+      "label": "E-711 추출 드릴 활성화",
+      "name": "Activate E-711 Extraction Drill",
+      "image": "https://helldivers.wiki.gg/images/Drill_Stratagem_Icon_Background.svg?4379f7",
+      "source": "https://helldivers.wiki.gg/wiki/Activate_E-711_Extraction_Drill",
+      "src": "/equipment/stratagem-activate-e-711-extraction-drill.webp"
+    },
+    {
+      "id": "stratagem-aquifer-drill",
+      "group": "stratagem",
+      "label": "대수층 드릴",
+      "name": "Aquifer Drill",
+      "image": "https://helldivers.wiki.gg/images/Drill_Stratagem_Icon_Background.svg?4379f7",
+      "source": "https://helldivers.wiki.gg/wiki/Aquifer_Drill",
+      "src": "/equipment/stratagem-aquifer-drill.webp"
+    },
+    {
+      "id": "stratagem-portable-comms-relay",
+      "group": "stratagem",
+      "label": "휴대용 통신 중계기",
+      "name": "Portable Comms Relay",
+      "image": "https://helldivers.wiki.gg/images/Cargo_Container_Stratagem_Icon_Background.svg?60d35b",
+      "source": "https://helldivers.wiki.gg/wiki/Portable_Comms_Relay",
+      "src": "/equipment/stratagem-portable-comms-relay.webp"
+    },
+    {
+      "id": "stratagem-tactical-video-camera",
+      "group": "stratagem",
+      "label": "전술 비디오 카메라",
+      "name": "Tactical Video Camera",
+      "image": "https://helldivers.wiki.gg/images/Tactical_Video_Camera_Stratagem_Icon_Background.svg?5dd24d",
+      "source": "https://helldivers.wiki.gg/wiki/Tactical_Video_Camera",
+      "src": "/equipment/stratagem-tactical-video-camera.webp"
+    }
+  ]
+}
