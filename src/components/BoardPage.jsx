@@ -1,7 +1,6 @@
 'use client';
 import Nickname from './Nickname';
 import { LoadoutDisplay } from './Loadout';
-import ArmorDetails from './ArmorDetails';
 import { ActionLink, Button, Input } from './ui';
 
 import Link from 'next/link';
@@ -164,7 +163,6 @@ function StandardBoardPage({ board }) {
                   <h2>{post.title}</h2>
                   <LoadoutDisplay value={post.loadout} compact />
                 </Link>
-                <ArmorDetails id={post.loadout?.armor} />
                 <p>
                   <Nickname name={post.author} role={post.authorRole} own={post.own} /> ·{' '}
                   {post.date} · 댓글 {post.comments} · 추천 {post.likes}
