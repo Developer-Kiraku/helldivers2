@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Crosshair } from 'lucide-react';
-import { selectableEquipment, equipmentGroups } from '@/lib/equipment.mjs';
+import { selectableEquipment, equipmentGroups, equipmentMatchesSearch } from '@/lib/equipment.mjs';
 import { Button, Input } from './ui';
 import Modal from './Modal';
 
@@ -20,11 +20,8 @@ export function EquipmentPicker({
   const [open, setOpen] = useState(false);
   const [group, setGroup] = useState('primary');
   const [search, setSearch] = useState('');
-  const query = search.trim().toLocaleLowerCase();
   const matches = selectableEquipment(fixedGroup || group).filter(
-    (item) =>
-      !excludeIds.includes(item.id) &&
-      `${item.label} ${item.name}`.toLocaleLowerCase().includes(query),
+    (item) => !excludeIds.includes(item.id) && equipmentMatchesSearch(item, search),
   );
   return (
     <>
@@ -60,7 +57,7 @@ export function EquipmentPicker({
           )}
           <Input
             aria-label="장비 이름 검색"
-            placeholder="장비 이름 검색 (한국어 / English)"
+            placeholder="장비·채권 이름 검색 (한국어 / English)"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />

@@ -3051,7 +3051,10 @@
       "source": "https://helldivers.wiki.gg/wiki/R-40_Sightliner",
       "src": "/equipment/primary-r-40-sightliner.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/R-40_Sightliner",
-      "checkedImage": "https://helldivers.wiki.gg/images/R-40_Sightliner_Primary_Render.png?1d243b"
+      "checkedImage": "https://helldivers.wiki.gg/images/R-40_Sightliner_Primary_Render.png?1d243b",
+      "warbond": "권위의 가늠자",
+      "contentCheckedAt": "2026-10-29",
+      "contentSource": "https://blog.ko.playstation.com/?p=32332"
     },
     {
       "id": "primary-las-13-trident",
@@ -3084,30 +3087,39 @@
       "source": "https://helldivers.wiki.gg/wiki/P-44_Mist",
       "src": "/equipment/secondary-p-44-mist.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/P-44_Mist",
-      "checkedImage": "https://helldivers.wiki.gg/images/P-44_Mist_Secondary_Render.png?8a61cf"
+      "checkedImage": "https://helldivers.wiki.gg/images/P-44_Mist_Secondary_Render.png?8a61cf",
+      "warbond": "권위의 가늠자",
+      "contentCheckedAt": "2026-10-29",
+      "contentSource": "https://blog.ko.playstation.com/?p=32332"
     },
     {
       "id": "throwable-g-11-caltrops",
       "group": "throwable",
-      "label": "G-11 캘트롭스",
+      "label": "G-11 마름쇠",
       "name": "G-11 Caltrops",
       "image": "https://helldivers.wiki.gg/images/G-11_Caltrops_Throwable_Render.png?a67b12",
       "source": "https://helldivers.wiki.gg/wiki/G-11_Caltrops",
       "src": "/equipment/throwable-g-11-caltrops.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/G-11_Caltrops",
       "checkedImage": "https://helldivers.wiki.gg/images/G-11_Caltrops_Throwable_Render.png?a67b12",
-      "displayScale": 0.65
+      "displayScale": 0.65,
+      "warbond": "권위의 가늠자",
+      "contentCheckedAt": "2026-10-29",
+      "contentSource": "https://blog.ko.playstation.com/?p=32332"
     },
     {
       "id": "armor-stationary-shroud",
       "group": "armor",
-      "label": "정지 은폐",
+      "label": "정적인 장막",
       "name": "Stationary Shroud",
       "image": "https://helldivers.wiki.gg/images/Stationary_Shroud_Armor_Passive_Icon.svg?bfe5b7",
       "source": "https://helldivers.wiki.gg/wiki/Stationary_Shroud",
       "src": "/equipment/armor-stationary-shroud.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Stationary_Shroud",
-      "checkedImage": "https://helldivers.wiki.gg/images/Stationary_Shroud_Armor_Passive_Icon.svg?bfe5b7"
+      "checkedImage": "https://helldivers.wiki.gg/images/Stationary_Shroud_Armor_Passive_Icon.svg?bfe5b7",
+      "warbond": "권위의 가늠자",
+      "contentCheckedAt": "2026-10-29",
+      "contentSource": "https://blog.ko.playstation.com/?p=32332"
     },
     {
       "id": "armor-true-grit",
@@ -3163,7 +3175,10 @@
       "src": "/equipment/stratagem-amw-20-apex.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/AMW-20_Apex",
       "checkedImage": "https://helldivers.wiki.gg/images/Apex_Stratagem_Icon_Background.svg?ff81dc",
-      "section": "Supply Permit"
+      "section": "Supply Permit",
+      "warbond": "권위의 가늠자",
+      "contentCheckedAt": "2026-10-29",
+      "contentSource": "https://blog.ko.playstation.com/?p=32332"
     },
     {
       "id": "stratagem-las-44-nova",
@@ -3175,7 +3190,10 @@
       "src": "/equipment/stratagem-las-44-nova.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/LAS-44_Nova",
       "checkedImage": "https://helldivers.wiki.gg/images/Nova_Stratagem_Icon_Background.svg?44e1ea",
-      "section": "Supply Permit"
+      "section": "Supply Permit",
+      "warbond": "권위의 가늠자",
+      "contentCheckedAt": "2026-10-29",
+      "contentSource": "https://blog.ko.playstation.com/?p=32332"
     },
     {
       "id": "stratagem-m-102-gunner-frv",

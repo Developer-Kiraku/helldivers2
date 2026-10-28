@@ -7,11 +7,34 @@ import {
   equipmentForId,
   equipmentParts,
   equipmentHtml,
+  equipmentMatchesSearch,
+  selectableEquipment,
 } from '../src/lib/equipment.mjs';
 import { sanitizePostHtml } from '../src/lib/server/post-html.mjs';
 import { postSummary } from '../src/lib/post-summary.mjs';
 
 assert.equal(new Set(equipment.map((item) => item.id)).size, equipment.length);
+const authorityIds = [
+  'primary-r-40-sightliner',
+  'secondary-p-44-mist',
+  'throwable-g-11-caltrops',
+  'armor-stationary-shroud',
+  'stratagem-amw-20-apex',
+  'stratagem-las-44-nova',
+].sort();
+for (const query of ['권한의 범위', '권위의 가늠자', 'scope OF authority']) {
+  assert.deepEqual(
+    selectableEquipment()
+      .filter((item) => equipmentMatchesSearch(item, query))
+      .map((item) => item.id)
+      .sort(),
+    authorityIds,
+  );
+}
+assert.equal(equipmentForId('throwable-g-11-caltrops').label, 'G-11 마름쇠');
+assert.equal(equipmentForId('armor-stationary-shroud').label, '정적인 장막');
+assert.ok(equipmentMatchesSearch(equipmentForId('throwable-g-11-caltrops'), '캘트롭스'));
+assert.ok(equipmentMatchesSearch(equipmentForId('armor-stationary-shroud'), '정지 은폐'));
 const selectableStratagems = equipment.filter(
   (item) => item.group === 'stratagem' && item.selectable !== false,
 );

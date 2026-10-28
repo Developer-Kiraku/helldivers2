@@ -16,6 +16,12 @@ export const equipmentForSrc = (src) => bySrc.get(src);
 // Shared catalog access for post/comment pickers and loadout slots.
 export const selectableEquipment = (group) =>
   equipment.filter((item) => item.selectable !== false && (!group || item.group === group));
+export const equipmentMatchesSearch = (item, search) =>
+  [item.label, item.name, item.warbond, ...(item.searchAliases || [])]
+    .filter(Boolean)
+    .join(' ')
+    .toLocaleLowerCase()
+    .includes(search.trim().toLocaleLowerCase());
 export function equipmentParts(value) {
   return String(value || '')
     .split(/(:gear-[a-z0-9-]+:)/g)
