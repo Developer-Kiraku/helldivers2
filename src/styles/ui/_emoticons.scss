@@ -182,9 +182,8 @@
   width: 100%;
   flex: 1;
 }
-.equipment-choice > .armor-details-button {
-  width: 100%;
-  min-height: var(--hd-size-36);
+.equipment-grid.armor-option-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .equipment-grid .equipment-inline {
   margin: 0;
@@ -290,6 +289,9 @@
   .equipment-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+  .equipment-grid.armor-option-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 .loadout-list {
   gap: var(--hd-space-8);
@@ -344,6 +346,14 @@
 .armor-details-button {
   margin-top: var(--hd-space-6);
   font-size: var(--hd-font-size-12);
+}
+.armor-option-description {
+  margin: var(--hd-space-8) 0 0;
+  padding: 0 var(--hd-space-6);
+  font-size: var(--hd-font-size-12);
+  line-height: 1.6;
+  text-align: left;
+  overflow-wrap: anywhere;
 }
 .equipment-kind-heading {
   grid-column: 1 / -1;

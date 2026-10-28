@@ -47,7 +47,9 @@ export function LoadoutFields({ value, onChange, disabled }) {
         excludeIds={excluded}
         onSelect={(item) => select(item.id)}
       />
-      {group === 'armor' && <ArmorDetails id={id} disabled={disabled} />}
+      {group === 'armor' && equipmentForId(id) && (
+        <p className="armor-option-description">{equipmentForId(id).description}</p>
+      )}
     </div>
   );
   return (

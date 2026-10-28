@@ -12,7 +12,6 @@ import Modal from './Modal';
 
 import { EquipmentIcon } from './EquipmentIcon';
 export { EquipmentIcon } from './EquipmentIcon';
-import ArmorDetails from './ArmorDetails';
 
 export function EquipmentPicker({
   onSelect,
@@ -69,7 +68,9 @@ export function EquipmentPicker({
           <div className="equipment-results" aria-live="polite">
             {matches.length}개
           </div>
-          <div className="equipment-grid">
+          <div
+            className={`equipment-grid${(fixedGroup || group) === 'armor' ? ' armor-option-grid' : ''}`}
+          >
             {matches.map((item, index) => (
               <Fragment key={item.id}>
                 {item.group === 'stratagem' && item.kind !== matches[index - 1]?.kind && (
@@ -81,6 +82,9 @@ export function EquipmentPicker({
                   <Button
                     type="button"
                     aria-label={item.label}
+                    aria-describedby={
+                      item.group === 'armor' ? `armor-effect-${item.id}` : undefined
+                    }
                     title={item.name}
                     onClick={() => {
                       onSelect(item);
@@ -89,7 +93,11 @@ export function EquipmentPicker({
                   >
                     <EquipmentIcon item={item} />
                   </Button>
-                  {item.group === 'armor' && <ArmorDetails id={item.id} />}
+                  {item.group === 'armor' && (
+                    <p className="armor-option-description" id={`armor-effect-${item.id}`}>
+                      {item.description || '효과 설명을 준비 중입니다.'}
+                    </p>
+                  )}
                 </div>
               </Fragment>
             ))}
