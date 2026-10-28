@@ -185,6 +185,9 @@
 .equipment-grid.armor-option-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+.armor-option-grid .equipment-choice > .ui-button:first-child {
+  flex: 0 0 auto;
+}
 .equipment-grid .equipment-inline {
   margin: 0;
   width: 100%;
