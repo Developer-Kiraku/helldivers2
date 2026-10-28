@@ -3,6 +3,7 @@ import { EquipmentIcon, EquipmentPicker } from './Equipment';
 import { equipmentForId } from '@/lib/equipment.mjs';
 import { armorClasses, loadoutSlots } from '@/lib/loadout.mjs';
 import { Label, Select } from './ui';
+import ArmorDetails from './ArmorDetails';
 
 export function LoadoutDisplay({ value, compact = false }) {
   if (!value) return null;
@@ -24,6 +25,7 @@ export function LoadoutDisplay({ value, compact = false }) {
         >
           {!compact && <strong>{label}</strong>}
           {equipmentForId(id) && <EquipmentIcon item={equipmentForId(id)} />}
+          {!compact && id === value.armor && <ArmorDetails id={id} />}
         </div>
       ))}
     </section>
@@ -45,6 +47,7 @@ export function LoadoutFields({ value, onChange, disabled }) {
         excludeIds={excluded}
         onSelect={(item) => select(item.id)}
       />
+      {group === 'armor' && <ArmorDetails id={id} disabled={disabled} />}
     </div>
   );
   return (

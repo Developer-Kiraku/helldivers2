@@ -1497,6 +1497,9 @@ export default [
   },
   {
     id: 'armor-acclimated',
+    description: '화염·가스·산성·전기 피해 50% 저항.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '적응형',
     name: 'Acclimated',
@@ -1504,6 +1507,10 @@ export default [
   },
   {
     id: 'armor-adreno-defibrillator',
+    description:
+      '신체가 온전하면 사망 시 한 번 잠시 소생. 자극제 지속 시간 +2초, 전기 피해 50% 저항.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '아드레노-제세동기',
     name: 'Adreno-Defibrillator',
@@ -1511,6 +1518,9 @@ export default [
   },
   {
     id: 'armor-advanced-filtration',
+    description: '가스 피해와 효과 80% 저항.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '고급 여과 시스템',
     name: 'Advanced Filtration',
@@ -1518,6 +1528,9 @@ export default [
   },
   {
     id: 'armor-extra-padding',
+    description: '방어 등급 증가.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '추가 패딩',
     name: 'Extra Padding',
@@ -1525,6 +1538,9 @@ export default [
   },
   {
     id: 'armor-blunt-force-mitigation',
+    description: '넘어짐 저항 증가. 충돌 피해 30% 감소, 방어 등급 증가.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '충격 완화',
     name: 'Blunt-Force Mitigation',
@@ -1532,6 +1548,9 @@ export default [
   },
   {
     id: 'armor-ballistic-padding',
+    description: '흉부·폭발 피해 25% 저항. 흉부 출혈 피해 방지.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '발리스틱 패딩',
     name: 'Ballistic Padding',
@@ -1539,6 +1558,9 @@ export default [
   },
   {
     id: 'armor-engineering-kit',
+    description: '앉거나 엎드릴 때 반동 30% 감소. 투척무기 초기·최대 소지량 +2.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '엔지니어링 키트',
     name: 'Engineering Kit',
@@ -1546,6 +1568,9 @@ export default [
   },
   {
     id: 'armor-med-kit',
+    description: '자극제 초기·최대 소지량 +2. 효과 지속 시간 +2초.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '메드킷',
     name: 'Med-Kit',
@@ -1553,6 +1578,9 @@ export default [
   },
   {
     id: 'armor-concussive-padding-hazmat',
+    description: '폭발 피해 50%, 가스 피해·효과 25% 저항. 보조무기 반동 30% 감소.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '충격 완화 패드, 방호복',
     name: 'Concussive Padding, Hazmat',
@@ -1560,6 +1588,9 @@ export default [
   },
   {
     id: 'armor-scout',
+    description: '지도 표식에서 2초마다 레이더 탐색. 적 탐지 거리 30% 감소.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '스카우트',
     name: 'Scout',
@@ -1567,6 +1598,9 @@ export default [
   },
   {
     id: 'armor-desert-stormer',
+    description: '화염·가스·산성·전기 피해 40% 저항. 투척 거리 20% 증가.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '데저트 스톰러',
     name: 'Desert Stormer',
@@ -1574,6 +1608,9 @@ export default [
   },
   {
     id: 'armor-electrical-conduit',
+    description: '전기 피해 95% 저항.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '전기 도관',
     name: 'Electrical Conduit',
@@ -1581,6 +1618,9 @@ export default [
   },
   {
     id: 'armor-fortified',
+    description: '앉거나 엎드릴 때 반동 30% 감소. 폭발 피해 50% 저항.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '강화',
     name: 'Fortified',
@@ -1588,6 +1628,9 @@ export default [
   },
   {
     id: 'armor-gunslinger',
+    description: '보조무기 재장전 40%, 꺼내기·집어넣기 50% 가속. 반동 70% 감소.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '건슬링거',
     name: 'Gunslinger',
@@ -1595,6 +1638,9 @@ export default [
   },
   {
     id: 'armor-inflammable',
+    description: '화염 피해 75% 저항.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '난연',
     name: 'Inflammable',
@@ -1602,6 +1648,9 @@ export default [
   },
   {
     id: 'armor-integrated-explosives',
+    description: '사망 1.5초 후 폭발. 투척무기 초기·최대 소지량 +2.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '일체형 폭발물',
     name: 'Integrated Explosives',
@@ -1609,6 +1658,9 @@ export default [
   },
   {
     id: 'armor-oxygenator',
+    description: '걷기·달리기 속도 증가. 슬라이딩 속도·지속 시간 증가.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '산소 발생기',
     name: 'Oxygenator',
@@ -1616,6 +1668,9 @@ export default [
   },
   {
     id: 'armor-peak-physique',
+    description: '근접 피해 40% 증가. 무기 조작성 향상.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '절정의 체격',
     name: 'Peak Physique',
@@ -1623,6 +1678,9 @@ export default [
   },
   {
     id: 'armor-reinforced-epaulettes',
+    description: '주무기 재장전 30% 가속. 사지 부상 회피 확률 50%, 근접 피해 20% 증가.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '강화 에폴렛',
     name: 'Reinforced Epaulettes',
@@ -1630,6 +1688,9 @@ export default [
   },
   {
     id: 'armor-rock-solid',
+    description: '근접 피해 40% 증가. 넘어짐 저항 증가.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '록 솔리드',
     name: 'Rock Solid',
@@ -1637,6 +1698,9 @@ export default [
   },
   {
     id: 'armor-reduced-signature',
+    description: '이동 소음 50%, 적 탐지 거리 40% 감소.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '시그니처 감소',
     name: 'Reduced Signature',
@@ -1644,6 +1708,9 @@ export default [
   },
   {
     id: 'armor-servo-assisted',
+    description: '투척 거리 30%, 사지 체력 50% 증가.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '서보 어시스트',
     name: 'Servo-Assisted',
@@ -1651,6 +1718,9 @@ export default [
   },
   {
     id: 'armor-siege-ready',
+    description: '주무기 재장전 30% 가속. 무기 탄약 용량 20% 증가(무기 배낭 제외).',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '시즈-레디',
     name: 'Siege-Ready',
@@ -1658,6 +1728,9 @@ export default [
   },
   {
     id: 'armor-unflinching',
+    description: '피격 시 움찔거림 감소. 방어 등급 증가, 지도 표식에서 2초마다 레이더 탐색.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '불굴',
     name: 'Unflinching',
@@ -1665,6 +1738,9 @@ export default [
   },
   {
     id: 'armor-feet-first',
+    description: '이동 소음 50% 감소. 관심 지점 식별 거리 30% 증가, 다리 부상 면역.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '피트 퍼스트',
     name: 'Feet First',
@@ -1672,6 +1748,9 @@ export default [
   },
   {
     id: 'armor-democracy-protects',
+    description: '치명상 생존 확률 50%. 흉부 출혈 피해 방지.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '민주주의가 지킨다',
     name: 'Democracy Protects',
@@ -1679,6 +1758,9 @@ export default [
   },
   {
     id: 'armor-kinetic-displacement-mitigation',
+    description: '화염 피해 50% 저항. 사지 부상 회피 확률 50%, 충돌 피해 30% 감소.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '운동량 전이 완화',
     name: 'Kinetic Displacement Mitigation',
@@ -1868,6 +1950,9 @@ export default [
   },
   {
     id: 'armor-stationary-shroud',
+    description: '조준 흔들림 35%, 이동 소음 15% 감소. 앉거나 엎드려 정지하면 은폐 효과.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '정지 은폐',
     name: 'Stationary Shroud',
@@ -1875,6 +1960,9 @@ export default [
   },
   {
     id: 'armor-true-grit',
+    description: '지원무기 재장전 30% 가속. 무기 조작성 소폭 향상.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '불굴의 투지',
     name: 'True Grit',
@@ -1882,6 +1970,9 @@ export default [
   },
   {
     id: 'armor-concussive-padding-grenadier',
+    description: '폭발 피해 50% 저항. 투척무기 초기·최대 소지량 +2.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '충격 완화 패드, 척탄병',
     name: 'Concussive Padding, Grenadier',
@@ -1889,6 +1980,9 @@ export default [
   },
   {
     id: 'armor-concussive-padding-reinforced',
+    description: '폭발 피해 50% 저항. 방어 등급 증가.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '충격 완화 패드, 강화',
     name: 'Concussive Padding, Reinforced',
@@ -1896,6 +1990,9 @@ export default [
   },
   {
     id: 'armor-supplemental-adrenaline',
+    description: '피격 시 지구력 일부 회복. 방어 등급 증가.',
+    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    descriptionCheckedAt: '2026-10-28',
     group: 'armor',
     label: '보조 아드레날린',
     name: 'Supplemental Adrenaline',
