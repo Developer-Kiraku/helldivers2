@@ -20,7 +20,9 @@ export function EquipmentPicker({ onSelect, onOpen, disabled = false }) {
   const query = search.trim().toLocaleLowerCase();
   const matches = equipment.filter(
     (item) =>
-      item.group === group && `${item.label} ${item.name}`.toLocaleLowerCase().includes(query),
+      item.selectable !== false &&
+      item.group === group &&
+      `${item.label} ${item.name}`.toLocaleLowerCase().includes(query),
   );
   return (
     <>

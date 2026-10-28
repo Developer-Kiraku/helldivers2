@@ -1357,6 +1357,7 @@ export default [
     label: '슈퍼 디스트로이어 호출',
     name: 'Call In Super Destroyer',
     src: '/equipment/stratagem-call-in-super-destroyer.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-cargo-container',
@@ -1364,6 +1365,7 @@ export default [
     label: '카고 컨테이너',
     name: 'Cargo Container',
     src: '/equipment/stratagem-cargo-container.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-dark-fluid-vessel',
@@ -1371,6 +1373,7 @@ export default [
     label: '다크 플루이드 베슬',
     name: 'Dark Fluid Vessel',
     src: '/equipment/stratagem-dark-fluid-vessel.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-eagle-rearm',
@@ -1378,6 +1381,7 @@ export default [
     label: '이글 재보급',
     name: 'Eagle Rearm',
     src: '/equipment/stratagem-eagle-rearm.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-hive-breaker-drill',
@@ -1385,6 +1389,7 @@ export default [
     label: '하이브 브레이커 드릴',
     name: 'Hive Breaker Drill',
     src: '/equipment/stratagem-hive-breaker-drill.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-nux-223-hellbomb',
@@ -1392,6 +1397,7 @@ export default [
     label: 'NUX-223 지옥폭탄',
     name: 'NUX-223 Hellbomb',
     src: '/equipment/stratagem-nux-223-hellbomb.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-orbital-illumination-flare',
@@ -1399,6 +1405,7 @@ export default [
     label: '궤도 조명 플레어',
     name: 'Orbital Illumination Flare',
     src: '/equipment/stratagem-orbital-illumination-flare.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-prospecting-drill',
@@ -1406,6 +1413,7 @@ export default [
     label: '탐사 드릴',
     name: 'Prospecting Drill',
     src: '/equipment/stratagem-prospecting-drill.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-reinforce',
@@ -1413,6 +1421,7 @@ export default [
     label: '증원',
     name: 'Reinforce',
     src: '/equipment/stratagem-reinforce.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-reinforcement-pods',
@@ -1420,6 +1429,7 @@ export default [
     label: '증원 포드',
     name: 'Reinforcement Pods',
     src: '/equipment/stratagem-reinforcement-pods.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-resupply',
@@ -1427,6 +1437,7 @@ export default [
     label: '보급',
     name: 'Resupply',
     src: '/equipment/stratagem-resupply.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-seaf-artillery',
@@ -1434,6 +1445,7 @@ export default [
     label: 'SEAF 포병',
     name: 'SEAF Artillery',
     src: '/equipment/stratagem-seaf-artillery.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-seismic-probe',
@@ -1441,6 +1453,7 @@ export default [
     label: '지진 탐사기',
     name: 'Seismic Probe',
     src: '/equipment/stratagem-seismic-probe.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-sos-beacon',
@@ -1448,6 +1461,7 @@ export default [
     label: 'SoS 비콘',
     name: 'SoS Beacon',
     src: '/equipment/stratagem-sos-beacon.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-sssd-delivery',
@@ -1455,6 +1469,7 @@ export default [
     label: 'SSSD 투하',
     name: 'SSSD Delivery',
     src: '/equipment/stratagem-sssd-delivery.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-super-earth-flag',
@@ -1462,6 +1477,7 @@ export default [
     label: '슈퍼 어스 깃발',
     name: 'Super Earth Flag',
     src: '/equipment/stratagem-super-earth-flag.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-tectonic-drill',
@@ -1469,6 +1485,7 @@ export default [
     label: '테크토닉 드릴',
     name: 'Tectonic Drill',
     src: '/equipment/stratagem-tectonic-drill.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-upload-data',
@@ -1476,6 +1493,7 @@ export default [
     label: '데이터 업로드',
     name: 'Upload Data',
     src: '/equipment/stratagem-upload-data.webp',
+    selectable: false,
   },
   {
     id: 'armor-acclimated',
@@ -1910,6 +1928,7 @@ export default [
     label: 'E-711 추출 드릴 활성화',
     name: 'Activate E-711 Extraction Drill',
     src: '/equipment/stratagem-activate-e-711-extraction-drill.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-aquifer-drill',
@@ -1917,6 +1936,7 @@ export default [
     label: '대수층 드릴',
     name: 'Aquifer Drill',
     src: '/equipment/stratagem-aquifer-drill.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-portable-comms-relay',
@@ -1924,6 +1944,7 @@ export default [
     label: '휴대용 통신 중계기',
     name: 'Portable Comms Relay',
     src: '/equipment/stratagem-portable-comms-relay.webp',
+    selectable: false,
   },
   {
     id: 'stratagem-tactical-video-camera',
@@ -1931,5 +1952,6 @@ export default [
     label: '전술 비디오 카메라',
     name: 'Tactical Video Camera',
     src: '/equipment/stratagem-tactical-video-camera.webp',
+    selectable: false,
   },
 ];

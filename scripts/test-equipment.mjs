@@ -12,6 +12,19 @@ import { sanitizePostHtml } from '../src/lib/server/post-html.mjs';
 import { postSummary } from '../src/lib/post-summary.mjs';
 
 assert.equal(new Set(equipment.map((item) => item.id)).size, equipment.length);
+const selectableStratagems = equipment.filter(
+  (item) => item.group === 'stratagem' && item.selectable !== false,
+);
+assert.equal(selectableStratagems.length, 95);
+for (const name of [
+  'Reinforce',
+  'Resupply',
+  'NUX-223 Hellbomb',
+  'Eagle Rearm',
+  'Super Earth Flag',
+]) {
+  assert.ok(!selectableStratagems.some((item) => item.name === name));
+}
 for (const [group] of equipmentGroups) assert.ok(equipment.some((item) => item.group === group));
 for (const item of equipment) {
   assert.match(item.id, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
@@ -23,6 +36,28 @@ for (const item of equipment) {
   assert.equal(sanitizePostHtml(equipmentHtml(item)), equipmentHtml(item));
 }
 const item = equipment[0];
+const caltrops = equipmentForId('throwable-g-11-caltrops');
+const { data: pixels, info } = await sharp(`public${caltrops.src}`)
+  .ensureAlpha()
+  .raw()
+  .toBuffer({ resolveWithObject: true });
+let minX = info.width,
+  maxX = -1,
+  minY = info.height,
+  maxY = -1;
+for (let y = 0; y < info.height; y++)
+  for (let x = 0; x < info.width; x++) {
+    if (pixels[(y * info.width + x) * info.channels + 3] > 10) {
+      minX = Math.min(minX, x);
+      maxX = Math.max(maxX, x);
+      minY = Math.min(minY, y);
+      maxY = Math.max(maxY, y);
+    }
+  }
+assert.ok(
+  maxX >= minX && maxX - minX + 1 <= 156 && maxY - minY + 1 <= 104,
+  'Caltrops artwork stays within the reduced visual size',
+);
 assert.equal(equipmentParts(`앞 ${item.token} 뒤`)[1].equipment, item);
 assert.equal(equipmentParts(':gear-not-real:')[0].equipment, undefined);
 assert.equal(postSummary({ content: `추천 ${item.token}` }), `추천 [${item.label}]`);
