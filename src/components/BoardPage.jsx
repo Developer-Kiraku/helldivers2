@@ -161,7 +161,7 @@ function StandardBoardPage({ board }) {
                 <Link href={`/boards/loadout/${post.id}`}>
                   <span className="badge">{post.category}</span>
                   <h2>{post.title}</h2>
-                  <LoadoutDisplay value={post.loadout} />
+                  <LoadoutDisplay value={post.loadout} compact />
                 </Link>
                 <p>
                   <Nickname name={post.author} role={post.authorRole} own={post.own} /> ·{' '}

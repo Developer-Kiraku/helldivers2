@@ -4,7 +4,7 @@ import { equipmentForId } from '@/lib/equipment.mjs';
 import { armorClasses, loadoutSlots } from '@/lib/loadout.mjs';
 import { Label, Select } from './ui';
 
-export function LoadoutDisplay({ value }) {
+export function LoadoutDisplay({ value, compact = false }) {
   if (!value) return null;
   const slots = [
     ...loadoutSlots.slice(0, 3).map(([key, label]) => [label, value[key]]),
@@ -12,10 +12,17 @@ export function LoadoutDisplay({ value }) {
     ...value.stratagems.map((id, i) => [`스트라타젬 ${i + 1}`, id]),
   ];
   return (
-    <section className="loadout-display loadout-summary" aria-label="장비 세팅">
+    <section
+      className={`loadout-display loadout-summary${compact ? ' loadout-compact' : ''}`}
+      aria-label="장비 세팅"
+    >
       {slots.map(([label, id]) => (
-        <div className="loadout-slot" key={label}>
-          <strong>{label}</strong>
+        <div
+          className="loadout-slot"
+          key={label}
+          title={`${label}: ${equipmentForId(id)?.label || ''}`}
+        >
+          {!compact && <strong>{label}</strong>}
           {equipmentForId(id) && <EquipmentIcon item={equipmentForId(id)} />}
         </div>
       ))}
