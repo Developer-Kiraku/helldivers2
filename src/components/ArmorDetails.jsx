@@ -23,7 +23,7 @@ export default function ArmorDetails({ id, disabled = false }) {
         옵션 설명
       </Button>
       {open && (
-        <Modal title={`${item.label} · 갑옷 옵션`} onClose={() => setOpen(false)}>
+        <Modal title={`${item.label} · 방어구 옵션`} onClose={() => setOpen(false)}>
           <div className="armor-details">
             <EquipmentIcon item={item} />
             <p>{item.description || '효과 설명을 준비 중입니다.'}</p>

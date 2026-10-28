@@ -6,7 +6,7 @@ export const loadoutSlots = [
   ['primary', '주무기'],
   ['secondary', '보조무기'],
   ['throwable', '투척무기'],
-  ['armor', '갑옷 옵션'],
+  ['armor', '방어구 옵션'],
 ];
 export const emptyLoadout = () => ({
   primary: '',

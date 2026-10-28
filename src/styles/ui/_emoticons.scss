@@ -28,6 +28,18 @@
 .loadout-summary {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
+.loadout-fields > .loadout-display {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.loadout-fields .loadout-slot {
+  justify-content: flex-start;
+}
+.loadout-fields .emoticon-trigger {
+  white-space: nowrap;
+  gap: var(--hd-space-4);
+  font-size: var(--hd-font-size-12);
+  padding: var(--hd-space-8);
+}
 .loadout-slot {
   display: flex;
   flex-direction: column;
@@ -186,7 +198,11 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .armor-option-grid .equipment-choice > .ui-button:first-child {
-  flex: 0 0 auto;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: var(--hd-space-8);
+  white-space: normal;
 }
 .equipment-grid .equipment-inline {
   margin: 0;
@@ -283,6 +299,9 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--hd-space-8);
   }
+  .loadout-fields > .loadout-display {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .loadout-slot {
     padding: var(--hd-space-6);
   }
@@ -351,6 +370,7 @@
   font-size: var(--hd-font-size-12);
 }
 .armor-option-description {
+  display: block;
   margin: var(--hd-space-8) 0 0;
   padding: 0 var(--hd-space-6);
   font-size: var(--hd-font-size-12);

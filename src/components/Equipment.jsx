@@ -92,12 +92,12 @@ export function EquipmentPicker({
                     }}
                   >
                     <EquipmentIcon item={item} />
+                    {item.group === 'armor' && (
+                      <span className="armor-option-description" id={`armor-effect-${item.id}`}>
+                        {item.description || '효과 설명을 준비 중입니다.'}
+                      </span>
+                    )}
                   </Button>
-                  {item.group === 'armor' && (
-                    <p className="armor-option-description" id={`armor-effect-${item.id}`}>
-                      {item.description || '효과 설명을 준비 중입니다.'}
-                    </p>
-                  )}
                 </div>
               </Fragment>
             ))}

@@ -9,7 +9,7 @@ export function LoadoutDisplay({ value, compact = false }) {
   if (!value) return null;
   const slots = [
     ...loadoutSlots.slice(0, 3).map(([key, label]) => [label, value[key]]),
-    [`${value.armorClass} · 갑옷 옵션`, value.armor],
+    [`${value.armorClass} · 방어구 옵션`, value.armor],
     ...value.stratagems.map((id, i) => [`스트라타젬 ${i + 1}`, id]),
   ];
   return (
@@ -42,13 +42,25 @@ export function LoadoutFields({ value, onChange, disabled }) {
       )}
       <EquipmentPicker
         fixedGroup={group}
-        label={`${label} 선택`}
+        label={label}
         disabled={disabled}
         excludeIds={excluded}
         onSelect={(item) => select(item.id)}
       />
-      {group === 'armor' && equipmentForId(id) && (
-        <p className="armor-option-description">{equipmentForId(id).description}</p>
+      {group === 'armor' && (
+        <>
+          <Label htmlFor="armor-class">갑옷 종류</Label>
+          <Select
+            id="armor-class"
+            value={value.armorClass}
+            onChange={(event) => onChange({ ...value, armorClass: event.target.value })}
+          >
+            {armorClasses.map((name) => (
+              <option key={name}>{name}</option>
+            ))}
+          </Select>
+          <ArmorDetails id={id} disabled={disabled} />
+        </>
       )}
     </div>
   );
@@ -56,11 +68,9 @@ export function LoadoutFields({ value, onChange, disabled }) {
     <fieldset className="loadout-fields" disabled={disabled}>
       <legend>장비 세팅</legend>
       <div className="loadout-display">
-        {loadoutSlots
-          .slice(0, 3)
-          .map(([key, label]) =>
-            slot(key, label, value[key], (id) => onChange({ ...value, [key]: id })),
-          )}
+        {loadoutSlots.map(([key, label]) =>
+          slot(key, label, value[key], (id) => onChange({ ...value, [key]: id })),
+        )}
       </div>
       <div className="loadout-display">
         {value.stratagems.map((id, index) =>
@@ -76,21 +86,6 @@ export function LoadoutFields({ value, onChange, disabled }) {
             value.stratagems.filter((_, i) => i !== index),
           ),
         )}
-      </div>
-      <div className="loadout-display">
-        <div className="loadout-slot">
-          <Label htmlFor="armor-class">갑옷 종류</Label>
-          <Select
-            id="armor-class"
-            value={value.armorClass}
-            onChange={(event) => onChange({ ...value, armorClass: event.target.value })}
-          >
-            {armorClasses.map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </Select>
-        </div>
-        {slot('armor', '갑옷 옵션', value.armor, (id) => onChange({ ...value, armor: id }))}
       </div>
     </fieldset>
   );
