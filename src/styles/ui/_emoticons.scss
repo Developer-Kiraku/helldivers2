@@ -21,6 +21,7 @@
 .community-theme .equipment-inline {
   display: inline-flex;
   flex-direction: column;
+  gap: var(--hd-space-8);
   align-items: center;
   justify-content: center;
   vertical-align: middle;
