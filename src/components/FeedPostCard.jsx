@@ -2,14 +2,14 @@
 import Nickname from './Nickname';
 import { EmoticonInput, EmoticonText } from './Emoticons';
 import CommentContent from './CommentContent';
-import PhotoCarousel from './PhotoCarousel';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { Button, Label, TextArea } from './ui';
+import { useState } from 'react';
+import { Button, Label } from './ui';
 import { useCommunity } from './CommunityProvider';
 import Avatar from './Avatar';
 import Icon from './Icon';
+import usePostComments from '../hooks/usePostComments';
 import VoteButtons from './VoteButtons';
 import PostShare from './PostShare';
 import HelstagramPost from './HelstagramPost';
@@ -22,43 +22,14 @@ export default function FeedPostCard({ post, board }) {
   );
 }
 function StandardFeedPostCard({ post, board }) {
-  const { api, profile, notify, refresh } = useCommunity();
+  const { api, notify, refresh } = useCommunity();
   const [open, setOpen] = useState(false);
-  const [comments, setComments] = useState([]);
-  const [count, setCount] = useState(post.comments);
+  const { comments, setComments, count, setCount, loading, error, setError, reload } =
+    usePostComments({ postId: post.id, api, enabled: open, initialCount: post.comments });
   const [draft, setDraft] = useState('');
-  const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
-  const [attempt, setAttempt] = useState(0);
   const href = `/boards/${board}/${post.id}`;
   const panelId = `feed-comments-${post.id}`;
-
-  useEffect(() => {
-    setCount(post.comments);
-  }, [post.comments]);
-  useEffect(() => {
-    if (!open) return;
-    let alive = true;
-    setLoading(true);
-    setError('');
-    api(`posts/${post.id}`)
-      .then((data) => {
-        if (alive) {
-          setComments(data.comments);
-          setCount(data.comments.length);
-        }
-      })
-      .catch((error) => {
-        if (alive) setError(error.message);
-      })
-      .finally(() => {
-        if (alive) setLoading(false);
-      });
-    return () => {
-      alive = false;
-    };
-  }, [open, post.id, api, attempt]);
 
   async function addComment(event) {
     event.preventDefault();
@@ -83,7 +54,7 @@ function StandardFeedPostCard({ post, board }) {
   }
   const image = post.images?.[0] || post.image;
   return (
-    <article className={`talk-card ${board === 'helstagram' ? 'helstagram-card' : ''}`}>
+    <article className="talk-card">
       <div className="post-meta">
         <span className="badge">{post.category}</span>
         <Avatar name={post.author} own={post.own} photo={post.authorPhoto} />
@@ -93,7 +64,6 @@ function StandardFeedPostCard({ post, board }) {
         <span>· {post.date}</span>
         <span>조회 {Number(post.views || 0).toLocaleString('ko-KR')}</span>
       </div>
-      {board === 'helstagram' && <PhotoCarousel images={post.images} title={post.title} />}
       <h2>
         <Link href={href}>{post.title}</Link>
       </h2>
@@ -106,7 +76,7 @@ function StandardFeedPostCard({ post, board }) {
       <p className="preserve-lines">
         <EmoticonText text={post.content} />
       </p>
-      {board !== 'helstagram' && image && (
+      {image && (
         <Link href={href} className="post-image">
           <img src={image} alt="게시글 첨부 이미지" />
         </Link>
@@ -201,11 +171,7 @@ function StandardFeedPostCard({ post, board }) {
                 <p className="form-error" role="alert">
                   {error}
                 </p>
-                <Button
-                  type="button"
-                  disabled={loading || busy}
-                  onClick={() => setAttempt((current) => current + 1)}
-                >
+                <Button type="button" disabled={loading || busy} onClick={reload}>
                   댓글 다시 불러오기
                 </Button>
               </div>

@@ -8,7 +8,7 @@ import { useCommunity } from './CommunityProvider';
 import AccessGate from './AccessGate';
 import IdentityStrip from './IdentityStrip';
 import Icon from './Icon';
-import { ActionLink, Button, Input, Label, Select, TextArea } from './ui';
+import { ActionLink, Button, Input, Label, Select } from './ui';
 import AiPolish from './AiPolish';
 import { prepareUpload } from '@/lib/image-upload.mjs';
 import { youtubeEmbedUrl } from '@/lib/editor-format.mjs';

@@ -95,12 +95,12 @@
 }
 .loadout-list {
   display: grid;
-  gap: var(--hd-space-16);
+  gap: var(--hd-space-8);
 }
 .loadout-card {
   border: var(--hd-size-1) solid var(--hd-color-border);
   border-radius: var(--hd-radius-8);
-  padding: var(--hd-space-16);
+  padding: var(--hd-space-12);
 }
 .loadout-card > a {
   color: inherit;
@@ -339,12 +339,6 @@
   .equipment-grid.armor-option-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
-.loadout-list {
-  gap: var(--hd-space-8);
-}
-.loadout-card {
-  padding: var(--hd-space-12);
 }
 .loadout-card > a > .badge {
   display: inline-flex;

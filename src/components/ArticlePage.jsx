@@ -3,13 +3,12 @@ import Nickname from './Nickname';
 import { LoadoutDisplay } from './Loadout';
 import { EmoticonInput, EmoticonText } from './Emoticons';
 import CommentContent from './CommentContent';
-import PhotoCarousel from './PhotoCarousel';
 import PostShare from './PostShare';
 import PostPoll from './PostPoll';
-import { Button, Label, TextArea } from './ui';
+import { Button, Label } from './ui';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { boards } from '@/lib/data';
 import { useCommunity } from './CommunityProvider';
 import AccessGate from './AccessGate';
@@ -21,6 +20,7 @@ import VoteButtons from './VoteButtons';
 import ModerationActions from './ModerationActions';
 import HelstagramDetail from './HelstagramDetail';
 import PostMaps from './PostMaps';
+import usePostComments from '../hooks/usePostComments';
 import usePostView from '../hooks/usePostView';
 export default function ArticlePage({ board, id }) {
   return board === 'helstagram' ? (
@@ -30,32 +30,18 @@ export default function ArticlePage({ board, id }) {
   );
 }
 function StandardArticlePage({ board, id }) {
-  const { posts, profile, api, notify } = useCommunity();
+  const { posts, api, notify } = useCommunity();
   const post = posts[board].find((item) => item.id === id || item.id === `${board}-${id}`);
   usePostView(post?.id);
-  const [commentsLoading, setCommentsLoading] = useState(true);
-  const [comments, setComments] = useState([]),
-    [draft, setDraft] = useState(''),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState('');
-  useEffect(() => {
-    let alive = true;
-    setCommentsLoading(true);
-    if (post)
-      api(`posts/${post.id}`)
-        .then((data) => {
-          if (alive) setComments(data.comments);
-        })
-        .catch((error) => {
-          if (alive) setError(error.message);
-        })
-        .finally(() => {
-          if (alive) setCommentsLoading(false);
-        });
-    return () => {
-      alive = false;
-    };
-  }, [post?.id, api]);
+  const {
+    comments,
+    setComments,
+    loading: commentsLoading,
+    error,
+    setError,
+  } = usePostComments({ postId: post?.id, api });
+  const [draft, setDraft] = useState('');
+  const [busy, setBusy] = useState(false);
   async function addComment(event) {
     event.preventDefault();
     if (!post || !draft.trim()) return;
@@ -103,14 +89,7 @@ function StandardArticlePage({ board, id }) {
               </div>
               <div className="article-copy">
                 {board === 'loadout' && <LoadoutDisplay value={post.loadout} />}
-                {board === 'helstagram' ? (
-                  <>
-                    <PhotoCarousel images={post.images} title={post.title} />
-                    <p className="preserve-lines">
-                      <EmoticonText text={post.content} />
-                    </p>
-                  </>
-                ) : post.bodyHtml ? (
+                {post.bodyHtml ? (
                   <div dangerouslySetInnerHTML={{ __html: post.bodyHtml }} />
                 ) : (
                   <>

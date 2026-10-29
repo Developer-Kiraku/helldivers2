@@ -119,6 +119,7 @@ async function run() {
   await import('./test-post-sharing-history.mjs');
   await import('./test-post-maps.mjs');
   await import('./test-post-views.mjs');
+  await import('./test-post-comments.mjs');
   await import('./test-emoticons.mjs');
   await import('./test-equipment.mjs');
   await import('./test-admin-share-ui.mjs');

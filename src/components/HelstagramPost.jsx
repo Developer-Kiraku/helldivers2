@@ -1,9 +1,9 @@
 'use client';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Heart, MessageCircle, MoreHorizontal, ArrowUpRight } from 'lucide-react';
 import { Popover } from '@radix-ui/themes';
-import { Button, Input } from './ui';
+import { Button } from './ui';
 import { useCommunity } from './CommunityProvider';
 import Avatar from './Avatar';
 import Nickname from './Nickname';
@@ -15,44 +15,27 @@ import ModerationActions from './ModerationActions';
 import PostPoll from './PostPoll';
 import YoutubeVideo from './YoutubeVideo';
 import PostMaps from './PostMaps';
+import usePostComments from '../hooks/usePostComments';
 import usePostLike from '../hooks/usePostLike';
 
 const number = (value) => Number(value || 0).toLocaleString('ko-KR');
 
 export default function HelstagramPost({ post, detail = false }) {
-  const { api, refresh, notify } = useCommunity();
+  const { api, refresh } = useCommunity();
   const like = usePostLike(post);
-  const [open, setOpen] = useState(detail),
-    [comments, setComments] = useState([]);
-  const [loading, setLoading] = useState(false),
-    [busy, setBusy] = useState(false),
-    [draft, setDraft] = useState('');
-  const [error, setError] = useState(''),
-    [attempt, setAttempt] = useState(0),
-    [expanded, setExpanded] = useState(detail);
+  const [open, setOpen] = useState(detail);
+  const { comments, setComments, loading, error, setError, reload } = usePostComments({
+    postId: post.id,
+    api,
+    enabled: open,
+  });
+  const [busy, setBusy] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [expanded, setExpanded] = useState(detail);
   const input = useRef(null),
     submitting = useRef(false);
   const href = `/boards/helstagram/${post.id}`,
     panelId = `helsta-comments-${post.id}`;
-  useEffect(() => {
-    if (!open) return;
-    let active = true;
-    setLoading(true);
-    setError('');
-    api(`posts/${post.id}`)
-      .then((data) => {
-        if (active) setComments(data.comments);
-      })
-      .catch((error) => {
-        if (active) setError(error.message);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [open, post.id, api, attempt]);
   async function comment(event) {
     event.preventDefault();
     if (submitting.current || !draft.trim()) return;
@@ -223,7 +206,7 @@ export default function HelstagramPost({ post, detail = false }) {
               type="button"
               className="helsta-text-button"
               disabled={loading}
-              onClick={() => setAttempt((value) => value + 1)}
+              onClick={reload}
             >
               댓글 다시 불러오기
             </Button>

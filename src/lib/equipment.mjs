@@ -17,6 +17,7 @@ export const stratagemKinds = [
   ['vehicle', '탑승 장비'],
 ];
 const kindOrder = new Map(stratagemKinds.map(([id], index) => [id, index]));
+const groupOrder = new Map(equipmentGroups.map(([id], index) => [id, index]));
 const nameOrder = new Intl.Collator('ko', { numeric: true });
 export const equipment = catalog.map((item) => ({ ...item, token: `:gear-${item.id}:` }));
 const byId = new Map(equipment.map((item) => [item.id, item]));
@@ -24,16 +25,16 @@ const bySrc = new Map(equipment.map((item) => [item.src, item]));
 export const equipmentForId = (id) => byId.get(id);
 export const equipmentForSrc = (src) => bySrc.get(src);
 // Shared catalog access for post/comment pickers and loadout slots.
+const selectable = equipment
+  .filter((item) => item.selectable !== false)
+  .sort((a, b) =>
+    a.group === 'stratagem' && b.group === 'stratagem'
+      ? (kindOrder.get(a.kind) ?? 99) - (kindOrder.get(b.kind) ?? 99) ||
+        nameOrder.compare(a.label, b.label)
+      : groupOrder.get(a.group) - groupOrder.get(b.group),
+  );
 export const selectableEquipment = (group) =>
-  equipment
-    .filter((item) => item.selectable !== false && (!group || item.group === group))
-    .sort((a, b) =>
-      a.group === 'stratagem' && b.group === 'stratagem'
-        ? (kindOrder.get(a.kind) ?? 99) - (kindOrder.get(b.kind) ?? 99) ||
-          nameOrder.compare(a.label, b.label)
-        : equipmentGroups.findIndex(([id]) => id === a.group) -
-          equipmentGroups.findIndex(([id]) => id === b.group),
-    );
+  selectable.filter((item) => !group || item.group === group);
 export const equipmentMatchesSearch = (item, search) =>
   [item.label, item.name, item.warbond, ...(item.searchAliases || [])]
     .filter(Boolean)
