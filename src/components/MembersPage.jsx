@@ -15,7 +15,7 @@ import Link from 'next/link';
 const date = (value) =>
   value ? new Date(value).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }) : '-';
 export default function MembersPage() {
-  const { api, role, refresh, notify } = useCommunity();
+  const { api, role, user: currentUser, refresh, notify } = useCommunity();
   const [users, setUsers] = useState([]),
     [search, setSearch] = useState(''),
     [grade, setGrade] = useState('all'),
@@ -26,6 +26,7 @@ export default function MembersPage() {
     [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const operator = role === 'operator';
+  const selfTest = operator && action?.user.id === currentUser?.id;
   const load = useCallback(async () => {
     try {
       const data = await api('admin/users');
@@ -233,7 +234,11 @@ export default function MembersPage() {
                     onClick={() => openAction('mute', user)}
                   >
                     <VolumeX size={17} />
-                    {isMuted(user) ? '벙어리 기간 변경' : '벙어리 설정'}
+                    {isMuted(user)
+                      ? '벙어리 기간 변경'
+                      : operator && user.id === currentUser?.id
+                        ? '벙어리 본인 테스트'
+                        : '벙어리 설정'}
                   </Button>
                   {isMuted(user) && (
                     <Button
@@ -284,12 +289,14 @@ export default function MembersPage() {
       {action && (
         <Modal
           title={
-            {
-              mute: '벙어리 설정',
-              unmute: '벙어리 해제',
-              expel: '회원 직접 강퇴',
-              request: '회원 강퇴 요청',
-            }[action.mode]
+            selfTest && action.mode === 'mute'
+              ? '벙어리 본인 테스트'
+              : {
+                  mute: '벙어리 설정',
+                  unmute: '벙어리 해제',
+                  expel: '회원 직접 강퇴',
+                  request: '회원 강퇴 요청',
+                }[action.mode]
           }
           onClose={() => !busy && setAction(null)}
         >
@@ -331,7 +338,9 @@ export default function MembersPage() {
             />
             <p className="field-hint">
               {action.mode === 'mute'
-                ? '지금부터 선택한 기간 동안 글 작성·수정을 제한하고 댓글을 같은 글자 수의 무작위 내용으로 바꿉니다. 기간이 끝나면 자동 해제됩니다.'
+                ? selfTest
+                  ? '본인 계정에 실제 벙어리 효과를 적용합니다. 글 작성·수정이 제한되고 댓글이 무작위 내용으로 바뀝니다. 회원 관리의 본인 카드에서 언제든 해제할 수 있습니다.'
+                  : '지금부터 선택한 기간 동안 글 작성·수정을 제한하고 댓글을 같은 글자 수의 무작위 내용으로 바꿉니다. 기간이 끝나면 자동 해제됩니다. 회원 관리에서 즉시 해제할 수도 있습니다.'
                 : action.mode === 'unmute'
                   ? '즉시 글쓰기와 정상적인 댓글 작성이 가능해집니다. 이미 변환된 댓글은 그대로 유지됩니다.'
                   : action.mode === 'expel'

@@ -1,6 +1,16 @@
 import assert from 'node:assert/strict';
 import { isMuted, muteExpiry } from '../src/lib/member-mute.mjs';
 import { mutedComment } from '../src/lib/server/muted-comment.mjs';
+import { memberCapabilities } from '../src/lib/roles.js';
+
+const operator = { id: 'owner', role: 'operator', status: 'active' };
+assert.equal(memberCapabilities(operator, operator).canMute, true);
+assert.equal(memberCapabilities(operator, { ...operator, id: 'other-owner' }).canMute, false);
+for (const role of ['deputy', 'member', 'apprentice']) {
+  const actor = { ...operator, role };
+  assert.equal(memberCapabilities(actor, actor).canMute, false);
+}
+assert.equal(memberCapabilities(operator, { ...operator, status: 'expelled' }).canMute, false);
 
 const now = Date.parse('2026-01-31T23:30:00+09:00');
 const user = { mutedUntil: muteExpiry('day', now) };

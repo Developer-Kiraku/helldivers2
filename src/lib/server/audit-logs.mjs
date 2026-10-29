@@ -31,6 +31,9 @@ export function auditLogEntry(db, entry) {
     ...(type === 'member_mute'
       ? { mutedUntil: details.mutedUntil || null, muteDuration: details.duration || null }
       : {}),
+    ...(['member_mute', 'member_unmute'].includes(type) && details.selfTest
+      ? { selfTest: true }
+      : {}),
     reason:
       reason ||
       request?.reason ||

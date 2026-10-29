@@ -439,7 +439,7 @@ async function handler(request, context) {
           ['POST', 'DELETE'].includes(method)
         ) {
           if (!memberCapabilities(actor, target).canMute)
-            fail(403, '자신보다 낮은 등급의 회원에게만 벙어리를 설정하거나 해제할 수 있습니다.');
+            fail(403, '하위 등급 회원만 관리할 수 있습니다. 총운영자는 본인 테스트도 가능합니다.');
           const previousMutedUntil = target.mutedUntil || null;
           const reason = typeof input.reason === 'string' ? input.reason.trim() : '';
           if (reason.length > 1000) fail(400, '사유는 1,000자 이내로 입력해주세요.');
@@ -456,6 +456,7 @@ async function handler(request, context) {
             targetNickname: target.nickname,
             targetCreatedAt: target.createdAt,
             previousMutedUntil,
+            selfTest: actor.id === target.id,
             mutedUntil: target.mutedUntil,
             duration: method === 'POST' ? input.duration : null,
             reason,

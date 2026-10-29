@@ -25,8 +25,6 @@ module.exports = async function ({ guest, admin, deputy, member, apprentice }) {
     await deputy.call(`/api/admin/users/${id}/mute`, 'POST', setting, 403);
     await deputy.call(`/api/admin/users/${id}/mute`, 'DELETE', {}, 403);
   }
-  await admin.call('/api/admin/users/u-admin/mute', 'POST', setting, 403);
-  await admin.call('/api/admin/users/u-admin/mute', 'DELETE', {}, 403);
   await deputy.call(endpoint, 'POST', { duration: 'forever' }, 400);
   await deputy.call(endpoint, 'POST', { duration: 1 }, 400);
   await deputy.call(endpoint, 'POST', { duration: ['day'] }, 400);
@@ -86,9 +84,44 @@ module.exports = async function ({ guest, admin, deputy, member, apprentice }) {
   await deputy.call('/api/posts', 'POST', { ...draft, board: 'notice' }, 403);
   await deputy.call(`/api/posts/${deputyPost.id}`, 'PATCH', draft, 403);
   await admin.call('/api/admin/users/u-subadmin/mute', 'DELETE', {});
+  const selfEndpoint = '/api/admin/users/u-admin/mute';
+  assert.equal(
+    (await admin.call('/api/admin/users')).data.users.find((u) => u.id === 'u-admin').canMute,
+    true,
+  );
+  await admin.call(selfEndpoint, 'POST', { duration: 'day', reason: '본인 기능 테스트' });
+  await admin.call('/api/posts', 'POST', draft, 403);
+  await admin.call('/api/posts', 'POST', { ...draft, board: 'notice', category: '공지' }, 403);
+  const ownComment = (await admin.call(comments, 'POST', { body: text })).data.comment;
+  assert.notEqual(ownComment.body, text);
+  assert.equal(
+    [...characters.segment(ownComment.body)].length,
+    [...characters.segment(text)].length,
+  );
+  assert.ok(
+    (await admin.call('/api/admin/logs?type=member_mute')).data.logs.some(
+      (l) => l.selfTest && l.reason === '본인 기능 테스트',
+    ),
+  );
+  await admin.call('/admin/users');
+  assert.equal(
+    (await admin.call('/api/admin/users')).data.users.find((u) => u.id === 'u-admin').canMute,
+    true,
+  );
+  assert.equal((await admin.call(selfEndpoint, 'DELETE', {})).data.user.mutedUntil, null);
+  assert.equal((await admin.call('/api/auth/me')).data.user.mutedUntil, null);
+  assert.ok(
+    (await admin.call('/api/admin/logs?type=member_unmute')).data.logs.some((l) => l.selfTest),
+  );
+  assert.equal(
+    (await admin.call(`${comments}/${ownComment.id}`, 'PATCH', { body: text })).data.comment.body,
+    text,
+  );
+  const recoveredPost = (await admin.call('/api/posts', 'POST', draft)).data.post;
+  await admin.call(`/api/posts/${recoveredPost.id}`, 'DELETE', {});
   await member.call(`/api/posts/${post.id}`, 'DELETE', {});
   await deputy.call(`/api/posts/${deputyPost.id}`, 'DELETE', {});
   console.log(
-    'PASS: mute permissions, all board restrictions, comment create/edit, durations, unmute and audit logs',
+    'PASS: mute permissions, board restrictions, comments, operator self-test/recovery, unmute and audit logs',
   );
 };

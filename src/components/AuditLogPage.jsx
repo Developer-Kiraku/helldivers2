@@ -136,6 +136,7 @@ export default function AuditLogPage() {
                   <tr>
                     <td>
                       {auditLogTypes[entry.type]}
+                      {entry.selfTest ? ' (본인 테스트)' : ''}
                       {entry.type === 'member_mute' && (
                         <small title={`종료: ${date(entry.mutedUntil, true)}`}>
                           {' '}
