@@ -1,4 +1,5 @@
 'use client';
+import MuteNotice from './MuteNotice';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { Heart, MessageCircle, MoreHorizontal, ArrowUpRight } from 'lucide-react';
@@ -215,6 +216,7 @@ export default function HelstagramPost({ post, detail = false }) {
         <p className="form-error" role="alert">
           {error}
         </p>
+        <MuteNotice />
         <form className="helsta-comment-form" onSubmit={comment}>
           <EmoticonInput
             ref={input}

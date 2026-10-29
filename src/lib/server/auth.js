@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { config } from './config';
 import { createToken, tokenHash } from './passwords';
 import { readStore } from './store';
+import { isMuted } from '../member-mute.mjs';
 
 export class AppError extends Error {
   constructor(status, message) {
@@ -48,6 +49,7 @@ export function publicUser(user) {
     kakao: user.kakao ? { id: user.kakao.id, connectedAt: user.kakao.connectedAt } : null,
     provider: user.kakao ? 'kakao' : 'temporary',
     status: user.status,
+    mutedUntil: isMuted(user) ? user.mutedUntil : null,
     lastLoginAt: user.lastLoginAt,
     createdAt: user.createdAt,
     probationStartedAt: user.probationStartedAt || null,

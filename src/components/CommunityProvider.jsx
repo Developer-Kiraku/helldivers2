@@ -93,6 +93,17 @@ export function CommunityProvider({ children, initialUser = null }) {
     refresh();
   }, [refresh, pathname]);
   useEffect(() => () => clearTimeout(timer.current), []);
+  useEffect(() => {
+    if (!user?.mutedUntil) return;
+    let timeout;
+    function checkExpiry() {
+      const remaining = Date.parse(user.mutedUntil) - Date.now();
+      if (remaining <= 0) refresh();
+      else timeout = setTimeout(checkExpiry, Math.min(remaining, 86400000));
+    }
+    checkExpiry();
+    return () => clearTimeout(timeout);
+  }, [user?.mutedUntil, refresh]);
   async function login(loginId, password) {
     await api('auth/login', { method: 'POST', body: { loginId, password } });
     await refresh();

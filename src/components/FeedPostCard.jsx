@@ -1,4 +1,5 @@
 'use client';
+import MuteNotice from './MuteNotice';
 import Nickname from './Nickname';
 import { EmoticonInput, EmoticonText } from './Emoticons';
 import CommentContent from './CommentContent';
@@ -178,6 +179,7 @@ function StandardFeedPostCard({ post, board }) {
             )}
             <form onSubmit={addComment}>
               <Label htmlFor={`${panelId}-draft`}>댓글 작성</Label>
+              <MuteNotice />
               <EmoticonInput
                 id={`${panelId}-draft`}
                 value={draft}

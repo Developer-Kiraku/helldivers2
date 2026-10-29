@@ -8,6 +8,8 @@ import { randomUUID } from 'node:crypto';
 import { transaction, readStore, audit } from '@/lib/server/store';
 import { config } from '@/lib/server/config';
 import { auditLogList } from '@/lib/server/audit-logs.mjs';
+import { isMuted, muteDurations, muteExpiry, muteNotice } from '@/lib/member-mute.mjs';
+import { mutedComment } from '@/lib/server/muted-comment.mjs';
 import {
   postSnapshot,
   postHistoryDetails,
@@ -177,6 +179,7 @@ async function handler(request, context) {
       const board = await readStore((db) => {
         const actor = requireUser(db, token);
         if (path === 'profile') return null;
+        if (isMuted(actor)) fail(403, muteNotice(actor));
         const post = method === 'PATCH' ? postForId(db, segments[1]) : null;
         if (post && !canReadPost(post, actor)) fail(404, '게시글을 찾을 수 없습니다.');
         if (post && actor.id !== post.authorId)
@@ -253,6 +256,7 @@ async function handler(request, context) {
         return { ok: true };
       }
       if (path === 'posts' && method === 'POST') {
+        if (isMuted(actor)) fail(403, muteNotice(actor));
         const board = input.board;
         if (board === 'notice' && !isStaff(actor.role))
           fail(403, '공지사항은 운영진만 작성할 수 있습니다.');
@@ -287,6 +291,7 @@ async function handler(request, context) {
               .map((comment) => serializeComment(db, comment, actor)),
           };
         if (segments.length === 2 && method === 'PATCH') {
+          if (isMuted(actor)) fail(403, muteNotice(actor));
           if (actor.id !== post.authorId) fail(403, '본인이 작성한 게시글만 수정할 수 있습니다.');
           if (post.board === 'notice' && !isStaff(actor.role))
             fail(403, '공지사항 수정 권한이 없습니다.');
@@ -323,7 +328,7 @@ async function handler(request, context) {
             id: randomUUID(),
             postId: post.id,
             authorId: actor.id,
-            body: text,
+            body: mutedComment(text, actor),
             createdAt: now(),
             deletedAt: null,
           };
@@ -347,7 +352,7 @@ async function handler(request, context) {
           }
           const text = typeof input.body === 'string' ? input.body.trim() : '';
           if (!text || text.length > 1000) fail(400, '댓글은 1~1,000자로 입력해주세요.');
-          comment.body = text;
+          comment.body = mutedComment(text, actor);
           comment.updatedAt = now();
           return { comment: serializeComment(db, comment, actor) };
         }
@@ -428,6 +433,35 @@ async function handler(request, context) {
       if (segments[0] === 'admin' && segments[1] === 'users' && segments[2]) {
         if (!isStaff(actor.role)) fail(403, '회원 관리 권한이 없습니다.');
         const target = memberForId(db, segments[2]);
+        if (
+          segments.length === 4 &&
+          segments[3] === 'mute' &&
+          ['POST', 'DELETE'].includes(method)
+        ) {
+          if (!memberCapabilities(actor, target).canMute)
+            fail(403, '자신보다 낮은 등급의 회원에게만 벙어리를 설정하거나 해제할 수 있습니다.');
+          const previousMutedUntil = target.mutedUntil || null;
+          const reason = typeof input.reason === 'string' ? input.reason.trim() : '';
+          if (reason.length > 1000) fail(400, '사유는 1,000자 이내로 입력해주세요.');
+          if (
+            method === 'POST' &&
+            (typeof input.duration !== 'string' || !Object.hasOwn(muteDurations, input.duration))
+          )
+            fail(400, '벙어리 기간을 확인해주세요.');
+          if (method === 'DELETE' && !isMuted(target)) fail(409, '현재 벙어리 상태가 아닙니다.');
+          target.mutedUntil = method === 'POST' ? muteExpiry(input.duration) : null;
+          target.updatedAt = now();
+          audit(db, actor.id, method === 'POST' ? 'user.mute' : 'user.unmute', target.id, {
+            actorNickname: actor.nickname,
+            targetNickname: target.nickname,
+            targetCreatedAt: target.createdAt,
+            previousMutedUntil,
+            mutedUntil: target.mutedUntil,
+            duration: method === 'POST' ? input.duration : null,
+            reason,
+          });
+          return { user: memberListUser(target, actor) };
+        }
         if (segments.length === 4 && segments[3] === 'approve' && method === 'POST') {
           if (!isStaff(actor.role)) fail(403, '운영자·부운영자만 견습회원 승인이 가능합니다.');
           if (target.role !== 'apprentice') fail(409, '승인 대기 중인 견습회원이 아닙니다.');

@@ -4,6 +4,7 @@ import { useCommunity } from './CommunityProvider';
 import { Button, Input, Select } from './ui';
 import { auditLogTypes } from '@/lib/audit-log-types.mjs';
 import { isStaff } from '@/lib/roles';
+import { muteDurations } from '@/lib/member-mute.mjs';
 
 const date = (value, withTime = false) =>
   value
@@ -135,6 +136,12 @@ export default function AuditLogPage() {
                   <tr>
                     <td>
                       {auditLogTypes[entry.type]}
+                      {entry.type === 'member_mute' && (
+                        <small title={`종료: ${date(entry.mutedUntil, true)}`}>
+                          {' '}
+                          · {muteDurations[entry.muteDuration]}
+                        </small>
+                      )}
                       {entry.automatic ? ' (자동)' : ''}
                       {entry.reason && (
                         <Button

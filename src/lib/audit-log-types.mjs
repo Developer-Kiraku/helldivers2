@@ -8,6 +8,8 @@ export const auditLogTypes = {
   member_join: '회원 가입',
   member_leave: '회원 탈퇴',
   member_expel: '강퇴',
+  member_mute: '벙어리 설정',
+  member_unmute: '벙어리 해제',
 };
 export const auditActionTypes = {
   'post.update': 'post_update',
@@ -22,4 +24,6 @@ export const auditActionTypes = {
   'user.withdraw.probation_expired': 'member_leave',
   'user.expel': 'member_expel',
   'user.expel.approved': 'member_expel',
+  'user.mute': 'member_mute',
+  'user.unmute': 'member_unmute',
 };

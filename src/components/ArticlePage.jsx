@@ -1,4 +1,5 @@
 'use client';
+import MuteNotice from './MuteNotice';
 import Nickname from './Nickname';
 import { LoadoutDisplay } from './Loadout';
 import { EmoticonInput, EmoticonText } from './Emoticons';
@@ -168,6 +169,7 @@ function StandardArticlePage({ board, id }) {
               )}
               <form onSubmit={addComment}>
                 <Label htmlFor="comment-body">댓글 작성</Label>
+                <MuteNotice />
                 <EmoticonInput
                   id="comment-body"
                   placeholder="동료에게 따뜻한 한마디를 남겨주세요."

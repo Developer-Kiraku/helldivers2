@@ -120,6 +120,7 @@ async function run() {
   await import('./test-post-maps.mjs');
   await import('./test-post-views.mjs');
   await import('./test-post-comments.mjs');
+  await import('./test-member-mute.mjs');
   await import('./test-emoticons.mjs');
   await import('./test-equipment.mjs');
   await import('./test-admin-share-ui.mjs');
@@ -198,6 +199,7 @@ async function run() {
     await require('./test-private-reports.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-emoticons-http.cjs')({ admin, deputy, member });
     await require('./test-equipment-http.cjs')({ admin, member });
+    await require('./test-member-mute-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-loadout-http.cjs')({ guest, member, deputy });
     await require('./test-board-permissions.cjs')({ guest, apprentice, member, deputy, admin });
     const aiDraft = { board: 'talk', title: '테스트', segments: ['맞춤뻡을 고쳐줘'] };

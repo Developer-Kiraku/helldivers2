@@ -104,7 +104,7 @@ export default function PhotoPostEditor({ id = null }) {
     }
   }
   return (
-    <AccessGate>
+    <AccessGate writing>
       <section className="editor-page">
         <IdentityStrip />
         <Link className="back-link" href="/boards/helstagram">

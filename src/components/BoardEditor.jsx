@@ -93,7 +93,7 @@ function StandardBoardEditor({ board, id = null }) {
     }
   }
   return (
-    <AccessGate operator={board === 'notice'}>
+    <AccessGate operator={board === 'notice'} writing>
       <section className="editor-page">
         <IdentityStrip />
         <Link className="back-link" href={`/boards/${board}`}>

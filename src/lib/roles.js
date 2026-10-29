@@ -12,6 +12,8 @@ export function memberCapabilities(actor, target) {
     operator = actor?.role === 'operator',
     deputy = actor?.role === 'deputy';
   return {
+    canMute:
+      active && isStaff(actor?.role) && actor.id !== target.id && outranks(actor.role, target.role),
     canApprove: active && isStaff(actor?.role) && target.role === 'apprentice',
     canExpel: active && operator && outranks(actor.role, target.role),
     canRequestExpel: active && deputy && ['member', 'apprentice'].includes(target.role),

@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { useCommunity } from './CommunityProvider';
 import Icon from './Icon';
 import PageSkeleton from './PageSkeleton';
-export default function AccessGate({ children, operator = false }) {
-  const { signedIn, canWriteNotice, ready } = useCommunity();
+import { isMuted, muteNotice } from '@/lib/member-mute.mjs';
+export default function AccessGate({ children, operator = false, writing = false }) {
+  const { signedIn, canWriteNotice, ready, user } = useCommunity();
   if (!ready) return <PageSkeleton />;
   if (!signedIn)
     return (
@@ -25,6 +26,17 @@ export default function AccessGate({ children, operator = false }) {
         <p>공지사항은 운영자와 부운영자만 작성할 수 있습니다.</p>
         <ActionLink className="button secondary" href="/boards/notice">
           목록으로
+        </ActionLink>
+      </section>
+    );
+  if (writing && isMuted(user))
+    return (
+      <section className="access-panel">
+        <Icon name="lock" size={40} />
+        <h1>글쓰기가 제한되었습니다.</h1>
+        <p>{muteNotice(user)}</p>
+        <ActionLink className="button secondary" href="/">
+          홈으로
         </ActionLink>
       </section>
     );

@@ -5,6 +5,8 @@ import { ActionLink, Button, Input, Label, Select, TextArea } from './ui';
 import { useCallback, useEffect, useState } from 'react';
 import { useCommunity } from './CommunityProvider';
 import { roleLabels } from '@/lib/roles';
+import { isMuted, muteDurations } from '@/lib/member-mute.mjs';
+import { VolumeX, Volume2 } from 'lucide-react';
 import Icon from './Icon';
 import PageSkeleton from './PageSkeleton';
 import Avatar from './Avatar';
@@ -20,6 +22,7 @@ export default function MembersPage() {
     [error, setError] = useState(''),
     [action, setAction] = useState(null),
     [reason, setReason] = useState(''),
+    [duration, setDuration] = useState('day'),
     [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const operator = role === 'operator';
@@ -42,7 +45,12 @@ export default function MembersPage() {
     setBusy(true);
     setError('');
     try {
-      if (action.mode === 'expel')
+      if (['mute', 'unmute'].includes(action.mode))
+        await api(`admin/users/${action.user.id}/mute`, {
+          method: action.mode === 'mute' ? 'POST' : 'DELETE',
+          body: { duration, reason },
+        });
+      else if (action.mode === 'expel')
         await api(`admin/users/${action.user.id}/expel`, { method: 'POST', body: { reason } });
       else
         await api('admin/requests', {
@@ -50,9 +58,13 @@ export default function MembersPage() {
           body: { type: 'user_expel', targetId: action.user.id, reason },
         });
       notify(
-        action.mode === 'expel'
-          ? '회원을 강퇴하고 세션을 종료했습니다.'
-          : '운영자에게 강퇴 요청을 보냈습니다.',
+        action.mode === 'mute'
+          ? `벙어리를 ${muteDurations[duration]} 동안 적용했습니다.`
+          : action.mode === 'unmute'
+            ? '벙어리를 해제했습니다.'
+            : action.mode === 'expel'
+              ? '회원을 강퇴하고 세션을 종료했습니다.'
+              : '운영자에게 강퇴 요청을 보냈습니다.',
       );
       setAction(null);
       await load();
@@ -79,6 +91,7 @@ export default function MembersPage() {
   function openAction(mode, user) {
     setAction({ mode, user });
     setReason('');
+    setDuration('day');
     setError('');
   }
   const filtered = users.filter(
@@ -107,8 +120,8 @@ export default function MembersPage() {
         <strong>{operator ? '운영자 권한' : '부운영자 권한'}</strong>
         <span>
           {operator
-            ? '하위 등급 변경 · 직접 강퇴 · 가입 승인'
-            : '일반·견습회원 강퇴 요청 · 가입 승인'}
+            ? '하위 등급 변경 · 벙어리 설정 · 직접 강퇴 · 가입 승인'
+            : '일반·견습회원 벙어리 설정 · 강퇴 요청 · 가입 승인'}
         </span>
         <ActionLink className="button secondary" href="/admin/approvals">
           <Icon name="approvals" size={17} />
@@ -169,6 +182,14 @@ export default function MembersPage() {
               <dd>{date(user.lastLoginAt)}</dd>
               <dt>생성일</dt>
               <dd>{date(user.createdAt)}</dd>
+              {isMuted(user) && (
+                <>
+                  <dt>벙어리 종료</dt>
+                  <dd>
+                    <strong>{date(user.mutedUntil)}</strong>
+                  </dd>
+                </>
+              )}
               {user.role === 'apprentice' && (
                 <>
                   <dt>승인 기한</dt>
@@ -204,6 +225,28 @@ export default function MembersPage() {
               </Label>
             )}
             <footer>
+              {user.canMute && (
+                <>
+                  <Button
+                    className="button secondary"
+                    disabled={busy}
+                    onClick={() => openAction('mute', user)}
+                  >
+                    <VolumeX size={17} />
+                    {isMuted(user) ? '벙어리 기간 변경' : '벙어리 설정'}
+                  </Button>
+                  {isMuted(user) && (
+                    <Button
+                      className="button secondary"
+                      disabled={busy}
+                      onClick={() => openAction('unmute', user)}
+                    >
+                      <Volume2 size={17} />
+                      벙어리 해제
+                    </Button>
+                  )}
+                </>
+              )}
               {user.canApprove && (
                 <ActionLink className="button secondary" href="/admin/approvals">
                   <Icon name="shield" size={17} />
@@ -230,7 +273,7 @@ export default function MembersPage() {
                   운영자에게 강퇴 요청
                 </Button>
               )}
-              {!user.canApprove && !user.canExpel && !user.canRequestExpel && (
+              {!user.canMute && !user.canApprove && !user.canExpel && !user.canRequestExpel && (
                 <span className="member-readonly">조회 전용</span>
               )}
             </footer>
@@ -240,8 +283,15 @@ export default function MembersPage() {
       {!filtered.length && <div className="empty-state">해당 회원이 없습니다.</div>}
       {action && (
         <Modal
-          title={action.mode === 'expel' ? '회원 직접 강퇴' : '회원 강퇴 요청'}
-          onClose={() => setAction(null)}
+          title={
+            {
+              mute: '벙어리 설정',
+              unmute: '벙어리 해제',
+              expel: '회원 직접 강퇴',
+              request: '회원 강퇴 요청',
+            }[action.mode]
+          }
+          onClose={() => !busy && setAction(null)}
         >
           <form onSubmit={submit}>
             <p>
@@ -250,29 +300,65 @@ export default function MembersPage() {
               </strong>{' '}
               · {roleLabels[action.user.role]}
             </p>
-            <Label htmlFor="expel-reason">사유</Label>
+            {action.mode === 'mute' && (
+              <Label>
+                적용 기간
+                <Select
+                  aria-label="벙어리 적용 기간"
+                  value={duration}
+                  disabled={busy}
+                  onChange={(event) => setDuration(event.target.value)}
+                >
+                  {Object.entries(muteDurations).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </Select>
+              </Label>
+            )}
+            <Label htmlFor="expel-reason">
+              사유{['mute', 'unmute'].includes(action.mode) ? ' (선택)' : ''}
+            </Label>
             <TextArea
               id="expel-reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              required
-              minLength={2}
+              disabled={busy}
+              required={!['mute', 'unmute'].includes(action.mode)}
+              minLength={['mute', 'unmute'].includes(action.mode) ? undefined : 2}
               maxLength={1000}
             />
             <p className="field-hint">
-              {action.mode === 'expel'
-                ? '강퇴 즉시 해당 회원의 모든 로그인 세션이 종료됩니다.'
-                : '운영자가 요청 승인 목록에서 승인한 뒤 강퇴가 적용됩니다.'}
+              {action.mode === 'mute'
+                ? '지금부터 선택한 기간 동안 글 작성·수정을 제한하고 댓글을 같은 글자 수의 무작위 내용으로 바꿉니다. 기간이 끝나면 자동 해제됩니다.'
+                : action.mode === 'unmute'
+                  ? '즉시 글쓰기와 정상적인 댓글 작성이 가능해집니다. 이미 변환된 댓글은 그대로 유지됩니다.'
+                  : action.mode === 'expel'
+                    ? '강퇴 즉시 해당 회원의 모든 로그인 세션이 종료됩니다.'
+                    : '운영자가 요청 승인 목록에서 승인한 뒤 강퇴가 적용됩니다.'}
             </p>
             <p className="form-error" role="alert">
               {error}
             </p>
             <div className="form-actions">
-              <Button type="button" className="button secondary" onClick={() => setAction(null)}>
+              <Button
+                type="button"
+                className="button secondary"
+                disabled={busy}
+                onClick={() => setAction(null)}
+              >
                 취소
               </Button>
               <Button className="button primary" disabled={busy}>
-                {busy ? '처리 중…' : action.mode === 'expel' ? '강퇴하기' : '요청 보내기'}
+                {busy
+                  ? '처리 중…'
+                  : {
+                      mute: '적용하기',
+                      unmute: '해제하기',
+                      expel: '강퇴하기',
+                      request: '요청 보내기',
+                    }[action.mode]}
               </Button>
             </div>
           </form>

@@ -1,4 +1,5 @@
 'use client';
+import MuteNotice from './MuteNotice';
 import { useRef, useState } from 'react';
 import { Button } from './ui';
 import { EmoticonInput, EmoticonText } from './Emoticons';
@@ -43,6 +44,7 @@ export default function CommentContent({ comment, postId, onChange }) {
     <div className="comment-content">
       {mode === 'edit' ? (
         <form onSubmit={submit} className="comment-edit-form" aria-label="댓글 수정">
+          <MuteNotice />
           <EmoticonInput
             aria-label="수정할 댓글 내용"
             value={draft}
