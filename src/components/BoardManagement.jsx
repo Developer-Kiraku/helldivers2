@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { ArrowRightLeft, Trash2, X } from 'lucide-react';
 import { boards } from '@/lib/data';
 import { bulkPostLimit, moveProblem } from '@/lib/post-move';
@@ -7,6 +7,8 @@ import { useCommunity } from './CommunityProvider';
 import { Button, Input, Label, TextArea } from './ui';
 import Modal from './Modal';
 import './board-management.scss';
+
+const PostSelectionContext = createContext(null);
 
 export function useBoardSelection(board, posts) {
   const { managementMode } = useCommunity();
@@ -50,20 +52,40 @@ export function SelectablePost({ post, selection, children }) {
   if (!selection.active) return children;
   const checked = selection.selected.some((item) => item.id === post.id);
   return (
-    <div className={`selectable-post ${checked ? 'is-selected' : ''}`}>
-      <label className="post-selection-check">
-        <Input
-          type="checkbox"
-          aria-label={`${post.title} 선택`}
-          checked={checked}
-          disabled={
-            Boolean(selection.action) || (!checked && selection.selected.length >= bulkPostLimit)
-          }
-          onChange={() => selection.toggle(post.id)}
-        />
-      </label>
-      <div className="selectable-post-content">{children}</div>
-    </div>
+    <PostSelectionContext.Provider value={{ post, selection, checked }}>
+      <div className={`selectable-post ${checked ? 'is-selected' : ''}`}>{children}</div>
+    </PostSelectionContext.Provider>
+  );
+}
+
+export function PostSelectionCheckbox() {
+  const context = useContext(PostSelectionContext);
+  if (!context) return null;
+  const { post, selection, checked } = context;
+  return (
+    <span className="post-selection-check">
+      <Input
+        type="checkbox"
+        aria-label={`${post.title} 선택`}
+        checked={checked}
+        disabled={
+          Boolean(selection.action) || (!checked && selection.selected.length >= bulkPostLimit)
+        }
+        onChange={() => selection.toggle(post.id)}
+      />
+    </span>
+  );
+}
+
+export function PostSelectionTitle({ children }) {
+  const context = useContext(PostSelectionContext);
+  return context ? (
+    <span className="post-selection-title">
+      <PostSelectionCheckbox />
+      {children}
+    </span>
+  ) : (
+    children
   );
 }
 

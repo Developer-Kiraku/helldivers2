@@ -84,37 +84,44 @@
   white-space: nowrap;
 }
 .selectable-post {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
-  border-radius: 6px;
-  transition: background 150ms;
-  &.is-selected {
-    background: var(--hd-color-alpha-379);
-  }
+  display: contents;
+}
+.selectable-post.is-selected
+  > :is(.board-row, .tier-list-row, .loadout-card, .talk-card, .helsta-post) {
+  background: var(--hd-color-alpha-379);
 }
 .post-selection-check {
-  display: flex;
-  align-items: flex-start;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  padding-top: 22px;
-  cursor: pointer;
+  flex: 0 0 auto;
+  vertical-align: middle;
 }
-.selectable-post-content {
+.post-selection-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  min-width: 0;
+  vertical-align: middle;
+  text-align: left;
+}
+.post-selection-title > a {
   min-width: 0;
 }
-.tier-list-table > .selectable-post {
+.tier-list-title .post-selection-title {
+  display: flex;
+}
+.tier-list-title .post-selection-title > a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tier-list-table > .selectable-post > .tier-list-row {
   border-top: 1px solid var(--hd-color-border);
 }
-.selectable-post.is-selected .selectable-post-content {
-  box-shadow: inset 2px 0 var(--hd-color-accent);
-}
-.board-management-active .table-head,
-.board-management-active .tier-list-head {
-  margin-left: 44px;
-}
-.selectable-post .board-row,
-.selectable-post .tier-list-row {
-  width: 100%;
+.loadout-card > .loadout-card-main > .badge {
+  display: inline-flex;
+  margin-right: var(--hd-space-8);
 }
 .bulk-post-summary {
   color: var(--hd-color-input-text);

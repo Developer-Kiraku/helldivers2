@@ -1,6 +1,11 @@
 'use client';
 import Nickname from './Nickname';
-import BoardManagement, { SelectablePost, useBoardSelection } from './BoardManagement';
+import BoardManagement, {
+  SelectablePost,
+  PostSelectionCheckbox,
+  PostSelectionTitle,
+  useBoardSelection,
+} from './BoardManagement';
 import { LoadoutDisplay } from './Loadout';
 import { ActionLink, Button, Input } from './ui';
 
@@ -51,6 +56,7 @@ function StandardBoardPage({ board }) {
   const visiblePosts = filtered.slice(0, visibleCount);
   const remaining = filtered.length - visiblePosts.length;
   const selection = useBoardSelection(board, visiblePosts);
+  const RowLink = selection.active ? 'div' : Link;
   return (
     <AccessGate>
       <div className={`board-page ${selection.active ? 'board-management-active' : ''}`}>
@@ -203,8 +209,19 @@ function StandardBoardPage({ board }) {
             </div>
             {visiblePosts.map((post) => (
               <SelectablePost key={post.id} post={post} selection={selection}>
-                <Link className="tier-list-row" href={`/boards/tierlist/${post.id}`}>
-                  <strong className="tier-list-title">{post.title}</strong>
+                <RowLink
+                  className="tier-list-row"
+                  href={selection.active ? undefined : `/boards/tierlist/${post.id}`}
+                >
+                  <strong className="tier-list-title">
+                    <PostSelectionTitle>
+                      {selection.active ? (
+                        <Link href={`/boards/tierlist/${post.id}`}>{post.title}</Link>
+                      ) : (
+                        post.title
+                      )}
+                    </PostSelectionTitle>
+                  </strong>
                   <span className="tier-list-category">{post.category}</span>
                   <span>{post.tierList.faction}</span>
                   <time dateTime={post.createdAt}>
@@ -226,7 +243,7 @@ function StandardBoardPage({ board }) {
                     <span className="tier-mobile-label">조회 </span>
                     {post.views}
                   </span>
-                </Link>
+                </RowLink>
               </SelectablePost>
             ))}
             {!filtered.length && (
@@ -240,11 +257,22 @@ function StandardBoardPage({ board }) {
             {visiblePosts.map((post) => (
               <SelectablePost key={post.id} post={post} selection={selection}>
                 <article className="loadout-card">
-                  <Link href={`/boards/loadout/${post.id}`}>
+                  <RowLink
+                    className="loadout-card-main"
+                    href={selection.active ? undefined : `/boards/loadout/${post.id}`}
+                  >
                     <span className="badge">{post.category}</span>
-                    <h2>{post.title}</h2>
+                    <h2>
+                      <PostSelectionTitle>
+                        {selection.active ? (
+                          <Link href={`/boards/loadout/${post.id}`}>{post.title}</Link>
+                        ) : (
+                          post.title
+                        )}
+                      </PostSelectionTitle>
+                    </h2>
                     <LoadoutDisplay value={post.loadout} compact />
-                  </Link>
+                  </RowLink>
                   <p>
                     <Nickname name={post.author} role={post.authorRole} own={post.own} /> ·{' '}
                     {post.date} · 댓글 {post.comments} · 추천 {post.likes}
@@ -259,7 +287,7 @@ function StandardBoardPage({ board }) {
         ) : (
           <section className="board-table" aria-label={`${config.label} 목록`}>
             <div className="board-columns table-head" aria-hidden="true">
-              <span>번호</span>
+              <span>{selection.active ? '선택' : '번호'}</span>
               <span>분류</span>
               <span>제목</span>
               <span>작성자</span>
@@ -269,18 +297,26 @@ function StandardBoardPage({ board }) {
             </div>
             {visiblePosts.map((post, index) => (
               <SelectablePost key={post.id} post={post} selection={selection}>
-                <Link
+                <RowLink
                   className={`board-columns board-row ${post.pinned ? 'pinned' : ''}`}
-                  href={`/boards/${board}/${post.id}`}
+                  href={selection.active ? undefined : `/boards/${board}/${post.id}`}
                 >
                   <span className="row-number">
-                    {String(filtered.length - index).padStart(2, '0')}
+                    {selection.active ? (
+                      <PostSelectionCheckbox />
+                    ) : (
+                      String(filtered.length - index).padStart(2, '0')
+                    )}
                   </span>
                   <span className="badge">{post.category}</span>
                   <span className="board-title">
                     {board !== 'notice' && post.poll && <Icon name="poll" size={16} />}{' '}
                     <span className="post-title-text" title={post.title}>
-                      {post.title}
+                      {selection.active ? (
+                        <Link href={`/boards/${board}/${post.id}`}>{post.title}</Link>
+                      ) : (
+                        post.title
+                      )}
                     </span>
                     <em>[{post.comments}]</em>
                   </span>
@@ -299,7 +335,7 @@ function StandardBoardPage({ board }) {
                   </time>
                   <span className="desktop-metric">{post.views}</span>
                   <span className="desktop-metric">{post.likes}</span>
-                </Link>
+                </RowLink>
               </SelectablePost>
             ))}
             {!filtered.length && <div className="empty-state">검색 결과가 없습니다.</div>}

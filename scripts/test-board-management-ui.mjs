@@ -66,7 +66,9 @@ try {
       },
     ],
   });
-  const { default: Management, SelectablePost, useBoardSelection } = require(outfile);
+  const { default: Management, SelectablePost, PostSelectionTitle, useBoardSelection } = require(
+    outfile,
+  );
   let board = 'guide';
   let posts = [
     { id: 'a', board: 'guide', title: 'A' },
@@ -82,7 +84,15 @@ try {
         React.createElement(
           SelectablePost,
           { key: post.id, post, selection },
-          React.createElement('a', { href: `#${post.id}` }, post.title),
+          React.createElement(
+            'h2',
+            null,
+            React.createElement(
+              PostSelectionTitle,
+              null,
+              React.createElement('a', { href: `#${post.id}` }, post.title),
+            ),
+          ),
         ),
       ),
     );
@@ -99,6 +109,8 @@ try {
   assert.equal(button('선택한 게시물 삭제'), undefined);
   await click(checkbox('A 선택'));
   assert.ok(button('선택한 게시물 삭제'));
+  assert.ok(document.querySelector('.post-selection-title .post-selection-check'));
+  assert.equal(document.querySelector('.selectable-post-content'), null);
   assert.equal(
     document.querySelector('.selectable-post a input'),
     null,

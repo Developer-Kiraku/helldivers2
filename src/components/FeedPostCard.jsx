@@ -14,6 +14,7 @@ import usePostComments from '../hooks/usePostComments';
 import VoteButtons from './VoteButtons';
 import PostShare from './PostShare';
 import HelstagramPost from './HelstagramPost';
+import { PostSelectionTitle } from './BoardManagement';
 
 export default function FeedPostCard({ post, board }) {
   return board === 'helstagram' ? (
@@ -66,7 +67,9 @@ function StandardFeedPostCard({ post, board }) {
         <span>조회 {Number(post.views || 0).toLocaleString('ko-KR')}</span>
       </div>
       <h2>
-        <Link href={href}>{post.title}</Link>
+        <PostSelectionTitle>
+          <Link href={href}>{post.title}</Link>
+        </PostSelectionTitle>
       </h2>
       {post.poll && (
         <Link className="poll-list-badge" href={href}>

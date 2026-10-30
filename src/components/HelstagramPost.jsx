@@ -18,6 +18,7 @@ import YoutubeVideo from './YoutubeVideo';
 import PostMaps from './PostMaps';
 import usePostComments from '../hooks/usePostComments';
 import usePostLike from '../hooks/usePostLike';
+import { PostSelectionTitle } from './BoardManagement';
 
 const number = (value) => Number(value || 0).toLocaleString('ko-KR');
 
@@ -150,9 +151,11 @@ export default function HelstagramPost({ post, detail = false }) {
           {detail ? (
             <h1>{post.title}</h1>
           ) : (
-            <Link className="helsta-caption-title" href={href}>
-              {post.title}
-            </Link>
+            <PostSelectionTitle>
+              <Link className="helsta-caption-title" href={href}>
+                {post.title}
+              </Link>
+            </PostSelectionTitle>
           )}
           {post.content && (
             <p>
