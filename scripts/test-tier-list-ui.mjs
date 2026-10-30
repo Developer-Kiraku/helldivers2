@@ -105,6 +105,8 @@ try {
         isPrimary: { value: true },
       });
       target.dispatchEvent(event);
+      if (type === 'pointerdown' && editable && !disabled)
+        assert.ok(event.defaultPrevented, 'Custom drag must suppress native browser dragging');
       if (type === 'pointermove') {
         const pending = [...frames.entries()];
         frames.clear();
@@ -134,6 +136,43 @@ try {
       window.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true })),
     );
   const preview = () => document.querySelector('[data-tier-placeholder]');
+  for (const pointerType of ['mouse', 'touch', 'pen']) {
+    const before = commits;
+    x = 250;
+    y = 830;
+    await pointer('pointerdown', card(a.id), { pointerType });
+    assert.ok(document.querySelector('.tier-drag-overlay'), `${pointerType}: pick up immediately`);
+    await release();
+    assert.equal(commits, before, 'Pressing and releasing without moving must not change order');
+    assert.equal(document.querySelector('.tier-drag-overlay'), null);
+    await pointer('pointerdown', card(a.id), { pointerType });
+    hit = zone(null);
+    x += 1;
+    await pointer('pointermove', window, { pointerType });
+    assert.ok(preview(), `${pointerType}: even a 1px move should start placement`);
+    await escape();
+    assert.equal(commits, before);
+  }
+  await begin(a.id, null);
+  hit = document.querySelector('.tier-board');
+  await pointer('pointermove');
+  await pointer('lostpointercapture', document.querySelector('.tier-board'));
+  assert.equal(preview(), null, 'No insertion preview in the gap outside a drop zone');
+  assert.ok(
+    document.querySelector('.tier-drag-overlay'),
+    'Keep holding the item across the pool boundary',
+  );
+  hit = document.body;
+  await pointer('pointermove');
+  assert.ok(
+    document.querySelector('.tier-drag-overlay'),
+    'Leaving the board while holding is not a drop',
+  );
+  hit = zone(0);
+  await pointer('pointermove');
+  assert.ok(preview(), 'Re-entering a tier restores its insertion preview');
+  await escape();
+  assert.equal(commits, 0);
   await begin(a.id, 0);
   assert.equal(commits, 0, 'Drag preview must not mutate the draft');
   assert.equal(preview().closest('[data-tier-drop]').dataset.tierDrop, '0');
@@ -165,7 +204,6 @@ try {
   await release();
   assert.deepEqual(value.rows[0].items, [a.id, c.id, b.id]);
   for (const cancel of [
-    () => pointer('lostpointercapture', document.querySelector('.tier-board')),
     () => pointer('pointercancel'),
     () => React.act(async () => window.dispatchEvent(new window.Event('blur'))),
     async () => {

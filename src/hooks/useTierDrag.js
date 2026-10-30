@@ -69,7 +69,7 @@ export default function useTierDrag({ boardRef, disabled, onDrop }) {
       if (!state || state.pointerId !== event.pointerId) return;
       state.x = event.clientX;
       state.y = event.clientY;
-      if (!state.active && Math.hypot(state.x - state.startX, state.y - state.startY) >= 5) {
+      if (!state.active) {
         state.active = true;
         tick();
       }
@@ -85,8 +85,6 @@ export default function useTierDrag({ boardRef, disabled, onDrop }) {
     }
     const cancel = () => finish();
     const pointerCancel = (event) => {
-      // Ignore card/child capture loss; only losing the board capture cancels this drag.
-      if (event.type === 'lostpointercapture' && event.target !== gesture.current?.element) return;
       if (gesture.current?.pointerId === event.pointerId) finish();
     };
     const key = (event) => {
@@ -97,8 +95,8 @@ export default function useTierDrag({ boardRef, disabled, onDrop }) {
     };
     window.addEventListener('pointermove', pointerMove, { passive: false });
     window.addEventListener('pointerup', pointerUp);
+    // Capture can change while cards reflow; window listeners keep the gesture alive across gaps.
     window.addEventListener('pointercancel', pointerCancel);
-    window.addEventListener('lostpointercapture', pointerCancel);
     window.addEventListener('keydown', key);
     window.addEventListener('blur', cancel);
     return () => {
@@ -106,7 +104,6 @@ export default function useTierDrag({ boardRef, disabled, onDrop }) {
       window.removeEventListener('pointermove', pointerMove);
       window.removeEventListener('pointerup', pointerUp);
       window.removeEventListener('pointercancel', pointerCancel);
-      window.removeEventListener('lostpointercapture', pointerCancel);
       window.removeEventListener('keydown', key);
       window.removeEventListener('blur', cancel);
     };
@@ -116,8 +113,11 @@ export default function useTierDrag({ boardRef, disabled, onDrop }) {
   }, [disabled]);
   function start(event, id) {
     if (disabled || event.button !== 0 || event.isPrimary === false) return;
+    // Prevent native image/text dragging from cancelling our pointer-driven drag.
+    event.preventDefault();
     stop.current();
     const source = event.currentTarget;
+    source.focus({ preventScroll: true });
     // Insertion previews can move/remount a card. Keep capture on the stable board instead.
     const element = boardRef.current || source;
     let scroller = source.parentElement;
@@ -135,14 +135,14 @@ export default function useTierDrag({ boardRef, disabled, onDrop }) {
       pointerId: event.pointerId,
       element,
       scroller,
-      startX: event.clientX,
-      startY: event.clientY,
       x: event.clientX,
       y: event.clientY,
       active: false,
       target: null,
     };
     element.setPointerCapture?.(event.pointerId);
+    // Pick up immediately; only start placement/scrolling once the pointer actually moves.
+    setDrag({ id, x: event.clientX, y: event.clientY, target: null });
   }
   return { drag, start };
 }
