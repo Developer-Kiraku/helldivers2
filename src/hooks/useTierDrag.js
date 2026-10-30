@@ -85,6 +85,8 @@ export default function useTierDrag({ boardRef, disabled, onDrop }) {
     }
     const cancel = () => finish();
     const pointerCancel = (event) => {
+      // Children can release implicit touch capture when the card takes over the drag.
+      if (event.type === 'lostpointercapture' && event.target !== gesture.current?.element) return;
       if (gesture.current?.pointerId === event.pointerId) finish();
     };
     const key = (event) => {

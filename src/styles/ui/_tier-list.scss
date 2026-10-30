@@ -124,6 +124,9 @@
 .tier-editable .tier-item:active {
   cursor: grabbing;
 }
+.tier-editable .tier-item > * {
+  pointer-events: none;
+}
 .tier-editable .tier-item:focus-visible {
   outline: var(--hd-size-2) solid var(--hd-color-accent);
 }
