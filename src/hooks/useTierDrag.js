@@ -85,7 +85,7 @@ export default function useTierDrag({ boardRef, disabled, onDrop }) {
     }
     const cancel = () => finish();
     const pointerCancel = (event) => {
-      // Children can release implicit touch capture when the card takes over the drag.
+      // Ignore card/child capture loss; only losing the board capture cancels this drag.
       if (event.type === 'lostpointercapture' && event.target !== gesture.current?.element) return;
       if (gesture.current?.pointerId === event.pointerId) finish();
     };
@@ -117,8 +117,10 @@ export default function useTierDrag({ boardRef, disabled, onDrop }) {
   function start(event, id) {
     if (disabled || event.button !== 0 || event.isPrimary === false) return;
     stop.current();
-    const element = event.currentTarget;
-    let scroller = element.parentElement;
+    const source = event.currentTarget;
+    // Insertion previews can move/remount a card. Keep capture on the stable board instead.
+    const element = boardRef.current || source;
+    let scroller = source.parentElement;
     while (
       scroller &&
       !(

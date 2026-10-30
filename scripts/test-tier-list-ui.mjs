@@ -150,6 +150,8 @@ try {
   assert.equal(preview().previousElementSibling.dataset.tierItem, a.id);
   await pointer('lostpointercapture', card(c.id).querySelector('.equipment-inline > span'));
   assert.ok(preview(), 'A child capture transfer must not cancel the card drag');
+  await pointer('lostpointercapture', card(c.id));
+  assert.ok(preview(), 'Moving the source card must not cancel the board capture');
   assert.deepEqual(value.rows[0].items, [a.id, b.id, c.id]);
   // The preview is itself a stable hit target, even though inserting it shifts neighbours.
   hit = preview();
@@ -163,7 +165,7 @@ try {
   await release();
   assert.deepEqual(value.rows[0].items, [a.id, c.id, b.id]);
   for (const cancel of [
-    () => pointer('lostpointercapture', card(b.id)),
+    () => pointer('lostpointercapture', document.querySelector('.tier-board')),
     () => pointer('pointercancel'),
     () => React.act(async () => window.dispatchEvent(new window.Event('blur'))),
     async () => {
