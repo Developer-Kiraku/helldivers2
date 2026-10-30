@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { ArrowRightLeft, Trash2, X } from 'lucide-react';
+import { ArrowRightLeft, Trash2 } from 'lucide-react';
 import { boards } from '@/lib/data';
 import { bulkPostLimit, moveProblem } from '@/lib/post-move';
 import { useCommunity } from './CommunityProvider';
@@ -99,6 +99,7 @@ export default function BoardManagement({ board, posts, selection }) {
   const lock = useRef(false);
   const selected = selection.selected;
   const count = selected.length;
+  const allSelected = count > 0 && count === Math.min(posts.length, bulkPostLimit);
   const move = selection.action === 'move';
   useEffect(() => {
     setTarget('');
@@ -143,35 +144,45 @@ export default function BoardManagement({ board, posts, selection }) {
   return (
     <>
       <div className="board-management-bar" role="region" aria-label="게시물 일괄 관리">
-        <Label className="management-select-all">
-          <Input
-            type="checkbox"
-            aria-label="현재 표시된 게시물 전체 선택"
-            className="board-selection-checkbox"
-            checked={count > 0 && count === posts.length ? true : count ? 'indeterminate' : false}
-            disabled={!posts.length || Boolean(selection.action)}
-            onChange={selection.all}
-          />
-          현재 목록 선택{posts.length > bulkPostLimit ? ` (최대 ${bulkPostLimit}개)` : ''}
-        </Label>
-        <span className="management-count" role="status">
-          {count ? `${count}개 선택` : '게시물을 선택하세요'}
-        </span>
-        {count > 0 && (
-          <div className="management-bulk-actions">
-            <Button type="button" onClick={() => selection.setAction('delete')}>
+        <div className="management-bar-content">
+          <div className="management-selection-summary">
+            <Button
+              type="button"
+              role="switch"
+              aria-label="현재 표시된 게시물 전체 선택"
+              aria-checked={allSelected}
+              className="management-all-switch"
+              title={`현재 표시된 게시물 중 최대 ${bulkPostLimit}개 선택`}
+              disabled={!posts.length || Boolean(selection.action)}
+              onClick={selection.all}
+            >
+              <span className="management-switch-track" aria-hidden="true">
+                <span />
+              </span>
+              <span>전체선택</span>
+              <span className="management-switch-state" aria-hidden="true">
+                {allSelected ? 'ON' : 'OFF'}
+              </span>
+            </Button>
+            <span className="management-count" role="status">
+              {count}개 선택
+            </span>
+          </div>
+          <div
+            className={`management-bulk-actions ${!count ? 'is-empty' : ''}`}
+            aria-hidden={!count}
+            inert={!count}
+          >
+            <Button type="button" disabled={!count} onClick={() => selection.setAction('delete')}>
               <Trash2 size={16} />
               선택한 게시물 삭제
             </Button>
-            <Button type="button" onClick={() => selection.setAction('move')}>
+            <Button type="button" disabled={!count} onClick={() => selection.setAction('move')}>
               <ArrowRightLeft size={16} />
               선택한 게시물 이동
             </Button>
-            <Button type="button" aria-label="선택 해제" onClick={selection.clear}>
-              <X size={17} />
-            </Button>
           </div>
-        )}
+        </div>
       </div>
       {selection.action && count > 0 && (
         <Modal

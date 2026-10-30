@@ -99,7 +99,9 @@ try {
   }
   const render = () => React.act(async () => root.render(React.createElement(Harness)));
   const button = (text) =>
-    [...document.querySelectorAll('button')].find((node) => node.textContent === text);
+    [...document.querySelectorAll('button')].find(
+      (node) => node.textContent === text && !node.closest('[inert]'),
+    );
   const checkbox = (label) => document.querySelector(`input[aria-label="${label}"]`);
   const click = async (node) => {
     assert.ok(node);
@@ -107,6 +109,27 @@ try {
   };
   await render();
   assert.equal(button('선택한 게시물 삭제'), undefined);
+  const selectAll = () => document.querySelector('[role="switch"]');
+  const actionSlot = document.querySelector('.management-bulk-actions');
+  assert.equal(selectAll().getAttribute('aria-checked'), 'false');
+  assert.equal(actionSlot.querySelectorAll('button:disabled').length, 2);
+  assert.equal(document.querySelector('button[aria-label="선택 해제"]'), null);
+  await click(selectAll());
+  assert.equal(selectAll().getAttribute('aria-checked'), 'true');
+  assert.equal(checkbox('A 선택').checked, true);
+  assert.equal(checkbox('B 선택').checked, true);
+  assert.equal(
+    document.querySelector('.management-bulk-actions'),
+    actionSlot,
+    'Action space must stay mounted across selection changes',
+  );
+  await click(checkbox('B 선택'));
+  assert.equal(selectAll().getAttribute('aria-checked'), 'false');
+  await click(selectAll());
+  assert.equal(selectAll().getAttribute('aria-checked'), 'true');
+  await click(selectAll());
+  assert.equal(checkbox('A 선택').checked, false);
+  assert.equal(checkbox('B 선택').checked, false);
   await click(checkbox('A 선택'));
   assert.ok(button('선택한 게시물 삭제'));
   assert.ok(document.querySelector('.post-selection-title .post-selection-check'));
