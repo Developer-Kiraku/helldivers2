@@ -193,7 +193,7 @@ export default function TierList({ value, onChange, disabled = false }) {
               <div
                 className="tier-drag-overlay"
                 aria-hidden="true"
-                style={{ left: drag.x + 14, top: drag.y + 14 }}
+                style={{ left: drag.x, top: drag.y }}
               >
                 <EquipmentIcon item={activeItem} />
               </div>,
