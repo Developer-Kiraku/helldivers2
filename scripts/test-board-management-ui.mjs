@@ -4,6 +4,15 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { build } from 'esbuild';
 import { JSDOM } from 'jsdom';
+import { canManagePosts } from '../src/lib/post-access.mjs';
+
+assert.equal(canManagePosts({ role: 'operator', actualRole: 'operator' }), true);
+assert.equal(canManagePosts({ role: 'operator' }), true);
+for (const role of ['deputy', 'member', 'apprentice']) {
+  assert.equal(canManagePosts({ role }), false);
+  assert.equal(canManagePosts({ role, actualRole: 'operator' }), false);
+}
+assert.equal(canManagePosts(null), false);
 
 const dom = new JSDOM('<div id="root"></div>', { pretendToBeVisual: true });
 for (const key of ['window', 'document', 'navigator', 'HTMLElement'])

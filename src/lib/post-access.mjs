@@ -1,5 +1,9 @@
 import { isStaff, outranks } from './roles.js';
 
+export function canManagePosts(user) {
+  return Boolean(user?.role === 'operator' && (user.actualRole || user.role) === 'operator');
+}
+
 export function canDeletePost(actor, author) {
   return Boolean(
     actor &&

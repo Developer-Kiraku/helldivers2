@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { canManagePosts } from '@/lib/post-access.mjs';
 const CommunityContext = createContext(null);
 const emptyPosts = {
   tierlist: [],
@@ -151,8 +152,7 @@ export function CommunityProvider({ children, initialUser = null }) {
     <CommunityContext.Provider
       value={{
         user,
-        managementMode:
-          managementMode && desktopMode && user?.role === 'operator' && !user?.actualRole,
+        managementMode: managementMode && desktopMode && canManagePosts(user),
         setManagementMode,
         desktopMode,
         setDesktopMode,

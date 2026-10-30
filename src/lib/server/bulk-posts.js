@@ -1,12 +1,12 @@
 import { boards } from '../data';
 import { bulkPostLimit, movedCategory, moveProblem, postFormat } from '../post-move';
-import { canReadPost } from '../post-access.mjs';
+import { canManagePosts, canReadPost } from '../post-access.mjs';
 import { fail } from './auth';
 import { audit } from './store';
 import { postSnapshot, postHistoryDetails } from './post-history.mjs';
 
 export function bulkPosts(db, actor, input) {
-  if (actor.role !== 'operator' || actor.actualRole) fail(403, '총운영자만 사용할 수 있습니다.');
+  if (!canManagePosts(actor)) fail(403, '총운영자만 사용할 수 있습니다.');
   const { ids, action, sourceBoard, targetBoard } = input;
   if (!['delete', 'move'].includes(action) || !Object.hasOwn(boards, sourceBoard))
     fail(400, '작업과 게시판을 확인해주세요.');
