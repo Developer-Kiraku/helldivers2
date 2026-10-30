@@ -16,8 +16,10 @@ import AiPolish from './AiPolish';
 import MapAttachmentsEditor from './MapAttachmentsEditor';
 import { LoadoutFields } from './Loadout';
 import { emptyLoadout, normalizeLoadout } from '@/lib/loadout.mjs';
+import TierListEditor from './TierListEditor';
 
 export default function BoardEditor(props) {
+  if (props.board === 'tierlist') return <TierListEditor id={props.id} />;
   return props.board === 'helstagram' ? (
     <PhotoPostEditor key={props.id || 'new'} id={props.id} />
   ) : (

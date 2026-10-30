@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { usePathname, useRouter } from 'next/navigation';
 const CommunityContext = createContext(null);
 const emptyPosts = {
+  tierlist: [],
   loadout: [],
   notice: [],
   report: [],

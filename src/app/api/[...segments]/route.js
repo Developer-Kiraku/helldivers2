@@ -263,7 +263,7 @@ async function handler(request, context) {
         const clean = cleanPost(input, board),
           post = {
             ...clean,
-            poll: createPoll(input.poll),
+            poll: board === 'tierlist' ? null : createPoll(input.poll),
             id: randomUUID(),
             board,
             authorId: actor.id,
@@ -274,7 +274,7 @@ async function handler(request, context) {
             deletedAt: null,
           };
         db.posts.unshift(post);
-        audit(db, actor.id, 'post.create', post.id);
+        if (post.status !== 'draft') audit(db, actor.id, 'post.create', post.id);
         return { post: serializePost(db, post, actor) };
       }
       if (segments[0] === 'posts' && segments[1]) {
@@ -282,7 +282,7 @@ async function handler(request, context) {
         if (!canReadPost(post, actor)) fail(404, '게시글을 찾을 수 없습니다.');
         const author = db.users.find((user) => user.id === post.authorId);
         if (segments.length === 3 && segments[2] === 'view' && method === 'POST')
-          return { views: recordPostView(post, actor.id) };
+          return { views: post.status === 'draft' ? post.views : recordPostView(post, actor.id) };
         if (segments.length === 2 && method === 'GET')
           return {
             post: serializePost(db, post, actor),
@@ -296,31 +296,42 @@ async function handler(request, context) {
           if (post.board === 'notice' && !isStaff(actor.role))
             fail(403, '공지사항 수정 권한이 없습니다.');
           const before = postSnapshot(post);
-          Object.assign(post, cleanPost(input, post.board), { updatedAt: now() });
-          audit(
-            db,
-            actor.id,
-            'post.update',
-            post.id,
-            postHistoryDetails(actor, before, postSnapshot(post)),
-          );
+          const wasDraft = post.status === 'draft';
+          const clean = cleanPost(input, post.board);
+          if (!wasDraft && clean.status === 'draft')
+            fail(400, '게시한 티어리스트는 임시저장으로 변경할 수 없습니다.');
+          Object.assign(post, clean, { updatedAt: now() });
+          if (wasDraft && post.status !== 'draft') {
+            post.createdAt = now();
+            audit(db, actor.id, 'post.create', post.id);
+          } else if (!wasDraft)
+            audit(
+              db,
+              actor.id,
+              'post.update',
+              post.id,
+              postHistoryDetails(actor, before, postSnapshot(post)),
+            );
           return { post: serializePost(db, post, actor) };
         }
         if (segments.length === 2 && method === 'DELETE') {
           if (!canDeletePost(actor, author)) fail(403, '게시글을 삭제할 권한이 없습니다.');
           const before = postSnapshot(post);
           post.deletedAt = now();
-          audit(
-            db,
-            actor.id,
-            'post.delete',
-            post.id,
-            postHistoryDetails(actor, before, null, {
-              reason: typeof input.reason === 'string' ? input.reason.slice(0, 1000) : '직접 삭제',
-            }),
-          );
+          if (post.status !== 'draft')
+            audit(
+              db,
+              actor.id,
+              'post.delete',
+              post.id,
+              postHistoryDetails(actor, before, null, {
+                reason:
+                  typeof input.reason === 'string' ? input.reason.slice(0, 1000) : '직접 삭제',
+              }),
+            );
           return { ok: true };
         }
+        if (post.status === 'draft') fail(400, '임시저장 글에는 댓글이나 추천을 남길 수 없습니다.');
         if (segments[2] === 'comments' && segments.length === 3 && method === 'POST') {
           const text = typeof input.body === 'string' ? input.body.trim() : '';
           if (!text || text.length > 1000) fail(400, '댓글은 1~1,000자로 입력해주세요.');
@@ -510,6 +521,7 @@ async function handler(request, context) {
         if (!['post_delete', 'user_expel'].includes(input.type))
           fail(400, '요청 종류를 확인해주세요.');
         const post = input.type === 'post_delete' ? postForId(db, input.targetId) : null;
+        if (post && !canReadPost(post, actor)) fail(404, '게시글을 찾을 수 없습니다.');
         const target = post
           ? db.users.find((user) => user.id === post.authorId)
           : memberForId(db, input.targetId);

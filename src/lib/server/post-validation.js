@@ -5,6 +5,8 @@ import { boards } from '../data';
 import { fail } from './auth';
 import { normalizeMaps } from '../post-maps.mjs';
 import { normalizeLoadout } from '../loadout.mjs';
+import { normalizeTierList } from '../tier-list.mjs';
+import { equipmentGroups } from '../equipment.mjs';
 
 export function validImage(value, allowLocal = false, max = 900000, allowRemote = false) {
   if (typeof value !== 'string' || value.length > max)
@@ -34,6 +36,28 @@ export function validImage(value, allowLocal = false, max = 900000, allowRemote 
 }
 export function cleanPost(input, board) {
   if (!boards[board]) fail(400, '게시판을 확인해주세요.');
+  if (board === 'tierlist') {
+    const status = input.status ?? 'published';
+    if (!['draft', 'published'].includes(status)) fail(400, '저장 상태를 확인해주세요.');
+    const title = typeof input.title === 'string' ? input.title.trim() : '';
+    if (!title || title.length > 100) fail(400, '제목은 1~100자로 입력해주세요.');
+    let tierList;
+    try {
+      tierList = normalizeTierList(input.tierList, { draft: status === 'draft' });
+    } catch (error) {
+      fail(400, error.message);
+    }
+    return {
+      title,
+      status,
+      tierList,
+      category: equipmentGroups.find(([id]) => id === tierList.group)[1],
+      content: '',
+      bodyHtml: '',
+      images: [],
+      maps: [],
+    };
+  }
   let loadout;
   if (board === 'loadout') {
     try {

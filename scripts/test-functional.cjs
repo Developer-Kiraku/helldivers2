@@ -134,6 +134,7 @@ async function run() {
   await import('./test-signup-nickname.mjs');
   await import('./test-helstagram.mjs');
   await import('./test-photo-carousel.mjs');
+  await import('./test-tier-list-ui.mjs');
   await import('./test-dashboard-hero.mjs');
   await fs.mkdir(path.join(root, 'work'), { recursive: true });
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-'));
@@ -201,6 +202,7 @@ async function run() {
     await require('./test-equipment-http.cjs')({ admin, member });
     await require('./test-member-mute-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-loadout-http.cjs')({ guest, member, deputy });
+    await require('./test-tier-list-http.cjs')({ guest, member, apprentice, deputy, admin });
     await require('./test-board-permissions.cjs')({ guest, apprentice, member, deputy, admin });
     const aiDraft = { board: 'talk', title: '테스트', segments: ['맞춤뻡을 고쳐줘'] };
     await guest.call('/api/ai/polish', 'POST', aiDraft, 401);

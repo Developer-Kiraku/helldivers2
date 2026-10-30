@@ -19,6 +19,7 @@ export function postSnapshot(post) {
     youtubeUrl: post.youtubeUrl || '',
     maps: post.maps || [],
     ...(post.loadout ? { loadout: post.loadout } : {}),
+    ...(post.tierList ? { tierList: post.tierList } : {}),
     pinned: Boolean(post.pinned),
   };
 }

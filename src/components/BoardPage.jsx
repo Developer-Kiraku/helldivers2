@@ -28,6 +28,7 @@ function StandardBoardPage({ board }) {
   const isFeed = board === 'talk' || board === 'qna' || board === 'helstagram';
   const { posts, profile, canWriteNotice } = useCommunity();
   const [category, setCategory] = useState('전체');
+  const [showDrafts, setShowDrafts] = useState(false);
   const [input, setInput] = useState('');
   const [filters, setFilters] = useState({ ...emptyBoardFilters });
   const [filterOpen, setFilterOpen] = useState(false);
@@ -35,7 +36,9 @@ function StandardBoardPage({ board }) {
   const [page, setPage] = useState({ board, count: batchSize });
   const filtered = posts[board].filter(
     (post) =>
-      (category === '전체' || category === post.category) && matchesBoardFilters(post, filters),
+      (board !== 'tierlist' || (post.status === 'draft') === showDrafts) &&
+      (category === '전체' || category === post.category) &&
+      matchesBoardFilters(post, filters),
   );
   function applyFilters(next) {
     setFilters(next);
@@ -65,6 +68,32 @@ function StandardBoardPage({ board }) {
             </div>
           )}
         </header>
+        {board === 'tierlist' && (
+          <div className="category-tabs" aria-label="게시 상태">
+            <Button
+              type="button"
+              className={!showDrafts ? 'selected' : ''}
+              aria-pressed={!showDrafts}
+              onClick={() => {
+                setShowDrafts(false);
+                setPage({ board, count: batchSize });
+              }}
+            >
+              게시된 티어리스트
+            </Button>
+            <Button
+              type="button"
+              className={showDrafts ? 'selected' : ''}
+              aria-pressed={showDrafts}
+              onClick={() => {
+                setShowDrafts(true);
+                setPage({ board, count: batchSize });
+              }}
+            >
+              내 임시저장 ({posts[board].filter((post) => post.status === 'draft').length})
+            </Button>
+          </div>
+        )}
         <div className="category-tabs" aria-label="게시글 분류">
           {['전체', ...config.categories].map((value) => (
             <Button
@@ -154,6 +183,51 @@ function StandardBoardPage({ board }) {
               )}
             </section>
           </div>
+        ) : board === 'tierlist' ? (
+          <section
+            className="tier-list-table"
+            aria-label={showDrafts ? '내 임시저장 목록' : '티어리스트 목록'}
+          >
+            <div className="tier-list-row tier-list-head" aria-hidden="true">
+              <span>글제목</span>
+              <span>분류</span>
+              <span>종족</span>
+              <span>작성일시</span>
+              <span>추천</span>
+              <span>조회</span>
+            </div>
+            {visiblePosts.map((post) => (
+              <Link className="tier-list-row" key={post.id} href={`/boards/tierlist/${post.id}`}>
+                <strong className="tier-list-title">{post.title}</strong>
+                <span className="badge">{post.category}</span>
+                <span>{post.tierList.faction}</span>
+                <time dateTime={post.createdAt}>
+                  {new Date(post.createdAt).toLocaleString('ko-KR', {
+                    timeZone: 'Asia/Seoul',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                  })}
+                </time>
+                <span>
+                  <span className="tier-mobile-label">추천 </span>
+                  {post.likes}
+                </span>
+                <span>
+                  <span className="tier-mobile-label">조회 </span>
+                  {post.views}
+                </span>
+              </Link>
+            ))}
+            {!filtered.length && (
+              <div className="empty-state">
+                {showDrafts ? '임시저장한 티어리스트가 없습니다.' : '게시된 티어리스트가 없습니다.'}
+              </div>
+            )}
+          </section>
         ) : board === 'loadout' ? (
           <section className="loadout-list" aria-label="로드아웃 목록">
             {visiblePosts.map((post) => (

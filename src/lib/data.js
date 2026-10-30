@@ -1,5 +1,12 @@
 import { loadoutFactions } from './loadout.mjs';
+import { equipmentGroups } from './equipment.mjs';
 export const boards = {
+  tierlist: {
+    label: '티어리스트',
+    eyebrow: 'RANK YOUR ARSENAL',
+    description: '나만의 장비 티어를 공유하세요.',
+    categories: equipmentGroups.map(([, label]) => label),
+  },
   loadout: {
     label: '로드아웃',
     eyebrow: 'READY TO DROP',
@@ -60,6 +67,7 @@ const row = (id, category, title, author, comments, likes, content, extra = {}) 
 });
 
 export const posts = {
+  tierlist: [],
   loadout: [],
   report: [],
   helstagram: [],

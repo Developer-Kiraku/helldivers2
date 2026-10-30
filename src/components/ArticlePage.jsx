@@ -2,6 +2,7 @@
 import MuteNotice from './MuteNotice';
 import Nickname from './Nickname';
 import { LoadoutDisplay } from './Loadout';
+import TierList from './TierList';
 import { EmoticonInput, EmoticonText } from './Emoticons';
 import CommentContent from './CommentContent';
 import PostShare from './PostShare';
@@ -33,14 +34,15 @@ export default function ArticlePage({ board, id }) {
 function StandardArticlePage({ board, id }) {
   const { posts, api, notify } = useCommunity();
   const post = posts[board].find((item) => item.id === id || item.id === `${board}-${id}`);
-  usePostView(post?.id);
+  const isDraft = post?.status === 'draft';
+  usePostView(isDraft ? null : post?.id);
   const {
     comments,
     setComments,
     loading: commentsLoading,
     error,
     setError,
-  } = usePostComments({ postId: post?.id, api });
+  } = usePostComments({ postId: isDraft ? null : post?.id, api });
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
   async function addComment(event) {
@@ -78,6 +80,8 @@ function StandardArticlePage({ board, id }) {
           <>
             <article className="article-paper">
               <span className="badge">{post.category}</span>
+              {post.tierList && <span className="badge">{post.tierList.faction}</span>}
+              {isDraft && <span className="badge">임시저장 · 나만 보기</span>}
               <h1>{post.title}</h1>
               <div className="article-meta">
                 <span className="author-inline">
@@ -90,7 +94,9 @@ function StandardArticlePage({ board, id }) {
               </div>
               <div className="article-copy">
                 {board === 'loadout' && <LoadoutDisplay value={post.loadout} />}
-                {post.bodyHtml ? (
+                {post.tierList ? (
+                  <TierList value={post.tierList} />
+                ) : post.bodyHtml ? (
                   <div dangerouslySetInnerHTML={{ __html: post.bodyHtml }} />
                 ) : (
                   <>
@@ -110,84 +116,88 @@ function StandardArticlePage({ board, id }) {
               </div>
               <PostMaps maps={post.maps} />
               {post.poll && <PostPoll key={post.id} post={post} />}
-              <div className="article-votes">
-                <VoteButtons
-                  postId={post.id}
-                  likes={post.likes}
-                  dislikes={post.dislikes}
-                  myVote={post.myVote}
-                />
-              </div>
+              {!isDraft && (
+                <div className="article-votes">
+                  <VoteButtons
+                    postId={post.id}
+                    likes={post.likes}
+                    dislikes={post.dislikes}
+                    myVote={post.myVote}
+                  />
+                </div>
+              )}
               <ModerationActions post={post} />
               <footer className="article-actions">
                 <Link href={`/boards/${board}`}>
                   <Icon name="back" size={15} />
                   목록으로
                 </Link>
-                {board !== 'report' && <PostShare post={post} />}
+                {board !== 'report' && !isDraft && <PostShare post={post} />}
               </footer>
             </article>
-            <section className="comment-panel">
-              <h2>
-                댓글 <span>{comments.length}</span>
-              </h2>
-              {commentsLoading ? (
-                <CommentsSkeleton />
-              ) : (
-                <ul className="comments-list">
-                  {comments.map((comment) => (
-                    <li key={comment.id}>
-                      <div className="author-inline">
-                        <Avatar
-                          name={comment.author}
-                          own={comment.own}
-                          photo={comment.authorPhoto}
-                        />
-                        <strong>
-                          <Nickname
+            {!isDraft && (
+              <section className="comment-panel">
+                <h2>
+                  댓글 <span>{comments.length}</span>
+                </h2>
+                {commentsLoading ? (
+                  <CommentsSkeleton />
+                ) : (
+                  <ul className="comments-list">
+                    {comments.map((comment) => (
+                      <li key={comment.id}>
+                        <div className="author-inline">
+                          <Avatar
                             name={comment.author}
-                            role={comment.authorRole}
                             own={comment.own}
+                            photo={comment.authorPhoto}
                           />
-                        </strong>
-                      </div>
-                      <CommentContent
-                        comment={comment}
-                        postId={post.id}
-                        onChange={(updated) =>
-                          setComments((current) =>
-                            updated
-                              ? current.map((item) => (item.id === comment.id ? updated : item))
-                              : current.filter((item) => item.id !== comment.id),
-                          )
-                        }
-                      />
-                      <time>{new Date(comment.createdAt).toLocaleString('ko-KR')}</time>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <form onSubmit={addComment}>
-                <Label htmlFor="comment-body">댓글 작성</Label>
-                <MuteNotice />
-                <EmoticonInput
-                  id="comment-body"
-                  placeholder="동료에게 따뜻한 한마디를 남겨주세요."
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  required
-                  maxLength={1000}
-                />
-                <p className="form-error" role="alert">
-                  {error}
-                </p>
-                <div className="form-actions">
-                  <Button className="button primary" disabled={busy}>
-                    {busy ? '등록 중…' : '댓글 등록'}
-                  </Button>
-                </div>
-              </form>
-            </section>
+                          <strong>
+                            <Nickname
+                              name={comment.author}
+                              role={comment.authorRole}
+                              own={comment.own}
+                            />
+                          </strong>
+                        </div>
+                        <CommentContent
+                          comment={comment}
+                          postId={post.id}
+                          onChange={(updated) =>
+                            setComments((current) =>
+                              updated
+                                ? current.map((item) => (item.id === comment.id ? updated : item))
+                                : current.filter((item) => item.id !== comment.id),
+                            )
+                          }
+                        />
+                        <time>{new Date(comment.createdAt).toLocaleString('ko-KR')}</time>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <form onSubmit={addComment}>
+                  <Label htmlFor="comment-body">댓글 작성</Label>
+                  <MuteNotice />
+                  <EmoticonInput
+                    id="comment-body"
+                    placeholder="동료에게 따뜻한 한마디를 남겨주세요."
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value)}
+                    required
+                    maxLength={1000}
+                  />
+                  <p className="form-error" role="alert">
+                    {error}
+                  </p>
+                  <div className="form-actions">
+                    <Button className="button primary" disabled={busy}>
+                      {busy ? '등록 중…' : '댓글 등록'}
+                    </Button>
+                  </div>
+                </form>
+              </section>
+            )}
           </>
         )}
       </div>

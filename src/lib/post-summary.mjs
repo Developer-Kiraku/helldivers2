@@ -24,6 +24,18 @@ export function postText(post) {
     });
 }
 export function postSummary(post, limit = 120) {
+  if (post.tierList) {
+    return `${post.category} · ${post.tierList.faction} · ${post.tierList.rows
+      .filter((row) => row.items.length)
+      .map(
+        (row) =>
+          `${row.name}: ${row.items
+            .map((id) => equipmentForId(id)?.label)
+            .filter(Boolean)
+            .join(', ')}`,
+      )
+      .join(' / ')}`.slice(0, limit);
+  }
   if (post.loadout) {
     const value = post.loadout;
     return `${post.category} · ${[

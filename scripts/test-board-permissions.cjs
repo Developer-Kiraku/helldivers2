@@ -2,6 +2,9 @@ const assert = require('node:assert/strict');
 
 module.exports = async function ({ guest, apprentice, member, deputy, admin }) {
   const { selectableEquipment } = await import('../src/lib/equipment.mjs');
+  const { emptyTierList } = await import('../src/lib/tier-list.mjs');
+  const tierList = emptyTierList();
+  tierList.rows[0].items = [selectableEquipment('primary')[0].id];
   const loadout = Object.fromEntries(
     ['primary', 'secondary', 'throwable', 'armor'].map((group) => [
       group,
@@ -20,6 +23,7 @@ module.exports = async function ({ guest, apprentice, member, deputy, admin }) {
     report: '신고',
     helstagram: '스크린샷',
     loadout: '테르미닛',
+    tierlist: '주무기',
   };
   for (const [board, category] of Object.entries(categories)) {
     const draft = {
@@ -30,6 +34,7 @@ module.exports = async function ({ guest, apprentice, member, deputy, admin }) {
       bodyHtml: '<p>권한 검사</p>',
       images: board === 'helstagram' ? ['/images/helldivers-logo.png'] : [],
       ...(board === 'loadout' ? { loadout } : {}),
+      ...(board === 'tierlist' ? { tierList } : {}),
     };
     await guest.call('/api/posts', 'POST', draft, 401);
     await guest.call(`/boards/${board}/write`, 'GET', undefined, 307);
@@ -49,6 +54,6 @@ module.exports = async function ({ guest, apprentice, member, deputy, admin }) {
     }
   }
   console.log(
-    'PASS: all 7 boards × guest/apprentice/member/deputy/operator writing permissions, guest write-page redirect, owner edit, authenticated comments',
+    'PASS: all 8 boards × guest/apprentice/member/deputy/operator writing permissions, guest write-page redirect, owner edit, authenticated comments',
   );
 };

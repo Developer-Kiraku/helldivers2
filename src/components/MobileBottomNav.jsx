@@ -24,14 +24,6 @@ export default function MobileBottomNav({ boards }) {
   return (
     <nav className="mobile-nav" aria-label="모바일 메뉴">
       <Link
-        href="/"
-        className={pathname === '/' ? 'active' : ''}
-        aria-current={pathname === '/' ? 'page' : undefined}
-      >
-        <Icon name="home" />
-        <span>대시보드</span>
-      </Link>
-      <Link
         href="/boards/notice"
         className={active('/boards/notice') ? 'active' : ''}
         aria-current={active('/boards/notice') ? 'page' : undefined}
