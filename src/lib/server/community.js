@@ -1,5 +1,5 @@
 import { postSharePath } from './share-links.mjs';
-import { canReadPost } from '../post-access.mjs';
+import { canDeletePost, canReadPost } from '../post-access.mjs';
 import { serializePoll } from './polls';
 import 'server-only';
 import { outranks } from '../roles';
@@ -33,11 +33,7 @@ export function memberForId(db, id) {
   if (!user) fail(404, '활성 회원을 찾을 수 없습니다.');
   return user;
 }
-export function canDeletePost(actor, author) {
-  return (
-    actor.id === author?.id || (actor.role === 'operator' && outranks(actor.role, author?.role))
-  );
-}
+export { canDeletePost } from '../post-access.mjs';
 export function canRequest(actor, target) {
   return actor.role === 'deputy' && target && outranks(actor.role, target.role);
 }
@@ -67,7 +63,8 @@ export function serializePost(db, post, viewer) {
       .length,
     canDelete: canDeletePost(viewer, author),
     canEdit: viewer.id === post.authorId,
-    canRequestDelete: canRequest(viewer, author) && viewer.id !== post.authorId,
+    canRequestDelete:
+      !canDeletePost(viewer, author) && canRequest(viewer, author) && viewer.id !== post.authorId,
   };
 }
 export function serializeComment(db, comment, viewer) {

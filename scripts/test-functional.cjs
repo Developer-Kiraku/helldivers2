@@ -741,7 +741,7 @@ async function run() {
     assert.match(post.bodyHtml, /noopener noreferrer/);
     await member.call(`/api/posts/${post.id}`, 'PATCH', { ...draft(), title: '수정된 글' });
     await apprentice.call(`/api/posts/${post.id}`, 'PATCH', draft(), 403);
-    await deputy.call(`/api/posts/${post.id}`, 'DELETE', {}, 403);
+    assert.equal((await deputy.call(`/api/posts/${post.id}`)).data.post.canDelete, true);
     await apprentice.call(`/api/posts/${post.id}`, 'DELETE', {}, 403);
     await guest.call('/api/admin/post-history', 'GET', undefined, 401);
     await member.call('/api/admin/post-history', 'GET', undefined, 403);

@@ -1,4 +1,13 @@
-import { isStaff } from './roles.js';
+import { isStaff, outranks } from './roles.js';
+
+export function canDeletePost(actor, author) {
+  return Boolean(
+    actor &&
+    (actor.id === author?.id ||
+      actor.role === 'operator' ||
+      (actor.role === 'deputy' && outranks(actor.role, author?.role))),
+  );
+}
 
 // Apply before serializing any post data, including titles and attachments.
 export function canReadPost(post, viewer) {

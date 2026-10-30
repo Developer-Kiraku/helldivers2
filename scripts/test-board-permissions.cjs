@@ -1,6 +1,23 @@
 const assert = require('node:assert/strict');
 
 module.exports = async function ({ guest, apprentice, member, deputy, admin }) {
+  const { canDeletePost } = await import('../src/lib/post-access.mjs');
+  for (const actorRole of ['apprentice', 'member', 'deputy', 'operator']) {
+    for (const authorRole of ['apprentice', 'member', 'deputy', 'operator']) {
+      const expected =
+        actorRole === 'operator' ||
+        (actorRole === 'deputy' && ['apprentice', 'member'].includes(authorRole));
+      assert.equal(
+        canDeletePost({ id: 'actor', role: actorRole }, { id: 'author', role: authorRole }),
+        expected,
+      );
+      assert.equal(
+        canDeletePost({ id: 'self', role: actorRole }, { id: 'self', role: authorRole }),
+        true,
+      );
+    }
+  }
+  assert.equal(canDeletePost(null, { id: 'author', role: 'member' }), false);
   const { selectableEquipment } = await import('../src/lib/equipment.mjs');
   const { emptyTierList } = await import('../src/lib/tier-list.mjs');
   const tierList = emptyTierList();
@@ -52,6 +69,35 @@ module.exports = async function ({ guest, apprentice, member, deputy, admin }) {
       await actor.call(`/api/posts/${post.id}/comments`, 'POST', { body: '로그인 회원 댓글' });
       await actor.call(`/api/posts/${post.id}`, 'DELETE', {});
     }
+    const author = board === 'notice' ? deputy : member;
+    for (const moderator of board === 'notice' ? [admin] : [admin, deputy]) {
+      const title = `${board} ${moderator === admin ? '총운영자' : '부운영자'} 삭제 검증`;
+      const post = (await author.call('/api/posts', 'POST', { ...draft, title })).data.post;
+      const url = `/api/posts/${post.id}`;
+      const detail = (await moderator.call(url)).data.post;
+      assert.equal(detail.canDelete, true);
+      assert.equal(detail.canEdit, false);
+      assert.equal(detail.canRequestDelete, false);
+      const listed = (await moderator.call('/api/bootstrap')).data.posts[board].find(
+        (p) => p.id === post.id,
+      );
+      assert.equal(listed.canDelete, true);
+      await apprentice.call(url, 'DELETE', {}, board === 'report' ? 404 : 403);
+      const reason = `${board} 운영진 삭제 검증`;
+      await moderator.call(url, 'DELETE', { reason });
+      await author.call(url, 'GET', undefined, 404);
+      const logs = (
+        await admin.call('/api/admin/logs?type=post_delete&q=' + encodeURIComponent(title))
+      ).data;
+      assert.ok(
+        logs.logs.some((entry) => entry.reason === reason),
+        'Moderator deletion must leave its reason in an audit log',
+      );
+    }
+    const staffPost = (await admin.call('/api/posts', 'POST', draft)).data.post;
+    assert.equal((await deputy.call(`/api/posts/${staffPost.id}`)).data.post.canDelete, false);
+    await deputy.call(`/api/posts/${staffPost.id}`, 'DELETE', {}, 403);
+    await admin.call(`/api/posts/${staffPost.id}`, 'DELETE', {});
   }
   console.log(
     'PASS: all 8 boards × guest/apprentice/member/deputy/operator writing permissions, guest write-page redirect, owner edit, authenticated comments',
