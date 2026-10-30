@@ -49,11 +49,10 @@ export function useBoardSelection(board, posts) {
 }
 
 export function SelectablePost({ post, selection, children }) {
-  if (!selection.active) return children;
   const checked = selection.selected.some((item) => item.id === post.id);
   return (
-    <PostSelectionContext.Provider value={{ post, selection, checked }}>
-      <div className={`selectable-post ${checked ? 'is-selected' : ''}`}>{children}</div>
+    <PostSelectionContext.Provider value={selection.active ? { post, selection, checked } : null}>
+      {children}
     </PostSelectionContext.Provider>
   );
 }
@@ -66,6 +65,7 @@ export function PostSelectionCheckbox() {
     <span className="post-selection-check">
       <Input
         type="checkbox"
+        className="board-selection-checkbox"
         aria-label={`${post.title} 선택`}
         checked={checked}
         disabled={
@@ -147,6 +147,7 @@ export default function BoardManagement({ board, posts, selection }) {
           <Input
             type="checkbox"
             aria-label="현재 표시된 게시물 전체 선택"
+            className="board-selection-checkbox"
             checked={count > 0 && count === posts.length ? true : count ? 'indeterminate' : false}
             disabled={!posts.length || Boolean(selection.action)}
             onChange={selection.all}

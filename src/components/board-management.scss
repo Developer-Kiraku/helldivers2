@@ -83,12 +83,58 @@
   font-size: var(--hd-font-size-12);
   white-space: nowrap;
 }
-.selectable-post {
-  display: contents;
-}
-.selectable-post.is-selected
-  > :is(.board-row, .tier-list-row, .loadout-card, .talk-card, .helsta-post) {
-  background: var(--hd-color-alpha-379);
+.board-selection-checkbox.ui-checkbox.rt-CheckboxRoot {
+  --checkbox-size: 24px;
+  --checkbox-indicator-size: 14px;
+  --checkbox-border-radius: 6px;
+
+  width: 28px;
+  height: 28px;
+  min-height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+
+  &[data-state='checked'],
+  &[data-state='indeterminate'] {
+    background: transparent;
+    border: 0;
+  }
+
+  &::before {
+    box-sizing: border-box;
+    border: 1.5px solid var(--hd-color-palette-95a999);
+    background: var(--hd-color-input);
+    background-image: none;
+    box-shadow: none;
+    outline: none;
+    transition:
+      border-color 150ms,
+      background-color 150ms;
+  }
+  &:hover:not(:disabled)::before {
+    border-color: var(--hd-color-palette-e8edc5);
+  }
+  &[data-state='checked']::before,
+  &[data-state='indeterminate']::before {
+    border-color: var(--hd-color-palette-e8edc5);
+    background: var(--hd-color-palette-e8edc5);
+  }
+  .rt-BaseCheckboxIndicator {
+    color: var(--hd-color-input);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--hd-color-palette-e8edc5);
+    outline-offset: 2px;
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
 }
 .post-selection-check {
   display: inline-flex;
@@ -115,9 +161,6 @@
 .tier-list-title .post-selection-title > a {
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.tier-list-table > .selectable-post > .tier-list-row {
-  border-top: 1px solid var(--hd-color-border);
 }
 .loadout-card > .loadout-card-main > .badge {
   display: inline-flex;
@@ -203,8 +246,5 @@
   .board-management-bar,
   .post-selection-check {
     display: none !important;
-  }
-  .selectable-post {
-    display: block;
   }
 }

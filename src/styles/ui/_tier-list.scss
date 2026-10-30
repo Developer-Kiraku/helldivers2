@@ -380,7 +380,7 @@
   color: var(--hd-color-text);
   line-height: 1.5;
 }
-a.tier-list-row:hover {
+.tier-list-row:not(.tier-list-head):hover {
   background: var(--hd-color-surface-soft);
 }
 .tier-list-title {

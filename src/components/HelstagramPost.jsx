@@ -18,7 +18,7 @@ import YoutubeVideo from './YoutubeVideo';
 import PostMaps from './PostMaps';
 import usePostComments from '../hooks/usePostComments';
 import usePostLike from '../hooks/usePostLike';
-import { PostSelectionTitle } from './BoardManagement';
+import { PostSelectionCheckbox } from './BoardManagement';
 
 const number = (value) => Number(value || 0).toLocaleString('ko-KR');
 
@@ -71,6 +71,7 @@ export default function HelstagramPost({ post, detail = false }) {
       aria-label={`${post.author}의 사진: ${post.title}`}
     >
       <header className="helsta-post-header">
+        <PostSelectionCheckbox />
         <span className="helsta-avatar-ring">
           <Avatar name={post.author} own={post.own} photo={post.authorPhoto} />
         </span>
@@ -151,11 +152,9 @@ export default function HelstagramPost({ post, detail = false }) {
           {detail ? (
             <h1>{post.title}</h1>
           ) : (
-            <PostSelectionTitle>
-              <Link className="helsta-caption-title" href={href}>
-                {post.title}
-              </Link>
-            </PostSelectionTitle>
+            <Link className="helsta-caption-title" href={href}>
+              {post.title}
+            </Link>
           )}
           {post.content && (
             <p>

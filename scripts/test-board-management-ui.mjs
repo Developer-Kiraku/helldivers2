@@ -112,7 +112,12 @@ try {
   assert.ok(document.querySelector('.post-selection-title .post-selection-check'));
   assert.equal(document.querySelector('.selectable-post-content'), null);
   assert.equal(
-    document.querySelector('.selectable-post a input'),
+    document.querySelectorAll('#root > h2').length,
+    2,
+    'Management mode must preserve direct children and sibling border selectors',
+  );
+  assert.equal(
+    document.querySelector('a input'),
     null,
     'Checkbox must not be nested in the post link',
   );
