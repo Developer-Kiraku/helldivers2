@@ -118,6 +118,7 @@ export default function TierList({ value, onChange, disabled = false }) {
             <div className="tier-label">
               {editable ? (
                 <Input
+                  className="tier-rank-name"
                   aria-label={`${index + 1}번째 티어명`}
                   value={row.name}
                   maxLength={20}
@@ -132,9 +133,9 @@ export default function TierList({ value, onChange, disabled = false }) {
                   }
                 />
               ) : (
-                <strong>{row.name}</strong>
+                <strong className="tier-rank-name">{row.name}</strong>
               )}
-              <small>{row.items.length}</small>
+              <small>{row.items.length}개</small>
             </div>
             <div className="tier-items">
               {cards(row.items, index)}

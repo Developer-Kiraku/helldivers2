@@ -33,16 +33,42 @@
   grid-column: 1 / -1;
 }
 .tier-edit-summary {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: var(--hd-space-12);
-  align-items: center;
   margin-bottom: var(--hd-space-16);
   overflow-wrap: anywhere;
 }
-.tier-edit-summary span {
+.tier-edit-title {
+  font-size: var(--hd-font-size-22);
+  line-height: 1.4;
+}
+.tier-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hd-space-8);
+}
+.tier-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hd-space-8);
+  padding: var(--hd-space-6) var(--hd-space-12);
+  border: var(--hd-size-1) solid var(--hd-color-border);
+  border-radius: var(--hd-radius-6);
+  background: var(--hd-color-surface-soft);
+  color: var(--hd-color-text);
+  font-size: var(--hd-font-size-12);
+  line-height: 1.5;
+}
+.tier-meta-label {
   color: var(--hd-color-text-muted);
-  font-size: var(--hd-font-size-13);
+  font-size: var(--hd-font-size-11);
+}
+.tier-meta-draft {
+  color: var(--hd-color-accent);
+}
+.tier-board {
+  line-height: 1.5;
 }
 .tier-rows {
   border: var(--hd-size-1) solid var(--hd-color-border);
@@ -60,7 +86,7 @@
 }
 @each $index, $color in (0: s, 1: a, 2: b, 3: c, 4: d, 5: e, 6: unknown) {
   .tier-color-#{$index} .tier-label {
-    background: var(--hd-color-tier-#{$color});
+    --tier-color: var(--hd-color-tier-#{$color});
   }
 }
 .tier-label {
@@ -68,30 +94,48 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--hd-space-4);
+  gap: var(--hd-space-8);
   padding: var(--hd-space-8);
-  color: var(--hd-color-background);
+  border-left: var(--hd-size-4) solid var(--tier-color);
+  border-right: var(--hd-size-1) solid var(--hd-color-border);
+  background: var(--hd-color-surface);
+  color: var(--tier-color);
   overflow-wrap: anywhere;
   text-align: center;
 }
-.tier-label strong {
-  font-size: var(--hd-font-size-18);
-}
 .tier-label small {
   font-size: var(--hd-font-size-11);
+  color: var(--hd-color-text-muted);
 }
-.community-theme .tier-label .ui-input {
+.community-theme .tier-label .tier-rank-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   min-width: 0;
-  background: var(--hd-color-transparent);
+  min-height: var(--hd-size-44);
+  height: auto;
+  margin: 0;
+  padding: var(--hd-space-4);
+  border-radius: var(--hd-radius-6);
+  background: color-mix(in srgb, var(--tier-color) 12%, transparent);
   color: inherit;
   box-shadow: none;
-  border: 0;
-}
-.tier-label input {
+  border: var(--hd-size-1) solid color-mix(in srgb, var(--tier-color) 25%, transparent);
+  font-size: var(--hd-font-size-18);
+  font-weight: 800;
+  line-height: 1.4;
   text-align: center;
-  font-weight: bold;
+}
+.community-theme .tier-label .tier-rank-name input {
+  min-width: 0;
+  min-height: 0;
+  text-align: center;
+  font: inherit;
   padding: 0;
+}
+.community-theme .tier-label .tier-rank-name:focus-within {
+  outline-color: var(--tier-color);
 }
 .tier-items {
   display: flex;
@@ -238,6 +282,25 @@
 .tier-list-row + .tier-list-row {
   border-top: var(--hd-size-1) solid var(--hd-color-border);
 }
+.tier-list-row > * {
+  min-width: 0;
+  text-align: center;
+}
+.tier-list-row > :first-child {
+  text-align: left;
+}
+.tier-list-row time {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.tier-list-category {
+  justify-self: center;
+  padding: var(--hd-space-4) var(--hd-space-8);
+  border-radius: var(--hd-radius-6);
+  background: var(--hd-color-surface-soft);
+  color: var(--hd-color-text);
+  line-height: 1.5;
+}
 a.tier-list-row:hover {
   background: var(--hd-color-surface-soft);
 }
@@ -272,11 +335,9 @@ a.tier-list-row:hover {
   .tier-label {
     padding: var(--hd-space-4);
   }
-  .tier-label strong {
-    font-size: var(--hd-font-size-14);
-  }
-  .tier-label .ui-input {
-    font-size: var(--hd-font-size-12);
+  .community-theme .tier-label .tier-rank-name,
+  .community-theme .tier-label .tier-rank-name input {
+    font-size: var(--hd-font-size-16);
   }
   .tier-items {
     padding: var(--hd-space-4);
@@ -317,7 +378,17 @@ a.tier-list-row:hover {
   .tier-list-row time {
     grid-row: 3;
     grid-column: 1 / -1;
+    text-align: left;
     font-size: var(--hd-font-size-11);
+  }
+  .tier-list-row > :nth-child(2),
+  .tier-list-row > :nth-child(3) {
+    justify-self: start;
+    text-align: left;
+  }
+  .tier-list-row > :nth-child(5),
+  .tier-list-row > :nth-child(6) {
+    text-align: right;
   }
   .tier-list-head {
     display: none;

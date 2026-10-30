@@ -199,7 +199,7 @@ function StandardBoardPage({ board }) {
             {visiblePosts.map((post) => (
               <Link className="tier-list-row" key={post.id} href={`/boards/tierlist/${post.id}`}>
                 <strong className="tier-list-title">{post.title}</strong>
-                <span className="badge">{post.category}</span>
+                <span className="tier-list-category">{post.category}</span>
                 <span>{post.tierList.faction}</span>
                 <time dateTime={post.createdAt}>
                   {new Date(post.createdAt).toLocaleString('ko-KR', {

@@ -3,6 +3,7 @@ import MuteNotice from './MuteNotice';
 import Nickname from './Nickname';
 import { LoadoutDisplay } from './Loadout';
 import TierList from './TierList';
+import TierListMeta from './TierListMeta';
 import { EmoticonInput, EmoticonText } from './Emoticons';
 import CommentContent from './CommentContent';
 import PostShare from './PostShare';
@@ -79,9 +80,14 @@ function StandardArticlePage({ board, id }) {
         ) : (
           <>
             <article className="article-paper">
-              <span className="badge">{post.category}</span>
-              {post.tierList && <span className="badge">{post.tierList.faction}</span>}
-              {isDraft && <span className="badge">임시저장 · 나만 보기</span>}
+              {post.tierList ? (
+                <TierListMeta value={post.tierList} draft={isDraft} />
+              ) : (
+                <>
+                  <span className="badge">{post.category}</span>
+                  {isDraft && <span className="badge">임시저장 · 나만 보기</span>}
+                </>
+              )}
               <h1>{post.title}</h1>
               <div className="article-meta">
                 <span className="author-inline">

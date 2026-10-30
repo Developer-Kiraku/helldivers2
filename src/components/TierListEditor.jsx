@@ -8,6 +8,7 @@ import { useCommunity } from './CommunityProvider';
 import AccessGate from './AccessGate';
 import IdentityStrip from './IdentityStrip';
 import TierList from './TierList';
+import TierListMeta from './TierListMeta';
 import { Button, Input, Label, Select } from './ui';
 import Icon from './Icon';
 
@@ -175,10 +176,8 @@ function Editor({ id }) {
           ) : (
             <>
               <div className="tier-edit-summary">
-                <strong>{title}</strong>
-                <span>
-                  {equipmentGroups.find(([key]) => key === value.group)?.[1]} · {value.faction}
-                </span>
+                <TierListMeta value={value} />
+                <strong className="tier-edit-title">{title}</strong>
               </div>
               <TierList key={value.group} value={value} onChange={change} disabled={busy} />
             </>
