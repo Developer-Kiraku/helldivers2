@@ -5,7 +5,12 @@ const digest = (value) =>
   createHash('sha256')
     .update(String(value || ''))
     .digest('hex');
-export const postHistoryActions = ['post.update', 'post.delete', 'post.delete.approved'];
+export const postHistoryActions = [
+  'post.update',
+  'post.delete',
+  'post.delete.approved',
+  'post.move',
+];
 export function postSnapshot(post) {
   return {
     board: post.board,

@@ -15,9 +15,9 @@ import { youtubeEmbedUrl } from '@/lib/editor-format.mjs';
 import YoutubeVideo from './YoutubeVideo';
 import MapAttachmentsEditor from './MapAttachmentsEditor';
 
-export default function PhotoPostEditor({ id = null }) {
+export default function PhotoPostEditor({ id = null, board = 'helstagram' }) {
   const { posts, addPost, api, refresh, notify } = useCommunity();
-  const current = id ? posts.helstagram.find((post) => post.id === id) : null;
+  const current = id ? posts[board].find((post) => post.id === id) : null;
   const [title, setTitle] = useState(''),
     [content, setContent] = useState(''),
     [category, setCategory] = useState('스크린샷'),
@@ -94,9 +94,9 @@ export default function PhotoPostEditor({ id = null }) {
       if (id) {
         await api(`posts/${id}`, { method: 'PATCH', body: draft });
         await refresh();
-      } else await addPost('helstagram', draft);
+      } else await addPost(board, draft);
       notify(id ? '게시글을 수정했습니다.' : '헬스타그램에 순간을 공유했습니다.');
-      router.push('/boards/helstagram');
+      router.push(`/boards/${board}`);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -104,17 +104,19 @@ export default function PhotoPostEditor({ id = null }) {
     }
   }
   return (
-    <AccessGate writing>
+    <AccessGate writing operator={board === 'notice'}>
       <section className="editor-page">
         <IdentityStrip />
-        <Link className="back-link" href="/boards/helstagram">
+        <Link className="back-link" href={`/boards/${board}`}>
           <Icon name="back" size={16} />
-          헬스타그램 목록으로
+          {boards[board].label} 목록으로
         </Link>
         <header className="page-heading">
           <div>
             <div className="eyebrow">MOMENTS FROM THE DROP</div>
-            <h1>헬스타그램 {id ? '수정' : '글쓰기'}</h1>
+            <h1>
+              {boards[board].label} {id ? '수정' : '글쓰기'}
+            </h1>
             <p>사진이나 유튜브 영상으로 나만의 강하 기록을 남겨보세요.</p>
           </div>
         </header>
@@ -224,7 +226,7 @@ export default function PhotoPostEditor({ id = null }) {
                   onChange={(event) => setCategory(event.target.value)}
                   disabled={busy || processing}
                 >
-                  {boards.helstagram.categories.map((value) => (
+                  {boards[board].categories.map((value) => (
                     <option key={value}>{value}</option>
                   ))}
                 </Select>
@@ -274,7 +276,7 @@ export default function PhotoPostEditor({ id = null }) {
             <footer className="editor-footer">
               <span>사진 또는 유튜브 영상 · 제목 필수</span>
               <div>
-                <ActionLink className="button secondary" href="/boards/helstagram">
+                <ActionLink className="button secondary" href={`/boards/${board}`}>
                   취소
                 </ActionLink>
                 <Button type="submit" className="button primary" disabled={busy || processing}>

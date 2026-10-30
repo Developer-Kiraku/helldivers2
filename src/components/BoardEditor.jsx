@@ -1,4 +1,5 @@
 'use client';
+import { postFormat } from '@/lib/post-move';
 import PollEditor from './PollEditor';
 import PhotoPostEditor from './PhotoPostEditor';
 import { ActionLink, Button, Input, Label, Select } from './ui';
@@ -19,9 +20,12 @@ import { emptyLoadout, normalizeLoadout } from '@/lib/loadout.mjs';
 import TierListEditor from './TierListEditor';
 
 export default function BoardEditor(props) {
-  if (props.board === 'tierlist') return <TierListEditor id={props.id} />;
-  return props.board === 'helstagram' ? (
-    <PhotoPostEditor key={props.id || 'new'} id={props.id} />
+  const { posts } = useCommunity();
+  const current = posts[props.board]?.find((post) => post.id === props.id);
+  const format = current ? postFormat(current) : props.board;
+  if (format === 'tierlist') return <TierListEditor id={props.id} board={props.board} />;
+  return format === 'helstagram' ? (
+    <PhotoPostEditor key={props.id || 'new'} id={props.id} board={props.board} />
   ) : (
     <StandardBoardEditor {...props} />
   );
@@ -31,6 +35,7 @@ function StandardBoardEditor({ board, id = null }) {
   const config = boards[board];
   const { addPost, notify, posts, api, refresh } = useCommunity();
   const current = id ? posts[board].find((post) => post.id === id) : null;
+  const hasLoadout = board === 'loadout' || Boolean(current?.loadout);
   const router = useRouter();
   const editor = useRef(null);
   const [poll, setPoll] = useState(null);
@@ -55,7 +60,7 @@ function StandardBoardEditor({ board, id = null }) {
     event.preventDefault();
     if (busy || processingImages) return;
     const { content: body, images, bodyHtml } = editor.current.getDraft();
-    if (!title.trim() || (board !== 'loadout' && !body && !images.length && !maps.length)) {
+    if (!title.trim() || (!hasLoadout && !body && !images.length && !maps.length)) {
       setError('제목과 본문을 입력해주세요.');
       return;
     }
@@ -64,7 +69,7 @@ function StandardBoardEditor({ board, id = null }) {
     try {
       const draft = {
         title: title.trim(),
-        ...(board === 'loadout' ? { loadout: normalizeLoadout(loadout) } : {}),
+        ...(hasLoadout ? { loadout: normalizeLoadout(loadout) } : {}),
         category,
         ...(board === 'notice' ? { pinned } : {}),
         content: body,
@@ -157,11 +162,9 @@ function StandardBoardEditor({ board, id = null }) {
               </p>
             </div>
           )}
-          {board === 'loadout' && (
-            <LoadoutFields value={loadout} onChange={setLoadout} disabled={busy} />
-          )}
+          {hasLoadout && <LoadoutFields value={loadout} onChange={setLoadout} disabled={busy} />}
           <Label className="field-label">
-            {board === 'loadout' ? (
+            {hasLoadout ? (
               '세팅 설명 (선택)'
             ) : (
               <>

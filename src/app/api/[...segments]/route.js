@@ -1,4 +1,6 @@
 import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/api-keys';
+import { bulkPosts } from '@/lib/server/bulk-posts';
+import { postFormat } from '@/lib/post-move';
 import { presentationUser, viewRoleCookie, viewRoles } from '@/lib/view-role.mjs';
 import { boards } from '@/lib/data';
 import { canReadPost } from '@/lib/post-access.mjs';
@@ -188,7 +190,7 @@ async function handler(request, context) {
         if (!Object.hasOwn(boards, targetBoard)) fail(400, '게시판을 확인해주세요.');
         if (targetBoard === 'notice' && !isStaff(actor.role))
           fail(403, '공지사항은 운영진만 작성할 수 있습니다.');
-        return targetBoard;
+        return post ? postFormat(post) : targetBoard;
       });
       input =
         path === 'profile'
@@ -197,6 +199,7 @@ async function handler(request, context) {
     }
     const result = await transaction((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
+      if (path === 'admin/posts/bulk' && method === 'POST') return bulkPosts(db, actor, input);
       if (path === 'integrations/maps' && method === 'GET') {
         const settings = mapSettings(db);
         return {
@@ -297,7 +300,7 @@ async function handler(request, context) {
             fail(403, '공지사항 수정 권한이 없습니다.');
           const before = postSnapshot(post);
           const wasDraft = post.status === 'draft';
-          const clean = cleanPost(input, post.board);
+          const clean = cleanPost(input, post.board, post);
           if (!wasDraft && clean.status === 'draft')
             fail(400, '게시한 티어 메이커 글은 임시저장으로 변경할 수 없습니다.');
           Object.assign(post, clean, { updatedAt: now() });

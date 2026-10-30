@@ -23,6 +23,7 @@ import VoteButtons from './VoteButtons';
 import ModerationActions from './ModerationActions';
 import HelstagramDetail from './HelstagramDetail';
 import PostMaps from './PostMaps';
+import YoutubeVideo from './YoutubeVideo';
 import usePostComments from '../hooks/usePostComments';
 import usePostView from '../hooks/usePostView';
 export default function ArticlePage({ board, id }) {
@@ -99,7 +100,7 @@ function StandardArticlePage({ board, id }) {
                 <span>댓글 {comments.length}</span>
               </div>
               <div className="article-copy">
-                {board === 'loadout' && <LoadoutDisplay value={post.loadout} />}
+                {post.loadout && <LoadoutDisplay value={post.loadout} />}
                 {post.tierList ? (
                   <TierList value={post.tierList} />
                 ) : post.bodyHtml ? (
@@ -120,6 +121,7 @@ function StandardArticlePage({ board, id }) {
                   </>
                 )}
               </div>
+              <YoutubeVideo url={post.youtubeUrl} title={post.title} />
               <PostMaps maps={post.maps} />
               {post.poll && <PostPoll key={post.id} post={post} />}
               {!isDraft && (

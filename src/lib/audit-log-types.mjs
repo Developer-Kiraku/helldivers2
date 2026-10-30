@@ -1,6 +1,7 @@
 export const auditLogTypes = {
   post_update: '게시글 수정',
   post_delete: '게시글 삭제',
+  post_move: '게시글 이동',
   post_like: '추천',
   post_dislike: '비추천',
   post_like_cancel: '추천 취소',
@@ -13,6 +14,7 @@ export const auditLogTypes = {
 };
 export const auditActionTypes = {
   'post.update': 'post_update',
+  'post.move': 'post_move',
   'post.delete': 'post_delete',
   'post.delete.approved': 'post_delete',
   'post.vote.like': 'post_like',

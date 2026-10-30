@@ -28,6 +28,9 @@ export function auditLogEntry(db, entry) {
       ? details.targetNickname || nickname(target) || '정보 없음'
       : details.targetTitle || snapshot?.title || target?.title || '정보 없음',
     targetCreatedAt: details.targetCreatedAt || snapshot?.createdAt || target?.createdAt || null,
+    ...(type === 'post_move'
+      ? { sourceBoard: details.sourceBoard, targetBoard: details.targetBoard }
+      : {}),
     ...(type === 'member_mute'
       ? { mutedUntil: details.mutedUntil || null, muteDuration: details.duration || null }
       : {}),

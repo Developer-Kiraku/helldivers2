@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import BoardManagement, { SelectablePost, useBoardSelection } from './BoardManagement';
 import { useState } from 'react';
 import { Camera, Search, Plus, X, Heart } from 'lucide-react';
 import { Button, Input } from './ui';
@@ -26,6 +27,7 @@ export default function HelstagramPage() {
   );
   const visible = filtered.slice(0, count),
     hasFilters = Object.values(filters).some(Boolean);
+  const selection = useBoardSelection('helstagram', visible);
   const photographers = [...new Map(allPosts.map((post) => [post.authorId, post])).values()].slice(
     0,
     5,
@@ -112,9 +114,12 @@ export default function HelstagramPage() {
                 </Button>
               </div>
             )}
+            <BoardManagement board="helstagram" posts={visible} selection={selection} />
             <section className="helsta-feed" aria-label="헬스타그램 게시글">
               {visible.map((post) => (
-                <HelstagramPost key={post.id} post={post} />
+                <SelectablePost key={post.id} post={post} selection={selection}>
+                  <HelstagramPost post={post} />
+                </SelectablePost>
               ))}
             </section>
             {!filtered.length && (

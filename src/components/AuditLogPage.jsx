@@ -3,6 +3,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { useCommunity } from './CommunityProvider';
 import { Button, Input, Select } from './ui';
 import { auditLogTypes } from '@/lib/audit-log-types.mjs';
+import { boards } from '@/lib/data';
 import { isStaff } from '@/lib/roles';
 import { muteDurations } from '@/lib/member-mute.mjs';
 
@@ -165,6 +166,11 @@ export default function AuditLogPage() {
                     <td>{entry.actorNickname}</td>
                     <td className="audit-log-target" title={entry.targetName}>
                       {entry.targetName}
+                      {entry.type === 'post_move' && (
+                        <small style={{ display: 'block' }}>
+                          {boards[entry.sourceBoard]?.label} → {boards[entry.targetBoard]?.label}
+                        </small>
+                      )}
                     </td>
                     <td>
                       {entry.targetCreatedAt ? (

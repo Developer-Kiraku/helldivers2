@@ -25,6 +25,11 @@ export function CommunityProvider({ children, initialUser = null }) {
     timer = useRef(null),
     refreshSequence = useRef(0);
   const [loadedPath, setLoadedPath] = useState(null);
+  const [managementMode, setManagementMode] = useState(false);
+  const [desktopMode, setDesktopMode] = useState(false);
+  useEffect(() => {
+    setManagementMode(false);
+  }, [pathname, user?.role, desktopMode]);
   const notify = useCallback((message) => {
     clearTimeout(timer.current);
     setToast(message);
@@ -146,6 +151,11 @@ export function CommunityProvider({ children, initialUser = null }) {
     <CommunityContext.Provider
       value={{
         user,
+        managementMode:
+          managementMode && desktopMode && user?.role === 'operator' && !user?.actualRole,
+        setManagementMode,
+        desktopMode,
+        setDesktopMode,
         signedIn,
         role,
         actualRole: user?.actualRole || role,

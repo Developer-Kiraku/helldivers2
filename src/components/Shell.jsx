@@ -10,7 +10,7 @@ import Icon from './Icon';
 import { useCommunity } from './CommunityProvider';
 import { DiscordLink, KakaoChatLink } from './CommunityLinks';
 import { isStaff, roleLabels } from '@/lib/roles';
-import { LogIn, LogOut, Menu, ChevronDown } from 'lucide-react';
+import { LogIn, LogOut, Menu, ChevronDown, ShieldCheck } from 'lucide-react';
 import Modal from './Modal';
 import MobileBottomNav from './MobileBottomNav';
 
@@ -134,7 +134,19 @@ const menu = [
 export default function Shell({ children, previewSkeleton = false }) {
   const pathname = usePathname(),
     router = useRouter();
-  const { signedIn, role, actualRole, setViewRole, notify, profile, logout } = useCommunity();
+  const {
+    signedIn,
+    role,
+    actualRole,
+    setViewRole,
+    notify,
+    profile,
+    logout,
+    managementMode,
+    setManagementMode,
+    desktopMode,
+    setDesktopMode,
+  } = useCommunity();
   const [roleBusy, setRoleBusy] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   useEffect(() => {
@@ -144,6 +156,17 @@ export default function Shell({ children, previewSkeleton = false }) {
     [isFrame, setIsFrame] = useState(false),
     [previewRoute, setPreviewRoute] = useState(pathname);
   const frame = useRef(null);
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 761px) and (hover: hover) and (pointer: fine)');
+    const update = () =>
+      setDesktopMode(media.matches && device === 'pc' && window.parent === window);
+    update();
+    media.addEventListener('change', update);
+    return () => {
+      media.removeEventListener('change', update);
+      setDesktopMode(false);
+    };
+  }, [device, setDesktopMode]);
   useEffect(() => {
     setIsFrame(window.parent !== window);
   }, []);
@@ -278,6 +301,21 @@ export default function Shell({ children, previewSkeleton = false }) {
               {actualRole === 'operator' && role !== actualRole ? ' · 화면 확인 중' : ''}
             </span>
             <div className="preview-control-groups">
+              {actualRole === 'operator' &&
+                role === 'operator' &&
+                desktopMode &&
+                /^\/boards\/[^/]+\/?$/.test(pathname) && (
+                  <Button
+                    type="button"
+                    className={`management-toggle ${managementMode ? 'is-active' : ''}`}
+                    aria-pressed={managementMode}
+                    onClick={() => setManagementMode(!managementMode)}
+                  >
+                    <ShieldCheck size={17} aria-hidden="true" />
+                    관리모드
+                    <span className="management-toggle-light" aria-hidden="true" />
+                  </Button>
+                )}
               {actualRole === 'operator' && (
                 <label className="view-role-selector">
                   <span>화면 등급</span>

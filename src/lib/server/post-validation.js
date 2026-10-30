@@ -7,6 +7,7 @@ import { normalizeMaps } from '../post-maps.mjs';
 import { normalizeLoadout } from '../loadout.mjs';
 import { normalizeTierList } from '../tier-list.mjs';
 import { equipmentGroups } from '../equipment.mjs';
+import { postFormat } from '../post-move';
 
 export function validImage(value, allowLocal = false, max = 900000, allowRemote = false) {
   if (typeof value !== 'string' || value.length > max)
@@ -34,8 +35,22 @@ export function validImage(value, allowLocal = false, max = 900000, allowRemote 
   if (!valid) fail(400, '유효한 이미지 파일을 선택해주세요.');
   return value;
 }
-export function cleanPost(input, board) {
+export function cleanPost(input, board, existing = null) {
   if (!boards[board]) fail(400, '게시판을 확인해주세요.');
+  const format = existing && postFormat(existing);
+  if (format && format !== board && ['tierlist', 'loadout', 'helstagram'].includes(format)) {
+    const category = input.category ?? existing.category;
+    if (!boards[board].categories.includes(category)) fail(400, '게시글 분류를 확인해주세요.');
+    const clean = cleanPost(
+      { ...input, pinned: undefined, category: boards[format].categories[0] },
+      format,
+    );
+    return {
+      ...clean,
+      category,
+      ...(board === 'notice' && typeof input.pinned === 'boolean' ? { pinned: input.pinned } : {}),
+    };
+  }
   if (board === 'tierlist') {
     const status = input.status ?? 'published';
     if (!['draft', 'published'].includes(status)) fail(400, '저장 상태를 확인해주세요.');

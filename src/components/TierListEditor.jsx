@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { boards } from '@/lib/data';
 import { equipmentGroups } from '@/lib/equipment.mjs';
 import { emptyTierList, normalizeTierList, tierFactions } from '@/lib/tier-list.mjs';
 import { useCommunity } from './CommunityProvider';
@@ -12,16 +13,16 @@ import TierListMeta from './TierListMeta';
 import { Button, Input, Label, Select } from './ui';
 import Icon from './Icon';
 
-export default function TierListEditor({ id }) {
+export default function TierListEditor({ id, board = 'tierlist' }) {
   return (
-    <AccessGate writing>
-      <Editor key={id || 'new'} id={id} />
+    <AccessGate writing operator={board === 'notice'}>
+      <Editor key={id || 'new'} id={id} board={board} />
     </AccessGate>
   );
 }
-function Editor({ id }) {
+function Editor({ id, board }) {
   const { posts, api, refresh, notify } = useCommunity();
-  const current = posts.tierlist.find((post) => post.id === id);
+  const current = posts[board].find((post) => post.id === id);
   const router = useRouter();
   const [title, setTitle] = useState(current?.title || '');
   const [value, setValue] = useState(current?.tierList || emptyTierList());
@@ -63,17 +64,21 @@ function Editor({ id }) {
     try {
       const data = await api(savedId ? `posts/${savedId}` : 'posts', {
         method: savedId ? 'PATCH' : 'POST',
-        body: { board: 'tierlist', title, tierList, status },
+        body: {
+          board,
+          title,
+          tierList,
+          status,
+          ...(board !== 'tierlist' ? { category: current?.category } : {}),
+        },
       });
       setSavedId(data.post.id);
       setDirty(false);
       setSavedAt(new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }));
       await refresh();
-      notify(
-        status === 'draft' ? '나만 볼 수 있도록 임시저장했습니다.' : '티어 메이커에 게시했습니다.',
-      );
-      if (status === 'published') router.push(`/boards/tierlist/${data.post.id}`);
-      else if (!id) router.replace(`/boards/tierlist/${data.post.id}/edit`);
+      notify(status === 'draft' ? '나만 볼 수 있도록 임시저장했습니다.' : '게시글을 저장했습니다.');
+      if (status === 'published') router.push(`/boards/${board}/${data.post.id}`);
+      else if (!id) router.replace(`/boards/${board}/${data.post.id}/edit`);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -87,14 +92,14 @@ function Editor({ id }) {
       <IdentityStrip />
       <Link
         className="back-link"
-        href="/boards/tierlist"
+        href={`/boards/${board}`}
         onClick={(event) => {
           if (dirty && !window.confirm('저장하지 않은 변경사항을 버리고 나갈까요?'))
             event.preventDefault();
         }}
       >
         <Icon name="back" size={16} />
-        티어 메이커 목록으로
+        {boards[board].label} 목록으로
       </Link>
       <header className="page-heading">
         <div>

@@ -1,5 +1,6 @@
 'use client';
 import Nickname from './Nickname';
+import BoardManagement, { SelectablePost, useBoardSelection } from './BoardManagement';
 import { LoadoutDisplay } from './Loadout';
 import { ActionLink, Button, Input } from './ui';
 
@@ -49,9 +50,10 @@ function StandardBoardPage({ board }) {
   const visibleCount = page.board === board ? page.count : batchSize;
   const visiblePosts = filtered.slice(0, visibleCount);
   const remaining = filtered.length - visiblePosts.length;
+  const selection = useBoardSelection(board, visiblePosts);
   return (
     <AccessGate>
-      <div className="board-page">
+      <div className={`board-page ${selection.active ? 'board-management-active' : ''}`}>
         <IdentityStrip />
         <header className="page-heading">
           <div>
@@ -161,6 +163,7 @@ function StandardBoardPage({ board }) {
             </Button>
           </div>
         )}
+        <BoardManagement board={board} posts={visiblePosts} selection={selection} />
         {isFeed ? (
           <div className="feed-layout feed-layout-full">
             <section
@@ -168,7 +171,9 @@ function StandardBoardPage({ board }) {
               aria-label={`${config.label} 게시글`}
             >
               {visiblePosts.map((post) => (
-                <FeedPostCard key={post.id} post={post} board={board} />
+                <SelectablePost key={post.id} post={post} selection={selection}>
+                  <FeedPostCard post={post} board={board} />
+                </SelectablePost>
               ))}
               {!filtered.length && (
                 <div className="empty-state">
@@ -197,30 +202,32 @@ function StandardBoardPage({ board }) {
               <span>조회</span>
             </div>
             {visiblePosts.map((post) => (
-              <Link className="tier-list-row" key={post.id} href={`/boards/tierlist/${post.id}`}>
-                <strong className="tier-list-title">{post.title}</strong>
-                <span className="tier-list-category">{post.category}</span>
-                <span>{post.tierList.faction}</span>
-                <time dateTime={post.createdAt}>
-                  {new Date(post.createdAt).toLocaleString('ko-KR', {
-                    timeZone: 'Asia/Seoul',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                  })}
-                </time>
-                <span>
-                  <span className="tier-mobile-label">추천 </span>
-                  {post.likes}
-                </span>
-                <span>
-                  <span className="tier-mobile-label">조회 </span>
-                  {post.views}
-                </span>
-              </Link>
+              <SelectablePost key={post.id} post={post} selection={selection}>
+                <Link className="tier-list-row" href={`/boards/tierlist/${post.id}`}>
+                  <strong className="tier-list-title">{post.title}</strong>
+                  <span className="tier-list-category">{post.category}</span>
+                  <span>{post.tierList.faction}</span>
+                  <time dateTime={post.createdAt}>
+                    {new Date(post.createdAt).toLocaleString('ko-KR', {
+                      timeZone: 'Asia/Seoul',
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false,
+                    })}
+                  </time>
+                  <span>
+                    <span className="tier-mobile-label">추천 </span>
+                    {post.likes}
+                  </span>
+                  <span>
+                    <span className="tier-mobile-label">조회 </span>
+                    {post.views}
+                  </span>
+                </Link>
+              </SelectablePost>
             ))}
             {!filtered.length && (
               <div className="empty-state">
@@ -231,17 +238,19 @@ function StandardBoardPage({ board }) {
         ) : board === 'loadout' ? (
           <section className="loadout-list" aria-label="로드아웃 목록">
             {visiblePosts.map((post) => (
-              <article className="loadout-card" key={post.id}>
-                <Link href={`/boards/loadout/${post.id}`}>
-                  <span className="badge">{post.category}</span>
-                  <h2>{post.title}</h2>
-                  <LoadoutDisplay value={post.loadout} compact />
-                </Link>
-                <p>
-                  <Nickname name={post.author} role={post.authorRole} own={post.own} /> ·{' '}
-                  {post.date} · 댓글 {post.comments} · 추천 {post.likes}
-                </p>
-              </article>
+              <SelectablePost key={post.id} post={post} selection={selection}>
+                <article className="loadout-card">
+                  <Link href={`/boards/loadout/${post.id}`}>
+                    <span className="badge">{post.category}</span>
+                    <h2>{post.title}</h2>
+                    <LoadoutDisplay value={post.loadout} compact />
+                  </Link>
+                  <p>
+                    <Nickname name={post.author} role={post.authorRole} own={post.own} /> ·{' '}
+                    {post.date} · 댓글 {post.comments} · 추천 {post.likes}
+                  </p>
+                </article>
+              </SelectablePost>
             ))}
             {!filtered.length && (
               <div className="empty-state">아직 로드아웃이 없습니다. 첫 세팅을 공유해보세요.</div>
@@ -259,38 +268,39 @@ function StandardBoardPage({ board }) {
               <span className="desktop-metric">추천</span>
             </div>
             {visiblePosts.map((post, index) => (
-              <Link
-                className={`board-columns board-row ${post.pinned ? 'pinned' : ''}`}
-                key={post.id}
-                href={`/boards/${board}/${post.id}`}
-              >
-                <span className="row-number">
-                  {String(filtered.length - index).padStart(2, '0')}
-                </span>
-                <span className="badge">{post.category}</span>
-                <span className="board-title">
-                  {board !== 'notice' && post.poll && <Icon name="poll" size={16} />}{' '}
-                  <span className="post-title-text" title={post.title}>
-                    {post.title}
+              <SelectablePost key={post.id} post={post} selection={selection}>
+                <Link
+                  className={`board-columns board-row ${post.pinned ? 'pinned' : ''}`}
+                  href={`/boards/${board}/${post.id}`}
+                >
+                  <span className="row-number">
+                    {String(filtered.length - index).padStart(2, '0')}
                   </span>
-                  <em>[{post.comments}]</em>
-                </span>
-                <span className="board-author">
-                  <Avatar name={post.author} own={post.own} photo={post.authorPhoto} />
-                  <span>
-                    <Nickname name={post.author} role={post.authorRole} own={post.own} />
+                  <span className="badge">{post.category}</span>
+                  <span className="board-title">
+                    {board !== 'notice' && post.poll && <Icon name="poll" size={16} />}{' '}
+                    <span className="post-title-text" title={post.title}>
+                      {post.title}
+                    </span>
+                    <em>[{post.comments}]</em>
                   </span>
-                </span>
-                <time>
-                  {post.date === '방금 전' ? post.date : post.date.slice(5)}
-                  <span className="board-mobile-views">
-                    {' '}
-                    · 조회 {Number(post.views || 0).toLocaleString('ko-KR')}
+                  <span className="board-author">
+                    <Avatar name={post.author} own={post.own} photo={post.authorPhoto} />
+                    <span>
+                      <Nickname name={post.author} role={post.authorRole} own={post.own} />
+                    </span>
                   </span>
-                </time>
-                <span className="desktop-metric">{post.views}</span>
-                <span className="desktop-metric">{post.likes}</span>
-              </Link>
+                  <time>
+                    {post.date === '방금 전' ? post.date : post.date.slice(5)}
+                    <span className="board-mobile-views">
+                      {' '}
+                      · 조회 {Number(post.views || 0).toLocaleString('ko-KR')}
+                    </span>
+                  </time>
+                  <span className="desktop-metric">{post.views}</span>
+                  <span className="desktop-metric">{post.likes}</span>
+                </Link>
+              </SelectablePost>
             ))}
             {!filtered.length && <div className="empty-state">검색 결과가 없습니다.</div>}
           </section>
