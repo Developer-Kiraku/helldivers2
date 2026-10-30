@@ -1,95 +1,126 @@
 'use client';
 import { useRef, useState } from 'react';
-import { equipmentForId, equipmentMatchesSearch } from '@/lib/equipment.mjs';
+import { createPortal } from 'react-dom';
+import { GripVertical } from 'lucide-react';
+import { equipmentForId, equipmentMatchesSearch, selectableEquipment } from '@/lib/equipment.mjs';
 import { moveTierItem, unrankedEquipment } from '@/lib/tier-list.mjs';
+import useTierDrag from '@/hooks/useTierDrag';
 import { EquipmentIcon } from './EquipmentIcon';
-import { Button, Input, Select } from './ui';
-import Icon from './Icon';
+import { Input } from './ui';
 
 export default function TierList({ value, onChange, disabled = false }) {
   const editable = Boolean(onChange);
-  const [selected, setSelected] = useState(null);
+  const boardRef = useRef(null);
   const [search, setSearch] = useState('');
-  const [over, setOver] = useState(null);
   const [announcement, setAnnouncement] = useState('');
-  const dragging = useRef(null);
-  const pool = unrankedEquipment(value);
-  const selectedItem = equipmentForId(selected);
-  const rowIndex = value.rows.findIndex((row) => row.items.includes(selected));
-  const itemIndex = rowIndex < 0 ? -1 : value.rows[rowIndex].items.indexOf(selected);
-  function move(id, row, before = null) {
+  const [poolOrder, setPoolOrder] = useState(() =>
+    selectableEquipment(value.group).map((item) => item.id),
+  );
+  const unranked = new Set(unrankedEquipment(value).map((item) => item.id));
+  const pool = poolOrder.filter((id) => unranked.has(id));
+  function move(id, { row, before }) {
     if (disabled) return;
+    if (row === null && before !== id)
+      setPoolOrder((order) => {
+        const next = order.filter((key) => key !== id);
+        const index = before ? next.indexOf(before) : -1;
+        next.splice(index < 0 ? next.length : index, 0, id);
+        return next;
+      });
     onChange(moveTierItem(value, id, row, before));
     setAnnouncement(
       `${equipmentForId(id)?.label}: ${row === null ? '대기' : value.rows[row].name}로 이동했습니다.`,
     );
   }
-  function drop(event, row, before = null) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (dragging.current) move(dragging.current, row, before);
-    dragging.current = null;
-    setOver(null);
+  const { drag, start } = useTierDrag({ boardRef, disabled: disabled || !editable, onDrop: move });
+  const activeItem = drag ? equipmentForId(drag.id) : null;
+  function keyboard(event, id, row) {
+    if (disabled || drag) return;
+    const items = row === null ? pool : value.rows[row].items;
+    const index = items.indexOf(id);
+    let target;
+    if (event.key === 'ArrowLeft' && index > 0) target = { row, before: items[index - 1] };
+    if (event.key === 'ArrowRight' && index < items.length - 1)
+      target = { row, before: items[index + 2] || null };
+    if (event.key === 'ArrowUp')
+      target = { row: row === null ? value.rows.length - 1 : Math.max(0, row - 1) };
+    if (event.key === 'ArrowDown')
+      target = { row: row === null || row === value.rows.length - 1 ? null : row + 1 };
+    if (event.key === 'Delete' || event.key === 'Backspace') target = { row: null };
+    if (target) {
+      event.preventDefault();
+      move(id, target);
+    }
   }
   function itemCard(id, row) {
     const item = equipmentForId(id);
     if (!item) return null;
-    return editable ? (
-      <Button
-        type="button"
+    return (
+      <div
         key={id}
-        className={`tier-item ${selected === id ? 'selected' : ''} ${over === id ? 'drop-before' : ''}`}
-        aria-label={`${item.label} 선택`}
-        aria-pressed={selected === id}
-        disabled={disabled}
-        draggable={!disabled}
-        onDragStart={(event) => {
-          dragging.current = id;
-          event.dataTransfer.effectAllowed = 'move';
-          event.dataTransfer.setData('text/plain', id);
-        }}
-        onDragEnd={() => {
-          dragging.current = null;
-          setOver(null);
-        }}
-        onDragOver={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          setOver(id);
-        }}
-        onDrop={(event) => drop(event, row, id)}
-        onClick={() => setSelected(selected === id ? null : id)}
+        className={`tier-item ${drag?.id === id ? 'tier-drag-origin' : ''}`}
+        data-tier-item={id}
+        role={editable ? 'button' : undefined}
+        tabIndex={editable && !disabled ? 0 : undefined}
+        aria-label={editable ? `${item.label} 드래그하여 이동` : undefined}
+        aria-disabled={editable ? disabled : undefined}
+        onPointerDown={editable ? (event) => start(event, id) : undefined}
+        onKeyDown={editable ? (event) => keyboard(event, id, row) : undefined}
+        onDragStart={(event) => event.preventDefault()}
       >
-        <EquipmentIcon item={item} />
-      </Button>
-    ) : (
-      <div className="tier-item" key={id}>
+        {editable && (
+          <span className="tier-drag-handle" title="잡고 끌어서 이동">
+            <GripVertical size={18} aria-hidden="true" />
+          </span>
+        )}
         <EquipmentIcon item={item} />
       </div>
     );
   }
+  function cards(ids, row) {
+    const target = drag?.target;
+    const showPreview = activeItem && target?.row === row;
+    const preview = () => (
+      <div
+        key="drop-preview"
+        className="tier-item tier-drop-preview"
+        data-tier-placeholder="true"
+        aria-label={`${activeItem.label} 놓을 위치`}
+      >
+        <EquipmentIcon item={activeItem} />
+      </div>
+    );
+    const result = ids.flatMap((id) => [
+      showPreview && target.before === id ? preview() : null,
+      itemCard(id, row),
+    ]);
+    if (showPreview && (!target.before || !ids.includes(target.before))) result.push(preview());
+    return result;
+  }
   return (
-    <div className={`tier-board ${editable ? 'tier-editable' : ''}`}>
+    <div
+      ref={boardRef}
+      className={`tier-board ${editable ? 'tier-editable' : ''} ${drag ? 'tier-dragging' : ''}`}
+    >
       {editable && (
-        <p className="field-hint">
-          드래그로 배치하거나, 장비를 눌러 이동·순서를 조정하세요. 티어명도 직접 바꿀 수 있습니다.
-        </p>
+        <>
+          <p className="field-hint">
+            장비를 끌어 티어에 놓으세요. 모바일에서는 장비의 ⋮⋮ 손잡이를 잡고 이동하세요. Esc 또는
+            영역 밖에 놓으면 취소됩니다.
+          </p>
+          <span className="sr-only">
+            키보드: 장비에 초점을 맞추고 위아래 방향키로 티어 이동, 좌우로 순서 변경, Delete로 대기
+            복귀.
+          </span>
+        </>
       )}
       <div className="tier-rows">
         {value.rows.map((row, index) => (
           <section
-            className={`tier-row tier-color-${index} ${over === index ? 'drop-active' : ''}`}
+            className={`tier-row tier-color-${index} ${drag?.target?.row === index ? 'drop-active' : ''}`}
             key={index}
             aria-label={`${row.name} 티어`}
-            onDragOver={
-              editable
-                ? (event) => {
-                    event.preventDefault();
-                    setOver(index);
-                  }
-                : undefined
-            }
-            onDrop={editable ? (event) => drop(event, index) : undefined}
+            data-tier-drop={index}
           >
             <div className="tier-label">
               {editable ? (
@@ -97,7 +128,7 @@ export default function TierList({ value, onChange, disabled = false }) {
                   aria-label={`${index + 1}번째 티어명`}
                   value={row.name}
                   maxLength={20}
-                  disabled={disabled}
+                  disabled={disabled || Boolean(drag)}
                   onChange={(event) =>
                     onChange({
                       ...value,
@@ -113,8 +144,8 @@ export default function TierList({ value, onChange, disabled = false }) {
               <small>{row.items.length}</small>
             </div>
             <div className="tier-items">
-              {row.items.map((id) => itemCard(id, index))}
-              {editable && !row.items.length && (
+              {cards(row.items, index)}
+              {editable && !row.items.length && drag?.target?.row !== index && (
                 <span className="tier-placeholder">여기에 배치</span>
               )}
             </div>
@@ -124,13 +155,9 @@ export default function TierList({ value, onChange, disabled = false }) {
       {editable && (
         <>
           <section
-            className={`tier-pool ${over === 'pool' ? 'drop-active' : ''}`}
+            className={`tier-pool ${drag?.target?.row === null ? 'drop-active' : ''}`}
             aria-label="대기 장비"
-            onDragOver={(event) => {
-              event.preventDefault();
-              setOver('pool');
-            }}
-            onDrop={(event) => drop(event, null)}
+            data-tier-drop="pool"
           >
             <header>
               <h2>
@@ -140,69 +167,38 @@ export default function TierList({ value, onChange, disabled = false }) {
                 aria-label="대기 장비 검색"
                 placeholder="장비 검색"
                 value={search}
+                disabled={Boolean(drag)}
                 onChange={(event) => setSearch(event.target.value)}
               />
             </header>
             <div className="tier-items">
-              {pool
-                .filter((item) => equipmentMatchesSearch(item, search))
-                .map((item) => itemCard(item.id, null))}
-              {!pool.length && (
-                <span className="tier-placeholder">
-                  모든 장비를 배치했습니다. 여기에 놓으면 대기로 돌아갑니다.
-                </span>
+              {cards(
+                pool.filter((id) => equipmentMatchesSearch(equipmentForId(id), search)),
+                null,
               )}
-              {pool.length > 0 && !pool.some((item) => equipmentMatchesSearch(item, search)) && (
-                <span className="tier-placeholder">검색 결과가 없습니다.</span>
+              {!pool.length && drag?.target?.row !== null && (
+                <span className="tier-placeholder">여기에 놓으면 대기로 돌아갑니다.</span>
               )}
+              {pool.length > 0 &&
+                !pool.some((id) => equipmentMatchesSearch(equipmentForId(id), search)) && (
+                  <span className="tier-placeholder">검색 결과가 없습니다.</span>
+                )}
             </div>
           </section>
-          {selectedItem && (
-            <div className="tier-move-bar" aria-label="선택 장비 이동">
-              <strong>{selectedItem.label}</strong>
-              <Select
-                aria-label="이동할 티어"
-                value={rowIndex < 0 ? 'pool' : String(rowIndex)}
-                disabled={disabled}
-                onChange={(event) =>
-                  move(selected, event.target.value === 'pool' ? null : Number(event.target.value))
-                }
-              >
-                <option value="pool">대기</option>
-                {value.rows.map((row, i) => (
-                  <option key={i} value={String(i)}>
-                    {row.name || `${i + 1}번째 티어`}
-                  </option>
-                ))}
-              </Select>
-              <Button
-                type="button"
-                aria-label="앞으로 이동"
-                disabled={disabled || itemIndex <= 0}
-                onClick={() => move(selected, rowIndex, value.rows[rowIndex].items[itemIndex - 1])}
-              >
-                <Icon name="back" size={16} />
-              </Button>
-              <Button
-                type="button"
-                aria-label="뒤로 이동"
-                disabled={
-                  disabled || rowIndex < 0 || itemIndex === value.rows[rowIndex].items.length - 1
-                }
-                onClick={() =>
-                  move(selected, rowIndex, value.rows[rowIndex].items[itemIndex + 2] || null)
-                }
-              >
-                <Icon name="arrow" size={16} />
-              </Button>
-              <Button type="button" aria-label="장비 선택 해제" onClick={() => setSelected(null)}>
-                <Icon name="close" size={16} />
-              </Button>
-            </div>
-          )}
           <span className="sr-only" role="status" aria-live="polite">
             {announcement}
           </span>
+          {activeItem &&
+            createPortal(
+              <div
+                className="tier-drag-overlay"
+                aria-hidden="true"
+                style={{ left: drag.x + 14, top: drag.y + 14 }}
+              >
+                <EquipmentIcon item={activeItem} />
+              </div>,
+              document.body,
+            )}
         </>
       )}
     </div>

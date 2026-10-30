@@ -7,10 +7,18 @@ import { JSDOM } from 'jsdom';
 import { emptyTierList } from '../src/lib/tier-list.mjs';
 import { selectableEquipment } from '../src/lib/equipment.mjs';
 
-const dom = new JSDOM('<div id="root"></div>');
+const dom = new JSDOM('<div id="root"></div>', { pretendToBeVisual: true });
 for (const key of ['window', 'document', 'navigator', 'HTMLElement'])
   Object.defineProperty(globalThis, key, { configurable: true, value: dom.window[key] });
+globalThis.getComputedStyle = window.getComputedStyle.bind(window);
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+let nextFrame = 0;
+const frames = new Map();
+globalThis.requestAnimationFrame = (fn) => {
+  frames.set(++nextFrame, fn);
+  return nextFrame;
+};
+globalThis.cancelAnimationFrame = (id) => frames.delete(id);
 const require = createRequire(import.meta.url);
 const React = require('react');
 const { createRoot } = require('react-dom/client');
@@ -35,7 +43,7 @@ try {
             namespace: 'controls',
           }));
           builder.onLoad({ filter: /.*/, namespace: 'controls' }, () => ({
-            contents: `import React from 'react';export const Button=p=>React.createElement('button',p);export const Input=p=>React.createElement('input',p);export const Select=p=>React.createElement('select',p);`,
+            contents: `import React from 'react';export const Input=p=>React.createElement('input',p);`,
             loader: 'js',
             resolveDir: process.cwd(),
           }));
@@ -47,6 +55,7 @@ try {
   let value = emptyTierList();
   let disabled = false;
   let editable = true;
+  let commits = 0;
   const render = () =>
     root.render(
       React.createElement(TierList, {
@@ -55,6 +64,7 @@ try {
         ...(editable
           ? {
               onChange: (next) => {
+                commits++;
                 value = next;
                 render();
               },
@@ -63,59 +73,132 @@ try {
       }),
     );
   await React.act(async () => render());
-  const [a, b] = selectableEquipment('primary').slice(0, 2);
-  const card = (id) => document.querySelector(`[data-equipment="${id}"]`).closest('button');
-  const row = (i) => document.querySelectorAll('.tier-row')[i];
-  async function drag(id, destination) {
+  const [a, b, c] = selectableEquipment('primary').slice(0, 3);
+  const card = (id) => document.querySelector(`[data-tier-item="${id}"]`);
+  const zone = (row) => document.querySelector(`[data-tier-drop="${row === null ? 'pool' : row}"]`);
+  let hit = null;
+  document.elementFromPoint = () => hit;
+  HTMLElement.prototype.getBoundingClientRect = function () {
+    const parent = this.closest('[data-tier-drop]');
+    const row = parent?.dataset.tierDrop === 'pool' ? 7 : Number(parent?.dataset.tierDrop || 0);
+    const siblings = parent ? [...parent.querySelectorAll('.tier-item')] : [];
+    const index = Math.max(0, siblings.indexOf(this));
+    const left = 200 + index * 100,
+      top = 100 + row * 100;
+    return { left, right: left + 100, top, bottom: top + 90, width: 100, height: 90 };
+  };
+  let x = 0,
+    y = 0;
+  async function pointer(type, target = window, props = {}) {
     await React.act(async () => {
-      const event = new window.Event('dragstart', { bubbles: true });
-      Object.defineProperty(event, 'dataTransfer', { value: { setData() {} } });
-      card(id).dispatchEvent(event);
+      const event = new window.MouseEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        button: 0,
+        clientX: x,
+        clientY: y,
+        ...props,
+      });
+      Object.defineProperties(event, {
+        pointerId: { value: 1 },
+        pointerType: { value: props.pointerType || 'mouse' },
+        isPrimary: { value: true },
+      });
+      target.dispatchEvent(event);
+      if (type === 'pointermove') {
+        const pending = [...frames.entries()];
+        frames.clear();
+        pending.forEach(([, fn]) => fn());
+      }
     });
-    await React.act(async () =>
-      destination().dispatchEvent(new window.Event('drop', { bubbles: true, cancelable: true })),
-    );
   }
-  await drag(a.id, () => row(0));
-  await drag(b.id, () => row(0));
-  assert.deepEqual(value.rows[0].items, [a.id, b.id]);
-  await drag(b.id, () => card(a.id));
-  assert.deepEqual(value.rows[0].items, [b.id, a.id]);
-  await drag(a.id, () => row(2));
-  assert.deepEqual(value.rows[2].items, [a.id]);
-  await drag(a.id, () => document.querySelector('.tier-pool'));
-  assert.deepEqual(value.rows[2].items, []);
-  await React.act(async () => card(a.id).click());
-  const chooseTier = async (target) =>
-    React.act(async () => {
-      const select = document.querySelector('[aria-label="이동할 티어"]');
-      select.value = target;
-      select.dispatchEvent(new window.Event('change', { bubbles: true }));
+  async function begin(id, row, before = null, touch = false) {
+    x = 10;
+    y = 300;
+    await pointer('pointerdown', touch ? card(id).querySelector('.tier-drag-handle') : card(id), {
+      pointerType: touch ? 'touch' : 'mouse',
     });
-  await chooseTier('0');
-  assert.deepEqual(value.rows[0].items, [b.id, a.id]);
-  await React.act(async () => document.querySelector('[aria-label="앞으로 이동"]').click());
-  assert.deepEqual(value.rows[0].items, [a.id, b.id]);
-  await React.act(async () => document.querySelector('[aria-label="뒤로 이동"]').click());
-  assert.deepEqual(value.rows[0].items, [b.id, a.id]);
-  await chooseTier('pool');
-  assert.deepEqual(value.rows[0].items, [b.id]);
+    hit = before ? card(before) : zone(row);
+    const rect = hit.getBoundingClientRect();
+    x = before ? rect.left + 10 : 2000;
+    y = rect.top + 30;
+    await pointer('pointermove');
+  }
+  const release = () => pointer('pointerup');
+  const escape = () =>
+    React.act(async () =>
+      window.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true })),
+    );
+  const preview = () => document.querySelector('[data-tier-placeholder]');
+  await begin(a.id, 0);
+  assert.equal(commits, 0, 'Drag preview must not mutate the draft');
+  assert.equal(preview().closest('[data-tier-drop]').dataset.tierDrop, '0');
+  assert.ok(document.querySelector('.tier-drag-overlay'));
+  await release();
+  assert.deepEqual(value.rows[0].items, [a.id]);
+  assert.equal(preview(), null);
+  for (const item of [b, c]) {
+    await begin(item.id, 0);
+    await release();
+  }
+  await begin(c.id, 0, b.id);
+  assert.equal(preview().nextElementSibling.dataset.tierItem, b.id);
+  assert.equal(preview().previousElementSibling.dataset.tierItem, a.id);
+  assert.deepEqual(value.rows[0].items, [a.id, b.id, c.id]);
+  // The preview is itself a stable hit target, even though inserting it shifts neighbours.
+  hit = preview();
+  await pointer('pointermove');
+  assert.equal(preview().nextElementSibling.dataset.tierItem, b.id);
+  await escape();
+  assert.equal(preview(), null);
+  assert.equal(document.querySelector('.tier-drag-overlay'), null);
+  assert.deepEqual(value.rows[0].items, [a.id, b.id, c.id]);
+  await begin(c.id, 0, b.id);
+  await release();
+  assert.deepEqual(value.rows[0].items, [a.id, c.id, b.id]);
+  for (const cancel of [
+    () => pointer('pointercancel'),
+    () => React.act(async () => window.dispatchEvent(new window.Event('blur'))),
+    async () => {
+      hit = document.body;
+      await release();
+    },
+  ]) {
+    await begin(b.id, 2);
+    await cancel();
+    assert.equal(preview(), null);
+    assert.deepEqual(value.rows[0].items, [a.id, c.id, b.id]);
+    assert.deepEqual(value.rows[2].items, []);
+  }
+  await begin(b.id, 2, null, true);
+  await release();
+  assert.deepEqual(value.rows[2].items, [b.id]);
+  await begin(a.id, null);
+  await release();
+  assert.deepEqual(value.rows[0].items, [c.id]);
+  assert.equal(card(a.id).closest('[data-tier-drop]').dataset.tierDrop, 'pool');
+  await React.act(async () =>
+    card(c.id).dispatchEvent(
+      new window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }),
+    ),
+  );
+  assert.deepEqual(value.rows[1].items, [c.id]);
   disabled = true;
   await React.act(async () => render());
-  await drag(a.id, () => row(1));
-  assert.deepEqual(value.rows[1].items, []);
+  await begin(a.id, 1);
+  await release();
+  assert.deepEqual(value.rows[1].items, [c.id]);
+  assert.equal(preview(), null);
   editable = false;
   await React.act(async () => render());
   assert.equal(document.querySelector('.tier-pool'), null);
-  assert.equal(document.querySelectorAll('[data-equipment]').length, 1);
-  assert.equal(document.querySelector('[data-equipment]').dataset.equipment, b.id);
+  assert.equal(document.querySelectorAll('[data-equipment]').length, 2);
   console.log(
-    'PASS: actual tier component drag/drop insertion, row transfer, pool return, tap movement/reorder, disabled state and published pool exclusion',
+    'PASS: pointer/touch dragging, insertion ghost before commit, stable middle preview, drop order, Escape/outside/cancel/blur restoration, pool return, keyboard and disabled controls',
   );
 } finally {
   await React.act(async () => root.unmount());
   dom.window.close();
-  // The temporary directory is created directly under this workspace's work folder.
   if (path.dirname(directory) === path.resolve('work'))
     await fs.rm(directory, { recursive: true, force: true });
 }
