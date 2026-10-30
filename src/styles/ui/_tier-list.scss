@@ -119,22 +119,13 @@
   position: relative;
   user-select: none;
   cursor: grab;
-  touch-action: pan-y;
+  touch-action: none;
 }
 .tier-editable .tier-item:active {
   cursor: grabbing;
 }
 .tier-editable .tier-item:focus-visible {
   outline: var(--hd-size-2) solid var(--hd-color-accent);
-}
-.tier-drag-handle {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  height: var(--hd-size-24);
-  color: var(--hd-color-text-muted);
-  touch-action: none;
-  cursor: grab;
 }
 .tier-dragging .tier-item {
   cursor: grabbing;
@@ -146,7 +137,6 @@
   border: var(--hd-size-2) dashed var(--hd-color-accent);
   background: var(--hd-color-palette-ffe34c18);
   opacity: 0.65;
-  padding-top: calc(var(--hd-space-4) + var(--hd-size-24));
 }
 .tier-drag-overlay {
   position: fixed;
@@ -291,12 +281,6 @@ a.tier-list-row:hover {
   .tier-board .tier-item {
     width: var(--hd-size-72);
     padding: var(--hd-space-2);
-  }
-  .tier-drag-handle {
-    height: var(--hd-size-32);
-  }
-  .tier-board .tier-drop-preview {
-    padding-top: calc(var(--hd-space-2) + var(--hd-size-32));
   }
   .tier-drag-overlay {
     width: var(--hd-size-72);

@@ -114,8 +114,6 @@ export default function useTierDrag({ boardRef, disabled, onDrop }) {
   }, [disabled]);
   function start(event, id) {
     if (disabled || event.button !== 0 || event.isPrimary === false) return;
-    // The card remains scrollable on phones; its grip is the dedicated touch drag surface.
-    if (event.pointerType !== 'mouse' && !event.target.closest('.tier-drag-handle')) return;
     stop.current();
     const element = event.currentTarget;
     let scroller = element.parentElement;

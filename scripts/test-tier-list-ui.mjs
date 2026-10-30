@@ -112,12 +112,16 @@ try {
       }
     });
   }
-  async function begin(id, row, before = null, touch = false) {
+  async function begin(id, row, before = null, pointerType = 'mouse', area = 'card') {
     x = 10;
     y = 300;
-    await pointer('pointerdown', touch ? card(id).querySelector('.tier-drag-handle') : card(id), {
-      pointerType: touch ? 'touch' : 'mouse',
-    });
+    const source =
+      area === 'image'
+        ? card(id).querySelector('img')
+        : area === 'name'
+          ? card(id).querySelector('.equipment-inline > span')
+          : card(id);
+    await pointer('pointerdown', source, { pointerType });
     hit = before ? card(before) : zone(row);
     const rect = hit.getBoundingClientRect();
     x = before ? rect.left + 10 : 2000;
@@ -170,7 +174,7 @@ try {
     assert.deepEqual(value.rows[0].items, [a.id, c.id, b.id]);
     assert.deepEqual(value.rows[2].items, []);
   }
-  await begin(b.id, 2, null, true);
+  await begin(b.id, 2, null, 'touch');
   await release();
   assert.deepEqual(value.rows[2].items, [b.id]);
   await begin(a.id, null);
@@ -183,6 +187,20 @@ try {
     ),
   );
   assert.deepEqual(value.rows[1].items, [c.id]);
+  for (const pointerType of ['mouse', 'touch', 'pen']) {
+    for (const area of ['image', 'name', 'card']) {
+      const before = commits;
+      await begin(a.id, 6, null, pointerType, area);
+      assert.ok(preview(), `${pointerType}: drag should start from ${area}`);
+      assert.equal(commits, before);
+      await release();
+      assert.deepEqual(value.rows[6].items, [a.id]);
+      await begin(a.id, null, null, pointerType, area);
+      await release();
+      assert.deepEqual(value.rows[6].items, []);
+    }
+  }
+  assert.equal(document.querySelector('.tier-drag-handle'), null);
   disabled = true;
   await React.act(async () => render());
   await begin(a.id, 1);

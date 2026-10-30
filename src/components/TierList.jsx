@@ -1,7 +1,6 @@
 'use client';
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { GripVertical } from 'lucide-react';
 import { equipmentForId, equipmentMatchesSearch, selectableEquipment } from '@/lib/equipment.mjs';
 import { moveTierItem, unrankedEquipment } from '@/lib/tier-list.mjs';
 import useTierDrag from '@/hooks/useTierDrag';
@@ -68,11 +67,6 @@ export default function TierList({ value, onChange, disabled = false }) {
         onKeyDown={editable ? (event) => keyboard(event, id, row) : undefined}
         onDragStart={(event) => event.preventDefault()}
       >
-        {editable && (
-          <span className="tier-drag-handle" title="잡고 끌어서 이동">
-            <GripVertical size={18} aria-hidden="true" />
-          </span>
-        )}
         <EquipmentIcon item={item} />
       </div>
     );
@@ -105,8 +99,7 @@ export default function TierList({ value, onChange, disabled = false }) {
       {editable && (
         <>
           <p className="field-hint">
-            장비를 끌어 티어에 놓으세요. 모바일에서는 장비의 ⋮⋮ 손잡이를 잡고 이동하세요. Esc 또는
-            영역 밖에 놓으면 취소됩니다.
+            장비의 어느 부분이든 잡고 끌어 티어에 놓으세요. Esc 또는 영역 밖에 놓으면 취소됩니다.
           </p>
           <span className="sr-only">
             키보드: 장비에 초점을 맞추고 위아래 방향키로 티어 이동, 좌우로 순서 변경, Delete로 대기
