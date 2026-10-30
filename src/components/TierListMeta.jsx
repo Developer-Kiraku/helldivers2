@@ -2,7 +2,7 @@ import { equipmentGroups } from '@/lib/equipment.mjs';
 
 export default function TierListMeta({ value, draft = false }) {
   return (
-    <div className="tier-meta" aria-label="티어리스트 분류">
+    <div className="tier-meta" aria-label="티어 메이커 분류">
       <span className="tier-meta-chip">
         <span className="tier-meta-label">분류</span>
         {equipmentGroups.find(([key]) => key === value.group)?.[1]}

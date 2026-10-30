@@ -70,7 +70,7 @@ function Editor({ id }) {
       setSavedAt(new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }));
       await refresh();
       notify(
-        status === 'draft' ? '나만 볼 수 있도록 임시저장했습니다.' : '티어리스트를 게시했습니다.',
+        status === 'draft' ? '나만 볼 수 있도록 임시저장했습니다.' : '티어 메이커에 게시했습니다.',
       );
       if (status === 'published') router.push(`/boards/tierlist/${data.post.id}`);
       else if (!id) router.replace(`/boards/tierlist/${data.post.id}/edit`);
@@ -94,12 +94,12 @@ function Editor({ id }) {
         }}
       >
         <Icon name="back" size={16} />
-        티어리스트 목록으로
+        티어 메이커 목록으로
       </Link>
       <header className="page-heading">
         <div>
           <div className="eyebrow">RANK YOUR ARSENAL</div>
-          <h1>티어리스트 {id ? '수정' : '만들기'}</h1>
+          <h1>티어 메이커 {id ? '수정' : '만들기'}</h1>
         </div>
       </header>
       <ol className="tier-steps" aria-label="작성 단계">
@@ -131,7 +131,7 @@ function Editor({ id }) {
                   value={title}
                   maxLength={100}
                   required
-                  placeholder="티어리스트 제목"
+                  placeholder="티어 메이커 제목"
                   onChange={(event) => {
                     setTitle(event.target.value);
                     setDirty(true);

@@ -125,7 +125,7 @@ const menu = [
   { href: '/boards/notice', label: '공지사항', icon: 'flag' },
   { href: '/boards/guide', label: '공략브리핑', icon: 'target' },
   { href: '/boards/loadout', label: '로드아웃', icon: 'crosshair' },
-  { href: '/boards/tierlist', label: '티어리스트', icon: 'poll' },
+  { href: '/boards/tierlist', label: '티어 메이커', icon: 'poll' },
   { href: '/boards/talk', label: '헬다이버톡', icon: 'talk' },
   { href: '/boards/helstagram', label: '헬스타그램', icon: 'camera' },
   { href: '/boards/qna', label: '질문상담실', icon: 'question' },

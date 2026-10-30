@@ -79,7 +79,7 @@ function StandardBoardPage({ board }) {
                 setPage({ board, count: batchSize });
               }}
             >
-              게시된 티어리스트
+              게시된 글
             </Button>
             <Button
               type="button"
@@ -186,7 +186,7 @@ function StandardBoardPage({ board }) {
         ) : board === 'tierlist' ? (
           <section
             className="tier-list-table"
-            aria-label={showDrafts ? '내 임시저장 목록' : '티어리스트 목록'}
+            aria-label={showDrafts ? '내 임시저장 목록' : '티어 메이커 목록'}
           >
             <div className="tier-list-row tier-list-head" aria-hidden="true">
               <span>글제목</span>
@@ -224,7 +224,7 @@ function StandardBoardPage({ board }) {
             ))}
             {!filtered.length && (
               <div className="empty-state">
-                {showDrafts ? '임시저장한 티어리스트가 없습니다.' : '게시된 티어리스트가 없습니다.'}
+                {showDrafts ? '임시저장한 글이 없습니다.' : '게시된 글이 없습니다.'}
               </div>
             )}
           </section>

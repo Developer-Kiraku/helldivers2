@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 
 module.exports = async function ({ guest, member, apprentice, deputy, admin }) {
-  const { emptyTierList, normalizeTierList, moveTierItem, unrankedEquipment } =
+  const { emptyTierList, normalizeTierList, moveTierItem, unrankedEquipment, tierRowLimits } =
     await import('../src/lib/tier-list.mjs');
   const { equipmentGroups, selectableEquipment, equipment } =
     await import('../src/lib/equipment.mjs');
@@ -65,6 +65,18 @@ module.exports = async function ({ guest, member, apprentice, deputy, admin }) {
   value.rows[0].name = '내가 제일 좋아함';
   await member.call(url, 'PATCH', { ...payload, tierList: value });
   assert.deepEqual((await member.call(url)).data.post.tierList, value);
+  for (const count of [tierRowLimits.min, tierRowLimits.max]) {
+    const resized = {
+      ...value,
+      rows: Array.from({ length: count }, (_, i) => ({
+        name: `등급 ${i + 1}`,
+        items: i === 0 ? [a] : [],
+      })),
+    };
+    await member.call(url, 'PATCH', { ...payload, tierList: resized });
+    assert.deepEqual((await member.call(url)).data.post.tierList, resized);
+  }
+  await member.call(url, 'PATCH', { ...payload, tierList: value });
   assert.equal(
     (await admin.call('/api/admin/logs?q=' + encodeURIComponent(payload.title))).data.total,
     0,
@@ -78,6 +90,10 @@ module.exports = async function ({ guest, member, apprentice, deputy, admin }) {
     { ...value, group: 'bad' },
     { ...value, faction: 'bad' },
     { ...value, rows: [] },
+    {
+      ...value,
+      rows: Array.from({ length: tierRowLimits.max + 1 }, () => ({ name: '초과', items: [] })),
+    },
     { ...value, rows: [{ name: '', items: [] }, ...value.rows.slice(1)] },
     { ...value, rows: [{ name: 'x'.repeat(21), items: [] }, ...value.rows.slice(1)] },
     { ...value, rows: [{ name: 'S', items: [a, a] }, ...emptyTierList().rows.slice(1)] },

@@ -299,7 +299,7 @@ async function handler(request, context) {
           const wasDraft = post.status === 'draft';
           const clean = cleanPost(input, post.board);
           if (!wasDraft && clean.status === 'draft')
-            fail(400, '게시한 티어리스트는 임시저장으로 변경할 수 없습니다.');
+            fail(400, '게시한 티어 메이커 글은 임시저장으로 변경할 수 없습니다.');
           Object.assign(post, clean, { updatedAt: now() });
           if (wasDraft && post.status !== 'draft') {
             post.createdAt = now();

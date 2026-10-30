@@ -4,7 +4,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { build } from 'esbuild';
 import { JSDOM } from 'jsdom';
-import { emptyTierList } from '../src/lib/tier-list.mjs';
+import { emptyTierList, normalizeTierList, tierRowLimits } from '../src/lib/tier-list.mjs';
 import { selectableEquipment } from '../src/lib/equipment.mjs';
 
 const dom = new JSDOM('<div id="root"></div>', { pretendToBeVisual: true });
@@ -43,7 +43,7 @@ try {
             namespace: 'controls',
           }));
           builder.onLoad({ filter: /.*/, namespace: 'controls' }, () => ({
-            contents: `import React from 'react';export const Input=p=>React.createElement('input',p);`,
+            contents: `import React from 'react';export const Input=p=>React.createElement('input',p);export const Button=p=>React.createElement('button',p);`,
             loader: 'js',
             resolveDir: process.cwd(),
           }));
@@ -254,6 +254,40 @@ try {
   await React.act(async () => render());
   assert.equal(document.querySelector('.tier-pool'), null);
   assert.equal(document.querySelectorAll('[data-equipment]').length, 2);
+  assert.equal(document.querySelector('.tier-row-controls'), null);
+  editable = true;
+  disabled = false;
+  await React.act(async () => render());
+  const addButton = () => document.querySelector('.tier-row-controls button');
+  const removeButtons = () => [...document.querySelectorAll('.tier-row-remove')];
+  await begin(a.id, 0);
+  assert.ok(addButton().disabled);
+  assert.ok(removeButtons().every((button) => button.disabled));
+  await escape();
+  await React.act(async () => addButton().click());
+  assert.equal(value.rows.length, 8);
+  assert.ok(document.querySelector('.tier-row:last-child').classList.contains('tier-color-0'));
+  await React.act(async () => removeButtons()[1].click());
+  assert.equal(value.rows.length, 7);
+  assert.equal(card(c.id).closest('[data-tier-drop]').dataset.tierDrop, 'pool');
+  assert.ok(
+    value.rows.some((row) => row.items.includes(b.id)),
+    'Other tiers retain their items',
+  );
+  while (value.rows.length > tierRowLimits.min)
+    await React.act(async () => removeButtons().at(-1).click());
+  assert.ok(removeButtons()[0].disabled);
+  assert.equal(normalizeTierList(value, { draft: true }).rows.length, 1);
+  while (value.rows.length < tierRowLimits.max) await React.act(async () => addButton().click());
+  assert.ok(addButton().disabled);
+  assert.equal(normalizeTierList(value, { draft: true }).rows.length, 12);
+  assert.throws(() => normalizeTierList({ ...value, rows: [] }, { draft: true }));
+  assert.throws(() =>
+    normalizeTierList(
+      { ...value, rows: [...value.rows, { name: '초과', items: [] }] },
+      { draft: true },
+    ),
+  );
   console.log(
     'PASS: pointer/touch dragging, insertion ghost before commit, stable middle preview, drop order, Escape/outside/cancel/blur restoration, pool return, keyboard and disabled controls',
   );

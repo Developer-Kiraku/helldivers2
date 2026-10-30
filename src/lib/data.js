@@ -2,7 +2,7 @@ import { loadoutFactions } from './loadout.mjs';
 import { equipmentGroups } from './equipment.mjs';
 export const boards = {
   tierlist: {
-    label: '티어리스트',
+    label: '티어 메이커',
     eyebrow: 'RANK YOUR ARSENAL',
     description: '나만의 장비 티어를 공유하세요.',
     categories: equipmentGroups.map(([, label]) => label),

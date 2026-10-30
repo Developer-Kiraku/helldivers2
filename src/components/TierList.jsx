@@ -2,10 +2,10 @@
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { equipmentForId, equipmentMatchesSearch, selectableEquipment } from '@/lib/equipment.mjs';
-import { moveTierItem, unrankedEquipment } from '@/lib/tier-list.mjs';
+import { moveTierItem, tierNames, tierRowLimits, unrankedEquipment } from '@/lib/tier-list.mjs';
 import useTierDrag from '@/hooks/useTierDrag';
 import { EquipmentIcon } from './EquipmentIcon';
-import { Input } from './ui';
+import { Button, Input } from './ui';
 
 export default function TierList({ value, onChange, disabled = false }) {
   const editable = Boolean(onChange);
@@ -33,6 +33,24 @@ export default function TierList({ value, onChange, disabled = false }) {
   }
   const { drag, start } = useTierDrag({ boardRef, disabled: disabled || !editable, onDrop: move });
   const activeItem = drag ? equipmentForId(drag.id) : null;
+  const controlsDisabled = disabled || Boolean(drag);
+  function addRow() {
+    if (controlsDisabled || value.rows.length >= tierRowLimits.max) return;
+    let number = value.rows.length + 1;
+    while (value.rows.some((row) => row.name === `티어 ${number}`)) number++;
+    const name = `티어 ${number}`;
+    onChange({ ...value, rows: [...value.rows, { name, items: [] }] });
+    setAnnouncement(`${name}를 추가했습니다.`);
+  }
+  function removeRow(index) {
+    if (controlsDisabled || value.rows.length <= tierRowLimits.min) return;
+    const removed = value.rows[index];
+    onChange({ ...value, rows: value.rows.filter((_, i) => i !== index) });
+    setSearch('');
+    setAnnouncement(
+      `${removed.name} 티어를 삭제하고 장비 ${removed.items.length}개를 대기로 옮겼습니다.`,
+    );
+  }
   function keyboard(event, id, row) {
     if (disabled || drag) return;
     const items = row === null ? pool : value.rows[row].items;
@@ -110,7 +128,7 @@ export default function TierList({ value, onChange, disabled = false }) {
       <div className="tier-rows">
         {value.rows.map((row, index) => (
           <section
-            className={`tier-row tier-color-${index} ${drag?.target?.row === index ? 'drop-active' : ''}`}
+            className={`tier-row tier-color-${index % tierNames.length} ${drag?.target?.row === index ? 'drop-active' : ''}`}
             key={index}
             aria-label={`${row.name} 티어`}
             data-tier-drop={index}
@@ -135,7 +153,21 @@ export default function TierList({ value, onChange, disabled = false }) {
               ) : (
                 <strong className="tier-rank-name">{row.name}</strong>
               )}
-              <small>{row.items.length}개</small>
+              <div className="tier-label-footer">
+                <small>{row.items.length}개</small>
+                {editable && (
+                  <button
+                    type="button"
+                    className="tier-row-remove"
+                    aria-label={`${index + 1}번째 티어 삭제`}
+                    title="티어 삭제 · 장비는 대기로 이동"
+                    disabled={controlsDisabled || value.rows.length <= tierRowLimits.min}
+                    onClick={() => removeRow(index)}
+                  >
+                    삭제
+                  </button>
+                )}
+              </div>
             </div>
             <div className="tier-items">
               {cards(row.items, index)}
@@ -148,6 +180,18 @@ export default function TierList({ value, onChange, disabled = false }) {
       </div>
       {editable && (
         <>
+          <div className="tier-row-controls">
+            <span>
+              티어 {value.rows.length} / {tierRowLimits.max}
+            </span>
+            <Button
+              type="button"
+              onClick={addRow}
+              disabled={controlsDisabled || value.rows.length >= tierRowLimits.max}
+            >
+              + 티어 추가
+            </Button>
+          </div>
           <section
             className={`tier-pool ${drag?.target?.row === null ? 'drop-active' : ''}`}
             aria-label="대기 장비"

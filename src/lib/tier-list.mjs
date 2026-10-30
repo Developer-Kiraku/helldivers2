@@ -2,6 +2,7 @@ import { equipmentForId, equipmentGroups, selectableEquipment } from './equipmen
 
 export const tierFactions = ['전체', '테르미닛', '오토마톤', '일루미닛'];
 export const tierNames = ['S', 'A', 'B', 'C', 'D', 'E', '모름'];
+export const tierRowLimits = { min: 1, max: 12 };
 export const emptyTierList = (group = equipmentGroups[0][0]) => ({
   group,
   faction: '전체',
@@ -11,8 +12,12 @@ export function normalizeTierList(value, { draft = false } = {}) {
   if (!value || !equipmentGroups.some(([group]) => group === value.group))
     throw Error('장비 분류를 선택해주세요.');
   if (!tierFactions.includes(value.faction)) throw Error('종족을 선택해주세요.');
-  if (!Array.isArray(value.rows) || value.rows.length !== tierNames.length)
-    throw Error('7개의 티어를 확인해주세요.');
+  if (
+    !Array.isArray(value.rows) ||
+    value.rows.length < tierRowLimits.min ||
+    value.rows.length > tierRowLimits.max
+  )
+    throw Error(`티어는 ${tierRowLimits.min}~${tierRowLimits.max}개로 설정해주세요.`);
   const seen = new Set();
   const rows = value.rows.map((row) => {
     const name = typeof row?.name === 'string' ? row.name.trim() : '';
