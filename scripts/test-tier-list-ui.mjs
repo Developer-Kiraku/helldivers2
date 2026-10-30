@@ -59,6 +59,7 @@ try {
   const render = () =>
     root.render(
       React.createElement(TierList, {
+        key: value.group,
         value,
         disabled,
         ...(editable
@@ -122,7 +123,9 @@ try {
         ? card(id).querySelector('img')
         : area === 'name'
           ? card(id).querySelector('.equipment-inline > span')
-          : card(id);
+          : area === 'effect'
+            ? card(id).querySelector('.tier-armor-effect')
+            : card(id);
     await pointer('pointerdown', source, { pointerType });
     hit = before ? card(before) : zone(row);
     const rect = hit.getBoundingClientRect();
@@ -288,6 +291,18 @@ try {
       { draft: true },
     ),
   );
+  value = emptyTierList('armor');
+  await React.act(async () => render());
+  const armor = selectableEquipment('armor')[0];
+  assert.equal(card(armor.id).querySelector('.tier-armor-effect').textContent, armor.description);
+  await begin(armor.id, 0, null, 'mouse', 'effect');
+  await release();
+  assert.deepEqual(value.rows[0].items, [armor.id]);
+  assert.equal(card(armor.id).querySelector('.tier-armor-effect'), null);
+  await begin(armor.id, null);
+  assert.equal(preview().querySelector('.tier-armor-effect').textContent, armor.description);
+  await release();
+  assert.equal(card(armor.id).querySelector('.tier-armor-effect').textContent, armor.description);
   console.log(
     'PASS: pointer/touch dragging, insertion ghost before commit, stable middle preview, drop order, Escape/outside/cancel/blur restoration, pool return, keyboard and disabled controls',
   );

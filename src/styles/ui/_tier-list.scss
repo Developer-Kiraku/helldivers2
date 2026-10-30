@@ -294,6 +294,50 @@
 .tier-pool header .ui-input {
   max-width: 60%;
 }
+.tier-pool-armor .tier-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--hd-size-240)), 1fr));
+  align-items: stretch;
+  gap: var(--hd-space-12);
+}
+.tier-board .tier-pool-armor .tier-item {
+  width: 100%;
+  padding: var(--hd-space-12);
+  border-color: var(--hd-color-border);
+  border-radius: var(--hd-radius-8);
+}
+.tier-board .tier-pool-armor .tier-item:hover,
+.tier-board .tier-pool-armor .tier-drop-preview {
+  border-color: var(--hd-color-accent);
+}
+.tier-board .tier-pool-armor .equipment-inline {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: var(--hd-space-12);
+  padding: 0;
+  background: var(--hd-color-transparent);
+  text-align: left;
+}
+.tier-board .tier-pool-armor .tier-item .equipment-inline > img {
+  flex: 0 0 var(--hd-size-40);
+  width: var(--hd-size-40);
+  height: var(--hd-size-40);
+}
+.tier-board .tier-pool-armor .tier-item .equipment-inline > span {
+  font-size: var(--hd-font-size-14);
+  font-weight: 700;
+  color: var(--hd-color-text);
+}
+.tier-board .tier-armor-effect {
+  margin: var(--hd-space-12) 0 0;
+  padding-top: var(--hd-space-12);
+  border-top: var(--hd-size-1) solid var(--hd-color-border);
+  color: var(--hd-color-text-muted);
+  font-size: var(--hd-font-size-12);
+  line-height: 1.65;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
 .tier-board .drop-active {
   outline: var(--hd-size-2) solid var(--hd-color-accent);
   outline-offset: var(--hd-size-n2);

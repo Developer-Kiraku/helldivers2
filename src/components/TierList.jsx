@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { equipmentForId, equipmentMatchesSearch, selectableEquipment } from '@/lib/equipment.mjs';
 import { moveTierItem, tierNames, tierRowLimits, unrankedEquipment } from '@/lib/tier-list.mjs';
@@ -10,6 +10,7 @@ import { Button, Input } from './ui';
 export default function TierList({ value, onChange, disabled = false }) {
   const editable = Boolean(onChange);
   const boardRef = useRef(null);
+  const descriptionId = useId();
   const [search, setSearch] = useState('');
   const [announcement, setAnnouncement] = useState('');
   const [poolOrder, setPoolOrder] = useState(() =>
@@ -69,6 +70,21 @@ export default function TierList({ value, onChange, disabled = false }) {
       move(id, target);
     }
   }
+  function itemContent(item, row, describe = false) {
+    return (
+      <>
+        <EquipmentIcon item={item} />
+        {row === null && item.group === 'armor' && (
+          <p
+            className="tier-armor-effect"
+            id={describe ? `${descriptionId}-${item.id}` : undefined}
+          >
+            {item.description || '효과 설명을 준비 중입니다.'}
+          </p>
+        )}
+      </>
+    );
+  }
   function itemCard(id, row) {
     const item = equipmentForId(id);
     if (!item) return null;
@@ -80,12 +96,15 @@ export default function TierList({ value, onChange, disabled = false }) {
         role={editable ? 'button' : undefined}
         tabIndex={editable && !disabled ? 0 : undefined}
         aria-label={editable ? `${item.label} 드래그하여 이동` : undefined}
+        aria-describedby={
+          row === null && item.group === 'armor' ? `${descriptionId}-${id}` : undefined
+        }
         aria-disabled={editable ? disabled : undefined}
         onPointerDown={editable ? (event) => start(event, id) : undefined}
         onKeyDown={editable ? (event) => keyboard(event, id, row) : undefined}
         onDragStart={(event) => event.preventDefault()}
       >
-        <EquipmentIcon item={item} />
+        {itemContent(item, row, true)}
       </div>
     );
   }
@@ -99,7 +118,7 @@ export default function TierList({ value, onChange, disabled = false }) {
         data-tier-placeholder="true"
         aria-label={`${activeItem.label} 놓을 위치`}
       >
-        <EquipmentIcon item={activeItem} />
+        {itemContent(activeItem, row)}
       </div>
     );
     const result = ids.flatMap((id) => [
@@ -193,7 +212,7 @@ export default function TierList({ value, onChange, disabled = false }) {
             </Button>
           </div>
           <section
-            className={`tier-pool ${drag?.target?.row === null ? 'drop-active' : ''}`}
+            className={`tier-pool ${value.group === 'armor' ? 'tier-pool-armor' : ''} ${drag?.target?.row === null ? 'drop-active' : ''}`}
             aria-label="대기 장비"
             data-tier-drop="pool"
           >
