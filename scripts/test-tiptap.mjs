@@ -31,27 +31,28 @@ const make = (content) =>
   });
 const loaded = make('');
 const { equipment, equipmentHtml } = await import('../src/lib/equipment.mjs');
-const gear = equipment[0];
-const gearEditor = make('<p>앞 뒤</p>');
-gearEditor
-  .chain()
-  .setTextSelection(3)
-  .insertContent({ type: 'equipment', attrs: { id: gear.id } })
-  .run();
-assert.ok(gearEditor.getText().includes(gear.token));
-const gearSaved = sanitizePostHtml(cleanEditorHtml(gearEditor.getHTML()));
-assert.ok(gearSaved.includes(equipmentHtml(gear)));
-const gearRestored = make(gearSaved);
-assert.ok(gearRestored.getText().includes(gear.token));
-let gearCount = 0;
-gearRestored.state.doc.descendants((node) => {
-  if (node.type.name === 'equipment') gearCount++;
-});
-assert.equal(gearCount, 1);
-gearEditor.commands.undo();
-assert.ok(!gearEditor.getHTML().includes('data-equipment'));
-gearEditor.destroy();
-gearRestored.destroy();
+for (const gear of [equipment[0], equipment.find((item) => item.group === 'warbond')]) {
+  const gearEditor = make('<p>앞 뒤</p>');
+  gearEditor
+    .chain()
+    .setTextSelection(3)
+    .insertContent({ type: 'equipment', attrs: { id: gear.id } })
+    .run();
+  assert.ok(gearEditor.getText().includes(gear.token));
+  const gearSaved = sanitizePostHtml(cleanEditorHtml(gearEditor.getHTML()));
+  assert.ok(gearSaved.includes(equipmentHtml(gear)));
+  const gearRestored = make(gearSaved);
+  assert.ok(gearRestored.getText().includes(gear.token));
+  let gearCount = 0;
+  gearRestored.state.doc.descendants((node) => {
+    if (node.type.name === 'equipment') gearCount++;
+  });
+  assert.equal(gearCount, 1);
+  gearEditor.commands.undo();
+  assert.ok(!gearEditor.getHTML().includes('data-equipment'));
+  gearEditor.destroy();
+  gearRestored.destroy();
+}
 const sticker = make('<p>앞 뒤</p>');
 sticker
   .chain()

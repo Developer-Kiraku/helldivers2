@@ -13,6 +13,7 @@ import {
 } from '../src/lib/equipment.mjs';
 import { sanitizePostHtml } from '../src/lib/server/post-html.mjs';
 import { postSummary } from '../src/lib/post-summary.mjs';
+import { commentDocument, commentText } from '../src/lib/comment-editor.js';
 
 assert.equal(new Set(equipment.map((item) => item.id)).size, equipment.length);
 const authorityIds = [
@@ -22,6 +23,7 @@ const authorityIds = [
   'armor-stationary-shroud',
   'stratagem-amw-20-apex',
   'stratagem-las-44-nova',
+  'warbond-scope-of-authority',
 ].sort();
 for (const query of ['권한의 범위', '권위의 가늠자', 'scope OF authority']) {
   assert.deepEqual(
@@ -67,11 +69,20 @@ for (const item of equipment) {
   assert.equal(equipmentForId(item.id), item);
   const image = await sharp(await fs.readFile(`public${item.src}`)).metadata();
   assert.equal(image.format, 'webp');
-  assert.equal(image.width, 240);
-  assert.equal(image.height, 160);
+  assert.equal(image.width, item.group === 'warbond' ? 640 : 240);
+  assert.equal(image.height, item.group === 'warbond' ? 320 : 160);
   assert.equal(sanitizePostHtml(equipmentHtml(item)), equipmentHtml(item));
 }
 const item = equipment[0];
+const warbonds = selectableEquipment('warbond');
+assert.equal(warbonds.length, 26);
+for (const warbond of warbonds) {
+  assert.ok(warbond.id.startsWith('warbond-'));
+  assert.equal(equipmentParts(warbond.token)[0].equipment, warbond);
+  assert.equal(commentText(commentDocument(warbond.token)), warbond.token);
+  assert.equal(postSummary({ content: warbond.token }), `[${warbond.label}]`);
+}
+assert.ok(equipmentMatchesSearch(equipmentForId('warbond-righteous-revenants'), '킬존'));
 const caltrops = equipmentForId('throwable-g-11-caltrops');
 const { data: pixels, info } = await sharp(`public${caltrops.src}`)
   .ensureAlpha()

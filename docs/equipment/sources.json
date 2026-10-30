@@ -3764,6 +3764,311 @@
       "checkedImage": "https://helldivers.wiki.gg/images/Tactical_Video_Camera_Stratagem_Icon_Background.svg?5dd24d",
       "section": "Other",
       "selectable": false
+    },
+    {
+      "id": "warbond-helldivers-mobilize",
+      "group": "warbond",
+      "label": "헬다이버 출동!",
+      "name": "Helldivers Mobilize!",
+      "src": "/equipment/warbond-helldivers-mobilize.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Helldivers_Mobilize_Warbond_Cover.png/1920px-Helldivers_Mobilize_Warbond_Cover.png?936af2",
+      "source": "https://helldivers.wiki.gg/wiki/Helldivers_Mobilize!_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-steeled-veterans",
+      "group": "warbond",
+      "label": "결연한 베테랑",
+      "name": "Steeled Veterans",
+      "src": "/equipment/warbond-steeled-veterans.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Steeled_Veterans_Premium_Warbond_Cover.png/1920px-Steeled_Veterans_Premium_Warbond_Cover.png?1a705f",
+      "source": "https://helldivers.wiki.gg/wiki/Steeled_Veterans_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-cutting-edge",
+      "group": "warbond",
+      "label": "최첨단",
+      "name": "Cutting Edge",
+      "src": "/equipment/warbond-cutting-edge.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Cutting_Edge_Premium_Warbond_Cover.png/1920px-Cutting_Edge_Premium_Warbond_Cover.png?96ae63",
+      "source": "https://helldivers.wiki.gg/wiki/Cutting_Edge_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-democratic-detonation",
+      "group": "warbond",
+      "label": "민주적 폭파",
+      "name": "Democratic Detonation",
+      "src": "/equipment/warbond-democratic-detonation.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Democratic_Detonation_Premium_Warbond_Cover.png/1920px-Democratic_Detonation_Premium_Warbond_Cover.png?12cf87",
+      "source": "https://helldivers.wiki.gg/wiki/Democratic_Detonation",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-polar-patriots",
+      "group": "warbond",
+      "label": "극지의 애국자",
+      "name": "Polar Patriots",
+      "src": "/equipment/warbond-polar-patriots.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Polar_Patriots_Premium_Warbond_Cover.png/1920px-Polar_Patriots_Premium_Warbond_Cover.png?538e9e",
+      "source": "https://helldivers.wiki.gg/wiki/Polar_Patriots_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-viper-commandos",
+      "group": "warbond",
+      "label": "독사 특공대",
+      "name": "Viper Commandos",
+      "src": "/equipment/warbond-viper-commandos.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Viper_Commandos_Premium_Warbond_Cover.png/1920px-Viper_Commandos_Premium_Warbond_Cover.png?d77947",
+      "source": "https://helldivers.wiki.gg/wiki/Viper_Commandos_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-freedoms-flame",
+      "group": "warbond",
+      "label": "자유의 불길",
+      "name": "Freedom's Flame",
+      "src": "/equipment/warbond-freedoms-flame.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Freedom%27s_Flame_Premium_Warbond_Cover.png/1920px-Freedom%27s_Flame_Premium_Warbond_Cover.png?f29078",
+      "source": "https://helldivers.wiki.gg/wiki/Freedom%27s_Flame_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-chemical-agents",
+      "group": "warbond",
+      "label": "화학 요원",
+      "name": "Chemical Agents",
+      "src": "/equipment/warbond-chemical-agents.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Chemical_Agents_Premium_Warbond_Cover.png/1920px-Chemical_Agents_Premium_Warbond_Cover.png?e068eb",
+      "source": "https://helldivers.wiki.gg/wiki/Chemical_Agents_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-truth-enforcers",
+      "group": "warbond",
+      "label": "진리의 집행자",
+      "name": "Truth Enforcers",
+      "src": "/equipment/warbond-truth-enforcers.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Truth_Enforcers_Premium_Warbond_Cover.png/1920px-Truth_Enforcers_Premium_Warbond_Cover.png?c30053",
+      "source": "https://helldivers.wiki.gg/wiki/Truth_Enforcers_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-urban-legends",
+      "group": "warbond",
+      "label": "도시 전설",
+      "name": "Urban Legends",
+      "src": "/equipment/warbond-urban-legends.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Urban_Legends_Premium_Warbond_Cover.png/1920px-Urban_Legends_Premium_Warbond_Cover.png?2efd60",
+      "source": "https://helldivers.wiki.gg/wiki/Urban_Legends_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-servants-of-freedom",
+      "group": "warbond",
+      "label": "자유의 종복",
+      "name": "Servants of Freedom",
+      "src": "/equipment/warbond-servants-of-freedom.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Servants_of_Freedom_Premium_Warbond_Cover.png/1920px-Servants_of_Freedom_Premium_Warbond_Cover.png?b73600",
+      "source": "https://helldivers.wiki.gg/wiki/Servants_of_Freedom_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-borderline-justice",
+      "group": "warbond",
+      "label": "정의의 경계선",
+      "name": "Borderline Justice",
+      "src": "/equipment/warbond-borderline-justice.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Borderline_Justice_Premium_Warbond_Cover.png/1920px-Borderline_Justice_Premium_Warbond_Cover.png?9e31ca",
+      "source": "https://helldivers.wiki.gg/wiki/Borderline_Justice_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30",
+      "searchAliases": [
+        "변방의 정의"
+      ]
+    },
+    {
+      "id": "warbond-masters-of-ceremony",
+      "group": "warbond",
+      "label": "의장의 달인",
+      "name": "Masters of Ceremony",
+      "src": "/equipment/warbond-masters-of-ceremony.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Masters_of_Ceremony_Premium_Warbond_Cover.png/1920px-Masters_of_Ceremony_Premium_Warbond_Cover.png?7dfccd",
+      "source": "https://helldivers.wiki.gg/wiki/Masters_of_Ceremony_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-force-of-law",
+      "group": "warbond",
+      "label": "법의 위력",
+      "name": "Force of Law",
+      "src": "/equipment/warbond-force-of-law.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Force_of_Law_Premium_Warbond_Cover.png/1920px-Force_of_Law_Premium_Warbond_Cover.png?f244cb",
+      "source": "https://helldivers.wiki.gg/wiki/Force_of_Law_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-control-group",
+      "group": "warbond",
+      "label": "대조군",
+      "name": "Control Group",
+      "src": "/equipment/warbond-control-group.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Control_Group_Premium_Warbond_Cover.png/1920px-Control_Group_Premium_Warbond_Cover.png?efc810",
+      "source": "https://helldivers.wiki.gg/wiki/Control_Group_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-dust-devils",
+      "group": "warbond",
+      "label": "먼지 폭풍",
+      "name": "Dust Devils",
+      "src": "/equipment/warbond-dust-devils.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Dust_Devils_Premium_Warbond_Cover.png/1920px-Dust_Devils_Premium_Warbond_Cover.png?9092ac",
+      "source": "https://helldivers.wiki.gg/wiki/Dust_Devils_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-python-commandos",
+      "group": "warbond",
+      "label": "금사 특공대",
+      "name": "Python Commandos",
+      "src": "/equipment/warbond-python-commandos.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Python_Commandos_Premium_Warbond_Cover.png/1920px-Python_Commandos_Premium_Warbond_Cover.png?d4fe65",
+      "source": "https://helldivers.wiki.gg/wiki/Python_Commandos_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-redacted-regiment",
+      "group": "warbond",
+      "label": "존재하지 않는 부대",
+      "name": "Redacted Regiment",
+      "src": "/equipment/warbond-redacted-regiment.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Redacted_Regiment_Premium_Warbond_Cover.png/1920px-Redacted_Regiment_Premium_Warbond_Cover.png?d879ee",
+      "source": "https://helldivers.wiki.gg/wiki/Redacted_Regiment_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-siege-breakers",
+      "group": "warbond",
+      "label": "공성 파괴자",
+      "name": "Siege Breakers",
+      "src": "/equipment/warbond-siege-breakers.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Siege_Breakers_Premium_Warbond_Cover.png/1920px-Siege_Breakers_Premium_Warbond_Cover.png?1a51ba",
+      "source": "https://helldivers.wiki.gg/wiki/Siege_Breakers_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-entrenched-division",
+      "group": "warbond",
+      "label": "견고한 참호 사단",
+      "name": "Entrenched Division",
+      "src": "/equipment/warbond-entrenched-division.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Entrenched_Division_Premium_Warbond_Cover.png/1920px-Entrenched_Division_Premium_Warbond_Cover.png?3228cb",
+      "source": "https://helldivers.wiki.gg/wiki/Entrenched_Division_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-exo-experts",
+      "group": "warbond",
+      "label": "외계 전문가",
+      "name": "Exo Experts",
+      "src": "/equipment/warbond-exo-experts.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Exo_Experts_Premium_Warbond_Cover.png/1920px-Exo_Experts_Premium_Warbond_Cover.png?5de1bd",
+      "source": "https://helldivers.wiki.gg/wiki/Exo_Experts_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-ironclad-democracy",
+      "group": "warbond",
+      "label": "철갑의 민주주의",
+      "name": "Ironclad Democracy",
+      "src": "/equipment/warbond-ironclad-democracy.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Ironclad_Democracy_Premium_Warbond_Cover.png/1920px-Ironclad_Democracy_Premium_Warbond_Cover.png?24038d",
+      "source": "https://helldivers.wiki.gg/wiki/Ironclad_Democracy_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "warbond-scope-of-authority",
+      "group": "warbond",
+      "label": "권위의 가늠자",
+      "name": "Scope of Authority",
+      "src": "/equipment/warbond-scope-of-authority.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Scope_of_Authority_Premium_Warbond_Cover.png/1920px-Scope_of_Authority_Premium_Warbond_Cover.png?ab311d",
+      "source": "https://helldivers.wiki.gg/wiki/Scope_of_Authority_Premium_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30",
+      "searchAliases": [
+        "권한의 범위"
+      ]
+    },
+    {
+      "id": "warbond-obedient-democracy-support-troopers",
+      "group": "warbond",
+      "label": "민주적 궤도 강하 타격대",
+      "name": "Obedient Democracy Support Troopers",
+      "src": "/equipment/warbond-obedient-democracy-support-troopers.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Halo_ODST_Legendary_Warbond_Cover.png/1920px-Halo_ODST_Legendary_Warbond_Cover.png?5ef14c",
+      "source": "https://helldivers.wiki.gg/wiki/Obedient_Democracy_Support_Troopers_Legendary_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30",
+      "searchAliases": [
+        "Halo",
+        "ODST",
+        "헤일로"
+      ]
+    },
+    {
+      "id": "warbond-righteous-revenants",
+      "group": "warbond",
+      "label": "정의로운 망령",
+      "name": "Righteous Revenants",
+      "src": "/equipment/warbond-righteous-revenants.webp",
+      "image": "https://helldivers.wiki.gg/images/thumb/Righteous_Revenants_Legendary_Warbond_Cover.png/1920px-Righteous_Revenants_Legendary_Warbond_Cover.png?772db8",
+      "source": "https://helldivers.wiki.gg/wiki/Righteous_Revenants_Legendary_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30",
+      "searchAliases": [
+        "Killzone",
+        "킬존"
+      ]
+    },
+    {
+      "id": "warbond-castellans-creed",
+      "group": "warbond",
+      "label": "카스텔란의 신조",
+      "name": "Castellan's Creed",
+      "src": "/equipment/warbond-castellans-creed.webp",
+      "image": "https://helldivers.wiki.gg/images/Castellan%27s_Creed_Legendary_Warbond_Cover.png?661a59",
+      "source": "https://helldivers.wiki.gg/wiki/Castellan%27s_Creed_Legendary_Warbond",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/전쟁%20채권",
+      "checkedAt": "2026-10-30",
+      "searchAliases": [
+        "Warhammer 40000",
+        "워해머"
+      ]
     }
   ],
   "recheckedAt": "2026-10-28"

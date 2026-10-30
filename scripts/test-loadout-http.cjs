@@ -26,6 +26,12 @@ module.exports = async function ({ guest, member, deputy }) {
   for (const invalid of [
     null,
     { ...loadout, primary: loadout.secondary },
+    { ...loadout, primary: selectableEquipment('warbond')[0].id },
+    { ...loadout, armor: selectableEquipment('warbond')[0].id },
+    {
+      ...loadout,
+      stratagems: [selectableEquipment('warbond')[0].id, ...loadout.stratagems.slice(1)],
+    },
     { ...loadout, armorClass: '임의' },
     { ...loadout, stratagems: loadout.stratagems.slice(1) },
     { ...loadout, stratagems: Array(4).fill(loadout.stratagems[0]) },

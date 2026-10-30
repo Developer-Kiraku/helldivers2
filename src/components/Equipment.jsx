@@ -69,7 +69,7 @@ export function EquipmentPicker({
             {matches.length}개
           </div>
           <div
-            className={`equipment-grid${(fixedGroup || group) === 'armor' ? ' armor-option-grid' : ''}`}
+            className={`equipment-grid${(fixedGroup || group) === 'armor' ? ' armor-option-grid' : ''}${(fixedGroup || group) === 'warbond' ? ' warbond-grid' : ''}`}
           >
             {matches.map((item, index) => (
               <Fragment key={item.id}>

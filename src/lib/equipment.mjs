@@ -7,6 +7,7 @@ export const equipmentGroups = [
   ['stratagem', '스트라타젬'],
   ['booster', '부스터'],
   ['armor', '방어구 옵션'],
+  ['warbond', '채권'],
 ];
 export const stratagemKinds = [
   ['support', '지원 무기'],

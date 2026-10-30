@@ -233,6 +233,21 @@
   margin: 0;
   width: 100%;
 }
+.equipment-inline[data-equipment^='warbond-'],
+.community-theme .equipment-inline[data-equipment^='warbond-'] {
+  width: var(--hd-size-240);
+}
+.equipment-inline[data-equipment^='warbond-'] > img,
+.community-theme .equipment-inline[data-equipment^='warbond-'] > img {
+  height: auto;
+  aspect-ratio: 2 / 1;
+}
+.equipment-grid.warbond-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.equipment-grid.warbond-grid .equipment-inline {
+  width: 100%;
+}
 .emoticon-draft-preview {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
