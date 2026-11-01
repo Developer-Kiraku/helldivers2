@@ -2910,13 +2910,14 @@
       "src": "/equipment/armor-acclimated.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Acclimated",
       "checkedImage": "https://helldivers.wiki.gg/images/Acclimated_Armor_Passive_Icon.svg?7f04db",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%81%EC%9D%91%EB%A0%A5",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%81%EC%9D%91%EB%A0%A5",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-adreno-defibrillator",
@@ -2928,13 +2929,14 @@
       "src": "/equipment/armor-adreno-defibrillator.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Adreno-Defibrillator",
       "checkedImage": "https://helldivers.wiki.gg/images/Adreno-Defibrillator_Armor_Passive_Icon.svg?f4dd65",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%95%84%EB%93%9C%EB%A0%88%EB%85%B8-%EC%A0%9C%EC%84%B8%EB%8F%99%EA%B8%B0",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%95%84%EB%93%9C%EB%A0%88%EB%85%B8-%EC%A0%9C%EC%84%B8%EB%8F%99%EA%B8%B0",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-advanced-filtration",
@@ -2946,13 +2948,14 @@
       "src": "/equipment/armor-advanced-filtration.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Advanced_Filtration",
       "checkedImage": "https://helldivers.wiki.gg/images/Advanced_Filtration_Armor_Passive_Icon.svg?215fd3",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B3%A0%EA%B8%89%20%EC%97%AC%EA%B3%BC",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B3%A0%EA%B8%89%20%EC%97%AC%EA%B3%BC",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-extra-padding",
@@ -2964,13 +2967,14 @@
       "src": "/equipment/armor-extra-padding.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Extra_Padding",
       "checkedImage": "https://helldivers.wiki.gg/images/Extra_Padding_Armor_Passive_Icon.svg?260561",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%B6%94%EA%B0%80%20%EC%99%84%EC%B6%A9%EC%A0%9C",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%B6%94%EA%B0%80%20%EC%99%84%EC%B6%A9%EC%A0%9C",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-blunt-force-mitigation",
@@ -2982,13 +2986,14 @@
       "src": "/equipment/armor-blunt-force-mitigation.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Blunt-Force_Mitigation",
       "checkedImage": "https://helldivers.wiki.gg/images/Blunt-Force_Mitigation_Armor_Passive_Icon.svg?218237",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%91%94%EA%B8%B0%20%EC%B6%A9%EA%B2%A9%20%EC%99%84%ED%99%94",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%91%94%EA%B8%B0%20%EC%B6%A9%EA%B2%A9%20%EC%99%84%ED%99%94",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-ballistic-padding",
@@ -3000,13 +3005,14 @@
       "src": "/equipment/armor-ballistic-padding.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Ballistic_Padding",
       "checkedImage": "https://helldivers.wiki.gg/images/Ballistic_Padding_Armor_Passive_Icon.svg?62385e",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%ED%83%84%EB%8F%84%20%EC%99%84%EC%B6%A9%EC%A0%9C",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%ED%83%84%EB%8F%84%20%EC%99%84%EC%B6%A9%EC%A0%9C",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-engineering-kit",
@@ -3018,13 +3024,14 @@
       "src": "/equipment/armor-engineering-kit.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Engineering_Kit",
       "checkedImage": "https://helldivers.wiki.gg/images/Engineering_Kit_Armor_Passive_Icon.svg?81b4af",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B3%B5%EB%B3%91%20%ED%82%A4%ED%8A%B8",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B3%B5%EB%B3%91%20%ED%82%A4%ED%8A%B8",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-med-kit",
@@ -3036,31 +3043,37 @@
       "src": "/equipment/armor-med-kit.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Med-Kit",
       "checkedImage": "https://helldivers.wiki.gg/images/Med-Kit_Armor_Passive_Icon.svg?44a7cf",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B5%AC%EA%B8%89%20%ED%82%A4%ED%8A%B8",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B5%AC%EA%B8%89%20%ED%82%A4%ED%8A%B8",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-concussive-padding-hazmat",
       "group": "armor",
-      "label": "충격 방지 패드 · 위험물",
+      "label": "충격 방지 패드, 위험물",
       "name": "Concussive Padding, Hazmat",
       "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Concussive_Padding_Armor_Passive_Icon.svg",
       "source": "https://divershub.app/database/armor/cph-26-commandant",
       "src": "/equipment/armor-concussive-padding-hazmat.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Concussive_Padding,_Hazmat",
       "checkedImage": "https://helldivers.wiki.gg/images/Concussive_Padding_Armor_Passive_Icon.svg?9c420d",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%B6%A9%EA%B2%A9%20%EB%B0%A9%EC%A7%80%20%ED%8C%A8%EB%93%9C",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://helldivers.wiki.gg/wiki/Armor_Passives",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-unavailable"
+      "descriptionWordingStatus": "korean-game-description-unavailable",
+      "previousKoreanLabels": [
+        "충격 방지 패드 · 위험물"
+      ],
+      "koreanNameVerification": "namu-variant-names-official-comma-format",
+      "koreanNameFormatSource": "https://blog.ko.playstation.com/?p=31024"
     },
     {
       "id": "armor-scout",
@@ -3072,13 +3085,14 @@
       "src": "/equipment/armor-scout.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Scout",
       "checkedImage": "https://helldivers.wiki.gg/images/Scout_Armor_Passive_Icon.svg?c505d5",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%95%EC%B0%B0",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%95%EC%B0%B0",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-desert-stormer",
@@ -3090,13 +3104,14 @@
       "src": "/equipment/armor-desert-stormer.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Desert_Stormer",
       "checkedImage": "https://helldivers.wiki.gg/images/Desert_Stormer_Armor_Passive_Icon.svg?974b97",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%82%AC%EB%A7%89%20%EB%8F%8C%EA%B2%A9%EB%8C%80",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%82%AC%EB%A7%89%20%EB%8F%8C%EA%B2%A9%EB%8C%80",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-electrical-conduit",
@@ -3108,13 +3123,14 @@
       "src": "/equipment/armor-electrical-conduit.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Electrical_Conduit",
       "checkedImage": "https://helldivers.wiki.gg/images/Electrical_Conduit_Armor_Passive_Icon.svg?79e7c4",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%84%EB%8F%84%EC%84%B1",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%84%EB%8F%84%EC%84%B1",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-fortified",
@@ -3126,13 +3142,14 @@
       "src": "/equipment/armor-fortified.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Fortified",
       "checkedImage": "https://helldivers.wiki.gg/images/Fortified_Armor_Passive_Icon.svg?b2400e",
-      "koreanNameCheckedAt": "2026-10-29",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
+      "koreanNameCheckedAt": "2026-11-01",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B0%95%ED%99%94",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B0%95%ED%99%94",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-gunslinger",
@@ -3144,13 +3161,14 @@
       "src": "/equipment/armor-gunslinger.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Gunslinger",
       "checkedImage": "https://helldivers.wiki.gg/images/Gunslinger_Armor_Passive_Icon.svg?e25d45",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%B4%9D%EC%9E%A1%EC%9D%B4",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%B4%9D%EC%9E%A1%EC%9D%B4",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-inflammable",
@@ -3162,13 +3180,14 @@
       "src": "/equipment/armor-inflammable.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Inflammable",
       "checkedImage": "https://helldivers.wiki.gg/images/Inflammable_Armor_Passive_Icon.svg?7f04db",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%9D%B8%ED%99%94%EC%84%B1%20%EB%AC%BC%EC%A7%88",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%9D%B8%ED%99%94%EC%84%B1%20%EB%AC%BC%EC%A7%88",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-integrated-explosives",
@@ -3180,13 +3199,14 @@
       "src": "/equipment/armor-integrated-explosives.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Integrated_Explosives",
       "checkedImage": "https://helldivers.wiki.gg/images/Integrated_Explosives_Armor_Passive_Icon.svg?9f426a",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%ED%86%B5%ED%95%A9%20%ED%8F%AD%EB%B0%9C%EB%AC%BC",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%ED%86%B5%ED%95%A9%20%ED%8F%AD%EB%B0%9C%EB%AC%BC",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-oxygenator",
@@ -3198,13 +3218,14 @@
       "src": "/equipment/armor-oxygenator.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Oxygenator",
       "checkedImage": "https://helldivers.wiki.gg/images/Oxygenator_Armor_Passive_Icon.svg?a794f6",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%82%B0%EC%86%8C%20%EA%B3%B5%EA%B8%89%EA%B8%B0",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://helldivers.wiki.gg/wiki/Oxygenator",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-unavailable"
+      "descriptionWordingStatus": "korean-game-description-unavailable",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-peak-physique",
@@ -3216,13 +3237,14 @@
       "src": "/equipment/armor-peak-physique.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Peak_Physique",
       "checkedImage": "https://helldivers.wiki.gg/images/Peak_Physique_Armor_Passive_Icon.svg?5522cf",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%9D%B4%EC%83%81%EC%A0%81%EC%9D%B8%20%EC%B2%B4%ED%98%95",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%9D%B4%EC%83%81%EC%A0%81%EC%9D%B8%20%EC%B2%B4%ED%98%95",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-reinforced-epaulettes",
@@ -3234,13 +3256,14 @@
       "src": "/equipment/armor-reinforced-epaulettes.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Reinforced_Epaulettes",
       "checkedImage": "https://helldivers.wiki.gg/images/Reinforced_Epaulettes_Armor_Passive_Icon.svg?24e119",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B0%95%ED%99%94%EB%90%9C%20%EA%B2%AC%EC%9E%A5",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B0%95%ED%99%94%EB%90%9C%20%EA%B2%AC%EC%9E%A5",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-rock-solid",
@@ -3252,13 +3275,14 @@
       "src": "/equipment/armor-rock-solid.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Rock_Solid",
       "checkedImage": "https://helldivers.wiki.gg/images/Rock_Solid_Armor_Passive_Icon.svg?af3f32",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B5%B3%EA%B1%B4%ED%95%9C%20%EB%B0%94%EC%9C%84",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B5%B3%EA%B1%B4%ED%95%9C%20%EB%B0%94%EC%9C%84",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-reduced-signature",
@@ -3270,13 +3294,14 @@
       "src": "/equipment/armor-reduced-signature.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Reduced_Signature",
       "checkedImage": "https://helldivers.wiki.gg/images/Reduced_Signature_Armor_Passive_Icon.svg?e78d86",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%8B%A0%ED%98%B8%20%EA%B0%90%EC%86%8C",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%8B%A0%ED%98%B8%20%EA%B0%90%EC%86%8C",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-servo-assisted",
@@ -3288,13 +3313,14 @@
       "src": "/equipment/armor-servo-assisted.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Servo-Assisted",
       "checkedImage": "https://helldivers.wiki.gg/images/Servo-Assisted_Armor_Passive_Icon.svg?7f63db",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%84%9C%EB%B3%B4%20%EB%B3%B4%EC%A1%B0",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%84%9C%EB%B3%B4%20%EB%B3%B4%EC%A1%B0",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-siege-ready",
@@ -3306,13 +3332,14 @@
       "src": "/equipment/armor-siege-ready.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Siege-Ready",
       "checkedImage": "https://helldivers.wiki.gg/images/Siege-Ready_Armor_Passive_Icon.svg?53e361",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%ED%8F%AC%EC%9C%84%20%EC%A4%80%EB%B9%84%20%EC%99%84%EB%A3%8C",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%ED%8F%AC%EC%9C%84%20%EC%A4%80%EB%B9%84%20%EC%99%84%EB%A3%8C",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-unflinching",
@@ -3324,13 +3351,14 @@
       "src": "/equipment/armor-unflinching.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Unflinching",
       "checkedImage": "https://helldivers.wiki.gg/images/Unflinching_Armor_Passive_Icon.svg?96cef1",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B2%B0%EC%97%B0%ED%95%A8",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B2%B0%EC%97%B0%ED%95%A8",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-feet-first",
@@ -3342,13 +3370,14 @@
       "src": "/equipment/armor-feet-first.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Feet_First",
       "checkedImage": "https://helldivers.wiki.gg/images/Feet_First_Armor_Passive_Icon.svg?87f23d",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%B0%9C%20%EB%A8%BC%EC%A0%80",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%B0%9C%20%EB%A8%BC%EC%A0%80",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-democracy-protects",
@@ -3360,18 +3389,19 @@
       "src": "/equipment/armor-democracy-protects.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Democracy_Protects",
       "checkedImage": "https://helldivers.wiki.gg/images/Democracy_Protects_Armor_Passive_Icon.svg?704a3b",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%AF%BC%EC%A3%BC%EC%A3%BC%EC%9D%98%EC%9D%98%20%EA%B0%80%ED%98%B8",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%AF%BC%EC%A3%BC%EC%A3%BC%EC%9D%98%EC%9D%98%20%EA%B0%80%ED%98%B8",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-kinetic-displacement-mitigation",
       "group": "armor",
-      "label": "운동량 전이 완화",
+      "label": "운동 에너지 변위 완화",
       "name": "Kinetic Displacement Mitigation",
       "image": "https://secejvpgd09sdpuq.public.blob.vercel-storage.com/Kinetic_Displacement_Mitigation_Armor_Passive_Icon.svg",
       "source": "https://divershub.app/database/armor/kdm-500-outrider",
@@ -3382,7 +3412,13 @@
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-unavailable"
+      "descriptionWordingStatus": "korean-game-description-unavailable",
+      "previousKoreanLabels": [
+        "운동량 전이 완화"
+      ],
+      "koreanNameCheckedAt": "2026-11-01",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%91%94%EA%B8%B0%20%EC%B6%A9%EA%B2%A9%20%EC%99%84%ED%99%94",
+      "koreanNameVerification": "namu-body-reference-game-screen-unverified"
     },
     {
       "id": "booster-hellpod-space-optimization",
@@ -3745,13 +3781,14 @@
       "warbond": "권위의 가늠자",
       "contentCheckedAt": "2026-10-29",
       "contentSource": "https://blog.ko.playstation.com/?p=32332",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%95%EC%A0%81%EC%9D%B8%20%EC%9E%A5%EB%A7%89",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%95%EC%A0%81%EC%9D%B8%20%EC%9E%A5%EB%A7%89",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-true-grit",
@@ -3763,49 +3800,60 @@
       "src": "/equipment/armor-true-grit.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/True_Grit",
       "checkedImage": "https://helldivers.wiki.gg/images/True_Grit_Armor_Passive_Icon.svg?4e2218",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A7%84%EC%A0%95%ED%95%9C%20%EC%9C%84%EC%9A%A9",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A7%84%EC%A0%95%ED%95%9C%20%EC%9C%84%EC%9A%A9",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "armor-concussive-padding-grenadier",
       "group": "armor",
-      "label": "충격 방지 패드 · 척탄병",
+      "label": "충격 방지 패드, 척탄병",
       "name": "Concussive Padding, Grenadier",
       "image": "https://helldivers.wiki.gg/images/Concussive_Padding_Armor_Passive_Icon.svg?9c420d",
       "source": "https://helldivers.wiki.gg/wiki/Concussive_Padding,_Grenadier",
       "src": "/equipment/armor-concussive-padding-grenadier.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Concussive_Padding,_Grenadier",
       "checkedImage": "https://helldivers.wiki.gg/images/Concussive_Padding_Armor_Passive_Icon.svg?9c420d",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%B6%A9%EA%B2%A9%20%EB%B0%A9%EC%A7%80%20%ED%8C%A8%EB%93%9C",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://helldivers.wiki.gg/wiki/Armor_Passives",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-unavailable"
+      "descriptionWordingStatus": "korean-game-description-unavailable",
+      "previousKoreanLabels": [
+        "충격 방지 패드 · 척탄병"
+      ],
+      "koreanNameVerification": "namu-variant-names-official-comma-format",
+      "koreanNameFormatSource": "https://blog.ko.playstation.com/?p=31024"
     },
     {
       "id": "armor-concussive-padding-reinforced",
       "group": "armor",
-      "label": "충격 방지 패드 · 강화",
+      "label": "충격 방지 패드, 강화",
       "name": "Concussive Padding, Reinforced",
       "image": "https://helldivers.wiki.gg/images/Concussive_Padding_Armor_Passive_Icon.svg?9c420d",
       "source": "https://helldivers.wiki.gg/wiki/Concussive_Padding,_Reinforced",
       "src": "/equipment/armor-concussive-padding-reinforced.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Concussive_Padding,_Reinforced",
       "checkedImage": "https://helldivers.wiki.gg/images/Concussive_Padding_Armor_Passive_Icon.svg?9c420d",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%B6%A9%EA%B2%A9%20%EB%B0%A9%EC%A7%80%20%ED%8C%A8%EB%93%9C",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://helldivers.wiki.gg/wiki/Concussive_Padding%2C_Reinforced",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-unavailable"
+      "descriptionWordingStatus": "korean-game-description-unavailable",
+      "previousKoreanLabels": [
+        "충격 방지 패드 · 강화"
+      ],
+      "koreanNameVerification": "namu-variant-names-official-comma-format",
+      "koreanNameFormatSource": "https://blog.ko.playstation.com/?p=31024"
     },
     {
       "id": "armor-supplemental-adrenaline",
@@ -3817,13 +3865,14 @@
       "src": "/equipment/armor-supplemental-adrenaline.webp",
       "checkedAgainst": "https://helldivers.wiki.gg/wiki/Supplemental_Adrenaline",
       "checkedImage": "https://helldivers.wiki.gg/images/Supplemental_Adrenaline_Armor_Passive_Icon.svg?85c93e",
-      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
-      "koreanNameCheckedAt": "2026-10-29",
+      "koreanNameSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%B3%B4%EA%B8%89%20%EC%95%84%EB%93%9C%EB%A0%88%EB%82%A0%EB%A6%B0",
+      "koreanNameCheckedAt": "2026-11-01",
       "descriptionSource": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%B3%B4%EA%B8%89%20%EC%95%84%EB%93%9C%EB%A0%88%EB%82%A0%EB%A6%B0",
       "descriptionCheckedAt": "2026-11-01",
       "descriptionCrossCheckedAgainst": "https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC",
       "descriptionWordingCheckedAt": "2026-11-01",
-      "descriptionWordingStatus": "korean-game-description-via-namu"
+      "descriptionWordingStatus": "korean-game-description-via-namu",
+      "koreanNameVerification": "namu-section-heading"
     },
     {
       "id": "stratagem-amw-20-apex",
