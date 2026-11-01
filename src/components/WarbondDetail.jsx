@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import ArmorDetails from './ArmorDetails';
 
 function Medal({ count }) {
   return (
@@ -111,6 +112,9 @@ export default function WarbondDetail({ warbond, pageNumber }) {
                   </span>
                 )}
               </div>
+              {item.passive?.description && (
+                <ArmorDetails id={item.passive.id} cardLabel={item.label} />
+              )}
             </article>
           ))}
         </div>

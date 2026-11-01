@@ -5,7 +5,7 @@ import { EquipmentIcon } from './EquipmentIcon';
 import { Button } from './ui';
 import Modal from './Modal';
 
-export default function ArmorDetails({ id, disabled = false }) {
+export default function ArmorDetails({ id, disabled = false, cardLabel }) {
   const [open, setOpen] = useState(false);
   const item = equipmentForId(id);
   if (item?.group !== 'armor') return null;
@@ -13,14 +13,14 @@ export default function ArmorDetails({ id, disabled = false }) {
     <>
       <Button
         type="button"
-        className="armor-details-button"
+        className={`armor-details-button${cardLabel ? ' armor-details-card-trigger' : ''}`}
         disabled={disabled}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label={`${item.label} 옵션 설명`}
+        aria-label={`${cardLabel ? `${cardLabel} · ` : ''}${item.label} 옵션 설명`}
         onClick={() => setOpen(true)}
       >
-        옵션 설명
+        {cardLabel ? '옵션 보기' : '옵션 설명'}
       </Button>
       {open && (
         <Modal title={`${item.label} · 방어구 옵션`} onClose={() => setOpen(false)}>
