@@ -31,6 +31,15 @@ export default function MobileBottomNav({ boards }) {
         <Icon name="flag" />
         <span>공지사항</span>
       </Link>
+      <Link
+        href="/warbonds"
+        aria-label="전쟁 채권 사전"
+        className={active('/warbonds') ? 'active' : ''}
+        aria-current={active('/warbonds') ? 'page' : undefined}
+      >
+        <Icon name="library" />
+        <span>채권 사전</span>
+      </Link>
       <Popover.Root open={open} onOpenChange={setOpen}>
         <Popover.Trigger>
           <Button
