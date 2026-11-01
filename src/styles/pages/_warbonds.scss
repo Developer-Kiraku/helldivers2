@@ -1,0 +1,658 @@
+@use '../tokens' as t;
+
+.warbond-library {
+  max-width: 1180px;
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+  color: var(--hd-color-input-text);
+  button,
+  a,
+  input {
+    &:focus-visible {
+      outline: 2px solid var(--hd-color-accent);
+      outline-offset: 4px;
+    }
+  }
+  button {
+    cursor: pointer;
+  }
+}
+.warbond-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 0 28px;
+  border-bottom: 1px solid var(--hd-color-border);
+}
+.warbond-eyebrow {
+  display: block;
+  color: var(--hd-color-accent);
+  font-size: var(--hd-font-size-11);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.warbond-heading h1 {
+  margin: 8px 0 10px;
+  font-size: var(--hd-font-size-28);
+  letter-spacing: -0.04em;
+}
+.warbond-heading p {
+  margin: 0;
+  color: var(--hd-color-feed-muted);
+  font-size: var(--hd-font-size-14);
+  line-height: 1.6;
+}
+.warbond-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--hd-color-border);
+  border-radius: 8px;
+  font-size: var(--hd-font-size-13);
+}
+.warbond-tools {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 0 14px;
+}
+.warbond-filters {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.warbond-filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  padding: 10px 13px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--hd-color-feed-muted);
+  font-size: var(--hd-font-size-13);
+}
+.warbond-filters button span {
+  font-size: var(--hd-font-size-11);
+  opacity: 0.7;
+}
+.warbond-filters button[aria-pressed='true'] {
+  color: var(--hd-color-accent);
+  border-color: color-mix(in srgb, var(--hd-color-accent) 25%, transparent);
+  background: color-mix(in srgb, var(--hd-color-accent) 7%, transparent);
+}
+.warbond-search {
+  display: flex;
+  align-items: center;
+  width: 280px;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--hd-color-input-border);
+  border-radius: 7px;
+  color: var(--hd-color-feed-muted);
+  background: var(--hd-color-input);
+}
+.warbond-search input {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--hd-color-input-text);
+  font-size: var(--hd-font-size-13);
+}
+.warbond-search input::-webkit-search-cancel-button {
+  display: none;
+}
+.warbond-search button {
+  display: flex;
+  padding: 3px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+.warbond-results {
+  margin: 0 0 12px;
+  color: var(--hd-color-feed-muted);
+  font-size: var(--hd-font-size-12);
+}
+.warbond-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.warbond-list-item {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 24px 12px 12px;
+  border: 1px solid var(--hd-color-border);
+  border-radius: 10px;
+  background: linear-gradient(110deg, var(--hd-color-input), var(--hd-color-background));
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color 0.18s,
+    background-color 0.18s;
+}
+.warbond-list-item:hover {
+  border-color: var(--hd-color-input-border);
+  background: var(--hd-color-input);
+}
+.warbond-cover {
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--hd-color-black);
+}
+.warbond-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2;
+  object-fit: contain;
+}
+.warbond-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--hd-color-input-border);
+  border-radius: 4px;
+  padding: 3px 7px;
+  color: var(--hd-color-tier-d);
+  font-size: var(--hd-font-size-11);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.warbond-badge.is-premium {
+  color: var(--hd-color-accent);
+  border-color: color-mix(in srgb, var(--hd-color-accent) 25%, transparent);
+}
+.warbond-badge.is-legendary {
+  color: var(--hd-color-tier-unknown);
+  border-color: color-mix(in srgb, var(--hd-color-tier-unknown) 35%, transparent);
+}
+.warbond-list-copy h2 {
+  font-size: var(--hd-font-size-20);
+  margin: 8px 0 3px;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.warbond-english {
+  font-size: var(--hd-font-size-12);
+  color: var(--hd-color-feed-muted);
+}
+.warbond-list-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 12px;
+  color: var(--hd-color-feed-muted);
+  font-size: var(--hd-font-size-12);
+}
+.warbond-list-action {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  color: var(--hd-color-feed-muted);
+}
+.warbond-list-action > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-size: var(--hd-font-size-14);
+  color: var(--hd-color-input-text);
+}
+.warbond-list-action img {
+  object-fit: contain;
+}
+.warbond-empty {
+  padding: 70px 20px;
+  text-align: center;
+  color: var(--hd-color-feed-muted);
+}
+.warbond-empty h2 {
+  font-size: var(--hd-font-size-18);
+  color: var(--hd-color-input-text);
+}
+.warbond-empty p {
+  font-size: var(--hd-font-size-14);
+}
+.warbond-empty button {
+  color: var(--hd-color-accent);
+  background: transparent;
+  border: 1px solid var(--hd-color-input-border);
+  padding: 10px 18px;
+  border-radius: 6px;
+}
+.warbond-back {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin: 4px 0 20px;
+  font-size: var(--hd-font-size-13);
+  color: var(--hd-color-feed-muted);
+}
+.warbond-hero {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.95fr) 1fr;
+  gap: 32px;
+  align-items: center;
+  border: 1px solid var(--hd-color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(120deg, var(--hd-color-input), var(--hd-color-background));
+}
+.warbond-hero-art {
+  background: var(--hd-color-black);
+  height: 100%;
+  display: grid;
+  align-items: center;
+}
+.warbond-hero-art img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.warbond-hero-copy {
+  padding: 28px 28px 28px 0;
+  min-width: 0;
+}
+.warbond-hero h1 {
+  font-size: var(--hd-font-size-28);
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  margin: 14px 0 6px;
+  overflow-wrap: anywhere;
+}
+.warbond-hero p {
+  color: var(--hd-color-feed-muted);
+  font-size: var(--hd-font-size-13);
+  margin: 0;
+}
+.warbond-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 26px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--hd-color-border);
+}
+.warbond-facts dt {
+  color: var(--hd-color-feed-muted);
+  font-size: var(--hd-font-size-11);
+  margin-bottom: 8px;
+}
+.warbond-facts dd {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--hd-font-size-16);
+  font-weight: 650;
+  white-space: nowrap;
+}
+.warbond-facts small {
+  margin-left: 2px;
+  font-size: var(--hd-font-size-11);
+  color: var(--hd-color-feed-muted);
+  font-weight: 400;
+}
+.warbond-facts dd > img {
+  object-fit: contain;
+}
+.warbond-pages {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 28px 2px 18px;
+  scrollbar-width: thin;
+}
+.warbond-pages a {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  white-space: nowrap;
+  padding: 11px 18px;
+  color: var(--hd-color-feed-muted);
+  border: 1px solid var(--hd-color-border);
+  background: var(--hd-color-input);
+  border-radius: 7px;
+  font-size: var(--hd-font-size-12);
+}
+.warbond-pages a > span {
+  font-weight: 750;
+  font-size: var(--hd-font-size-16);
+}
+.warbond-pages a[aria-current='page'] {
+  background: var(--hd-color-accent);
+  color: var(--hd-color-background);
+  border-color: var(--hd-color-accent);
+}
+.warbond-page-content {
+  padding: 24px;
+  border: 1px solid var(--hd-color-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--hd-color-input) 60%, transparent);
+}
+.warbond-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.warbond-page-heading h2 {
+  margin: 6px 0 0;
+  font-size: var(--hd-font-size-20);
+}
+.warbond-page-heading h2 > span {
+  color: var(--hd-color-feed-muted);
+  font-size: var(--hd-font-size-13);
+  font-weight: 400;
+  margin-left: 4px;
+}
+.warbond-page-cost {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--hd-color-feed-muted);
+  font-size: var(--hd-font-size-12);
+}
+.warbond-medals {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--hd-color-accent);
+  white-space: nowrap;
+}
+.warbond-medals img {
+  height: 18px;
+  width: 14px;
+  object-fit: contain;
+}
+.warbond-rewards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.warbond-reward {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--hd-color-border);
+  border-radius: 8px;
+  background: var(--hd-color-background);
+  overflow: hidden;
+}
+.warbond-reward-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 13px 0;
+  font-size: var(--hd-font-size-11);
+  color: var(--hd-color-feed-muted);
+}
+.warbond-reward-art {
+  height: 138px;
+  margin: 10px 12px 4px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--hd-color-input-border) 22%, transparent),
+    transparent 72%
+  );
+}
+.warbond-reward-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 138px;
+  object-fit: contain;
+}
+.warbond-reward.is-stratagem .warbond-reward-art img,
+.warbond-reward.is-booster .warbond-reward-art img {
+  max-width: 100px;
+  max-height: 100px;
+}
+.warbond-reward.is-credits .warbond-reward-art img {
+  max-width: 110px;
+  max-height: 110px;
+}
+.warbond-reward-copy {
+  padding: 12px 14px 16px;
+  border-top: 1px solid color-mix(in srgb, var(--hd-color-border) 60%, transparent);
+  flex: 1;
+}
+.warbond-reward h3 {
+  font-size: var(--hd-font-size-14);
+  line-height: 1.5;
+  margin: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.warbond-passive {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  color: var(--hd-color-feed-muted);
+  font-size: var(--hd-font-size-11);
+}
+.warbond-passive img {
+  object-fit: contain;
+}
+.warbond-page-bottom {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 20px 2px;
+  color: var(--hd-color-feed-muted);
+  font-size: var(--hd-font-size-12);
+}
+.warbond-page-bottom a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: start;
+  padding: 8px 0;
+  color: var(--hd-color-input-text);
+}
+.warbond-page-bottom a:last-child {
+  justify-self: end;
+}
+
+@media (max-width: t.breakpoint('content')) {
+  .warbond-hero {
+    gap: 22px;
+  }
+  .warbond-hero-copy {
+    padding: 22px 22px 22px 0;
+  }
+  .warbond-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .warbond-list-item {
+    grid-template-columns: 190px minmax(0, 1fr) auto;
+    gap: 18px;
+  }
+  .warbond-list-action {
+    gap: 12px;
+  }
+}
+@media (max-width: t.breakpoint('mobile')) {
+  .warbond-heading {
+    padding: 4px 0 20px;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .warbond-heading h1 {
+    font-size: var(--hd-font-size-24);
+  }
+  .warbond-heading p {
+    font-size: var(--hd-font-size-12);
+    max-width: 245px;
+  }
+  .warbond-count {
+    padding: 7px 9px;
+    font-size: var(--hd-font-size-11);
+    gap: 5px;
+    margin-top: 24px;
+  }
+  .warbond-count svg {
+    width: 14px;
+  }
+  .warbond-tools {
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 16px;
+  }
+  .warbond-filters {
+    gap: 4px;
+  }
+  .warbond-filters button {
+    flex: 1;
+    justify-content: center;
+    padding: 9px 5px;
+    font-size: var(--hd-font-size-12);
+  }
+  .warbond-search {
+    width: 100%;
+  }
+  .warbond-list {
+    gap: 10px;
+  }
+  .warbond-list-item {
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+    position: relative;
+  }
+  .warbond-cover {
+    align-self: start;
+    margin-top: 2px;
+  }
+  .warbond-list-copy h2 {
+    font-size: var(--hd-font-size-16);
+    margin: 7px 0 4px;
+  }
+  .warbond-english {
+    display: none;
+  }
+  .warbond-list-meta {
+    gap: 5px 10px;
+    margin-top: 8px;
+    font-size: var(--hd-font-size-11);
+  }
+  .warbond-list-meta > span:last-child {
+    display: none;
+  }
+  .warbond-list-action {
+    position: absolute;
+    left: 12px;
+    top: 78px;
+    width: 112px;
+    justify-content: center;
+  }
+  .warbond-list-action > span {
+    font-size: var(--hd-font-size-11);
+  }
+  .warbond-list-action img {
+    width: 17px;
+    height: 17px;
+  }
+  .warbond-list-action > svg {
+    display: none;
+  }
+  .warbond-badge {
+    font-size: var(--hd-font-size-10);
+    padding: 2px 5px;
+  }
+  .warbond-hero {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .warbond-hero-art img {
+    max-height: 200px;
+  }
+  .warbond-hero-copy {
+    padding: 20px;
+  }
+  .warbond-hero h1 {
+    font-size: var(--hd-font-size-24);
+    margin-top: 10px;
+  }
+  .warbond-facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 18px;
+    padding-top: 16px;
+  }
+  .warbond-facts dt {
+    font-size: var(--hd-font-size-10);
+  }
+  .warbond-facts dd {
+    font-size: var(--hd-font-size-14);
+  }
+  .warbond-facts dd > img {
+    width: 17px;
+    height: 17px;
+  }
+  .warbond-pages {
+    padding: 20px 2px 14px;
+    gap: 6px;
+  }
+  .warbond-pages a {
+    padding: 10px 15px;
+  }
+  .warbond-page-content {
+    padding: 16px 12px 12px;
+    border-radius: 9px;
+  }
+  .warbond-page-heading {
+    margin: 0 2px 16px;
+  }
+  .warbond-page-heading h2 {
+    font-size: var(--hd-font-size-18);
+  }
+  .warbond-page-cost {
+    gap: 5px;
+    font-size: var(--hd-font-size-11);
+  }
+  .warbond-rewards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .warbond-reward-top {
+    padding: 10px 10px 0;
+    font-size: var(--hd-font-size-10);
+  }
+  .warbond-reward-art {
+    height: 112px;
+    margin: 8px 8px 2px;
+  }
+  .warbond-reward-art img {
+    max-height: 112px;
+  }
+  .warbond-reward-copy {
+    padding: 10px;
+  }
+  .warbond-reward h3 {
+    font-size: var(--hd-font-size-12);
+  }
+  .warbond-passive {
+    font-size: var(--hd-font-size-10);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .warbond-list-item {
+    transition: none;
+  }
+}

@@ -124,6 +124,7 @@ async function run() {
   await import('./test-member-mute.mjs');
   await import('./test-emoticons.mjs');
   await import('./test-equipment.mjs');
+  await import('./test-warbonds.mjs');
   await import('./test-admin-share-ui.mjs');
   await import('./test-owner-setup.mjs');
   await import('./test-post-html.mjs');
@@ -202,6 +203,8 @@ async function run() {
     await require('./test-private-reports.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-emoticons-http.cjs')({ admin, deputy, member });
     await require('./test-equipment-http.cjs')({ admin, member });
+    await require('./test-warbonds-http.cjs')({ guest, member });
+    await require('./test-messages-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-member-mute-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-loadout-http.cjs')({ guest, member, deputy });
     await require('./test-tier-list-http.cjs')({ guest, member, apprentice, deputy, admin });

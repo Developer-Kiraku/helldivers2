@@ -21,6 +21,7 @@ export function CommunityProvider({ children, initialUser = null }) {
     [stats, setStats] = useState({ totalMembers: 0, onlineMembers: 0 }),
     [ready, setReady] = useState(false),
     [toast, setToast] = useState('');
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter(),
     pathname = usePathname(),
     timer = useRef(null),
@@ -84,6 +85,7 @@ export function CommunityProvider({ children, initialUser = null }) {
       if (sequence !== refreshSequence.current) return;
       if (!response.ok) throw new Error(data.error);
       setUser(data.user);
+      setUnreadMessages(data.unreadMessages || 0);
       setPosts(data.posts);
       setStats(data.stats);
     } catch (error) {
@@ -100,6 +102,34 @@ export function CommunityProvider({ children, initialUser = null }) {
     refresh();
   }, [refresh, pathname]);
   useEffect(() => () => clearTimeout(timer.current), []);
+  useEffect(() => {
+    if (!user?.id) {
+      setUnreadMessages(0);
+      return;
+    }
+    let alive = true;
+    const update = async () => {
+      if (document.visibilityState === 'hidden') return;
+      try {
+        const response = await fetch('/api/messages/unread', { cache: 'no-store' });
+        if (response.ok && alive) {
+          const data = await response.json();
+          if (alive) setUnreadMessages(data.unreadCount);
+        }
+      } catch {
+        /* A temporary connection failure must not interrupt the current page. */
+      }
+    };
+    const timer = setInterval(update, 30000);
+    window.addEventListener('focus', update);
+    document.addEventListener('visibilitychange', update);
+    return () => {
+      alive = false;
+      clearInterval(timer);
+      window.removeEventListener('focus', update);
+      document.removeEventListener('visibilitychange', update);
+    };
+  }, [user?.id]);
   useEffect(() => {
     if (!user?.mutedUntil) return;
     let timeout;
@@ -163,6 +193,8 @@ export function CommunityProvider({ children, initialUser = null }) {
         profile,
         posts,
         stats,
+        unreadMessages,
+        setUnreadMessages,
         ready: ready && loadedPath === pathname,
         notify,
         api,

@@ -15,6 +15,7 @@ import Modal from './Modal';
 import MobileBottomNav from './MobileBottomNav';
 
 function MobileBrandHeader({ signedIn, logout, role }) {
+  const { unreadMessages } = useCommunity();
   const [busy, setBusy] = useState(false),
     [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -36,6 +37,20 @@ function MobileBrandHeader({ signedIn, logout, role }) {
           <img src="/images/helldivers-logo.png" alt="HELLDIVERS II" />
           <span>HELLDIVERS 2 COMMUNITY</span>
         </Link>
+        {signedIn && (
+          <Link
+            href="/messages"
+            className="mobile-message-link"
+            aria-label={`쪽지함${unreadMessages ? `, 안 읽은 쪽지 ${unreadMessages}개` : ''}`}
+          >
+            <Icon name="mail" size={23} />
+            {unreadMessages > 0 && (
+              <span className="message-nav-count">
+                {unreadMessages > 99 ? '99+' : unreadMessages}
+              </span>
+            )}
+          </Link>
+        )}
         <Button
           type="button"
           className="mobile-auth-action"
@@ -59,6 +74,14 @@ function MobileBrandHeader({ signedIn, logout, role }) {
               >
                 <Icon name={item.icon} />
                 <span>{item.label}</span>
+                {item.href === '/messages' && unreadMessages > 0 && (
+                  <span
+                    className="message-nav-count"
+                    aria-label={`안 읽은 쪽지 ${unreadMessages}개`}
+                  >
+                    {unreadMessages > 99 ? '99+' : unreadMessages}
+                  </span>
+                )}
               </Link>
             ))}
             {signedIn && isStaff(role) && (
@@ -126,10 +149,12 @@ const menu = [
   { href: '/boards/guide', label: '공략브리핑', icon: 'target' },
   { href: '/boards/loadout', label: '로드아웃', icon: 'crosshair' },
   { href: '/boards/tierlist', label: '티어 메이커', icon: 'poll' },
+  { href: '/warbonds', label: '전쟁 채권 사전', icon: 'library' },
   { href: '/boards/talk', label: '헬다이버톡', icon: 'talk' },
   { href: '/boards/helstagram', label: '헬스타그램', icon: 'camera' },
   { href: '/boards/qna', label: '질문상담실', icon: 'question' },
   { href: '/boards/report', label: '진리부 신고', icon: 'shield' },
+  { href: '/messages', label: '쪽지함', icon: 'mail' },
 ];
 export default function Shell({ children, previewSkeleton = false }) {
   const pathname = usePathname(),
@@ -141,6 +166,7 @@ export default function Shell({ children, previewSkeleton = false }) {
     setViewRole,
     notify,
     profile,
+    unreadMessages,
     logout,
     managementMode,
     setManagementMode,
@@ -219,6 +245,11 @@ export default function Shell({ children, previewSkeleton = false }) {
             <Link key={item.href} href={item.href} className={active(item.href) ? 'active' : ''}>
               <Icon name={item.icon} />
               <span>{item.label}</span>
+              {item.href === '/messages' && unreadMessages > 0 && (
+                <span className="message-nav-count" aria-label={`안 읽은 쪽지 ${unreadMessages}개`}>
+                  {unreadMessages > 99 ? '99+' : unreadMessages}
+                </span>
+              )}
             </Link>
           ))}
           {isStaff(role) && (

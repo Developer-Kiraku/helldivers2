@@ -1,5 +1,6 @@
 import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/api-keys';
 import { bulkPosts } from '@/lib/server/bulk-posts';
+import { handleMessages, unreadMessageCount } from '@/lib/server/messages';
 import { postFormat } from '@/lib/post-move';
 import { presentationUser, viewRoleCookie, viewRoles } from '@/lib/view-role.mjs';
 import { boards } from '@/lib/data';
@@ -70,6 +71,7 @@ function safeReason(value) {
 function bootstrap(db, actor) {
   return {
     user: publicUser(actor),
+    unreadMessages: unreadMessageCount(db, actor.id),
     posts: Object.fromEntries(
       Object.keys(boards).map((board) => [
         board,
@@ -167,7 +169,10 @@ async function handler(request, context) {
     let input =
       method === 'GET'
         ? {}
-        : await readJsonRequest(request, path === 'profile' ? 1300000 : 13000000);
+        : await readJsonRequest(
+            request,
+            segments[0] === 'messages' ? 16000 : path === 'profile' ? 1300000 : 13000000,
+          );
     if (method !== 'GET')
       await readStore((db) => {
         if (presentationUser(requireUser(db, token), viewRole)?.actualRole)
@@ -199,6 +204,15 @@ async function handler(request, context) {
     }
     const result = await transaction((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
+      if (segments[0] === 'messages')
+        return handleMessages(
+          db,
+          actor,
+          segments,
+          method,
+          input,
+          new URL(request.url).searchParams,
+        );
       if (path === 'admin/posts/bulk' && method === 'POST') return bulkPosts(db, actor, input);
       if (path === 'integrations/maps' && method === 'GET') {
         const settings = mapSettings(db);

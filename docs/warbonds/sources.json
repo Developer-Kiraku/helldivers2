@@ -1,0 +1,2478 @@
+{
+  "checkedAt": "2026-11-01",
+  "notes": [
+    "Equipment names and images resolve from equipment-catalog.mjs; armor rewards are actual armor sets, not passive icons.",
+    "Reward membership and costs checked against Wiki.gg warbond page tables and acquisition-grid illustrations.",
+    "Corrected table typos using the source acquisition grids: CPG-48 helmet 30, Crest of the Unsullied card 7, TG-8 helmet 30, SS-33 helmet 30 / armor 45.",
+    "Scope of Authority table calls Boundary Banner \"Boundary Banker\" and links missing images; use the actual Boundary Banner images in its acquisition grid.",
+    "Korean labels checked against Namu and official Korean PlayStation articles; unverified translations retain the verified English item name."
+  ],
+  "koreanSources": [
+    "https://www.namu.moe/w/HELLDIVERS%202/스토어",
+    "https://www.namu.moe/w/HELLDIVERS%202/치장",
+    "https://www.namu.moe/w/HELLDIVERS%202/방어구/경량",
+    "https://www.namu.moe/w/HELLDIVERS%202/방어구/일반",
+    "https://www.namu.moe/w/HELLDIVERS%202/방어구/중량",
+    "https://blog.ko.playstation.com/2026/01/21/20260121-helldivers2/",
+    "https://blog.ko.playstation.com/?p=31024",
+    "https://blog.ko.playstation.com/2026/04/24/20260423-helldivers2/",
+    "https://blog.ko.playstation.com/?p=32145",
+    "https://blog.ko.playstation.com/?p=32332"
+  ],
+  "warbonds": [
+    {
+      "id": "warbond-helldivers-mobilize",
+      "source": "https://helldivers.wiki.gg/wiki/Helldivers_Mobilize!_Warbond",
+      "expectedMedals": 2015
+    },
+    {
+      "id": "warbond-steeled-veterans",
+      "source": "https://helldivers.wiki.gg/wiki/Steeled_Veterans_Premium_Warbond",
+      "expectedMedals": 686
+    },
+    {
+      "id": "warbond-cutting-edge",
+      "source": "https://helldivers.wiki.gg/wiki/Cutting_Edge_Premium_Warbond",
+      "expectedMedals": 672
+    },
+    {
+      "id": "warbond-democratic-detonation",
+      "source": "https://helldivers.wiki.gg/wiki/Democratic_Detonation",
+      "expectedMedals": 699
+    },
+    {
+      "id": "warbond-polar-patriots",
+      "source": "https://helldivers.wiki.gg/wiki/Polar_Patriots_Premium_Warbond",
+      "expectedMedals": 669
+    },
+    {
+      "id": "warbond-viper-commandos",
+      "source": "https://helldivers.wiki.gg/wiki/Viper_Commandos_Premium_Warbond",
+      "expectedMedals": 734
+    },
+    {
+      "id": "warbond-freedoms-flame",
+      "source": "https://helldivers.wiki.gg/wiki/Freedom%27s_Flame_Premium_Warbond",
+      "expectedMedals": 569
+    },
+    {
+      "id": "warbond-chemical-agents",
+      "source": "https://helldivers.wiki.gg/wiki/Chemical_Agents_Premium_Warbond",
+      "expectedMedals": 814
+    },
+    {
+      "id": "warbond-truth-enforcers",
+      "source": "https://helldivers.wiki.gg/wiki/Truth_Enforcers_Premium_Warbond",
+      "expectedMedals": 686
+    },
+    {
+      "id": "warbond-urban-legends",
+      "source": "https://helldivers.wiki.gg/wiki/Urban_Legends_Premium_Warbond",
+      "expectedMedals": 836
+    },
+    {
+      "id": "warbond-servants-of-freedom",
+      "source": "https://helldivers.wiki.gg/wiki/Servants_of_Freedom_Premium_Warbond",
+      "expectedMedals": 598
+    },
+    {
+      "id": "warbond-borderline-justice",
+      "source": "https://helldivers.wiki.gg/wiki/Borderline_Justice_Premium_Warbond",
+      "expectedMedals": 663
+    },
+    {
+      "id": "warbond-masters-of-ceremony",
+      "source": "https://helldivers.wiki.gg/wiki/Masters_of_Ceremony_Premium_Warbond",
+      "expectedMedals": 641
+    },
+    {
+      "id": "warbond-force-of-law",
+      "source": "https://helldivers.wiki.gg/wiki/Force_of_Law_Premium_Warbond",
+      "expectedMedals": 873
+    },
+    {
+      "id": "warbond-control-group",
+      "source": "https://helldivers.wiki.gg/wiki/Control_Group_Premium_Warbond",
+      "expectedMedals": 713
+    },
+    {
+      "id": "warbond-dust-devils",
+      "source": "https://helldivers.wiki.gg/wiki/Dust_Devils_Premium_Warbond",
+      "expectedMedals": 863
+    },
+    {
+      "id": "warbond-python-commandos",
+      "source": "https://helldivers.wiki.gg/wiki/Python_Commandos_Premium_Warbond",
+      "expectedMedals": 788
+    },
+    {
+      "id": "warbond-redacted-regiment",
+      "source": "https://helldivers.wiki.gg/wiki/Redacted_Regiment_Premium_Warbond",
+      "expectedMedals": 628
+    },
+    {
+      "id": "warbond-siege-breakers",
+      "source": "https://helldivers.wiki.gg/wiki/Siege_Breakers_Premium_Warbond",
+      "expectedMedals": 853
+    },
+    {
+      "id": "warbond-entrenched-division",
+      "source": "https://helldivers.wiki.gg/wiki/Entrenched_Division_Premium_Warbond",
+      "expectedMedals": 888
+    },
+    {
+      "id": "warbond-exo-experts",
+      "source": "https://helldivers.wiki.gg/wiki/Exo_Experts_Premium_Warbond",
+      "expectedMedals": 778
+    },
+    {
+      "id": "warbond-ironclad-democracy",
+      "source": "https://helldivers.wiki.gg/wiki/Ironclad_Democracy_Premium_Warbond",
+      "expectedMedals": 803
+    },
+    {
+      "id": "warbond-scope-of-authority",
+      "source": "https://helldivers.wiki.gg/wiki/Scope_of_Authority_Premium_Warbond",
+      "expectedMedals": 603
+    },
+    {
+      "id": "warbond-obedient-democracy-support-troopers",
+      "source": "https://helldivers.wiki.gg/wiki/Obedient_Democracy_Support_Troopers_Legendary_Warbond",
+      "expectedMedals": 637
+    },
+    {
+      "id": "warbond-righteous-revenants",
+      "source": "https://helldivers.wiki.gg/wiki/Righteous_Revenants_Legendary_Warbond",
+      "expectedMedals": 562
+    },
+    {
+      "id": "warbond-castellans-creed",
+      "source": "https://helldivers.wiki.gg/wiki/Castellan%27s_Creed_Legendary_Warbond",
+      "expectedMedals": 657
+    }
+  ],
+  "images": [
+    {
+      "id": "super-credits",
+      "name": "100 Super Credits",
+      "image": "https://helldivers.wiki.gg/images/thumb/Super_Credit.png/51px-Super_Credit.png?178851",
+      "src": "/warbonds/super-credits.webp"
+    },
+    {
+      "id": "helmet-sc-34-infiltrator",
+      "name": "SC-34 Infiltrator",
+      "image": "https://helldivers.wiki.gg/images/thumb/SC-34_Infiltrator_Helmet_Render.png/512px-SC-34_Infiltrator_Helmet_Render.png?580b38",
+      "src": "/warbonds/helmet-sc-34-infiltrator.webp"
+    },
+    {
+      "id": "suit-sc-34-infiltrator",
+      "name": "SC-34 Infiltrator",
+      "image": "https://helldivers.wiki.gg/images/thumb/SC-34_Infiltrator_Armor_Render.png/512px-SC-34_Infiltrator_Armor_Render.png?201f6e",
+      "src": "/warbonds/suit-sc-34-infiltrator.webp"
+    },
+    {
+      "id": "cape-independence-bringer",
+      "name": "Independence Bringer",
+      "image": "https://helldivers.wiki.gg/images/thumb/Independence_Bringer_Cape_Render.png/512px-Independence_Bringer_Cape_Render.png?b4fe13",
+      "src": "/warbonds/cape-independence-bringer.webp"
+    },
+    {
+      "id": "card-independence-bringer",
+      "name": "Independence Bringer",
+      "image": "https://helldivers.wiki.gg/images/Independence_Bringer_Player_Card_Icon.png?98806b",
+      "src": "/warbonds/card-independence-bringer.webp"
+    },
+    {
+      "id": "pose-clapping",
+      "name": "Clapping",
+      "image": "https://helldivers.wiki.gg/images/Clapping_Victory_Pose_Icon.png?2421fa",
+      "src": "/warbonds/pose-clapping.webp"
+    },
+    {
+      "id": "helmet-fs-05-marksman",
+      "name": "FS-05 Marksman",
+      "image": "https://helldivers.wiki.gg/images/thumb/FS-05_Marksman_Helmet_Icon.png/512px-FS-05_Marksman_Helmet_Icon.png?39037c",
+      "src": "/warbonds/helmet-fs-05-marksman.webp"
+    },
+    {
+      "id": "suit-fs-05-marksman",
+      "name": "FS-05 Marksman",
+      "image": "https://helldivers.wiki.gg/images/thumb/FS-05_Marksman_Body_Icon.png/512px-FS-05_Marksman_Body_Icon.png?2b8bcd",
+      "src": "/warbonds/suit-fs-05-marksman.webp"
+    },
+    {
+      "id": "cape-libertys-herald",
+      "name": "Liberty's Herald",
+      "image": "https://helldivers.wiki.gg/images/thumb/Liberty%27s_Herald_Cape_Render.png/512px-Liberty%27s_Herald_Cape_Render.png?b92537",
+      "src": "/warbonds/cape-libertys-herald.webp"
+    },
+    {
+      "id": "card-libertys-herald",
+      "name": "Liberty's Herald",
+      "image": "https://helldivers.wiki.gg/images/Liberty%27s_Herald_Player_Card_Icon.png?12253b",
+      "src": "/warbonds/card-libertys-herald.webp"
+    },
+    {
+      "id": "pose-finger-guns",
+      "name": "Finger Guns",
+      "image": "https://helldivers.wiki.gg/images/Finger_Guns_Victory_Pose_Icon.png?d5d94c",
+      "src": "/warbonds/pose-finger-guns.webp"
+    },
+    {
+      "id": "helmet-ce-35-trench-engineer",
+      "name": "CE-35 Trench Engineer",
+      "image": "https://helldivers.wiki.gg/images/thumb/CE-35_Trench_Engineer_Helmet_Render.png/512px-CE-35_Trench_Engineer_Helmet_Render.png?9e4d99",
+      "src": "/warbonds/helmet-ce-35-trench-engineer.webp"
+    },
+    {
+      "id": "suit-ce-35-trench-engineer",
+      "name": "CE-35 Trench Engineer",
+      "image": "https://helldivers.wiki.gg/images/thumb/CE-35_Trench_Engineer_Armor_Render.png/512px-CE-35_Trench_Engineer_Armor_Render.png?433371",
+      "src": "/warbonds/suit-ce-35-trench-engineer.webp"
+    },
+    {
+      "id": "cape-tideturner",
+      "name": "Tideturner",
+      "image": "https://helldivers.wiki.gg/images/thumb/Tideturner_Cape_Render.png/512px-Tideturner_Cape_Render.png?c7c6c6",
+      "src": "/warbonds/cape-tideturner.webp"
+    },
+    {
+      "id": "card-tideturner",
+      "name": "Tideturner",
+      "image": "https://helldivers.wiki.gg/images/Tideturner_Player_Card_Icon.png?9bb5cd",
+      "src": "/warbonds/card-tideturner.webp"
+    },
+    {
+      "id": "emote-explosive-handshake",
+      "name": "Explosive Handshake",
+      "image": "https://helldivers.wiki.gg/images/Explosive_Handshake_Emote_Icon.png?f402f3",
+      "src": "/warbonds/emote-explosive-handshake.webp"
+    },
+    {
+      "id": "helmet-cm-09-bonesnapper",
+      "name": "CM-09 Bonesnapper",
+      "image": "https://helldivers.wiki.gg/images/thumb/CM-09_Bonesnapper_Helmet_Render.png/512px-CM-09_Bonesnapper_Helmet_Render.png?d28081",
+      "src": "/warbonds/helmet-cm-09-bonesnapper.webp"
+    },
+    {
+      "id": "suit-cm-09-bonesnapper",
+      "name": "CM-09 Bonesnapper",
+      "image": "https://helldivers.wiki.gg/images/thumb/CM-09_Bonesnapper_Armor_Render.png/512px-CM-09_Bonesnapper_Armor_Render.png?118ccf",
+      "src": "/warbonds/suit-cm-09-bonesnapper.webp"
+    },
+    {
+      "id": "cape-the-cape-of-stars-and-suffrage",
+      "name": "The Cape of Stars and Suffrage",
+      "image": "https://helldivers.wiki.gg/images/thumb/The_Cape_of_Stars_and_Suffrage_Cape_Render.png/512px-The_Cape_of_Stars_and_Suffrage_Cape_Render.png?7d1002",
+      "src": "/warbonds/cape-the-cape-of-stars-and-suffrage.webp"
+    },
+    {
+      "id": "card-stars-and-suffrage",
+      "name": "Stars and Suffrage",
+      "image": "https://helldivers.wiki.gg/images/Stars_and_Suffrage_Player_Card_Icon.png?559386",
+      "src": "/warbonds/card-stars-and-suffrage.webp"
+    },
+    {
+      "id": "emote-hug",
+      "name": "Hug",
+      "image": "https://helldivers.wiki.gg/images/Hug_Emote_Icon.png?4613a3",
+      "src": "/warbonds/emote-hug.webp"
+    },
+    {
+      "id": "helmet-dp-40-hero-of-the-federation",
+      "name": "DP-40 Hero of the Federation",
+      "image": "https://helldivers.wiki.gg/images/thumb/DP-40_Hero_of_the_Federation_Helmet_Render.png/512px-DP-40_Hero_of_the_Federation_Helmet_Render.png?2cd668",
+      "src": "/warbonds/helmet-dp-40-hero-of-the-federation.webp"
+    },
+    {
+      "id": "suit-dp-40-hero-of-the-federation",
+      "name": "DP-40 Hero of the Federation",
+      "image": "https://helldivers.wiki.gg/images/thumb/DP-40_Hero_of_the_Federation_Armor_Render.png/512px-DP-40_Hero_of_the_Federation_Armor_Render.png?aaafd0",
+      "src": "/warbonds/suit-dp-40-hero-of-the-federation.webp"
+    },
+    {
+      "id": "cape-unblemished-allegiance",
+      "name": "Unblemished Allegiance",
+      "image": "https://helldivers.wiki.gg/images/thumb/Unblemished_Allegiance_Cape_Render.png/512px-Unblemished_Allegiance_Cape_Render.png?f20de8",
+      "src": "/warbonds/cape-unblemished-allegiance.webp"
+    },
+    {
+      "id": "card-unblemished-allegiance",
+      "name": "Unblemished Allegiance",
+      "image": "https://helldivers.wiki.gg/images/Unblemished_Allegiance_Player_Card_Icon.png?5f60e0",
+      "src": "/warbonds/card-unblemished-allegiance.webp"
+    },
+    {
+      "id": "emote-high-five",
+      "name": "High-Five",
+      "image": "https://helldivers.wiki.gg/images/High-Five_Emote_Icon.png?dfb584",
+      "src": "/warbonds/emote-high-five.webp"
+    },
+    {
+      "id": "helmet-fs-23-battle-master",
+      "name": "FS-23 Battle Master",
+      "image": "https://helldivers.wiki.gg/images/thumb/FS-23_Battle_Master_Helmet_Render.png/512px-FS-23_Battle_Master_Helmet_Render.png?71f73b",
+      "src": "/warbonds/helmet-fs-23-battle-master.webp"
+    },
+    {
+      "id": "suit-fs-23-battle-master",
+      "name": "FS-23 Battle Master",
+      "image": "https://helldivers.wiki.gg/images/thumb/FS-23_Battle_Master_Armor_Render.png/512px-FS-23_Battle_Master_Armor_Render.png?f7f3b7",
+      "src": "/warbonds/suit-fs-23-battle-master.webp"
+    },
+    {
+      "id": "cape-judgment-day",
+      "name": "Judgment Day",
+      "image": "https://helldivers.wiki.gg/images/thumb/Judgment_Day_Cape_Render.png/512px-Judgment_Day_Cape_Render.png?10e94e",
+      "src": "/warbonds/cape-judgment-day.webp"
+    },
+    {
+      "id": "card-judgment-day",
+      "name": "Judgment Day",
+      "image": "https://helldivers.wiki.gg/images/Judgment_Day_Player_Card_Icon.png?82c9f7",
+      "src": "/warbonds/card-judgment-day.webp"
+    },
+    {
+      "id": "pose-flex",
+      "name": "Flex",
+      "image": "https://helldivers.wiki.gg/images/Flex_Victory_Pose_Icon.png?2afeeb",
+      "src": "/warbonds/pose-flex.webp"
+    },
+    {
+      "id": "helmet-sc-30-trailblazer-scout",
+      "name": "SC-30 Trailblazer Scout",
+      "image": "https://helldivers.wiki.gg/images/thumb/SC-30_Trailblazer_Scout_Helmet_Render.png/512px-SC-30_Trailblazer_Scout_Helmet_Render.png?192d1e",
+      "src": "/warbonds/helmet-sc-30-trailblazer-scout.webp"
+    },
+    {
+      "id": "suit-sc-30-trailblazer-scout",
+      "name": "SC-30 Trailblazer Scout",
+      "image": "https://helldivers.wiki.gg/images/thumb/SC-30_Trailblazer_Scout_Armor_Render.png/512px-SC-30_Trailblazer_Scout_Armor_Render.png?391b26",
+      "src": "/warbonds/suit-sc-30-trailblazer-scout.webp"
+    },
+    {
+      "id": "cape-cresting-honor",
+      "name": "Cresting Honor",
+      "image": "https://helldivers.wiki.gg/images/thumb/Cresting_Honor_Cape_Render.png/512px-Cresting_Honor_Cape_Render.png?5158e1",
+      "src": "/warbonds/cape-cresting-honor.webp"
+    },
+    {
+      "id": "card-cresting-honor",
+      "name": "Cresting Honor",
+      "image": "https://helldivers.wiki.gg/images/Cresting_Honor_Player_Card_Icon.png?8be66b",
+      "src": "/warbonds/card-cresting-honor.webp"
+    },
+    {
+      "id": "emote-scout-handshake",
+      "name": "Scout Handshake",
+      "image": "https://helldivers.wiki.gg/images/Scout_Handshake_Emote_Icon.png?ecc1ca",
+      "src": "/warbonds/emote-scout-handshake.webp"
+    },
+    {
+      "id": "helmet-sa-04-combat-technician",
+      "name": "SA-04 Combat Technician",
+      "image": "https://helldivers.wiki.gg/images/thumb/SA-04_Combat_Technician_Helmet_Render.png/512px-SA-04_Combat_Technician_Helmet_Render.png?7c5395",
+      "src": "/warbonds/helmet-sa-04-combat-technician.webp"
+    },
+    {
+      "id": "suit-sa-04-combat-technician",
+      "name": "SA-04 Combat Technician",
+      "image": "https://helldivers.wiki.gg/images/thumb/SA-04_Combat_Technician_Armor_Render.png/512px-SA-04_Combat_Technician_Armor_Render.png?52bfe9",
+      "src": "/warbonds/suit-sa-04-combat-technician.webp"
+    },
+    {
+      "id": "cape-mantle-of-true-citizenship",
+      "name": "Mantle of True Citizenship",
+      "image": "https://helldivers.wiki.gg/images/thumb/Mantle_of_True_Citizenship_Cape_Render.png/512px-Mantle_of_True_Citizenship_Cape_Render.png?760f82",
+      "src": "/warbonds/cape-mantle-of-true-citizenship.webp"
+    },
+    {
+      "id": "card-mantle-of-true-citizenship",
+      "name": "Mantle of True Citizenship",
+      "image": "https://helldivers.wiki.gg/images/Mantle_of_True_Citizenship_Player_Card_Icon.png?4147b8",
+      "src": "/warbonds/card-mantle-of-true-citizenship.webp"
+    },
+    {
+      "id": "emote-rock-paper-scissors",
+      "name": "Rock Paper Scissors",
+      "image": "https://helldivers.wiki.gg/images/Rock_Paper_Scissors_Emote_Icon.png?911459",
+      "src": "/warbonds/emote-rock-paper-scissors.webp"
+    },
+    {
+      "id": "helmet-cm-14-physician",
+      "name": "CM-14 Physician",
+      "image": "https://helldivers.wiki.gg/images/thumb/CM-14_Physician_Helmet_Render.png/512px-CM-14_Physician_Helmet_Render.png?6d31a5",
+      "src": "/warbonds/helmet-cm-14-physician.webp"
+    },
+    {
+      "id": "suit-cm-14-physician",
+      "name": "CM-14 Physician",
+      "image": "https://helldivers.wiki.gg/images/thumb/CM-14_Physician_Armor_Render.png/512px-CM-14_Physician_Armor_Render.png?84d134",
+      "src": "/warbonds/suit-cm-14-physician.webp"
+    },
+    {
+      "id": "cape-blazing-samaritan",
+      "name": "Blazing Samaritan",
+      "image": "https://helldivers.wiki.gg/images/thumb/Blazing_Samaritan_Cape_Render.png/512px-Blazing_Samaritan_Cape_Render.png?f25d1a",
+      "src": "/warbonds/cape-blazing-samaritan.webp"
+    },
+    {
+      "id": "card-blazing-samaritan",
+      "name": "Blazing Samaritan",
+      "image": "https://helldivers.wiki.gg/images/Blazing_Samaritan_Player_Card_Icon.png?bb369e",
+      "src": "/warbonds/card-blazing-samaritan.webp"
+    },
+    {
+      "id": "pose-loosen-up",
+      "name": "Loosen Up",
+      "image": "https://helldivers.wiki.gg/images/Loosen_Up_Victory_Pose_Icon.png?abda89",
+      "src": "/warbonds/pose-loosen-up.webp"
+    },
+    {
+      "id": "helmet-dp-11-champion-of-the-people",
+      "name": "DP-11 Champion of the People",
+      "image": "https://helldivers.wiki.gg/images/thumb/DP-11_Champion_of_the_People_Helmet_Render.png/512px-DP-11_Champion_of_the_People_Helmet_Render.png?941546",
+      "src": "/warbonds/helmet-dp-11-champion-of-the-people.webp"
+    },
+    {
+      "id": "suit-dp-11-champion-of-the-people",
+      "name": "DP-11 Champion of the People",
+      "image": "https://helldivers.wiki.gg/images/thumb/DP-11_Champion_of_the_People_Armor_Render.png/512px-DP-11_Champion_of_the_People_Armor_Render.png?c3ea46",
+      "src": "/warbonds/suit-dp-11-champion-of-the-people.webp"
+    },
+    {
+      "id": "cape-light-of-eternal-liberty",
+      "name": "Light of Eternal Liberty",
+      "image": "https://helldivers.wiki.gg/images/thumb/Light_of_Eternal_Liberty_Cape_Render.png/512px-Light_of_Eternal_Liberty_Cape_Render.png?fab6d4",
+      "src": "/warbonds/cape-light-of-eternal-liberty.webp"
+    },
+    {
+      "id": "card-light-of-eternal-liberty",
+      "name": "Light of Eternal Liberty",
+      "image": "https://helldivers.wiki.gg/images/Light_of_Eternal_Liberty_Player_Card_Icon.png?896ed4",
+      "src": "/warbonds/card-light-of-eternal-liberty.webp"
+    },
+    {
+      "id": "pose-big-whoop",
+      "name": "Big Whoop",
+      "image": "https://helldivers.wiki.gg/images/Big_Whoop_Victory_Pose_Icon.png?4250bc",
+      "src": "/warbonds/pose-big-whoop.webp"
+    },
+    {
+      "id": "helmet-sa-25-steel-trooper",
+      "name": "SA-25 Steel Trooper",
+      "image": "https://helldivers.wiki.gg/images/thumb/SA-25_Steel_Trooper_Helmet_Render.png/512px-SA-25_Steel_Trooper_Helmet_Render.png?455a44",
+      "src": "/warbonds/helmet-sa-25-steel-trooper.webp"
+    },
+    {
+      "id": "suit-sa-25-steel-trooper",
+      "name": "SA-25 Steel Trooper",
+      "image": "https://helldivers.wiki.gg/images/thumb/SA-25_Steel_Trooper_Armor_Render.png/512px-SA-25_Steel_Trooper_Armor_Render.png?e5cc32",
+      "src": "/warbonds/suit-sa-25-steel-trooper.webp"
+    },
+    {
+      "id": "cape-tyrant-hunter",
+      "name": "Tyrant Hunter",
+      "image": "https://helldivers.wiki.gg/images/thumb/Tyrant_Hunter_Cape_Armory.png/512px-Tyrant_Hunter_Cape_Armory.png?7c761a",
+      "src": "/warbonds/cape-tyrant-hunter.webp"
+    },
+    {
+      "id": "card-tyrant-hunter",
+      "name": "Tyrant Hunter",
+      "image": "https://helldivers.wiki.gg/images/Tyrant_Hunter_Player_Card_Icon.png?e4b813",
+      "src": "/warbonds/card-tyrant-hunter.webp"
+    },
+    {
+      "id": "pose-super-person",
+      "name": "Super Person",
+      "image": "https://helldivers.wiki.gg/images/Super_Person_Victory_Pose_Icon.png?8adc35",
+      "src": "/warbonds/pose-super-person.webp"
+    },
+    {
+      "id": "helmet-sa-12-servo-assisted",
+      "name": "SA-12 Servo Assisted",
+      "image": "https://helldivers.wiki.gg/images/thumb/SA-12_Servo_Assisted_Helmet_Render.png/512px-SA-12_Servo_Assisted_Helmet_Render.png?43142a",
+      "src": "/warbonds/helmet-sa-12-servo-assisted.webp"
+    },
+    {
+      "id": "suit-sa-12-servo-assisted",
+      "name": "SA-12 Servo Assisted",
+      "image": "https://helldivers.wiki.gg/images/thumb/SA-12_Servo_Assisted_Armor_Render.png/512px-SA-12_Servo_Assisted_Armor_Render.png?dddc63",
+      "src": "/warbonds/suit-sa-12-servo-assisted.webp"
+    },
+    {
+      "id": "cape-cloak-of-posteritys-gratitude",
+      "name": "Cloak of Posterity's Gratitude",
+      "image": "https://helldivers.wiki.gg/images/thumb/Cloak_of_Posterity%27s_Gratitude_Cape_Armory.png/512px-Cloak_of_Posterity%27s_Gratitude_Cape_Armory.png?15daed",
+      "src": "/warbonds/cape-cloak-of-posteritys-gratitude.webp"
+    },
+    {
+      "id": "card-cloak-of-posteritys-gratitude",
+      "name": "Cloak of Posterity's Gratitude",
+      "image": "https://helldivers.wiki.gg/images/Cloak_of_Posterity%27s_Gratitude_Player_Card_Icon.png?7bb175",
+      "src": "/warbonds/card-cloak-of-posteritys-gratitude.webp"
+    },
+    {
+      "id": "cape-drape-of-glory",
+      "name": "Drape of Glory",
+      "image": "https://helldivers.wiki.gg/images/thumb/Drape_of_Glory_Cape_Render.png/512px-Drape_of_Glory_Cape_Render.png?9854ab",
+      "src": "/warbonds/cape-drape-of-glory.webp"
+    },
+    {
+      "id": "pose-roll-em",
+      "name": "Roll 'Em",
+      "image": "https://helldivers.wiki.gg/images/Roll_%27Em_Victory_Pose_Icon.png?2961f8",
+      "src": "/warbonds/pose-roll-em.webp"
+    },
+    {
+      "id": "helmet-sa-32-dynamo",
+      "name": "SA-32 Dynamo",
+      "image": "https://helldivers.wiki.gg/images/thumb/SA-32_Dynamo_Helmet_Render.png/512px-SA-32_Dynamo_Helmet_Render.png?d8d519",
+      "src": "/warbonds/helmet-sa-32-dynamo.webp"
+    },
+    {
+      "id": "suit-sa-32-dynamo",
+      "name": "SA-32 Dynamo",
+      "image": "https://helldivers.wiki.gg/images/thumb/SA-32_Dynamo_Armor_Render.png/512px-SA-32_Dynamo_Armor_Render.png?d1a59f",
+      "src": "/warbonds/suit-sa-32-dynamo.webp"
+    },
+    {
+      "id": "cape-bastion-of-integrity",
+      "name": "Bastion of Integrity",
+      "image": "https://helldivers.wiki.gg/images/thumb/Bastion_of_Integrity_Cape_Render.png/512px-Bastion_of_Integrity_Cape_Render.png?4486c2",
+      "src": "/warbonds/cape-bastion-of-integrity.webp"
+    },
+    {
+      "id": "card-bastion-of-integrity",
+      "name": "Bastion of Integrity",
+      "image": "https://helldivers.wiki.gg/images/Bastion_of_Integrity_Player_Card_Icon.png?9feb60",
+      "src": "/warbonds/card-bastion-of-integrity.webp"
+    },
+    {
+      "id": "pose-youre-next",
+      "name": "You're Next",
+      "image": "https://helldivers.wiki.gg/images/You%27re_Next_Victory_Pose_Icon.png?593fbd",
+      "src": "/warbonds/pose-youre-next.webp"
+    },
+    {
+      "id": "helmet-ex-03-prototype-3",
+      "name": "EX-03 Prototype 3",
+      "image": "https://helldivers.wiki.gg/images/thumb/EX-03_Prototype_3_Helmet_Render.png/512px-EX-03_Prototype_3_Helmet_Render.png?ea0c67",
+      "src": "/warbonds/helmet-ex-03-prototype-3.webp"
+    },
+    {
+      "id": "suit-ex-03-prototype-3",
+      "name": "EX-03 Prototype 3",
+      "image": "https://helldivers.wiki.gg/images/thumb/EX-03_Prototype_3_Armor_Render.png/512px-EX-03_Prototype_3_Armor_Render.png?995556",
+      "src": "/warbonds/suit-ex-03-prototype-3.webp"
+    },
+    {
+      "id": "cape-botslayer",
+      "name": "Botslayer",
+      "image": "https://helldivers.wiki.gg/images/thumb/Botslayer_Cape_Render.png/512px-Botslayer_Cape_Render.png?7b6345",
+      "src": "/warbonds/cape-botslayer.webp"
+    },
+    {
+      "id": "card-botslayer",
+      "name": "Botslayer",
+      "image": "https://helldivers.wiki.gg/images/Botslayer_Player_Card_Icon.png?43e349",
+      "src": "/warbonds/card-botslayer.webp"
+    },
+    {
+      "id": "pose-head-tap",
+      "name": "Head Tap",
+      "image": "https://helldivers.wiki.gg/images/Head_Tap_Victory_Pose_Icon.png?ea2ac5",
+      "src": "/warbonds/pose-head-tap.webp"
+    },
+    {
+      "id": "helmet-ex-16-prototype-16",
+      "name": "EX-16 Prototype 16",
+      "image": "https://helldivers.wiki.gg/images/thumb/EX-16_Prototype_16_Helmet_Render.png/512px-EX-16_Prototype_16_Helmet_Render.png?3f2d6f",
+      "src": "/warbonds/helmet-ex-16-prototype-16.webp"
+    },
+    {
+      "id": "suit-ex-16-prototype-16",
+      "name": "EX-16 Prototype 16",
+      "image": "https://helldivers.wiki.gg/images/thumb/EX-16_Prototype_16_Armor_Render.png/512px-EX-16_Prototype_16_Armor_Render.png?ba784e",
+      "src": "/warbonds/suit-ex-16-prototype-16.webp"
+    },
+    {
+      "id": "cape-martyris-rex",
+      "name": "Martyris Rex",
+      "image": "https://helldivers.wiki.gg/images/thumb/Martyris_Rex_Cape_Render.png/512px-Martyris_Rex_Cape_Render.png?5ae78b",
+      "src": "/warbonds/cape-martyris-rex.webp"
+    },
+    {
+      "id": "card-martyris-rex",
+      "name": "Martyris Rex",
+      "image": "https://helldivers.wiki.gg/images/Martyris_Rex_Player_Card_Icon.png?d589c1",
+      "src": "/warbonds/card-martyris-rex.webp"
+    },
+    {
+      "id": "pose-shotgun-show",
+      "name": "Shotgun Show",
+      "image": "https://helldivers.wiki.gg/images/Shotgun_Show_Victory_Pose_Icon.png?68f5e9",
+      "src": "/warbonds/pose-shotgun-show.webp"
+    },
+    {
+      "id": "helmet-ex-00-prototype-x",
+      "name": "EX-00 Prototype X",
+      "image": "https://helldivers.wiki.gg/images/thumb/EX-00_Prototype_X_Helmet_Render.png/512px-EX-00_Prototype_X_Helmet_Render.png?eae6ff",
+      "src": "/warbonds/helmet-ex-00-prototype-x.webp"
+    },
+    {
+      "id": "suit-ex-00-prototype-x",
+      "name": "EX-00 Prototype X",
+      "image": "https://helldivers.wiki.gg/images/thumb/EX-00_Prototype_X_Armor_Render.png/512px-EX-00_Prototype_X_Armor_Render.png?324843",
+      "src": "/warbonds/suit-ex-00-prototype-x.webp"
+    },
+    {
+      "id": "cape-agent-of-oblivion",
+      "name": "Agent of Oblivion",
+      "image": "https://helldivers.wiki.gg/images/thumb/Agent_of_Oblivion_Cape_Render.png/512px-Agent_of_Oblivion_Cape_Render.png?4987e9",
+      "src": "/warbonds/cape-agent-of-oblivion.webp"
+    },
+    {
+      "id": "card-agent-of-oblivion",
+      "name": "Agent of Oblivion",
+      "image": "https://helldivers.wiki.gg/images/Agent_of_Oblivion_Player_Card_Icon.png?c89c22",
+      "src": "/warbonds/card-agent-of-oblivion.webp"
+    },
+    {
+      "id": "pose-presentable",
+      "name": "Presentable",
+      "image": "https://helldivers.wiki.gg/images/Presentable_Victory_Pose_Icon.png?cdda6f",
+      "src": "/warbonds/pose-presentable.webp"
+    },
+    {
+      "id": "helmet-ce-27-ground-breaker",
+      "name": "CE-27 Ground Breaker",
+      "image": "https://helldivers.wiki.gg/images/thumb/CE-27_Ground_Breaker_Helmet_Render.png/512px-CE-27_Ground_Breaker_Helmet_Render.png?13d209",
+      "src": "/warbonds/helmet-ce-27-ground-breaker.webp"
+    },
+    {
+      "id": "suit-ce-27-ground-breaker",
+      "name": "CE-27 Ground Breaker",
+      "image": "https://helldivers.wiki.gg/images/thumb/CE-27_Ground_Breaker_Armor_Render.png/512px-CE-27_Ground_Breaker_Armor_Render.png?f31adb",
+      "src": "/warbonds/suit-ce-27-ground-breaker.webp"
+    },
+    {
+      "id": "cape-harbinger-of-true-equality",
+      "name": "Harbinger of True Equality",
+      "image": "https://helldivers.wiki.gg/images/thumb/Harbinger_of_True_Equality_Cape_Render.png/512px-Harbinger_of_True_Equality_Cape_Render.png?5f6b6d",
+      "src": "/warbonds/cape-harbinger-of-true-equality.webp"
+    },
+    {
+      "id": "card-harbinger-of-true-equality",
+      "name": "Harbinger of True Equality",
+      "image": "https://helldivers.wiki.gg/images/Harbinger_of_True_Equality_Player_Card_Icon.png?9060a6",
+      "src": "/warbonds/card-harbinger-of-true-equality.webp"
+    },
+    {
+      "id": "pose-squat",
+      "name": "Squat",
+      "image": "https://helldivers.wiki.gg/images/Squat_Victory_Pose_Icon.png?ffddf4",
+      "src": "/warbonds/pose-squat.webp"
+    },
+    {
+      "id": "helmet-ce-07-demolition-specialist",
+      "name": "CE-07 Demolition Specialist",
+      "image": "https://helldivers.wiki.gg/images/thumb/CE-07_Demolition_Specialist_Helmet_Render.png/512px-CE-07_Demolition_Specialist_Helmet_Render.png?12d640",
+      "src": "/warbonds/helmet-ce-07-demolition-specialist.webp"
+    },
+    {
+      "id": "suit-ce-07-demolition-specialist",
+      "name": "CE-07 Demolition Specialist",
+      "image": "https://helldivers.wiki.gg/images/thumb/CE-07_Demolition_Specialist_Armor_Render.png/512px-CE-07_Demolition_Specialist_Armor_Render.png?f2b4fb",
+      "src": "/warbonds/suit-ce-07-demolition-specialist.webp"
+    },
+    {
+      "id": "cape-eagles-fury",
+      "name": "Eagle's Fury",
+      "image": "https://helldivers.wiki.gg/images/thumb/Eagle%27s_Fury_Cape_Render.png/512px-Eagle%27s_Fury_Cape_Render.png?5e297b",
+      "src": "/warbonds/cape-eagles-fury.webp"
+    },
+    {
+      "id": "card-eagles-fury",
+      "name": "Eagle's Fury",
+      "image": "https://helldivers.wiki.gg/images/Eagle%27s_Fury_Player_Card_Icon.png?a7899a",
+      "src": "/warbonds/card-eagles-fury.webp"
+    },
+    {
+      "id": "pose-courtly-bow",
+      "name": "Courtly Bow",
+      "image": "https://helldivers.wiki.gg/images/Courtly_Bow_Victory_Pose_Icon.png?d80c5c",
+      "src": "/warbonds/pose-courtly-bow.webp"
+    },
+    {
+      "id": "helmet-fs-55-devastator",
+      "name": "FS-55 Devastator",
+      "image": "https://helldivers.wiki.gg/images/thumb/FS-55_Devastator_Helmet_Render.png/512px-FS-55_Devastator_Helmet_Render.png?8adf41",
+      "src": "/warbonds/helmet-fs-55-devastator.webp"
+    },
+    {
+      "id": "suit-fs-55-devastator",
+      "name": "FS-55 Devastator",
+      "image": "https://helldivers.wiki.gg/images/thumb/FS-55_Devastator_Armor_Render.png/512px-FS-55_Devastator_Armor_Render.png?d45cb6",
+      "src": "/warbonds/suit-fs-55-devastator.webp"
+    },
+    {
+      "id": "cape-freedoms-tapestry",
+      "name": "Freedom's Tapestry",
+      "image": "https://helldivers.wiki.gg/images/thumb/Freedom%27s_Tapestry_Cape_Render.png/512px-Freedom%27s_Tapestry_Cape_Render.png?a4a8a5",
+      "src": "/warbonds/cape-freedoms-tapestry.webp"
+    },
+    {
+      "id": "card-freedoms-tapestry",
+      "name": "Freedom's Tapestry",
+      "image": "https://helldivers.wiki.gg/images/Freedom%27s_Tapestry_Player_Card_Icon.png?d89a0a",
+      "src": "/warbonds/card-freedoms-tapestry.webp"
+    },
+    {
+      "id": "pose-boxer",
+      "name": "Boxer",
+      "image": "https://helldivers.wiki.gg/images/Boxer_Victory_Pose_Icon.png?5ba5ff",
+      "src": "/warbonds/pose-boxer.webp"
+    },
+    {
+      "id": "helmet-cw-36-winter-warrior",
+      "name": "CW-36 Winter Warrior",
+      "image": "https://helldivers.wiki.gg/images/thumb/CW-36_Winter_Warrior_Helmet_Render.png/512px-CW-36_Winter_Warrior_Helmet_Render.png?285bfb",
+      "src": "/warbonds/helmet-cw-36-winter-warrior.webp"
+    },
+    {
+      "id": "suit-cw-36-winter-warrior",
+      "name": "CW-36 Winter Warrior",
+      "image": "https://helldivers.wiki.gg/images/thumb/CW-36_Winter_Warrior_Armor_Render.png/512px-CW-36_Winter_Warrior_Armor_Render.png?808eaf",
+      "src": "/warbonds/suit-cw-36-winter-warrior.webp"
+    },
+    {
+      "id": "cape-dissidents-nightmare",
+      "name": "Dissident's Nightmare",
+      "image": "https://helldivers.wiki.gg/images/thumb/Dissident%27s_Nightmare_Cape_Armory.png/512px-Dissident%27s_Nightmare_Cape_Armory.png?3c7d97",
+      "src": "/warbonds/cape-dissidents-nightmare.webp"
+    },
+    {
+      "id": "card-dissidents-nightmare",
+      "name": "Dissident's Nightmare",
+      "image": "https://helldivers.wiki.gg/images/Dissident%27s_Nightmare_Player_Card_Icon.png?15b490",
+      "src": "/warbonds/card-dissidents-nightmare.webp"
+    },
+    {
+      "id": "pose-mime-instrumentation",
+      "name": "Mime Instrumentation",
+      "image": "https://helldivers.wiki.gg/images/Mime_Instrumentation_Victory_Pose_Icon.png?e41a3b",
+      "src": "/warbonds/pose-mime-instrumentation.webp"
+    },
+    {
+      "id": "helmet-cw-22-kodiak",
+      "name": "CW-22 Kodiak",
+      "image": "https://helldivers.wiki.gg/images/thumb/CW-22_Kodiak_Helmet_Render.png/512px-CW-22_Kodiak_Helmet_Render.png?d53d82",
+      "src": "/warbonds/helmet-cw-22-kodiak.webp"
+    },
+    {
+      "id": "suit-cw-22-kodiak",
+      "name": "CW-22 Kodiak",
+      "image": "https://helldivers.wiki.gg/images/thumb/CW-22_Kodiak_Armor_Render.png/512px-CW-22_Kodiak_Armor_Render.png?43ff69",
+      "src": "/warbonds/suit-cw-22-kodiak.webp"
+    },
+    {
+      "id": "cape-pinions-of-everlasting-glory",
+      "name": "Pinions of Everlasting Glory",
+      "image": "https://helldivers.wiki.gg/images/thumb/Pinions_of_Everlasting_Glory_Cape_Render.png/512px-Pinions_of_Everlasting_Glory_Cape_Render.png?31a7c0",
+      "src": "/warbonds/cape-pinions-of-everlasting-glory.webp"
+    },
+    {
+      "id": "card-pinions-of-everlasting-glory",
+      "name": "Pinions of Everlasting Glory",
+      "image": "https://helldivers.wiki.gg/images/Pinions_of_Everlasting_Glory_Player_Card_Icon.png?ef43f5",
+      "src": "/warbonds/card-pinions-of-everlasting-glory.webp"
+    },
+    {
+      "id": "pose-call-the-helldivers",
+      "name": "Call the Helldivers",
+      "image": "https://helldivers.wiki.gg/images/Call_the_Helldivers_Victory_Pose_Icon.png?de6605",
+      "src": "/warbonds/pose-call-the-helldivers.webp"
+    },
+    {
+      "id": "helmet-cw-4-arctic-ranger",
+      "name": "CW-4 Arctic Ranger",
+      "image": "https://helldivers.wiki.gg/images/thumb/CW-4_Arctic_Ranger_Helmet_Render.png/512px-CW-4_Arctic_Ranger_Helmet_Render.png?40ed57",
+      "src": "/warbonds/helmet-cw-4-arctic-ranger.webp"
+    },
+    {
+      "id": "suit-cw-4-arctic-ranger",
+      "name": "CW-4 Arctic Ranger",
+      "image": "https://helldivers.wiki.gg/images/thumb/CW-4_Arctic_Ranger_Armor_Render.png/512px-CW-4_Arctic_Ranger_Armor_Render.png?244883",
+      "src": "/warbonds/suit-cw-4-arctic-ranger.webp"
+    },
+    {
+      "id": "cape-order-of-the-venerated-ballot",
+      "name": "Order of the Venerated Ballot",
+      "image": "https://helldivers.wiki.gg/images/thumb/Order_of_the_Venerated_Ballot_Cape_Render.png/512px-Order_of_the_Venerated_Ballot_Cape_Render.png?d1537a",
+      "src": "/warbonds/cape-order-of-the-venerated-ballot.webp"
+    },
+    {
+      "id": "card-order-of-the-venerated-ballot",
+      "name": "Order of the Venerated Ballot",
+      "image": "https://helldivers.wiki.gg/images/Order_of_the_Venerated_Ballot_Player_Card_Icon.png?cca7bd",
+      "src": "/warbonds/card-order-of-the-venerated-ballot.webp"
+    },
+    {
+      "id": "pose-distribute-ballots",
+      "name": "Distribute Ballots",
+      "image": "https://helldivers.wiki.gg/images/Distribute_Ballots_Victory_Pose_Icon.png?504152",
+      "src": "/warbonds/pose-distribute-ballots.webp"
+    },
+    {
+      "id": "helmet-ph-9-predator",
+      "name": "PH-9 Predator",
+      "image": "https://helldivers.wiki.gg/images/thumb/PH-9_Predator_Helmet_Icon.png/512px-PH-9_Predator_Helmet_Icon.png?3be380",
+      "src": "/warbonds/helmet-ph-9-predator.webp"
+    },
+    {
+      "id": "suit-ph-9-predator",
+      "name": "PH-9 Predator",
+      "image": "https://helldivers.wiki.gg/images/thumb/PH-9_Predator_Body_Icon.png/512px-PH-9_Predator_Body_Icon.png?24742c",
+      "src": "/warbonds/suit-ph-9-predator.webp"
+    },
+    {
+      "id": "cape-mark-of-the-crimson-fang",
+      "name": "Mark of the Crimson Fang",
+      "image": "https://helldivers.wiki.gg/images/Mark_of_the_Crimson_Fang_Cape_Armory.png?d764bf",
+      "src": "/warbonds/cape-mark-of-the-crimson-fang.webp"
+    },
+    {
+      "id": "card-mark-of-the-crimson-fang",
+      "name": "Mark of the Crimson Fang",
+      "image": "https://helldivers.wiki.gg/images/Mark_of_the_Crimson_Fang_Player_Card_Icon.png?be2055",
+      "src": "/warbonds/card-mark-of-the-crimson-fang.webp"
+    },
+    {
+      "id": "pose-welcome-adoration",
+      "name": "Welcome Adoration",
+      "image": "https://helldivers.wiki.gg/images/Welcome_Adoration_Victory_Pose_Icon.png?a7660c",
+      "src": "/warbonds/pose-welcome-adoration.webp"
+    },
+    {
+      "id": "pattern-undergrowth-hellpod",
+      "name": "Undergrowth Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Undergrowth_Hellpod_Pattern_Icon.png?5b23ae",
+      "src": "/warbonds/pattern-undergrowth-hellpod.webp"
+    },
+    {
+      "id": "helmet-ph-202-twigsnapper",
+      "name": "PH-202 Twigsnapper",
+      "image": "https://helldivers.wiki.gg/images/thumb/PH-202_Twigsnapper_Helmet_Render.png/512px-PH-202_Twigsnapper_Helmet_Render.png?ae0b79",
+      "src": "/warbonds/helmet-ph-202-twigsnapper.webp"
+    },
+    {
+      "id": "suit-ph-202-twigsnapper",
+      "name": "PH-202 Twigsnapper",
+      "image": "https://helldivers.wiki.gg/images/thumb/PH-202_Twigsnapper_Armor_Render.png/512px-PH-202_Twigsnapper_Armor_Render.png?d2a694",
+      "src": "/warbonds/suit-ph-202-twigsnapper.webp"
+    },
+    {
+      "id": "cape-executioners-canopy",
+      "name": "Executioner's Canopy",
+      "image": "https://helldivers.wiki.gg/images/Executioner%27s_Canopy_Cape_Armory.png?7f968e",
+      "src": "/warbonds/cape-executioners-canopy.webp"
+    },
+    {
+      "id": "card-executioners-canopy",
+      "name": "Executioner's Canopy",
+      "image": "https://helldivers.wiki.gg/images/Executioner%27s_Canopy_Player_Card_Icon.png?d5244e",
+      "src": "/warbonds/card-executioners-canopy.webp"
+    },
+    {
+      "id": "pose-guns-of-liberty",
+      "name": "Guns of Liberty",
+      "image": "https://helldivers.wiki.gg/images/Guns_of_Liberty_Victory_Pose_Icon.png?efb452",
+      "src": "/warbonds/pose-guns-of-liberty.webp"
+    },
+    {
+      "id": "pattern-undergrowth-shuttle",
+      "name": "Undergrowth Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Undergrowth_Shuttle_Pattern_Icon.png?46af23",
+      "src": "/warbonds/pattern-undergrowth-shuttle.webp"
+    },
+    {
+      "id": "title-viper-commando",
+      "name": "Viper Commando",
+      "image": "https://helldivers.wiki.gg/images/Viper_Commando_Title_Icon.svg?2d0d41",
+      "src": "/warbonds/title-viper-commando.webp"
+    },
+    {
+      "id": "emote-test-of-conviction",
+      "name": "Test of Conviction",
+      "image": "https://helldivers.wiki.gg/images/Test_of_Conviction_Emote_Icon.png?700b89",
+      "src": "/warbonds/emote-test-of-conviction.webp"
+    },
+    {
+      "id": "pattern-undergrowth-exosuit",
+      "name": "Undergrowth Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Undergrowth_Exosuit_Pattern_Icon.png?1f9540",
+      "src": "/warbonds/pattern-undergrowth-exosuit.webp"
+    },
+    {
+      "id": "pattern-undergrowth-vehicle",
+      "name": "Undergrowth Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Undergrowth_Vehicle_Pattern_Icon.png?a5b7c0",
+      "src": "/warbonds/pattern-undergrowth-vehicle.webp"
+    },
+    {
+      "id": "helmet-i-09-heatseeker",
+      "name": "I-09 Heatseeker",
+      "image": "https://helldivers.wiki.gg/images/thumb/I-09_Heatseeker_Helmet_Render.png/512px-I-09_Heatseeker_Helmet_Render.png?dfc57b",
+      "src": "/warbonds/helmet-i-09-heatseeker.webp"
+    },
+    {
+      "id": "suit-i-09-heatseeker",
+      "name": "I-09 Heatseeker",
+      "image": "https://helldivers.wiki.gg/images/thumb/I-09_Heatseeker_Armor_Render.png/512px-I-09_Heatseeker_Armor_Render.png?7577df",
+      "src": "/warbonds/suit-i-09-heatseeker.webp"
+    },
+    {
+      "id": "cape-purifying-eclipse",
+      "name": "Purifying Eclipse",
+      "image": "https://helldivers.wiki.gg/images/thumb/Purifying_Eclipse_Cape_Render.png/512px-Purifying_Eclipse_Cape_Render.png?f942e2",
+      "src": "/warbonds/cape-purifying-eclipse.webp"
+    },
+    {
+      "id": "card-purifying-eclipse",
+      "name": "Purifying Eclipse",
+      "image": "https://helldivers.wiki.gg/images/Purifying_Eclipse_Player_Card_Icon.png?6cb79c",
+      "src": "/warbonds/card-purifying-eclipse.webp"
+    },
+    {
+      "id": "pose-big-stretch",
+      "name": "Big Stretch",
+      "image": "https://helldivers.wiki.gg/images/Big_Stretch_Victory_Pose_Icon.png?c4e172",
+      "src": "/warbonds/pose-big-stretch.webp"
+    },
+    {
+      "id": "pattern-safety-orange-hellpod",
+      "name": "Safety Orange Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Safety_Orange_Hellpod_Pattern_Icon.png?ca63f8",
+      "src": "/warbonds/pattern-safety-orange-hellpod.webp"
+    },
+    {
+      "id": "helmet-i-102-draconaught",
+      "name": "I-102 Draconaught",
+      "image": "https://helldivers.wiki.gg/images/thumb/I-102_Draconaught_Helmet_Render.png/512px-I-102_Draconaught_Helmet_Render.png?876200",
+      "src": "/warbonds/helmet-i-102-draconaught.webp"
+    },
+    {
+      "id": "suit-i-102-draconaught",
+      "name": "I-102 Draconaught",
+      "image": "https://helldivers.wiki.gg/images/thumb/I-102_Draconaught_Armor_Render.png/512px-I-102_Draconaught_Armor_Render.png?be9733",
+      "src": "/warbonds/suit-i-102-draconaught.webp"
+    },
+    {
+      "id": "cape-the-breach",
+      "name": "The Breach",
+      "image": "https://helldivers.wiki.gg/images/thumb/The_Breach_Cape_Render.png/512px-The_Breach_Cape_Render.png?f0f77a",
+      "src": "/warbonds/cape-the-breach.webp"
+    },
+    {
+      "id": "card-the-breach",
+      "name": "The Breach",
+      "image": "https://helldivers.wiki.gg/images/The_Breach_Player_Card_Icon.png?de06cb",
+      "src": "/warbonds/card-the-breach.webp"
+    },
+    {
+      "id": "pose-deep-reflection",
+      "name": "Deep Reflection",
+      "image": "https://helldivers.wiki.gg/images/Deep_Reflection_Victory_Pose_Icon.png?9ad45b",
+      "src": "/warbonds/pose-deep-reflection.webp"
+    },
+    {
+      "id": "pattern-safety-orange-shuttle",
+      "name": "Safety Orange Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Safety_Orange_Shuttle_Pattern_Icon.png?7322f3",
+      "src": "/warbonds/pattern-safety-orange-shuttle.webp"
+    },
+    {
+      "id": "title-fire-safety-officer",
+      "name": "Fire Safety Officer",
+      "image": "https://helldivers.wiki.gg/images/Fire_Safety_Officer_Title_Icon.svg?21fdcb",
+      "src": "/warbonds/title-fire-safety-officer.webp"
+    },
+    {
+      "id": "emote-thoracic-collision-exultation-maneuver",
+      "name": "Thoracic Collision Exultation Maneuver",
+      "image": "https://helldivers.wiki.gg/images/Thoracic_Collision_Exultation_Maneuver_Emote_Icon.png?c39bb1",
+      "src": "/warbonds/emote-thoracic-collision-exultation-maneuver.webp"
+    },
+    {
+      "id": "pattern-safety-orange-exosuit",
+      "name": "Safety Orange Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Safety_Orange_Exosuit_Pattern_Icon.png?e644be",
+      "src": "/warbonds/pattern-safety-orange-exosuit.webp"
+    },
+    {
+      "id": "pattern-safety-orange-vehicle",
+      "name": "Safety Orange Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Safety_Orange_Vehicle_Pattern_Icon.png?4ef3c1",
+      "src": "/warbonds/pattern-safety-orange-vehicle.webp"
+    },
+    {
+      "id": "helmet-af-50-noxious-ranger",
+      "name": "AF-50 Noxious Ranger",
+      "image": "https://helldivers.wiki.gg/images/thumb/AF-50_Noxious_Ranger_Helmet_Render.png/512px-AF-50_Noxious_Ranger_Helmet_Render.png?631603",
+      "src": "/warbonds/helmet-af-50-noxious-ranger.webp"
+    },
+    {
+      "id": "suit-af-50-noxious-ranger",
+      "name": "AF-50 Noxious Ranger",
+      "image": "https://helldivers.wiki.gg/images/thumb/AF-50_Noxious_Ranger_Armor_Render.png/512px-AF-50_Noxious_Ranger_Armor_Render.png?f2489f",
+      "src": "/warbonds/suit-af-50-noxious-ranger.webp"
+    },
+    {
+      "id": "cape-standard-of-safe-distance",
+      "name": "Standard of Safe Distance",
+      "image": "https://helldivers.wiki.gg/images/thumb/Standard_of_Safe_Distance_Cape_Render.png/512px-Standard_of_Safe_Distance_Cape_Render.png?f44f6e",
+      "src": "/warbonds/cape-standard-of-safe-distance.webp"
+    },
+    {
+      "id": "card-standard-of-safe-distance",
+      "name": "Standard of Safe Distance",
+      "image": "https://helldivers.wiki.gg/images/thumb/Standard_of_Safe_Distance_Player_Card_Icon.png/512px-Standard_of_Safe_Distance_Player_Card_Icon.png?b1dddf",
+      "src": "/warbonds/card-standard-of-safe-distance.webp"
+    },
+    {
+      "id": "pose-ew",
+      "name": "Ew",
+      "image": "https://helldivers.wiki.gg/images/Ew_Victory_Pose_Icon.png?a42d28",
+      "src": "/warbonds/pose-ew.webp"
+    },
+    {
+      "id": "pattern-mustard-hellpod",
+      "name": "Mustard Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Mustard_Hellpod_Pattern_Icon.png?514f4e",
+      "src": "/warbonds/pattern-mustard-hellpod.webp"
+    },
+    {
+      "id": "helmet-af-02-haz-master",
+      "name": "AF-02 Haz-Master",
+      "image": "https://helldivers.wiki.gg/images/thumb/AF-02_Haz-Master_Helmet_Render.png/512px-AF-02_Haz-Master_Helmet_Render.png?85fcb3",
+      "src": "/warbonds/helmet-af-02-haz-master.webp"
+    },
+    {
+      "id": "suit-af-02-haz-master",
+      "name": "AF-02 Haz-Master",
+      "image": "https://helldivers.wiki.gg/images/thumb/AF-02_Haz-Master_Armor_Render.png/512px-AF-02_Haz-Master_Armor_Render.png?983940",
+      "src": "/warbonds/suit-af-02-haz-master.webp"
+    },
+    {
+      "id": "cape-patient-zeros-remembrance",
+      "name": "Patient Zero's Remembrance",
+      "image": "https://helldivers.wiki.gg/images/thumb/Patient_Zero%27s_Remembrance_Cape_Render.png/512px-Patient_Zero%27s_Remembrance_Cape_Render.png?45095b",
+      "src": "/warbonds/cape-patient-zeros-remembrance.webp"
+    },
+    {
+      "id": "card-patient-zeros-remembrance",
+      "name": "Patient Zero's Remembrance",
+      "image": "https://helldivers.wiki.gg/images/thumb/Patient_Zero%27s_Remembrance_Player_Card_Icon.png/512px-Patient_Zero%27s_Remembrance_Player_Card_Icon.png?f91d0c",
+      "src": "/warbonds/card-patient-zeros-remembrance.webp"
+    },
+    {
+      "id": "pattern-mustard-shuttle",
+      "name": "Mustard Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Mustard_Shuttle_Pattern_Icon.png?e36f73",
+      "src": "/warbonds/pattern-mustard-shuttle.webp"
+    },
+    {
+      "id": "title-expert-exterminator",
+      "name": "Expert Exterminator",
+      "image": "https://helldivers.wiki.gg/images/Expert_Exterminator_Title_Icon.svg?3aefe8",
+      "src": "/warbonds/title-expert-exterminator.webp"
+    },
+    {
+      "id": "emote-natural-gas-extraction",
+      "name": "Natural Gas Extraction",
+      "image": "https://helldivers.wiki.gg/images/Scout_Handshake_Emote_Icon.png?ecc1ca",
+      "src": "/warbonds/emote-natural-gas-extraction.webp"
+    },
+    {
+      "id": "pattern-mustard-exosuit",
+      "name": "Mustard Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Mustard_Exosuit_Pattern_Icon.png?2d018d",
+      "src": "/warbonds/pattern-mustard-exosuit.webp"
+    },
+    {
+      "id": "pattern-mustard-vehicle",
+      "name": "Mustard Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Mustard_Vehicle_Pattern_Icon.png?1f312b",
+      "src": "/warbonds/pattern-mustard-vehicle.webp"
+    },
+    {
+      "id": "pattern-inconspicuous-black-hellpod",
+      "name": "Inconspicuous Black Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Inconspicuous_Black_Hellpod_Pattern_Icon.png?b1c08c",
+      "src": "/warbonds/pattern-inconspicuous-black-hellpod.webp"
+    },
+    {
+      "id": "pattern-inconspicuous-black-exosuit",
+      "name": "Inconspicuous Black Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Inconspicuous_Black_Exosuit_Pattern_Icon.png?a1f423",
+      "src": "/warbonds/pattern-inconspicuous-black-exosuit.webp"
+    },
+    {
+      "id": "helmet-uf-50-bloodhound",
+      "name": "UF-50 Bloodhound",
+      "image": "https://helldivers.wiki.gg/images/thumb/UF-50_Bloodhound_Helmet_Render.png/512px-UF-50_Bloodhound_Helmet_Render.png?7bf186",
+      "src": "/warbonds/helmet-uf-50-bloodhound.webp"
+    },
+    {
+      "id": "suit-uf-50-bloodhound",
+      "name": "UF-50 Bloodhound",
+      "image": "https://helldivers.wiki.gg/images/thumb/UF-50_Bloodhound_Armor_Render.png/512px-UF-50_Bloodhound_Armor_Render.png?823c98",
+      "src": "/warbonds/suit-uf-50-bloodhound.webp"
+    },
+    {
+      "id": "cape-pride-of-the-whistleblower",
+      "name": "Pride of the Whistleblower",
+      "image": "https://helldivers.wiki.gg/images/thumb/Pride_of_the_Whistleblower_Cape_Render.png/512px-Pride_of_the_Whistleblower_Cape_Render.png?c07e13",
+      "src": "/warbonds/cape-pride-of-the-whistleblower.webp"
+    },
+    {
+      "id": "card-pride-of-the-whistleblower",
+      "name": "Pride of the Whistleblower",
+      "image": "https://helldivers.wiki.gg/images/thumb/Pride_of_the_Whistleblower_Player_Card_Icon.png/512px-Pride_of_the_Whistleblower_Player_Card_Icon.png?f2a930",
+      "src": "/warbonds/card-pride-of-the-whistleblower.webp"
+    },
+    {
+      "id": "pattern-inconspicuous-black-shuttle",
+      "name": "Inconspicuous Black Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Inconspicuous_Black_Shuttle_Pattern_Icon.png?a9e38e",
+      "src": "/warbonds/pattern-inconspicuous-black-shuttle.webp"
+    },
+    {
+      "id": "title-free-of-thought",
+      "name": "Free of Thought",
+      "image": "https://helldivers.wiki.gg/images/Free_of_Thought_Title_Icon.svg?f14b60",
+      "src": "/warbonds/title-free-of-thought.webp"
+    },
+    {
+      "id": "helmet-uf-16-inspector",
+      "name": "UF-16 Inspector",
+      "image": "https://helldivers.wiki.gg/images/thumb/UF-16_Inspector_Helmet_Render.png/512px-UF-16_Inspector_Helmet_Render.png?d6fab1",
+      "src": "/warbonds/helmet-uf-16-inspector.webp"
+    },
+    {
+      "id": "suit-uf-16-inspector",
+      "name": "UF-16 Inspector",
+      "image": "https://helldivers.wiki.gg/images/thumb/UF-16_Inspector_Armor_Render.png/512px-UF-16_Inspector_Armor_Render.png?ea246d",
+      "src": "/warbonds/suit-uf-16-inspector.webp"
+    },
+    {
+      "id": "cape-proof-of-faultless-virtue",
+      "name": "Proof of Faultless Virtue",
+      "image": "https://helldivers.wiki.gg/images/thumb/Proof_of_Faultless_Virtue_Cape_Render.png/512px-Proof_of_Faultless_Virtue_Cape_Render.png?954219",
+      "src": "/warbonds/cape-proof-of-faultless-virtue.webp"
+    },
+    {
+      "id": "card-proof-of-faultless-virtue",
+      "name": "Proof of Faultless Virtue",
+      "image": "https://helldivers.wiki.gg/images/thumb/Proof_of_Faultless_Virtue_Player_Card_Icon.png/512px-Proof_of_Faultless_Virtue_Player_Card_Icon.png?1d981d",
+      "src": "/warbonds/card-proof-of-faultless-virtue.webp"
+    },
+    {
+      "id": "emote-at-ease",
+      "name": "At Ease",
+      "image": "https://helldivers.wiki.gg/images/At_Ease_Emote_Icon.png?224da9",
+      "src": "/warbonds/emote-at-ease.webp"
+    },
+    {
+      "id": "pattern-inconspicuous-black-vehicle",
+      "name": "Inconspicuous Black Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Inconspicuous_Black_Vehicle_Pattern_Icon.png?ad4a48",
+      "src": "/warbonds/pattern-inconspicuous-black-vehicle.webp"
+    },
+    {
+      "id": "helmet-sr-24-street-scout",
+      "name": "SR-24 Street Scout",
+      "image": "https://helldivers.wiki.gg/images/thumb/SR-24_Street_Scout_Helmet_Render.png/512px-SR-24_Street_Scout_Helmet_Render.png?bfb303",
+      "src": "/warbonds/helmet-sr-24-street-scout.webp"
+    },
+    {
+      "id": "suit-sr-24-street-scout",
+      "name": "SR-24 Street Scout",
+      "image": "https://helldivers.wiki.gg/images/thumb/SR-24_Street_Scout_Armor_Render.png/512px-SR-24_Street_Scout_Armor_Render.png?24d174",
+      "src": "/warbonds/suit-sr-24-street-scout.webp"
+    },
+    {
+      "id": "cape-greatcloak-of-rebar-resolve",
+      "name": "Greatcloak of Rebar Resolve",
+      "image": "https://helldivers.wiki.gg/images/thumb/Greatcloak_of_Rebar_Resolve_Cape_Render.png/512px-Greatcloak_of_Rebar_Resolve_Cape_Render.png?9acda6",
+      "src": "/warbonds/cape-greatcloak-of-rebar-resolve.webp"
+    },
+    {
+      "id": "card-rebar-resolve",
+      "name": "Rebar Resolve",
+      "image": "https://helldivers.wiki.gg/images/Rebar_Resolve_Player_Card_Icon.png?265b54",
+      "src": "/warbonds/card-rebar-resolve.webp"
+    },
+    {
+      "id": "pattern-concrete-jungle-hellpod",
+      "name": "Concrete Jungle Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Concrete_Jungle_Hellpod_Pattern_Icon.png?11f0f8",
+      "src": "/warbonds/pattern-concrete-jungle-hellpod.webp"
+    },
+    {
+      "id": "helmet-sr-18-roadblock",
+      "name": "SR-18 Roadblock",
+      "image": "https://helldivers.wiki.gg/images/thumb/SR-18_Roadblock_Helmet_Render.png/512px-SR-18_Roadblock_Helmet_Render.png?891a17",
+      "src": "/warbonds/helmet-sr-18-roadblock.webp"
+    },
+    {
+      "id": "suit-sr-18-roadblock",
+      "name": "SR-18 Roadblock",
+      "image": "https://helldivers.wiki.gg/images/thumb/SR-18_Roadblock_Armor_Render.png/512px-SR-18_Roadblock_Armor_Render.png?4314dc",
+      "src": "/warbonds/suit-sr-18-roadblock.webp"
+    },
+    {
+      "id": "cape-holder-of-the-yellow-line",
+      "name": "Holder of the Yellow Line",
+      "image": "https://helldivers.wiki.gg/images/thumb/Holder_of_the_Yellow_Line_Cape_Render.png/512px-Holder_of_the_Yellow_Line_Cape_Render.png?167ba7",
+      "src": "/warbonds/cape-holder-of-the-yellow-line.webp"
+    },
+    {
+      "id": "card-holder-of-the-yellow-line",
+      "name": "Holder of the Yellow Line",
+      "image": "https://helldivers.wiki.gg/images/Holder_of_the_Yellow_Line_Player_Card_Icon.png?9ae389",
+      "src": "/warbonds/card-holder-of-the-yellow-line.webp"
+    },
+    {
+      "id": "pattern-concrete-jungle-shuttle",
+      "name": "Concrete Jungle Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Concrete_Jungle_Shuttle_Pattern_Icon.png?b9428c",
+      "src": "/warbonds/pattern-concrete-jungle-shuttle.webp"
+    },
+    {
+      "id": "title-super-pedestrian",
+      "name": "Super Pedestrian",
+      "image": "https://helldivers.wiki.gg/images/Super_Pedestrian_Title_Icon.svg?d4d029",
+      "src": "/warbonds/title-super-pedestrian.webp"
+    },
+    {
+      "id": "emote-this-is-democracy",
+      "name": "This Is Democracy",
+      "image": "https://helldivers.wiki.gg/images/This_Is_Democracy_Emote_Icon.png?3220e9",
+      "src": "/warbonds/emote-this-is-democracy.webp"
+    },
+    {
+      "id": "pattern-concrete-jungle-exosuit",
+      "name": "Concrete Jungle Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Concrete_Jungle_Exosuit_Pattern_Icon.png?5eb7a1",
+      "src": "/warbonds/pattern-concrete-jungle-exosuit.webp"
+    },
+    {
+      "id": "pattern-concrete-jungle-vehicle",
+      "name": "Concrete Jungle Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Concrete_Jungle_Vehicle_Pattern_Icon.png?d8f311",
+      "src": "/warbonds/pattern-concrete-jungle-vehicle.webp"
+    },
+    {
+      "id": "helmet-ie-3-martyr",
+      "name": "IE-3 Martyr",
+      "image": "https://helldivers.wiki.gg/images/thumb/IE-3_Martyr_Helmet_Render.png/512px-IE-3_Martyr_Helmet_Render.png?69820e",
+      "src": "/warbonds/helmet-ie-3-martyr.webp"
+    },
+    {
+      "id": "suit-ie-3-martyr",
+      "name": "IE-3 Martyr",
+      "image": "https://helldivers.wiki.gg/images/thumb/IE-3_Martyr_Armor_Render.png/512px-IE-3_Martyr_Armor_Render.png?80eaea",
+      "src": "/warbonds/suit-ie-3-martyr.webp"
+    },
+    {
+      "id": "cape-fre-liberam",
+      "name": "Fre Liberam",
+      "image": "https://helldivers.wiki.gg/images/thumb/Fre_Liberam_Cape_Render.png/512px-Fre_Liberam_Cape_Render.png?4fe921",
+      "src": "/warbonds/cape-fre-liberam.webp"
+    },
+    {
+      "id": "card-fre-liberam",
+      "name": "Fre Liberam",
+      "image": "https://helldivers.wiki.gg/images/Fre_Liberam_Player_Card_Icon.png?833de0",
+      "src": "/warbonds/card-fre-liberam.webp"
+    },
+    {
+      "id": "helmet-ie-12-righteous",
+      "name": "IE-12 Righteous",
+      "image": "https://helldivers.wiki.gg/images/thumb/IE-12_Righteous_Helmet_Render.png/512px-IE-12_Righteous_Helmet_Render.png?4c51c9",
+      "src": "/warbonds/helmet-ie-12-righteous.webp"
+    },
+    {
+      "id": "suit-ie-12-righteous",
+      "name": "IE-12 Righteous",
+      "image": "https://helldivers.wiki.gg/images/thumb/IE-12_Righteous_Armor_Render.png/512px-IE-12_Righteous_Armor_Render.png?4ddc55",
+      "src": "/warbonds/suit-ie-12-righteous.webp"
+    },
+    {
+      "id": "cape-per-democrasum",
+      "name": "Per Democrasum",
+      "image": "https://helldivers.wiki.gg/images/thumb/Per_Democrasum_Cape_Render.png/512px-Per_Democrasum_Cape_Render.png?cf47e2",
+      "src": "/warbonds/cape-per-democrasum.webp"
+    },
+    {
+      "id": "card-per-democrasum",
+      "name": "Per Democrasum",
+      "image": "https://helldivers.wiki.gg/images/Per_Democrasum_Player_Card_Icon.png?5c684a",
+      "src": "/warbonds/card-per-democrasum.webp"
+    },
+    {
+      "id": "title-servant-of-freedom",
+      "name": "Servant of Freedom",
+      "image": "https://helldivers.wiki.gg/images/Servant_of_Freedom_Title_Icon.svg?2f4522",
+      "src": "/warbonds/title-servant-of-freedom.webp"
+    },
+    {
+      "id": "emote-raise-weapon",
+      "name": "Raise Weapon",
+      "image": "https://helldivers.wiki.gg/images/Raise_Weapon_Emote_Icon.png?7ee441",
+      "src": "/warbonds/emote-raise-weapon.webp"
+    },
+    {
+      "id": "helmet-gs-17-frontier-marshal",
+      "name": "GS-17 Frontier Marshal",
+      "image": "https://helldivers.wiki.gg/images/thumb/GS-17_Frontier_Marshal_Helmet_Render.png/512px-GS-17_Frontier_Marshal_Helmet_Render.png?669b43",
+      "src": "/warbonds/helmet-gs-17-frontier-marshal.webp"
+    },
+    {
+      "id": "suit-gs-17-frontier-marshal",
+      "name": "GS-17 Frontier Marshal",
+      "image": "https://helldivers.wiki.gg/images/thumb/GS-17_Frontier_Marshal_Armor_Render.png/512px-GS-17_Frontier_Marshal_Armor_Render.png?afb377",
+      "src": "/warbonds/suit-gs-17-frontier-marshal.webp"
+    },
+    {
+      "id": "cape-reaper-of-bounties",
+      "name": "Reaper of Bounties",
+      "image": "https://helldivers.wiki.gg/images/thumb/Reaper_of_Bounties_Cape_Render.png/512px-Reaper_of_Bounties_Cape_Render.png?c90c4b",
+      "src": "/warbonds/cape-reaper-of-bounties.webp"
+    },
+    {
+      "id": "card-reaper-of-bounties",
+      "name": "Reaper of Bounties",
+      "image": "https://helldivers.wiki.gg/images/Reaper_of_Bounties_Player_Card_Icon.png?c02e58",
+      "src": "/warbonds/card-reaper-of-bounties.webp"
+    },
+    {
+      "id": "helmet-gs-66-lawmaker",
+      "name": "GS-66 Lawmaker",
+      "image": "https://helldivers.wiki.gg/images/thumb/GS-66_Lawmaker_Helmet_Render.png/512px-GS-66_Lawmaker_Helmet_Render.png?bacf73",
+      "src": "/warbonds/helmet-gs-66-lawmaker.webp"
+    },
+    {
+      "id": "suit-gs-66-lawmaker",
+      "name": "GS-66 Lawmaker",
+      "image": "https://helldivers.wiki.gg/images/thumb/GS-66_Lawmaker_Armor_Render.png/512px-GS-66_Lawmaker_Armor_Render.png?d367b5",
+      "src": "/warbonds/suit-gs-66-lawmaker.webp"
+    },
+    {
+      "id": "cape-way-of-the-bandolier",
+      "name": "Way of the Bandolier",
+      "image": "https://helldivers.wiki.gg/images/thumb/Way_of_the_Bandolier_Cape_Render.png/512px-Way_of_the_Bandolier_Cape_Render.png?bd7b3e",
+      "src": "/warbonds/cape-way-of-the-bandolier.webp"
+    },
+    {
+      "id": "card-way-of-the-bandolier",
+      "name": "Way of the Bandolier",
+      "image": "https://helldivers.wiki.gg/images/Way_of_the_Bandolier_Player_Card_Icon.png?67c62e",
+      "src": "/warbonds/card-way-of-the-bandolier.webp"
+    },
+    {
+      "id": "title-super-sheriff",
+      "name": "Super Sheriff",
+      "image": "https://helldivers.wiki.gg/images/Super_Sheriff_Title_Icon.svg?54ecfa",
+      "src": "/warbonds/title-super-sheriff.webp"
+    },
+    {
+      "id": "emote-tip-hat",
+      "name": "Tip Hat",
+      "image": "https://helldivers.wiki.gg/images/Tip_Hat_Emote_Icon.png?288211",
+      "src": "/warbonds/emote-tip-hat.webp"
+    },
+    {
+      "id": "helmet-re-2310-honorary-guard",
+      "name": "RE-2310 Honorary Guard",
+      "image": "https://helldivers.wiki.gg/images/thumb/RE-2310_Honorary_Guard_Helmet_Render.png/512px-RE-2310_Honorary_Guard_Helmet_Render.png?abfdae",
+      "src": "/warbonds/helmet-re-2310-honorary-guard.webp"
+    },
+    {
+      "id": "suit-re-2310-honorary-guard",
+      "name": "RE-2310 Honorary Guard",
+      "image": "https://helldivers.wiki.gg/images/RE-2310_Honorary_Guard_Armor_Render.png?6146a1",
+      "src": "/warbonds/suit-re-2310-honorary-guard.webp"
+    },
+    {
+      "id": "cape-federations-embrace",
+      "name": "Federation's Embrace",
+      "image": "https://helldivers.wiki.gg/images/Federation%27s_Embrace_Cape_Render.png?e94f34",
+      "src": "/warbonds/cape-federations-embrace.webp"
+    },
+    {
+      "id": "card-federations-embrace",
+      "name": "Federation's Embrace",
+      "image": "https://helldivers.wiki.gg/images/Federation%27s_Embrace_Player_Card_Icon.png?41f7e9",
+      "src": "/warbonds/card-federations-embrace.webp"
+    },
+    {
+      "id": "helmet-re-1861-parade-commander",
+      "name": "RE-1861 Parade Commander",
+      "image": "https://helldivers.wiki.gg/images/RE-1861_Parade_Commander_Helmet_Render.png?cf4e2a",
+      "src": "/warbonds/helmet-re-1861-parade-commander.webp"
+    },
+    {
+      "id": "suit-re-1861-parade-commander",
+      "name": "RE-1861 Parade Commander",
+      "image": "https://helldivers.wiki.gg/images/RE-1861_Parade_Commander_Armor_Render.png?505fcb",
+      "src": "/warbonds/suit-re-1861-parade-commander.webp"
+    },
+    {
+      "id": "cape-humble-regalia",
+      "name": "Humble Regalia",
+      "image": "https://helldivers.wiki.gg/images/Humble_Regalia_Cape_Render.png?d076a9",
+      "src": "/warbonds/cape-humble-regalia.webp"
+    },
+    {
+      "id": "card-humble-regalia",
+      "name": "Humble Regalia",
+      "image": "https://helldivers.wiki.gg/images/Humble_Regalia_Player_Card_Icon.png?f58ef4",
+      "src": "/warbonds/card-humble-regalia.webp"
+    },
+    {
+      "id": "title-decorated-hero",
+      "name": "Decorated Hero",
+      "image": "https://helldivers.wiki.gg/images/Decorated_Hero_Title_Icon.svg?634738",
+      "src": "/warbonds/title-decorated-hero.webp"
+    },
+    {
+      "id": "emote-lockstep",
+      "name": "Lockstep",
+      "image": "https://helldivers.wiki.gg/images/Lockstep_Emote_Icon.png?7def31",
+      "src": "/warbonds/emote-lockstep.webp"
+    },
+    {
+      "id": "helmet-bp-20-correct-officer",
+      "name": "BP-20 Correct Officer",
+      "image": "https://helldivers.wiki.gg/images/BP-20_Correct_Officer_Helmet_Render.png?39810e",
+      "src": "/warbonds/helmet-bp-20-correct-officer.webp"
+    },
+    {
+      "id": "suit-bp-20-correct-officer",
+      "name": "BP-20 Correct Officer",
+      "image": "https://helldivers.wiki.gg/images/BP-20_Correct_Officer_Armor_Render.png?7acc68",
+      "src": "/warbonds/suit-bp-20-correct-officer.webp"
+    },
+    {
+      "id": "cape-mirandas-legacy",
+      "name": "Miranda's Legacy",
+      "image": "https://helldivers.wiki.gg/images/Miranda%27s_Legacy_Cape_Render.png?8348fb",
+      "src": "/warbonds/cape-mirandas-legacy.webp"
+    },
+    {
+      "id": "card-mirandas-legacy",
+      "name": "Miranda's Legacy",
+      "image": "https://helldivers.wiki.gg/images/Miranda%27s_Legacy_Player_Card_Icon.png?d622d7",
+      "src": "/warbonds/card-mirandas-legacy.webp"
+    },
+    {
+      "id": "emote-signal-hold",
+      "name": "Signal: Hold",
+      "image": "https://helldivers.wiki.gg/images/Signal_Hold_Emote_Icon.png?bfdabc",
+      "src": "/warbonds/emote-signal-hold.webp"
+    },
+    {
+      "id": "pattern-true-blue-hellpod",
+      "name": "True Blue Hellpod",
+      "image": "https://helldivers.wiki.gg/images/True_Blue_Hellpod_Pattern_Icon.png?bcaf16",
+      "src": "/warbonds/pattern-true-blue-hellpod.webp"
+    },
+    {
+      "id": "helmet-bp-32-jackboot",
+      "name": "BP-32 Jackboot",
+      "image": "https://helldivers.wiki.gg/images/BP-32_Jackboot_Helmet_Render.png?be7c0a",
+      "src": "/warbonds/helmet-bp-32-jackboot.webp"
+    },
+    {
+      "id": "suit-bp-32-jackboot",
+      "name": "BP-32 Jackboot",
+      "image": "https://helldivers.wiki.gg/images/BP-32_Jackboot_Armor_Render.png?150b9c",
+      "src": "/warbonds/suit-bp-32-jackboot.webp"
+    },
+    {
+      "id": "cape-mother-eagles-wings",
+      "name": "Mother Eagle's Wings",
+      "image": "https://helldivers.wiki.gg/images/Mother_Eagle%27s_Wings_Cape_Render.png?e515f1",
+      "src": "/warbonds/cape-mother-eagles-wings.webp"
+    },
+    {
+      "id": "card-mother-eagles-wings",
+      "name": "Mother Eagle's Wings",
+      "image": "https://helldivers.wiki.gg/images/Mother_Eagle%27s_Wings_Player_Card_Icon.png?dbd553",
+      "src": "/warbonds/card-mother-eagles-wings.webp"
+    },
+    {
+      "id": "emote-signal-silence",
+      "name": "Signal: Silence",
+      "image": "https://helldivers.wiki.gg/images/Signal_Silence_Emote_Icon.png?8ad8b8",
+      "src": "/warbonds/emote-signal-silence.webp"
+    },
+    {
+      "id": "pattern-true-blue-shuttle",
+      "name": "True Blue Shuttle",
+      "image": "https://helldivers.wiki.gg/images/True_Blue_Shuttle_Pattern_Icon.png?fb20c4",
+      "src": "/warbonds/pattern-true-blue-shuttle.webp"
+    },
+    {
+      "id": "title-extra-judicial",
+      "name": "Extra Judicial",
+      "image": "https://helldivers.wiki.gg/images/Extra_Judicial_Title_Icon.svg?72bac3",
+      "src": "/warbonds/title-extra-judicial.webp"
+    },
+    {
+      "id": "emote-signal-group-up",
+      "name": "Signal: Group Up",
+      "image": "https://helldivers.wiki.gg/images/Signal_Group_Up_Emote_Icon.png?4606df",
+      "src": "/warbonds/emote-signal-group-up.webp"
+    },
+    {
+      "id": "pattern-true-blue-exosuit",
+      "name": "True Blue Exosuit",
+      "image": "https://helldivers.wiki.gg/images/True_Blue_Exosuit_Pattern_Icon.png?72e9a7",
+      "src": "/warbonds/pattern-true-blue-exosuit.webp"
+    },
+    {
+      "id": "pattern-true-blue-vehicle",
+      "name": "True Blue Vehicle",
+      "image": "https://helldivers.wiki.gg/images/True_Blue_Vehicle_Pattern_Icon.png?f3b516",
+      "src": "/warbonds/pattern-true-blue-vehicle.webp"
+    },
+    {
+      "id": "helmet-ad-26-bleeding-edge",
+      "name": "AD-26 Bleeding Edge",
+      "image": "https://helldivers.wiki.gg/images/AD-26_Bleeding_Edge_Helmet_Render.png?4644f3",
+      "src": "/warbonds/helmet-ad-26-bleeding-edge.webp"
+    },
+    {
+      "id": "suit-ad-26-bleeding-edge",
+      "name": "AD-26 Bleeding Edge",
+      "image": "https://helldivers.wiki.gg/images/AD-26_Bleeding_Edge_Armor_Render.png?913a47",
+      "src": "/warbonds/suit-ad-26-bleeding-edge.webp"
+    },
+    {
+      "id": "cape-conductor-of-brilliance",
+      "name": "Conductor of Brilliance",
+      "image": "https://helldivers.wiki.gg/images/Conductor_of_Brilliance_Cape_Render.png?6bd853",
+      "src": "/warbonds/cape-conductor-of-brilliance.webp"
+    },
+    {
+      "id": "card-conductor-of-brilliance",
+      "name": "Conductor of Brilliance",
+      "image": "https://helldivers.wiki.gg/images/Conductor_of_Brilliance_Player_Card_Icon.png?6d4a30",
+      "src": "/warbonds/card-conductor-of-brilliance.webp"
+    },
+    {
+      "id": "helmet-ad-49-apollonian",
+      "name": "AD-49 Apollonian",
+      "image": "https://helldivers.wiki.gg/images/AD-49_Apollonian_Helmet_Render.png?f5c154",
+      "src": "/warbonds/helmet-ad-49-apollonian.webp"
+    },
+    {
+      "id": "suit-ad-49-apollonian",
+      "name": "AD-49 Apollonian",
+      "image": "https://helldivers.wiki.gg/images/AD-49_Apollonian_Armor_Render.png?71eeac",
+      "src": "/warbonds/suit-ad-49-apollonian.webp"
+    },
+    {
+      "id": "cape-over-artifice-triumphant",
+      "name": "Over Artifice Triumphant",
+      "image": "https://helldivers.wiki.gg/images/Over_Artifice_Triumphant_Cape_Render.png?8b621b",
+      "src": "/warbonds/cape-over-artifice-triumphant.webp"
+    },
+    {
+      "id": "card-over-artifice-triumphant",
+      "name": "Over Artifice Triumphant",
+      "image": "https://helldivers.wiki.gg/images/Over_Artifice_Triumphant_Player_Card_Icon.png?7abc58",
+      "src": "/warbonds/card-over-artifice-triumphant.webp"
+    },
+    {
+      "id": "emote-protect-eardrums",
+      "name": "Protect Eardrums",
+      "image": "https://helldivers.wiki.gg/images/Protect_Eardrums_Emote_Icon.png?1c894a",
+      "src": "/warbonds/emote-protect-eardrums.webp"
+    },
+    {
+      "id": "title-exemplary-subject",
+      "name": "Exemplary Subject",
+      "image": "https://helldivers.wiki.gg/images/Exemplary_Subject_Title_Icon.svg?a83495",
+      "src": "/warbonds/title-exemplary-subject.webp"
+    },
+    {
+      "id": "helmet-ds-42-federations-blade",
+      "name": "DS-42 Federation's Blade",
+      "image": "https://helldivers.wiki.gg/images/DS-42_Federation%27s_Blade_Helmet_Render.png?2e7608",
+      "src": "/warbonds/helmet-ds-42-federations-blade.webp"
+    },
+    {
+      "id": "suit-ds-42-federations-blade",
+      "name": "DS-42 Federation's Blade",
+      "image": "https://helldivers.wiki.gg/images/DS-42_Federation%27s_Blade_Armor_Render.png?94c332",
+      "src": "/warbonds/suit-ds-42-federations-blade.webp"
+    },
+    {
+      "id": "cape-rightful-occupier",
+      "name": "Rightful Occupier",
+      "image": "https://helldivers.wiki.gg/images/Rightful_Occupier_Cape_Render.png?d6f9ba",
+      "src": "/warbonds/cape-rightful-occupier.webp"
+    },
+    {
+      "id": "card-rightful-occupier",
+      "name": "Rightful Occupier",
+      "image": "https://helldivers.wiki.gg/images/Rightful_Occupier_Player_Card_Icon.png?49fad8",
+      "src": "/warbonds/card-rightful-occupier.webp"
+    },
+    {
+      "id": "pattern-rattlesnake-hellpod",
+      "name": "Rattlesnake Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Rattlesnake_Hellpod_Pattern_Icon.png?f999a1",
+      "src": "/warbonds/pattern-rattlesnake-hellpod.webp"
+    },
+    {
+      "id": "helmet-ds-191-scorpion",
+      "name": "DS-191 Scorpion",
+      "image": "https://helldivers.wiki.gg/images/DS-191_Scorpion_Helmet_Render.png?b00a67",
+      "src": "/warbonds/helmet-ds-191-scorpion.webp"
+    },
+    {
+      "id": "suit-ds-191-scorpion",
+      "name": "DS-191 Scorpion",
+      "image": "https://helldivers.wiki.gg/images/DS-191_Scorpion_Armor_Render.png?49c43d",
+      "src": "/warbonds/suit-ds-191-scorpion.webp"
+    },
+    {
+      "id": "cape-windswept-wayfinder",
+      "name": "Windswept Wayfinder",
+      "image": "https://helldivers.wiki.gg/images/Windswept_Wayfinder_Cape_Render.png?267da3",
+      "src": "/warbonds/cape-windswept-wayfinder.webp"
+    },
+    {
+      "id": "card-windswept-wayfinder",
+      "name": "Windswept Wayfinder",
+      "image": "https://helldivers.wiki.gg/images/Windswept_Wayfinder_Player_Card_Icon.png?77e079",
+      "src": "/warbonds/card-windswept-wayfinder.webp"
+    },
+    {
+      "id": "pattern-rattlesnake-shuttle",
+      "name": "Rattlesnake Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Rattlesnake_Shuttle_Pattern_Icon.png?f50525",
+      "src": "/warbonds/pattern-rattlesnake-shuttle.webp"
+    },
+    {
+      "id": "title-burier-of-heads",
+      "name": "Burier of Heads",
+      "image": "https://helldivers.wiki.gg/images/Burier_of_Heads_Title_Icon.svg?e83ca0",
+      "src": "/warbonds/title-burier-of-heads.webp"
+    },
+    {
+      "id": "emote-raiders-cheer",
+      "name": "Raider's Cheer",
+      "image": "https://helldivers.wiki.gg/images/Raider%27s_Cheer_Emote_Icon.png?f81eda",
+      "src": "/warbonds/emote-raiders-cheer.webp"
+    },
+    {
+      "id": "pattern-rattlesnake-exosuit",
+      "name": "Rattlesnake Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Rattlesnake_Exosuit_Pattern_Icon.png?512ada",
+      "src": "/warbonds/pattern-rattlesnake-exosuit.webp"
+    },
+    {
+      "id": "pattern-rattlesnake-vehicle",
+      "name": "Rattlesnake Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Rattlesnake_Vehicle_Pattern_Icon.png?3bbd45",
+      "src": "/warbonds/pattern-rattlesnake-vehicle.webp"
+    },
+    {
+      "id": "helmet-rs-20-constrictor",
+      "name": "RS-20 Constrictor",
+      "image": "https://helldivers.wiki.gg/images/RS-20_Constrictor_Helmet_Icon.png?32d27e",
+      "src": "/warbonds/helmet-rs-20-constrictor.webp"
+    },
+    {
+      "id": "suit-rs-20-constrictor",
+      "name": "RS-20 Constrictor",
+      "image": "https://helldivers.wiki.gg/images/RS-20_Constrictor_Body_Icon.png?e5b081",
+      "src": "/warbonds/suit-rs-20-constrictor.webp"
+    },
+    {
+      "id": "cape-mark-of-the-constrictor",
+      "name": "Mark of the Constrictor",
+      "image": "https://helldivers.wiki.gg/images/Mark_of_the_Constrictor_Cape_Armory.png?dc404b",
+      "src": "/warbonds/cape-mark-of-the-constrictor.webp"
+    },
+    {
+      "id": "card-mark-of-the-constrictor",
+      "name": "Mark of the Constrictor",
+      "image": "https://helldivers.wiki.gg/images/Mark_of_the_Constrictor_Player_Card_Icon.png?7f5996",
+      "src": "/warbonds/card-mark-of-the-constrictor.webp"
+    },
+    {
+      "id": "pattern-chameleon-camo-hellpod",
+      "name": "Chameleon Camo Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Chameleon_Camo_Hellpod_Pattern_Icon.png?c63650",
+      "src": "/warbonds/pattern-chameleon-camo-hellpod.webp"
+    },
+    {
+      "id": "helmet-rs-40-beast-of-prey",
+      "name": "RS-40 Beast of Prey",
+      "image": "https://helldivers.wiki.gg/images/RS-40_Beast_of_Prey_Helmet_Icon.png?35900e",
+      "src": "/warbonds/helmet-rs-40-beast-of-prey.webp"
+    },
+    {
+      "id": "suit-rs-40-beast-of-prey",
+      "name": "RS-40 Beast of Prey",
+      "image": "https://helldivers.wiki.gg/images/RS-40_Beast_of_Prey_Body_Icon.png?326f36",
+      "src": "/warbonds/suit-rs-40-beast-of-prey.webp"
+    },
+    {
+      "id": "cape-foe-rent-asunder",
+      "name": "Foe Rent Asunder",
+      "image": "https://helldivers.wiki.gg/images/Foe_Rent_Asunder_Cape_Armory.png?7be8d0",
+      "src": "/warbonds/cape-foe-rent-asunder.webp"
+    },
+    {
+      "id": "card-foe-rent-asunder",
+      "name": "Foe Rent Asunder",
+      "image": "https://helldivers.wiki.gg/images/Foe_Rent_Asunder_Player_Card_Icon.png?ea9a22",
+      "src": "/warbonds/card-foe-rent-asunder.webp"
+    },
+    {
+      "id": "pattern-chameleon-camo-shuttle",
+      "name": "Chameleon Camo Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Chameleon_Camo_Shuttle_Pattern_Icon.png?338cea",
+      "src": "/warbonds/pattern-chameleon-camo-shuttle.webp"
+    },
+    {
+      "id": "title-python-commando",
+      "name": "Python Commando",
+      "image": "https://helldivers.wiki.gg/images/Python_Commando_Title_Icon.svg?807cf7",
+      "src": "/warbonds/title-python-commando.webp"
+    },
+    {
+      "id": "emote-front-leaning-rest-position",
+      "name": "Front-Leaning Rest Position",
+      "image": "https://helldivers.wiki.gg/images/Front-Leaning_Rest_Position_Emote_Icon.png?f76cc7",
+      "src": "/warbonds/emote-front-leaning-rest-position.webp"
+    },
+    {
+      "id": "pattern-chameleon-camo-exosuit",
+      "name": "Chameleon Camo Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Chameleon_Camo_Emancipator_Exosuit_Pattern_Icon.png?2e89fc",
+      "src": "/warbonds/pattern-chameleon-camo-exosuit.webp"
+    },
+    {
+      "id": "pattern-chameleon-camo-vehicle",
+      "name": "Chameleon Camo Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Chameleon_Camo_Vehicle_Pattern_Icon.png?e4f89d",
+      "src": "/warbonds/pattern-chameleon-camo-vehicle.webp"
+    },
+    {
+      "id": "helmet-rs-89-shadow-paragon",
+      "name": "RS-89 Shadow Paragon",
+      "image": "https://helldivers.wiki.gg/images/RS-89_Shadow_Paragon_Helmet_Render.png?c8181e",
+      "src": "/warbonds/helmet-rs-89-shadow-paragon.webp"
+    },
+    {
+      "id": "suit-rs-89-shadow-paragon",
+      "name": "RS-89 Shadow Paragon",
+      "image": "https://helldivers.wiki.gg/images/RS-89_Shadow_Paragon_Armor_Render.png?b60c98",
+      "src": "/warbonds/suit-rs-89-shadow-paragon.webp"
+    },
+    {
+      "id": "cape-pillar-of-the-abyss",
+      "name": "Pillar of the Abyss",
+      "image": "https://helldivers.wiki.gg/images/Pillar_of_the_Abyss_Cape_Render.png?e97800",
+      "src": "/warbonds/cape-pillar-of-the-abyss.webp"
+    },
+    {
+      "id": "card-pillar-of-the-abyss",
+      "name": "Pillar of the Abyss",
+      "image": "https://helldivers.wiki.gg/images/Pillar_of_the_Abyss_Player_Card_Icon.png?3397ff",
+      "src": "/warbonds/card-pillar-of-the-abyss.webp"
+    },
+    {
+      "id": "helmet-rs-67-null-cipher",
+      "name": "RS-67 Null Cipher",
+      "image": "https://helldivers.wiki.gg/images/RS-67_Null_Cipher_Helmet_Render.png?8446f9",
+      "src": "/warbonds/helmet-rs-67-null-cipher.webp"
+    },
+    {
+      "id": "suit-rs-67-null-cipher",
+      "name": "RS-67 Null Cipher",
+      "image": "https://helldivers.wiki.gg/images/RS-67_Null_Cipher_Armor_Render.png?173cae",
+      "src": "/warbonds/suit-rs-67-null-cipher.webp"
+    },
+    {
+      "id": "cape-triangulation-veil",
+      "name": "Triangulation Veil",
+      "image": "https://helldivers.wiki.gg/images/Triangulation_Veil_Cape_Icon.png?3377f8",
+      "src": "/warbonds/cape-triangulation-veil.webp"
+    },
+    {
+      "id": "card-triangulation-veil",
+      "name": "Triangulation Veil",
+      "image": "https://helldivers.wiki.gg/images/Triangulation_Veil_Player_Card_Icon.png?175ed2",
+      "src": "/warbonds/card-triangulation-veil.webp"
+    },
+    {
+      "id": "title-redacted",
+      "name": "Redacted",
+      "image": "https://helldivers.wiki.gg/images/Redacted_Title_Icon.svg?b40be7",
+      "src": "/warbonds/title-redacted.webp"
+    },
+    {
+      "id": "pose-target-sighted",
+      "name": "Target Sighted",
+      "image": "https://helldivers.wiki.gg/images/Target_Sighted_Victory_Pose_Icon.png?a27b82",
+      "src": "/warbonds/pose-target-sighted.webp"
+    },
+    {
+      "id": "suit-sa-7-headfirst",
+      "name": "SA-7 Headfirst",
+      "image": "https://helldivers.wiki.gg/images/SA-7_Headfirst_Armor_Render.png?796aa6",
+      "src": "/warbonds/suit-sa-7-headfirst.webp"
+    },
+    {
+      "id": "helmet-sa-7-headfirst",
+      "name": "SA-7 Headfirst",
+      "image": "https://helldivers.wiki.gg/images/SA-7_Headfirst_Helmet_Render.png?87e056",
+      "src": "/warbonds/helmet-sa-7-headfirst.webp"
+    },
+    {
+      "id": "cape-rags-of-the-fashionable",
+      "name": "Rags of the Fashionable",
+      "image": "https://helldivers.wiki.gg/images/Rags_of_the_Fashionable_Cape_Render.png?3cc612",
+      "src": "/warbonds/cape-rags-of-the-fashionable.webp"
+    },
+    {
+      "id": "card-rags-of-the-fashionable",
+      "name": "Rags of the Fashionable",
+      "image": "https://helldivers.wiki.gg/images/Rags_of_The_Fashionable_Player_Card_Icon.png?5cb903",
+      "src": "/warbonds/card-rags-of-the-fashionable.webp"
+    },
+    {
+      "id": "pattern-churned-earth-hellpod",
+      "name": "Churned Earth Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Churned_Earth_Hellpod_Pattern_Icon.png?dc9c31",
+      "src": "/warbonds/pattern-churned-earth-hellpod.webp"
+    },
+    {
+      "id": "pattern-churned-earth-shuttle",
+      "name": "Churned Earth Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Churned_Earth_Shuttle_Pattern_Icon.png?f61f26",
+      "src": "/warbonds/pattern-churned-earth-shuttle.webp"
+    },
+    {
+      "id": "card-wedgeful-tricorn",
+      "name": "Wedgeful Tricorn",
+      "image": "https://helldivers.wiki.gg/images/Wedgeful_Tricorn_Player_Card_Icon.png?13d4f5",
+      "src": "/warbonds/card-wedgeful-tricorn.webp"
+    },
+    {
+      "id": "suit-sa-8-ram",
+      "name": "SA-8 Ram",
+      "image": "https://helldivers.wiki.gg/images/SA-8_Ram_Armor_Render.png?f57664",
+      "src": "/warbonds/suit-sa-8-ram.webp"
+    },
+    {
+      "id": "helmet-sa-8-ram",
+      "name": "SA-8 Ram",
+      "image": "https://helldivers.wiki.gg/images/SA-8_Ram_Helmet_Render.png?2e4192",
+      "src": "/warbonds/helmet-sa-8-ram.webp"
+    },
+    {
+      "id": "cape-wedgeful-tricorn",
+      "name": "Wedgeful Tricorn",
+      "image": "https://helldivers.wiki.gg/images/Wedgeful_Tricorn_Cape_Render.png?73a88b",
+      "src": "/warbonds/cape-wedgeful-tricorn.webp"
+    },
+    {
+      "id": "pattern-churned-earth-vehicle",
+      "name": "Churned Earth Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Churned_Earth_Vehicle_Pattern_Icon.png?e668ad",
+      "src": "/warbonds/pattern-churned-earth-vehicle.webp"
+    },
+    {
+      "id": "title-bunker-buster",
+      "name": "Bunker Buster",
+      "image": "https://helldivers.wiki.gg/images/Bunker_Buster_Title_Icon.svg?7d51bb",
+      "src": "/warbonds/title-bunker-buster.webp"
+    },
+    {
+      "id": "emote-display-of-brawn",
+      "name": "Display of Brawn",
+      "image": "https://helldivers.wiki.gg/images/Display_of_Brawn_Emote_Icon.png?5e4719",
+      "src": "/warbonds/emote-display-of-brawn.webp"
+    },
+    {
+      "id": "pattern-churned-earth-exosuit",
+      "name": "Churned Earth Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Churned_Earth_Exosuit_Pattern_Icon.png?cd656e",
+      "src": "/warbonds/pattern-churned-earth-exosuit.webp"
+    },
+    {
+      "id": "suit-cpg-48-sapper",
+      "name": "CPG-48 Sapper",
+      "image": "https://helldivers.wiki.gg/images/CPG-48_Sapper_Armor_Render.png?9f1fa9",
+      "src": "/warbonds/suit-cpg-48-sapper.webp"
+    },
+    {
+      "id": "helmet-cpg-48-sapper",
+      "name": "CPG-48 Sapper",
+      "image": "https://helldivers.wiki.gg/images/CPG-48_Sapper_Helmet_Render.png?70153f",
+      "src": "/warbonds/helmet-cpg-48-sapper.webp"
+    },
+    {
+      "id": "card-dignity-of-toil",
+      "name": "Dignity of Toil",
+      "image": "https://helldivers.wiki.gg/images/Dignity_of_Toil_Player_Card_Icon.png?bb1fa8",
+      "src": "/warbonds/card-dignity-of-toil.webp"
+    },
+    {
+      "id": "cape-dignity-of-toil",
+      "name": "Dignity of Toil",
+      "image": "https://helldivers.wiki.gg/images/Dignity_of_Toil_Cape_Render.png?12c529",
+      "src": "/warbonds/cape-dignity-of-toil.webp"
+    },
+    {
+      "id": "pattern-heritage-olive-hellpod",
+      "name": "Heritage Olive Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Heritage_Olive_Hellpod_Pattern_Icon.png?3c6303",
+      "src": "/warbonds/pattern-heritage-olive-hellpod.webp"
+    },
+    {
+      "id": "suit-cph-26-commandant",
+      "name": "CPH-26 Commandant",
+      "image": "https://helldivers.wiki.gg/images/CPH-26_Commandant_Armor_Render.png?e35a24",
+      "src": "/warbonds/suit-cph-26-commandant.webp"
+    },
+    {
+      "id": "helmet-cph-26-commandant",
+      "name": "CPH-26 Commandant",
+      "image": "https://helldivers.wiki.gg/images/CPH-26_Commandant_Helmet_Render.png?484605",
+      "src": "/warbonds/helmet-cph-26-commandant.webp"
+    },
+    {
+      "id": "cape-crest-of-the-unsullied",
+      "name": "Crest of the Unsullied",
+      "image": "https://helldivers.wiki.gg/images/Crest_of_the_Unsullied_Cape_Render.png?4f5d2e",
+      "src": "/warbonds/cape-crest-of-the-unsullied.webp"
+    },
+    {
+      "id": "card-crest-of-the-unsullied",
+      "name": "Crest of the Unsullied",
+      "image": "https://helldivers.wiki.gg/images/Crest_of_the_Unsullied_Player_Card_Icon.png?88c9d0",
+      "src": "/warbonds/card-crest-of-the-unsullied.webp"
+    },
+    {
+      "id": "pattern-heritage-olive-exosuit",
+      "name": "Heritage Olive Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Heritage_Olive_Exosuit_Pattern_Icon.png?a2c571",
+      "src": "/warbonds/pattern-heritage-olive-exosuit.webp"
+    },
+    {
+      "id": "pattern-heritage-olive-vehicle",
+      "name": "Heritage Olive Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Heritage_Olive_Vehicle_Pattern_Icon.png?8c6ddd",
+      "src": "/warbonds/pattern-heritage-olive-vehicle.webp"
+    },
+    {
+      "id": "pattern-heritage-olive-shuttle",
+      "name": "Heritage Olive Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Heritage_Olive_Shuttle_Pattern_Icon.png?6485c1",
+      "src": "/warbonds/pattern-heritage-olive-shuttle.webp"
+    },
+    {
+      "id": "title-mudskipper",
+      "name": "Mudskipper",
+      "image": "https://helldivers.wiki.gg/images/Mudskipper_Title_Icon.svg?d75286",
+      "src": "/warbonds/title-mudskipper.webp"
+    },
+    {
+      "id": "emote-diplomatic-handshake",
+      "name": "Diplomatic Handshake",
+      "image": "https://helldivers.wiki.gg/images/Diplomatic_Handshake_Emote_Icon.png?7050f9",
+      "src": "/warbonds/emote-diplomatic-handshake.webp"
+    },
+    {
+      "id": "helmet-o-3-free-spirit",
+      "name": "O-3 Free Spirit",
+      "image": "https://helldivers.wiki.gg/images/O-3_Free_Spirit_Helmet_Render.png?c455d4",
+      "src": "/warbonds/helmet-o-3-free-spirit.webp"
+    },
+    {
+      "id": "suit-o-3-free-spirit",
+      "name": "O-3 Free Spirit",
+      "image": "https://helldivers.wiki.gg/images/O-3_Free_Spirit_Armor_Render.png?e873a2",
+      "src": "/warbonds/suit-o-3-free-spirit.webp"
+    },
+    {
+      "id": "cape-free-spirited-spangles",
+      "name": "Free-Spirited Spangles",
+      "image": "https://helldivers.wiki.gg/images/Free-Spirited_Spangles_Cape_Render.png?d0950f",
+      "src": "/warbonds/cape-free-spirited-spangles.webp"
+    },
+    {
+      "id": "card-free-spirited-spangles",
+      "name": "Free-Spirited Spangles",
+      "image": "https://helldivers.wiki.gg/images/Free_Spirited_Spangles_Player_Card_Icon.png?cbadb4",
+      "src": "/warbonds/card-free-spirited-spangles.webp"
+    },
+    {
+      "id": "pattern-mobile-white-hellpod",
+      "name": "Mobile White Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Mobile_White_Hellpod_Pattern_Icon.png?c372ac",
+      "src": "/warbonds/pattern-mobile-white-hellpod.webp"
+    },
+    {
+      "id": "helmet-o-2-heavy-operator",
+      "name": "O-2 Heavy Operator",
+      "image": "https://helldivers.wiki.gg/images/O-2_Heavy_Operator_Helmet_Render.png?a8567c",
+      "src": "/warbonds/helmet-o-2-heavy-operator.webp"
+    },
+    {
+      "id": "suit-o-2-heavy-operator",
+      "name": "O-2 Heavy Operator",
+      "image": "https://helldivers.wiki.gg/images/O-2_Heavy_Operator_Armor_Render.png?f2395b",
+      "src": "/warbonds/suit-o-2-heavy-operator.webp"
+    },
+    {
+      "id": "cape-watchful-compatriot",
+      "name": "Watchful Compatriot",
+      "image": "https://helldivers.wiki.gg/images/Watchful_Compatriot_Cape_Render.png?e0f184",
+      "src": "/warbonds/cape-watchful-compatriot.webp"
+    },
+    {
+      "id": "card-watchful-compatriot",
+      "name": "Watchful Compatriot",
+      "image": "https://helldivers.wiki.gg/images/Watchful_Compatriot_Player_Card_Icon.png?9246df",
+      "src": "/warbonds/card-watchful-compatriot.webp"
+    },
+    {
+      "id": "pattern-mobile-white-shuttle",
+      "name": "Mobile White Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Mobile_White_Shuttle_Pattern_Icon.png?1d0d1d",
+      "src": "/warbonds/pattern-mobile-white-shuttle.webp"
+    },
+    {
+      "id": "title-exosuit-certified",
+      "name": "Exosuit Certified",
+      "image": "https://helldivers.wiki.gg/images/Exosuit_Certified_Title_Icon.svg?9df1ee",
+      "src": "/warbonds/title-exosuit-certified.webp"
+    },
+    {
+      "id": "emote-thumb-of-approval",
+      "name": "Thumb of Approval",
+      "image": "https://helldivers.wiki.gg/images/Thumb_of_Approval_Emote_Icon.png?c6b495",
+      "src": "/warbonds/emote-thumb-of-approval.webp"
+    },
+    {
+      "id": "pattern-mobile-white-exosuit",
+      "name": "Mobile White Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Mobile_White_Exosuit_Pattern_Icon.png?22a7f8",
+      "src": "/warbonds/pattern-mobile-white-exosuit.webp"
+    },
+    {
+      "id": "pattern-mobile-white-vehicle",
+      "name": "Mobile White Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Mobile_White_Vehicle_Pattern_Icon.png?b00b18",
+      "src": "/warbonds/pattern-mobile-white-vehicle.webp"
+    },
+    {
+      "id": "helmet-bfm-16-tanker",
+      "name": "BFM-16 Tanker",
+      "image": "https://helldivers.wiki.gg/images/BFM-16_Tanker_Helmet_Render.png?43f68d",
+      "src": "/warbonds/helmet-bfm-16-tanker.webp"
+    },
+    {
+      "id": "suit-bfm-16-tanker",
+      "name": "BFM-16 Tanker",
+      "image": "https://helldivers.wiki.gg/images/BFM-16_Tanker_Armor_Render.png?f52846",
+      "src": "/warbonds/suit-bfm-16-tanker.webp"
+    },
+    {
+      "id": "cape-standard-of-rapid-evacuation",
+      "name": "Standard of Rapid Evacuation",
+      "image": "https://helldivers.wiki.gg/images/Standard_of_Rapid_Evacuation_Cape_Render.png?f87e73",
+      "src": "/warbonds/cape-standard-of-rapid-evacuation.webp"
+    },
+    {
+      "id": "card-standard-of-rapid-evacuation",
+      "name": "Standard of Rapid Evacuation",
+      "image": "https://helldivers.wiki.gg/images/Standard_of_Rapid_Evacuation_Player_Card_Icon.png?f6ff11",
+      "src": "/warbonds/card-standard-of-rapid-evacuation.webp"
+    },
+    {
+      "id": "pattern-verdant-camouflage",
+      "name": "Verdant Camouflage",
+      "image": "https://helldivers.wiki.gg/images/Verdant_Camouflage_Pattern_Icon.png?9c2465",
+      "src": "/warbonds/pattern-verdant-camouflage.webp"
+    },
+    {
+      "id": "helmet-bfm-220-ironclad",
+      "name": "BFM-220 Ironclad",
+      "image": "https://helldivers.wiki.gg/images/BFM-220_Ironclad_Helmet_Render.png?f0c6f5",
+      "src": "/warbonds/helmet-bfm-220-ironclad.webp"
+    },
+    {
+      "id": "suit-bfm-220-ironclad",
+      "name": "BFM-220 Ironclad",
+      "image": "https://helldivers.wiki.gg/images/BFM-220_Ironclad_Armor_Render.png?fd09a7",
+      "src": "/warbonds/suit-bfm-220-ironclad.webp"
+    },
+    {
+      "id": "cape-shroud-of-the-juggernaut",
+      "name": "Shroud of the Juggernaut",
+      "image": "https://helldivers.wiki.gg/images/Shroud_of_the_Juggernaut_Cape_Render.png?2c2622",
+      "src": "/warbonds/cape-shroud-of-the-juggernaut.webp"
+    },
+    {
+      "id": "card-shroud-of-the-juggernaut",
+      "name": "Shroud of the Juggernaut",
+      "image": "https://helldivers.wiki.gg/images/Shroud_of_the_Juggernaut_Player_Card_Icon.png?1e5878",
+      "src": "/warbonds/card-shroud-of-the-juggernaut.webp"
+    },
+    {
+      "id": "pattern-glacial-polymer",
+      "name": "Glacial Polymer",
+      "image": "https://helldivers.wiki.gg/images/Glacial_Polymer_Pattern_Icon.png?630c7e",
+      "src": "/warbonds/pattern-glacial-polymer.webp"
+    },
+    {
+      "id": "emote-helmet-durability-check",
+      "name": "Helmet Durability Check",
+      "image": "https://helldivers.wiki.gg/images/Helmet_Durability_Check_Emote_Icon.png?285877",
+      "src": "/warbonds/emote-helmet-durability-check.webp"
+    },
+    {
+      "id": "pattern-executive-onyx",
+      "name": "Executive Onyx",
+      "image": "https://helldivers.wiki.gg/images/Executive_Onyx_Pattern_Icon.png?2919fb",
+      "src": "/warbonds/pattern-executive-onyx.webp"
+    },
+    {
+      "id": "title-treadhead",
+      "name": "Treadhead",
+      "image": "https://helldivers.wiki.gg/images/Treadhead_Title_Icon.png?596941",
+      "src": "/warbonds/title-treadhead.webp"
+    },
+    {
+      "id": "helmet-ss-33-mimetic-marshal",
+      "name": "SS-33 Mimetic Marshal",
+      "image": "https://helldivers.wiki.gg/images/SS-33_Mimetic_Marshal_Helmet_Render.png?cfcbdf",
+      "src": "/warbonds/helmet-ss-33-mimetic-marshal.webp"
+    },
+    {
+      "id": "suit-ss-33-mimetic-marshal",
+      "name": "SS-33 Mimetic Marshal",
+      "image": "https://helldivers.wiki.gg/images/SS-33_Mimetic_Marshal_Armor_Render.png?aed424",
+      "src": "/warbonds/suit-ss-33-mimetic-marshal.webp"
+    },
+    {
+      "id": "cape-mimetic-mesh",
+      "name": "Mimetic Mesh",
+      "image": "https://helldivers.wiki.gg/images/Mimetic_Mesh_Cape_Promo.png?cdb09a",
+      "src": "/warbonds/cape-mimetic-mesh.webp"
+    },
+    {
+      "id": "card-mimetic-mesh",
+      "name": "Mimetic Mesh",
+      "image": "https://helldivers.wiki.gg/images/Mimetic_Mesh_Player_Card_Icon.png?f44695",
+      "src": "/warbonds/card-mimetic-mesh.webp"
+    },
+    {
+      "id": "helmet-ss-15-focal-point",
+      "name": "SS-15 Focal Point",
+      "image": "https://helldivers.wiki.gg/images/SS-15_Focal_Point_Helmet_Render.png?5d5d46",
+      "src": "/warbonds/helmet-ss-15-focal-point.webp"
+    },
+    {
+      "id": "suit-ss-15-focal-point",
+      "name": "SS-15 Focal Point",
+      "image": "https://helldivers.wiki.gg/images/SS-15_Focal_Point_Armor_Promo.png?eff33a",
+      "src": "/warbonds/suit-ss-15-focal-point.webp"
+    },
+    {
+      "id": "cape-boundary-banker",
+      "name": "Boundary Banner",
+      "image": "https://helldivers.wiki.gg/images/Boundary_Banner_Cape_Render.png?55a766",
+      "src": "/warbonds/cape-boundary-banker.webp"
+    },
+    {
+      "id": "card-boundary-banker",
+      "name": "Boundary Banner",
+      "image": "https://helldivers.wiki.gg/images/Boundary_Banner_Player_Card_Icon.png?bd0896",
+      "src": "/warbonds/card-boundary-banker.webp"
+    },
+    {
+      "id": "emote-manual-ballistic-projection-protocol",
+      "name": "Manual Ballistic Projection Protocol",
+      "image": "https://helldivers.wiki.gg/images/Manual_Ballistic_Projection_Protocol_Emote_Icon.png?66cfdb",
+      "src": "/warbonds/emote-manual-ballistic-projection-protocol.webp"
+    },
+    {
+      "id": "title-longshot",
+      "name": "Longshot",
+      "image": "https://helldivers.wiki.gg/images/Longshot_Title_Icon.png?8f60fb",
+      "src": "/warbonds/title-longshot.webp"
+    },
+    {
+      "id": "helmet-a-9-helljumper",
+      "name": "A-9 Helljumper",
+      "image": "https://helldivers.wiki.gg/images/A-9_Helljumper_Helmet_Icon.png?139d5b",
+      "src": "/warbonds/helmet-a-9-helljumper.webp"
+    },
+    {
+      "id": "suit-a-9-helljumper",
+      "name": "A-9 Helljumper",
+      "image": "https://helldivers.wiki.gg/images/A-9_Helljumper_Armor_Render.png?50aa12",
+      "src": "/warbonds/suit-a-9-helljumper.webp"
+    },
+    {
+      "id": "cape-honored-heirloom",
+      "name": "Honored Heirloom",
+      "image": "https://helldivers.wiki.gg/images/Honored_Heirloom_Cape_Render.png?9ec8ff",
+      "src": "/warbonds/cape-honored-heirloom.webp"
+    },
+    {
+      "id": "card-honored-heirloom",
+      "name": "Honored Heirloom",
+      "image": "https://helldivers.wiki.gg/images/Honored_Heirloom_Player_Card_Icon.png?e33446",
+      "src": "/warbonds/card-honored-heirloom.webp"
+    },
+    {
+      "id": "pattern-mean-green-hellpod",
+      "name": "Mean Green Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Mean_Green_Hellpod_Pattern_Icon.png?354a7e",
+      "src": "/warbonds/pattern-mean-green-hellpod.webp"
+    },
+    {
+      "id": "helmet-a-35-recon",
+      "name": "A-35 Recon",
+      "image": "https://helldivers.wiki.gg/images/A-35_Recon_Helmet_Icon.png?184c44",
+      "src": "/warbonds/helmet-a-35-recon.webp"
+    },
+    {
+      "id": "suit-a-35-recon",
+      "name": "A-35 Recon",
+      "image": "https://helldivers.wiki.gg/images/A-35_Recon_Body_Icon.png?d69b7e",
+      "src": "/warbonds/suit-a-35-recon.webp"
+    },
+    {
+      "id": "cape-eye-of-the-clandestine",
+      "name": "Eye of the Clandestine",
+      "image": "https://helldivers.wiki.gg/images/Eye_of_the_Clandestine_Cape_Render.png?f636d6",
+      "src": "/warbonds/cape-eye-of-the-clandestine.webp"
+    },
+    {
+      "id": "card-eye-of-the-clandestine",
+      "name": "Eye of the Clandestine",
+      "image": "https://helldivers.wiki.gg/images/Eye_of_the_Clandestine_Player_Card_Icon.png?4f9056",
+      "src": "/warbonds/card-eye-of-the-clandestine.webp"
+    },
+    {
+      "id": "pattern-mean-green-shuttle",
+      "name": "Mean Green Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Mean_Green_Shuttle_Pattern_Icon.png?1ebe04",
+      "src": "/warbonds/pattern-mean-green-shuttle.webp"
+    },
+    {
+      "id": "title-rookie",
+      "name": "Rookie",
+      "image": "https://helldivers.wiki.gg/images/Rookie_Title_Icon.svg?780492",
+      "src": "/warbonds/title-rookie.webp"
+    },
+    {
+      "id": "pattern-mean-green-exosuit",
+      "name": "Mean Green Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Mean_Green_Exosuit_Pattern_Icon.png?794c5e",
+      "src": "/warbonds/pattern-mean-green-exosuit.webp"
+    },
+    {
+      "id": "pattern-mean-green-vehicle",
+      "name": "Mean Green Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Mean_Green_Vehicle_Pattern_Icon.png?5b0a13",
+      "src": "/warbonds/pattern-mean-green-vehicle.webp"
+    },
+    {
+      "id": "card-strength-in-our-arms",
+      "name": "Strength in Our Arms",
+      "image": "https://helldivers.wiki.gg/images/Strength_in_Our_Arms_Player_Card_Icon.png?9a3542",
+      "src": "/warbonds/card-strength-in-our-arms.webp"
+    },
+    {
+      "id": "suit-ac-1-dutiful",
+      "name": "AC-1 Dutiful",
+      "image": "https://helldivers.wiki.gg/images/AC-1_Dutiful_Armor_Render.png?e85770",
+      "src": "/warbonds/suit-ac-1-dutiful.webp"
+    },
+    {
+      "id": "helmet-ac-1-dutiful",
+      "name": "AC-1 Dutiful",
+      "image": "https://helldivers.wiki.gg/images/AC-1_Dutiful_Helmet_Render.png?ba4d45",
+      "src": "/warbonds/helmet-ac-1-dutiful.webp"
+    },
+    {
+      "id": "cape-strength-in-our-arms",
+      "name": "Strength in Our Arms",
+      "image": "https://helldivers.wiki.gg/images/Strength_in_Our_Arms_Cape_Render.png?7ccef7",
+      "src": "/warbonds/cape-strength-in-our-arms.webp"
+    },
+    {
+      "id": "pattern-extrasolar-ash-hellpod",
+      "name": "Extrasolar Ash Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Extrasolar_Ash_Hellpod_Pattern_Icon.png?14e579",
+      "src": "/warbonds/pattern-extrasolar-ash-hellpod.webp"
+    },
+    {
+      "id": "pattern-extrasolar-ash-shuttle",
+      "name": "Extrasolar Ash Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Extrasolar_Ash_Shuttle_Pattern_Icon.png?507fd8",
+      "src": "/warbonds/pattern-extrasolar-ash-shuttle.webp"
+    },
+    {
+      "id": "card-defender-of-our-dream",
+      "name": "Defender of Our Dream",
+      "image": "https://helldivers.wiki.gg/images/Defender_of_Our_Dream_Player_Card_Icon.png?8cbdb1",
+      "src": "/warbonds/card-defender-of-our-dream.webp"
+    },
+    {
+      "id": "suit-ac-2-obedient",
+      "name": "AC-2 Obedient",
+      "image": "https://helldivers.wiki.gg/images/AC-2_Obedient_Armor_Render.png?1a8415",
+      "src": "/warbonds/suit-ac-2-obedient.webp"
+    },
+    {
+      "id": "helmet-ac-2-obedient",
+      "name": "AC-2 Obedient",
+      "image": "https://helldivers.wiki.gg/images/AC-2_Obedient_Helmet_Render.png?da1d8e",
+      "src": "/warbonds/helmet-ac-2-obedient.webp"
+    },
+    {
+      "id": "cape-defender-of-our-dream",
+      "name": "Defender of Our Dream",
+      "image": "https://helldivers.wiki.gg/images/Defender_of_Our_Dream_Cape_Render.png?c999d3",
+      "src": "/warbonds/cape-defender-of-our-dream.webp"
+    },
+    {
+      "id": "title-assault-infantry",
+      "name": "Assault Infantry",
+      "image": "https://helldivers.wiki.gg/images/Assault_Infantry_Title_Icon.svg?7a942c",
+      "src": "/warbonds/title-assault-infantry.webp"
+    },
+    {
+      "id": "pattern-extrasolar-ash-exosuit",
+      "name": "Extrasolar Ash Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Extrasolar_Ash_Exosuit_Pattern_Icon.png?6fa860",
+      "src": "/warbonds/pattern-extrasolar-ash-exosuit.webp"
+    },
+    {
+      "id": "pattern-extrasolar-ash-vehicle",
+      "name": "Extrasolar Ash Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Extrasolar_Ash_Vehicle_Pattern_Icon.png?c6b96d",
+      "src": "/warbonds/pattern-extrasolar-ash-vehicle.webp"
+    },
+    {
+      "id": "card-camo-cloak",
+      "name": "Camo Cloak",
+      "image": "https://helldivers.wiki.gg/images/Camo_Cloak_Player_Card.png?43cecb",
+      "src": "/warbonds/card-camo-cloak.webp"
+    },
+    {
+      "id": "suit-tg-8-sharpshooter",
+      "name": "TG-8 Sharpshooter",
+      "image": "https://helldivers.wiki.gg/images/TG-8_Sharpshooter_Armor_Render.png?49c6cb",
+      "src": "/warbonds/suit-tg-8-sharpshooter.webp"
+    },
+    {
+      "id": "helmet-tg-8-sharpshooter",
+      "name": "TG-8 Sharpshooter",
+      "image": "https://helldivers.wiki.gg/images/TG-8_Sharpshooter_Helmet_Render.png?a9029b",
+      "src": "/warbonds/helmet-tg-8-sharpshooter.webp"
+    },
+    {
+      "id": "cape-camo-cloak",
+      "name": "Camo Cloak",
+      "image": "https://helldivers.wiki.gg/images/Camo_Cloak_Cape_Icon.png?21c95c",
+      "src": "/warbonds/cape-camo-cloak.webp"
+    },
+    {
+      "id": "pattern-castellans-green-hellpod",
+      "name": "Castellans Green Hellpod",
+      "image": "https://helldivers.wiki.gg/images/Castellans_Green_Hellpod_Pattern_Icon.png?516664",
+      "src": "/warbonds/pattern-castellans-green-hellpod.webp"
+    },
+    {
+      "id": "pattern-castellans-green-shuttle",
+      "name": "Castellans Green Shuttle",
+      "image": "https://helldivers.wiki.gg/images/Castellans_Green_Shuttle_Pattern_Icon.png?44a16c",
+      "src": "/warbonds/pattern-castellans-green-shuttle.webp"
+    },
+    {
+      "id": "card-city-fighters-resolve",
+      "name": "City Fighter's Resolve",
+      "image": "https://helldivers.wiki.gg/images/City_Fighter%27s_Resolve_Player_Card.png?ee8c0e",
+      "src": "/warbonds/card-city-fighters-resolve.webp"
+    },
+    {
+      "id": "suit-tg-122-demo-trooper",
+      "name": "TG-122 Demo-Trooper",
+      "image": "https://helldivers.wiki.gg/images/TG-122_Demo-Trooper_Armor_Render.png?95857c",
+      "src": "/warbonds/suit-tg-122-demo-trooper.webp"
+    },
+    {
+      "id": "helmet-tg-122-demo-trooper",
+      "name": "TG-122 Demo-Trooper",
+      "image": "https://helldivers.wiki.gg/images/TG-122_Demo-Trooper_Helmet_Render.png?9696b4",
+      "src": "/warbonds/helmet-tg-122-demo-trooper.webp"
+    },
+    {
+      "id": "cape-city-fighters-resolve",
+      "name": "City Fighter's Resolve",
+      "image": "https://helldivers.wiki.gg/images/City_Fighter%27s_Resolve_Cape_Icon.png?de2012",
+      "src": "/warbonds/cape-city-fighters-resolve.webp"
+    },
+    {
+      "id": "title-still-standing",
+      "name": "Still Standing",
+      "image": "https://helldivers.wiki.gg/images/Still_Standing_Title_Icon.png?7870b4",
+      "src": "/warbonds/title-still-standing.webp"
+    },
+    {
+      "id": "pattern-castellans-green-exosuit",
+      "name": "Castellans Green Exosuit",
+      "image": "https://helldivers.wiki.gg/images/Castellans_Green_Exosuit_Pattern_Icon.png?47b0f1",
+      "src": "/warbonds/pattern-castellans-green-exosuit.webp"
+    },
+    {
+      "id": "pattern-castellans-green-vehicle",
+      "name": "Castellans Green Vehicle",
+      "image": "https://helldivers.wiki.gg/images/Castellans_Green_Vehicle_Pattern_Icon.png?4b89dd",
+      "src": "/warbonds/pattern-castellans-green-vehicle.webp"
+    }
+  ],
+  "englishNameFallback": [
+    "Rags of the Fashionable",
+    "Rags of the Fashionable",
+    "Churned Earth Hellpod",
+    "Churned Earth Shuttle",
+    "Wedgeful Tricorn",
+    "Wedgeful Tricorn",
+    "Churned Earth Vehicle",
+    "Bunker Buster",
+    "Display of Brawn",
+    "Churned Earth Exosuit"
+  ]
+}

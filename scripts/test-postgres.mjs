@@ -117,6 +117,27 @@ try {
   await pool.end();
   pool = createPool(url.href);
   assert.equal((await read()).posts[0].views, 12);
+  await postgresTransaction(pool, (db) => {
+    db.messages.push({
+      id: 'private-message',
+      senderId: 'test-user',
+      recipientId: 'other-user',
+      body: 'private',
+      readAt: null,
+    });
+  });
+  assert.equal(
+    (await postgresTransaction(other, (db) => db.messages, { write: false }))[0].body,
+    'private',
+  );
+  await postgresTransaction(other, (db) => {
+    db.messages[0].readAt = '2026-11-01T00:00:00.000Z';
+  });
+  assert.equal((await read()).messages[0].readAt, '2026-11-01T00:00:00.000Z');
+  await postgresTransaction(pool, (db) => {
+    db.messages = [];
+  });
+  assert.equal((await read()).messages.length, 0);
   console.log(
     'PASS: PostgreSQL import, migration, nested polls, two-pool concurrency, rollback, expiry on rejected requests, record removal and reconnect persistence',
   );

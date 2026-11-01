@@ -76,6 +76,7 @@ function createSeed() {
     users,
     posts,
     comments,
+    messages: [],
     votes: [],
     requests: [],
     sessions: [],

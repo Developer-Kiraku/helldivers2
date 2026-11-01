@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { createPool } from '../src/lib/server/postgres.mjs';
 import harness from './test-functional.cjs';
 const url = new URL(process.env.DATABASE_URL),
@@ -42,6 +42,15 @@ try {
   await admin.call(`/api/posts/${post.id}/poll`, 'POST', { choices: [post.poll.options[0].id] });
   await admin.call(`/api/posts/${post.id}/comments`, 'POST', { body: 'PostgreSQL 댓글' });
   await admin.call('/api/admin/users/u-user2/approve', 'POST', {});
+  const message = (
+    await member.call('/api/messages', 'POST', {
+      recipientId: 'u-admin',
+      body: '재시작 후에도 보존되는 비공개 쪽지',
+      requestId: randomUUID(),
+    })
+  ).data.message;
+  const messageReadAt = (await admin.call(`/api/messages/${message.id}/read`, 'POST', {})).data
+    .message.readAt;
   await harness.stop();
   await harness.start('work/postgres-http-unused.json', { databaseUrl: url.href });
   const persisted = (await member.call(`/api/posts/${post.id}`)).data;
@@ -54,10 +63,15 @@ try {
     (await admin.call('/api/admin/users')).data.users.find((user) => user.id === 'u-user2').role,
     'member',
   );
+  const persistedMessage = (await member.call(`/api/messages/${message.id}`)).data.message;
+  assert.equal(persistedMessage.body, message.body);
+  assert.equal(persistedMessage.readAt, messageReadAt);
+  await member.call(`/api/messages/${message.id}`, 'DELETE', {});
+  assert.equal((await admin.call(`/api/messages/${message.id}`)).data.message.body, message.body);
   await member.call('/api/auth/logout', 'POST', {});
   await member.call('/api/bootstrap', 'GET', undefined, 401);
   console.log(
-    'PASS: PostgreSQL HTTP health, authentication, 18-post boards, posting, polls, comments, approval, session restart persistence and logout',
+    'PASS: PostgreSQL HTTP health, authentication, boards, comments, approval, private messages and read receipts across restart, independent deletion and logout',
   );
 } finally {
   await harness.stop();
