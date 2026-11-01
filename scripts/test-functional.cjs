@@ -117,6 +117,7 @@ const draft = (board = 'talk', title = '기능 검증 글') => ({
 async function run() {
   await import('./test-application-url.mjs');
   await import('./test-post-sharing-history.mjs');
+  await import('./test-audit-logs.mjs');
   await import('./test-post-maps.mjs');
   await import('./test-post-views.mjs');
   await import('./test-post-comments.mjs');
@@ -206,6 +207,7 @@ async function run() {
     await require('./test-tier-list-http.cjs')({ guest, member, apprentice, deputy, admin });
     await require('./test-board-permissions.cjs')({ guest, apprentice, member, deputy, admin });
     await require('./test-bulk-posts.cjs')({ guest, apprentice, member, deputy, admin });
+    await require('./test-audit-logs-http.cjs')({ guest, member, deputy, admin, file });
     const aiDraft = { board: 'talk', title: '테스트', segments: ['맞춤뻡을 고쳐줘'] };
     await guest.call('/api/ai/polish', 'POST', aiDraft, 401);
     await member.call('/api/ai/polish', 'POST', aiDraft, 403, {
@@ -856,7 +858,7 @@ async function run() {
       await member.call(`/api/posts/${voteLogPost.id}/vote`, 'POST', { value });
     const voteQuery = encodeURIComponent(voteLogTitle);
     const voteLogs = (await admin.call(`/api/admin/logs?q=${voteQuery}`)).data;
-    assert.equal(voteLogs.total, 6);
+    assert.equal(voteLogs.total, 7); // One creation event and six recommendation events.
     for (const [type, count] of [
       ['post_like', 2],
       ['post_dislike', 2],
@@ -876,7 +878,7 @@ async function run() {
       );
     }
     await member.call(`/api/posts/${voteLogPost.id}/vote`, 'POST', { value: 2 }, 400);
-    assert.equal((await admin.call(`/api/admin/logs?q=${voteQuery}`)).data.total, 6);
+    assert.equal((await admin.call(`/api/admin/logs?q=${voteQuery}`)).data.total, 7);
     // Polls keep ballots separate from recommendation votes and never expose anonymous identities.
     const pollDraft = {
       question: '오늘의 작전 시간?',

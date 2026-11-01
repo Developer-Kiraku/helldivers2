@@ -49,6 +49,7 @@ export function bulkPosts(db, actor, input) {
       post.pinned = false;
       post.updatedAt = timestamp;
     }
+    if (post.status === 'draft') continue;
     audit(
       db,
       actor.id,

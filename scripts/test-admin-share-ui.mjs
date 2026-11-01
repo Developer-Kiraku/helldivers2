@@ -92,6 +92,12 @@ try {
             pageCount: 1,
           },
   };
+  const auditRequests = [];
+  const auditApi = window.__community.api;
+  window.__community.api = (path) => {
+    auditRequests.push(path);
+    return auditApi(path);
+  };
   root = createRoot(document.getElementById('test'));
   await React.act(async () => root.render(React.createElement(AuditLogPage)));
   await flush();
@@ -106,6 +112,30 @@ try {
   assert.equal(button('사유 ▴').getAttribute('aria-expanded'), 'true');
   await click(button('사유 ▴'));
   assert.equal(document.querySelectorAll('.audit-log-reason-row').length, 0);
+  const changeFilter = async (label, value) => {
+    const select = document.querySelector(`select[aria-label="${label}"]`);
+    assert.ok(select);
+    await React.act(async () => {
+      select.value = value;
+      select.dispatchEvent(new window.Event('change', { bubbles: true }));
+    });
+    await flush();
+  };
+  assert.equal(document.querySelector('select[aria-label="로그 게시판"]').options.length, 9);
+  await changeFilter('로그 게시판', 'tierlist');
+  await changeFilter('로그 분류', 'comment_create');
+  assert.match(auditRequests.at(-1), /type=comment_create&board=tierlist/);
+  assert.ok(document.querySelector('thead').textContent.includes('댓글 작성일'));
+  const beforeRefresh = auditRequests.length;
+  await click(document.querySelector('button[aria-label="로그 새로고침"]'));
+  assert.equal(auditRequests.length, beforeRefresh + 1);
+  assert.match(auditRequests.at(-1), /board=tierlist/);
+  await changeFilter('로그 분류', 'member_join');
+  assert.equal(document.querySelector('select[aria-label="로그 게시판"]').disabled, true);
+  assert.equal(new URLSearchParams(auditRequests.at(-1).split('?')[1]).get('board'), '');
+  await changeFilter('로그 분류', 'post_create');
+  assert.equal(document.querySelector('select[aria-label="로그 게시판"]').disabled, false);
+  console.log('PASS: audit board/type filtering, comment headers, refresh and member filter reset');
   await React.act(async () => root.unmount());
   root = createRoot(document.getElementById('test'));
   const sent = [];

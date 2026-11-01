@@ -347,6 +347,7 @@ async function handler(request, context) {
             deletedAt: null,
           };
           db.comments.push(comment);
+          audit(db, actor.id, 'comment.create', comment.id);
           return { comment: serializeComment(db, comment, actor) };
         }
         if (
@@ -362,12 +363,15 @@ async function handler(request, context) {
             fail(403, '본인이 작성한 댓글만 수정하거나 삭제할 수 있습니다.');
           if (method === 'DELETE') {
             comment.deletedAt = now();
+            audit(db, actor.id, 'comment.delete', comment.id);
             return { ok: true };
           }
           const text = typeof input.body === 'string' ? input.body.trim() : '';
           if (!text || text.length > 1000) fail(400, '댓글은 1~1,000자로 입력해주세요.');
+          const previousBody = comment.body;
           comment.body = mutedComment(text, actor);
           comment.updatedAt = now();
+          if (comment.body !== previousBody) audit(db, actor.id, 'comment.update', comment.id);
           return { comment: serializeComment(db, comment, actor) };
         }
         if (segments[2] === 'poll' && segments.length === 3 && ['POST', 'PATCH'].includes(method)) {
@@ -379,7 +383,17 @@ async function handler(request, context) {
             post.poll.closedAt = now();
             audit(db, actor.id, 'poll.close', post.id);
           } else {
+            const previous =
+              post.poll.ballots.find((ballot) => ballot.userId === actor.id)?.choices || [];
             castBallot(post.poll, actor, input.choices);
+            if (
+              previous.length !== input.choices.length ||
+              previous.some((id) => !input.choices.includes(id))
+            ) {
+              // Record participation only; never put ballot choices in the audit log.
+              const action = !input.choices.length ? 'cancel' : previous.length ? 'change' : 'vote';
+              audit(db, actor.id, `poll.${action}`, post.id);
+            }
           }
           return { poll: serializePoll(db, post.poll, actor) };
         }

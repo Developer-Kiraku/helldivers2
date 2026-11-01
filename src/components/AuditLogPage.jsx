@@ -1,5 +1,6 @@
 'use client';
 import { Fragment, useEffect, useState } from 'react';
+import { RefreshCw } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import { Button, Input, Select } from './ui';
 import { auditLogTypes } from '@/lib/audit-log-types.mjs';
@@ -23,6 +24,8 @@ const date = (value, withTime = false) =>
 export default function AuditLogPage() {
   const { api, role } = useCommunity();
   const [type, setType] = useState('all');
+  const [board, setBoard] = useState('all');
+  const [refresh, setRefresh] = useState(0);
   const [expanded, setExpanded] = useState({});
   const [draft, setDraft] = useState(''),
     [query, setQuery] = useState('');
@@ -38,6 +41,7 @@ export default function AuditLogPage() {
     setError('');
     const parameters = new URLSearchParams({
       type: type === 'all' ? '' : type,
+      board: board === 'all' ? '' : board,
       q: query,
       page: String(page),
     });
@@ -54,7 +58,7 @@ export default function AuditLogPage() {
     return () => {
       alive = false;
     };
-  }, [api, role, type, query, page]);
+  }, [api, role, type, board, query, page, refresh]);
   if (!isStaff(role))
     return (
       <section className="access-panel">
@@ -62,7 +66,8 @@ export default function AuditLogPage() {
       </section>
     );
   const members = type.startsWith('member_');
-  const posts = type.startsWith('post_');
+  const comments = type.startsWith('comment_');
+  const posts = type.startsWith('post_') || type.startsWith('poll_') || comments;
   return (
     <section className="admin-page audit-log-page">
       <header className="audit-log-header">
@@ -82,6 +87,7 @@ export default function AuditLogPage() {
           value={type}
           onChange={(event) => {
             setType(event.target.value);
+            if (event.target.value.startsWith('member_')) setBoard('all');
             setPage(1);
           }}
         >
@@ -89,6 +95,22 @@ export default function AuditLogPage() {
           {Object.entries(auditLogTypes).map(([value, label]) => (
             <option key={value} value={value}>
               {label}
+            </option>
+          ))}
+        </Select>
+        <Select
+          aria-label="로그 게시판"
+          value={board}
+          disabled={members}
+          onChange={(event) => {
+            setBoard(event.target.value);
+            setPage(1);
+          }}
+        >
+          <option value="all">전체 게시판</option>
+          {Object.entries(boards).map(([value, item]) => (
+            <option key={value} value={value}>
+              {item.label}
             </option>
           ))}
         </Select>
@@ -100,6 +122,15 @@ export default function AuditLogPage() {
           onChange={(event) => setDraft(event.target.value)}
         />
         <Button type="submit">검색</Button>
+        <Button
+          type="button"
+          aria-label="로그 새로고침"
+          title="로그 새로고침"
+          disabled={loading}
+          onClick={() => setRefresh((value) => value + 1)}
+        >
+          <RefreshCw size={16} aria-hidden="true" />
+        </Button>
         <span role="status">{loading ? '불러오는 중…' : `${data?.total || 0}건`}</span>
       </form>
       {error && (
@@ -115,9 +146,23 @@ export default function AuditLogPage() {
               <th scope="col">실행 일시</th>
               <th scope="col">실행한 유저</th>
               <th scope="col">
-                {members ? '회원 닉네임' : posts ? '글 제목' : '글 제목 / 회원 닉네임'}
+                {members
+                  ? '회원 닉네임'
+                  : comments
+                    ? '댓글이 달린 글'
+                    : posts
+                      ? '글 제목'
+                      : '글 제목 / 회원 닉네임'}
               </th>
-              <th scope="col">{members ? '가입일' : posts ? '작성일' : '작성일 / 가입일'}</th>
+              <th scope="col">
+                {members
+                  ? '가입일'
+                  : comments
+                    ? '댓글 작성일'
+                    : posts
+                      ? '작성일'
+                      : '작성일 / 가입일'}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -166,9 +211,11 @@ export default function AuditLogPage() {
                     <td>{entry.actorNickname}</td>
                     <td className="audit-log-target" title={entry.targetName}>
                       {entry.targetName}
-                      {entry.type === 'post_move' && (
-                        <small style={{ display: 'block' }}>
-                          {boards[entry.sourceBoard]?.label} → {boards[entry.targetBoard]?.label}
+                      {entry.board && (
+                        <small className="audit-log-board">
+                          {entry.type === 'post_move'
+                            ? `${boards[entry.sourceBoard]?.label || entry.sourceBoard} → ${boards[entry.targetBoard]?.label || entry.targetBoard}`
+                            : boards[entry.board]?.label || entry.board}
                         </small>
                       )}
                     </td>

@@ -8,6 +8,7 @@ import { hashPassword } from './passwords';
 import { posts as samplePosts } from '../data';
 import { startProbation, settleProbation } from './probation.mjs';
 import { createPool, migrate, postgresTransaction } from './postgres.mjs';
+import { auditLogDetails } from './audit-logs.mjs';
 
 const shared = globalThis;
 shared.__hdJsonQueue ||= Promise.resolve();
@@ -153,7 +154,7 @@ export function audit(db, actorId, action, targetId, details = {}) {
     actorId,
     action,
     targetId,
-    details,
+    details: auditLogDetails(db, actorId, action, targetId, details),
     createdAt: new Date().toISOString(),
   });
 }
