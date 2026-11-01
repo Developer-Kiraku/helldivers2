@@ -1693,8 +1693,9 @@ export default [
   },
   {
     id: 'armor-acclimated',
-    description: '화염·가스·산성·전기 피해 50% 저항.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description: '화염, 가스, 산성, 전기 대미지에 대한 저항력을 50% 제공합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%81%EC%9D%91%EB%A0%A5',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '적응력',
@@ -1705,8 +1706,9 @@ export default [
   {
     id: 'armor-adreno-defibrillator',
     description:
-      '신체가 온전하면 사망 시 한 번 잠시 소생. 각성제 지속 시간 +2초, 아크 피해 50% 저항.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+      '헬다이버의 신체가 아직 온전한 경우, 사망 시 지속 시간이 짧은 일회성 소생술을 제공합니다. 각성제 지속 시간이 2.0초 증가합니다. 아크 대미지에 대한 저항력을 50% 제공합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%95%84%EB%93%9C%EB%A0%88%EB%85%B8-%EC%A0%9C%EC%84%B8%EB%8F%99%EA%B8%B0',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '아드레노-제세동기',
@@ -1715,8 +1717,9 @@ export default [
   },
   {
     id: 'armor-advanced-filtration',
-    description: '가스 피해와 효과 80% 저항.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description: '가스 대미지 및 효과에 대한 저항력을 80% 제공합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B3%A0%EA%B8%89%20%EC%97%AC%EA%B3%BC',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '고급 여과',
@@ -1726,8 +1729,9 @@ export default [
   },
   {
     id: 'armor-extra-padding',
-    description: '방어 등급 +50.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Extra_Padding',
+    description: '더 높은 장갑 등급을 제공합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%B6%94%EA%B0%80%20%EC%99%84%EC%B6%A9%EC%A0%9C',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '추가 완충제',
@@ -1737,8 +1741,10 @@ export default [
   },
   {
     id: 'armor-blunt-force-mitigation',
-    description: '넘어짐 저항 증가. 충격·충돌 피해 30% 감소, 방어 등급 +25.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Blunt-Force_Mitigation',
+    description:
+      '지니고 있으면 넘어짐에 대한 저항력이 높아집니다. 충격 및 충돌로 인한 손상을 30% 만큼 줄입니다. 더 높은 장갑 등급을 제공합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%91%94%EA%B8%B0%20%EC%B6%A9%EA%B2%A9%20%EC%99%84%ED%99%94',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '둔기 충격 완화',
@@ -1748,8 +1754,10 @@ export default [
   },
   {
     id: 'armor-ballistic-padding',
-    description: '흉부·폭발 피해 25% 저항. 흉부 출혈 피해 방지.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '가슴 부위에 입는 대미지에 대한 저항력을 25% 제공합니다. 폭발 대미지에 대한 저항력을 25% 제공합니다. 흉부 출혈 시 출혈로 인한 모든 대미지를 방지합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%ED%83%84%EB%8F%84%20%EC%99%84%EC%B6%A9%EC%A0%9C',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '탄도 완충제',
@@ -1759,8 +1767,10 @@ export default [
   },
   {
     id: 'armor-engineering-kit',
-    description: '앉거나 엎드릴 때 반동 30% 감소. 투척무기 초기·최대 소지량 +2.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '앉거나 포복할 때 반동이 추가로 30% 감소합니다. 투척 무기의 초기 인벤토리와 소지 용량이 +2 증가합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B3%B5%EB%B3%91%20%ED%82%A4%ED%8A%B8',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '공병 키트',
@@ -1770,8 +1780,10 @@ export default [
   },
   {
     id: 'armor-med-kit',
-    description: '각성제 초기·최대 소지량 +2. 각성제 효과 지속 시간 +2초.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '각성제의 초기 인벤토리와 소지 용량이 +2 증가합니다. 각성제 지속 시간이 2.0초 증가합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B5%AC%EA%B8%89%20%ED%82%A4%ED%8A%B8',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '구급 키트',
@@ -1792,8 +1804,10 @@ export default [
   },
   {
     id: 'armor-scout',
-    description: '지도 표식에서 2초마다 레이더 탐색. 적이 착용자를 발견하는 거리 30% 감소.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '지도에 배치한 마커가 2.0초 간격으로 레이더 스캔을 생성합니다. 적이 착용자를 탐지할 수 있는 거리가 30% 감소합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%95%EC%B0%B0',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '정찰',
@@ -1803,8 +1817,10 @@ export default [
   },
   {
     id: 'armor-desert-stormer',
-    description: '화염·가스·산성·전기 피해 40% 저항. 투척 거리 20% 증가.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '화염, 가스, 산성, 전기 대미지에 대한 저항력을 40% 제공합니다. 투척 거리가 20% 증가합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%82%AC%EB%A7%89%20%EB%8F%8C%EA%B2%A9%EB%8C%80',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '사막 돌격대',
@@ -1814,8 +1830,9 @@ export default [
   },
   {
     id: 'armor-electrical-conduit',
-    description: '아크 피해 95% 저항.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description: '아크 대미지에 대한 저항력을 95% 제공합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%84%EB%8F%84%EC%84%B1',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '전도성',
@@ -1825,8 +1842,10 @@ export default [
   },
   {
     id: 'armor-fortified',
-    description: '앉거나 엎드릴 때 반동 30% 감소. 폭발 피해 50% 저항.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '앉거나 포복할 때 반동이 추가로 30% 감소합니다. 폭발 대미지에 대한 저항력을 50% 제공합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B0%95%ED%99%94',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '강화',
@@ -1836,8 +1855,9 @@ export default [
   {
     id: 'armor-gunslinger',
     description:
-      '보조무기의 재장전 속도 40%, 꺼내기·집어넣기 속도 50% 증가. 보조무기 반동 70% 감소.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+      '보조 무기 재장전 속도가 40% 상승합니다. 보조 무기 집어 올리기/집어 넣기 속도가 50% 상승합니다. 보조 무기 반동이 70% 감소합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%B4%9D%EC%9E%A1%EC%9D%B4',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '총잡이',
@@ -1847,8 +1867,10 @@ export default [
   },
   {
     id: 'armor-inflammable',
-    description: '화염 피해 75% 저항.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '화염 대미지에 대한 저항력을 75% 제공하여, 착용자에게 화염에 대한 자신감을 부여합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%9D%B8%ED%99%94%EC%84%B1%20%EB%AC%BC%EC%A7%88',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '인화성 물질',
@@ -1858,8 +1880,10 @@ export default [
   },
   {
     id: 'armor-integrated-explosives',
-    description: '사망 1.5초 후 폭발. 투척무기 초기·최대 소지량 +2.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '착용자가 사망한 뒤 1.5초 후 방어구가 폭발합니다. 투척 무기의 초기 인벤토리와 소지 용량이 +2 증가합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%ED%86%B5%ED%95%A9%20%ED%8F%AD%EB%B0%9C%EB%AC%BC',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '통합 폭발물',
@@ -1869,8 +1893,7 @@ export default [
   },
   {
     id: 'armor-oxygenator',
-    description:
-      '걷기·달리기 속도 10% 증가(앉기·엎드리기·조준 중 이동 제외). 슬라이딩 속도·지속 시간 증가.',
+    description: '걷기·달리기 속도 증가. 슬라이딩 속도·지속 시간 증가.',
     descriptionSource: 'https://helldivers.wiki.gg/wiki/Oxygenator',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
@@ -1881,8 +1904,10 @@ export default [
   },
   {
     id: 'armor-peak-physique',
-    description: '근접 피해 40% 증가. 무기 조작성 향상.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '근접 공격 대미지가 40% 증가합니다. 무기 취급 능력이 향상되어 무기 움직임에 휘둘리지 않습니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%9D%B4%EC%83%81%EC%A0%81%EC%9D%B8%20%EC%B2%B4%ED%98%95',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '이상적인 체형',
@@ -1892,8 +1917,10 @@ export default [
   },
   {
     id: 'armor-reinforced-epaulettes',
-    description: '주무기 재장전 속도 30% 증가. 사지 부상 회피 확률 50%, 근접 피해 20% 증가.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '주 무기의 재장전 속도가 30% 증가합니다. 착용자는 50% 확률로 치명적인 사지 부상을 피할 수 있습니다. 근접 공격 대미지가 20% 증가합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B0%95%ED%99%94%EB%90%9C%20%EA%B2%AC%EC%9E%A5',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '강화된 견장',
@@ -1903,8 +1930,10 @@ export default [
   },
   {
     id: 'armor-rock-solid',
-    description: '근접 피해 40% 증가. 넘어짐 저항 증가.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '근접 공격 대미지가 40% 증가합니다. 지니고 있으면 넘어짐에 대한 저항력이 높아집니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B5%B3%EA%B1%B4%ED%95%9C%20%EB%B0%94%EC%9C%84',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '굳건한 바위',
@@ -1914,8 +1943,10 @@ export default [
   },
   {
     id: 'armor-reduced-signature',
-    description: '이동 소음 50% 감소. 적이 착용자를 발견하는 거리 40% 감소.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '착용하면 이동 시 소음이 50%만큼 줄어듭니다. 적이 착용자를 탐지할 수 있는 거리가 40% 감소합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%8B%A0%ED%98%B8%20%EA%B0%90%EC%86%8C',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '신호 감소',
@@ -1925,8 +1956,9 @@ export default [
   },
   {
     id: 'armor-servo-assisted',
-    description: '투척 거리 30%, 사지 체력 50% 증가.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description: '투척 거리가 30% 증가합니다. +50%의 사지 체력을 제공합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%84%9C%EB%B3%B4%20%EB%B3%B4%EC%A1%B0',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '서보 보조',
@@ -1937,8 +1969,9 @@ export default [
   {
     id: 'armor-siege-ready',
     description:
-      '주무기 재장전 속도 30% 증가. 예비 탄약 소지량 20% 증가(탄약 배낭·얼티메이텀·하부 부착 무기 제외). 탄창 크기는 증가하지 않음.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Siege-Ready',
+      '주 무기의 재장전 속도가 30% 증가합니다. 모든 무기의 탄약 용량이 20% 증가합니다. 무기 배낭에는 영향을 주지 않습니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%ED%8F%AC%EC%9C%84%20%EC%A4%80%EB%B9%84%20%EC%99%84%EB%A3%8C',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '포위 준비 완료',
@@ -1948,8 +1981,10 @@ export default [
   },
   {
     id: 'armor-unflinching',
-    description: '피격 시 조준 흔들림 감소. 방어 등급 +25, 지도 표식에서 2초마다 레이더 탐색.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Unflinching',
+    description:
+      '헬다이버가 피격 시에도 주저하지 않을 수 있도록 도와줍니다. 더 높은 장갑 등급을 제공합니다. 지도에 배치한 마커가 2.0초 간격으로 레이더 스캔을 생성합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EA%B2%B0%EC%97%B0%ED%95%A8',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '결연함',
@@ -1959,8 +1994,10 @@ export default [
   },
   {
     id: 'armor-feet-first',
-    description: '이동 소음 50% 감소. 관심 지점 식별 거리 30% 증가, 다리 부상 면역.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '착용하면 이동 시 소음이 50% 만큼 줄어듭니다. 관심 지점 인식 범위가 30% 만큼 증가합니다. 다리 부상에 면역이 생깁니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%B0%9C%20%EB%A8%BC%EC%A0%80',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '발 먼저',
@@ -1970,8 +2007,10 @@ export default [
   },
   {
     id: 'armor-democracy-protects',
-    description: '치명상 생존 확률 50%. 흉부 출혈 피해 방지.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '치명적 대미지에도 50% 확률로 사망하지 않습니다. 흉부 출혈 시 출혈로 인한 모든 대미지를 방지합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%AF%BC%EC%A3%BC%EC%A3%BC%EC%9D%98%EC%9D%98%20%EA%B0%80%ED%98%B8',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '민주주의의 가호',
@@ -2201,8 +2240,10 @@ export default [
       '포컬 포인트',
       'Focal Point',
     ],
-    description: '조준 흔들림 35%, 이동 소음 15% 감소. 앉거나 엎드려 정지하면 은폐 효과.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '조준 시 무기 흔들림이 35%만큼 감소합니다. 착용하면 이동 시 소음이 15%만큼 줄어듭니다. 나뭇잎과 유사한 은폐 효과를 통해 착용자가 움직이지 않고 웅크리거나 엎드린 자세를 유지하는 동안 적의 탐지 범위를 줄여줍니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A0%95%EC%A0%81%EC%9D%B8%20%EC%9E%A5%EB%A7%89',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '정적인 장막',
@@ -2211,8 +2252,10 @@ export default [
   },
   {
     id: 'armor-true-grit',
-    description: '지원무기 재장전 속도 30% 증가. 무기 조작성 소폭 향상.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Armor_Passives',
+    description:
+      '지원 무기의 재장전 속도가 30% 증가합니다. 무기의 인체공학 설계를 약간 개선하여 무기 이동 시 항력을 줄입니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EC%A7%84%EC%A0%95%ED%95%9C%20%EC%9C%84%EC%9A%A9',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '진정한 위용',
@@ -2233,7 +2276,7 @@ export default [
   },
   {
     id: 'armor-concussive-padding-reinforced',
-    description: '폭발 피해 50% 저항. 방어 등급 +30.',
+    description: '폭발 피해 50% 저항. 방어 등급 증가.',
     descriptionSource: 'https://helldivers.wiki.gg/wiki/Concussive_Padding%2C_Reinforced',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
@@ -2244,8 +2287,10 @@ export default [
   },
   {
     id: 'armor-supplemental-adrenaline',
-    description: '피해를 받으면 스태미나 일부 회복. 방어 등급 +25.',
-    descriptionSource: 'https://helldivers.wiki.gg/wiki/Supplemental_Adrenaline',
+    description:
+      '착용자가 피해를 입으면 스태미나를 일부 회복합니다. 더 높은 장갑 등급을 제공합니다.',
+    descriptionSource:
+      'https://www.namu.moe/w/HELLDIVERS%202/%EB%B0%A9%EC%96%B4%EA%B5%AC#%EB%B3%B4%EA%B8%89%20%EC%95%84%EB%93%9C%EB%A0%88%EB%82%A0%EB%A6%B0',
     descriptionCheckedAt: '2026-11-01',
     group: 'armor',
     label: '보급 아드레날린',
