@@ -20,6 +20,17 @@ module.exports = async function ({ guest, member }) {
         [...doc.querySelectorAll('.warbond-reward h3')].map((node) => node.textContent),
         page.items.map((item) => item.label),
       );
+      const cards = [...doc.querySelectorAll('.warbond-reward')];
+      page.items.forEach((item, index) => {
+        const trigger = cards[index].querySelector('button[aria-haspopup=dialog]');
+        if (item.passive?.description || item.details) {
+          assert.ok(trigger, `${item.label} must expose its options`);
+          assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+          assert.ok(trigger.getAttribute('aria-label').includes(item.label));
+        } else {
+          assert.equal(trigger, null, `${item.label} has no equipment options`);
+        }
+      });
       assert.equal(
         doc.querySelector('.warbond-pages [aria-current=page]').getAttribute('href'),
         `/warbonds/${warbond.slug}?page=${page.number}`,

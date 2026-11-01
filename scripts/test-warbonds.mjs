@@ -13,6 +13,7 @@ const source = JSON.parse(await fs.readFile('docs/warbonds/sources.json', 'utf8'
 assert.equal(warbonds.length, equipment.filter((item) => item.group === 'warbond').length);
 assert.equal(new Set(warbonds.map((item) => item.slug)).size, warbonds.length);
 const assets = new Set(['/warbonds/medal.webp']);
+const combatRewards = new Set();
 for (const warbond of warbonds) {
   assert.equal(warbond.pages.length, warbond.type === 'standard' ? 10 : 3, warbond.label);
   assert.equal(
@@ -38,7 +39,25 @@ for (const warbond of warbonds) {
     for (const item of page.items) {
       assert.ok(item.label && item.typeLabel && item.src);
       assert.ok(Number.isInteger(item.medals) && item.medals > 0);
-      if (item.equipmentId) assert.equal(item.src, equipmentForId(item.equipmentId).src);
+      if (item.equipmentId) {
+        assert.equal(item.src, equipmentForId(item.equipmentId).src);
+        assert.ok(item.details, `${item.label} is missing its equipment details`);
+        assert.ok(item.details.summary || item.details.stats.length || item.details.traits.length);
+        assert.match(
+          item.details.source,
+          /^https:\/\/(www\.namu\.moe|blog\.ko\.playstation\.com)\//,
+        );
+        assert.match(item.details.checkedAt, /^\d{4}-\d{2}-\d{2}$/);
+        assert.equal(
+          new Set(item.details.stats.map(([label]) => label)).size,
+          item.details.stats.length,
+        );
+        for (const [label, value] of item.details.stats) {
+          assert.ok(label.trim() && value.trim());
+          assert.doesNotMatch(value, /undefined|NaN|\?\?\?|[{}<>]/);
+        }
+        combatRewards.add(item.id);
+      }
       if (item.kind === 'suit')
         assert.equal(item.passive?.group, 'armor', `${item.label} must reference a real passive`);
       assert.notEqual(
@@ -65,6 +84,17 @@ assert.ok(
     .searchText.includes('시클'),
 );
 assert.ok(warbondListEntries().every((item) => !('pages' in item)));
+assert.equal(combatRewards.size, 143);
+assert.deepEqual(equipmentForId('primary-las-5-scythe').details.stats[0], ['초당 대미지', '350']);
+assert.ok(
+  equipmentForId('throwable-ted-63-dynamite').details.stats.some(
+    ([label, value]) => label === '신관 지연 시간' && value === '5초 / 15초 / 60초',
+  ),
+);
+assert.ok(
+  equipmentForId('secondary-cqc-73-entrenchment-tool').details.traits.includes('근접 무기'),
+);
+assert.ok(equipmentForId('booster-surplus-eat-allocation').details.summary.includes('두 번'));
 console.log(
   `PASS: ${warbonds.length} warbonds, complete page membership, verified medal/credit totals, ${assets.size} local images, shared equipment references`,
 );

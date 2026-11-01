@@ -1,41 +1,8 @@
 'use client';
-import { useState } from 'react';
 import { equipmentForId } from '@/lib/equipment.mjs';
-import { EquipmentIcon } from './EquipmentIcon';
-import { Button } from './ui';
-import Modal from './Modal';
+import EquipmentDetails from './EquipmentDetails';
 
-export default function ArmorDetails({ id, disabled = false, cardLabel }) {
-  const [open, setOpen] = useState(false);
-  const item = equipmentForId(id);
-  if (item?.group !== 'armor') return null;
-  return (
-    <>
-      <Button
-        type="button"
-        className={`armor-details-button${cardLabel ? ' armor-details-card-trigger' : ''}`}
-        disabled={disabled}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        aria-label={`${cardLabel ? `${cardLabel} · ` : ''}${item.label} 옵션 설명`}
-        onClick={() => setOpen(true)}
-      >
-        {cardLabel ? '옵션 보기' : '옵션 설명'}
-      </Button>
-      {open && (
-        <Modal title={`${item.label} · 방어구 옵션`} onClose={() => setOpen(false)}>
-          <div className="armor-details">
-            <EquipmentIcon item={item} />
-            <p>{item.description || '효과 설명을 준비 중입니다.'}</p>
-            <small>
-              {item.descriptionCheckedAt} 기준 ·{' '}
-              <a href={item.descriptionSource} target="_blank" rel="noopener noreferrer">
-                효과 출처
-              </a>
-            </small>
-          </div>
-        </Modal>
-      )}
-    </>
-  );
+export default function ArmorDetails(props) {
+  if (equipmentForId(props.id)?.group !== 'armor') return null;
+  return <EquipmentDetails {...props} />;
 }

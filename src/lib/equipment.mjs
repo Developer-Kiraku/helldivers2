@@ -1,4 +1,5 @@
 import catalog from './equipment-catalog.mjs';
+import details from './equipment-details-catalog.mjs';
 
 export const equipmentGroups = [
   ['primary', '주무기'],
@@ -20,7 +21,11 @@ export const stratagemKinds = [
 const kindOrder = new Map(stratagemKinds.map(([id], index) => [id, index]));
 const groupOrder = new Map(equipmentGroups.map(([id], index) => [id, index]));
 const nameOrder = new Intl.Collator('ko', { numeric: true });
-export const equipment = catalog.map((item) => ({ ...item, token: `:gear-${item.id}:` }));
+export const equipment = catalog.map((item) => ({
+  ...item,
+  ...(details[item.id] ? { details: details[item.id] } : {}),
+  token: `:gear-${item.id}:`,
+}));
 const byId = new Map(equipment.map((item) => [item.id, item]));
 const bySrc = new Map(equipment.map((item) => [item.src, item]));
 export const equipmentForId = (id) => byId.get(id);
