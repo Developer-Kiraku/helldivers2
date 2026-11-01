@@ -112,9 +112,7 @@ export default function WarbondDetail({ warbond, pageNumber }) {
                   </span>
                 )}
               </div>
-              {(item.passive?.description || item.details) && (
-                <EquipmentDetails id={item.passive?.id || item.id} cardLabel={item.label} />
-              )}
+              {item.detailsId && <EquipmentDetails id={item.detailsId} cardLabel={item.label} />}
             </article>
           ))}
         </div>

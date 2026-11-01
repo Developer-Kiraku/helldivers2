@@ -294,15 +294,21 @@ try {
   value = emptyTierList('armor');
   await React.act(async () => render());
   const armor = selectableEquipment('armor')[0];
-  assert.equal(card(armor.id).querySelector('.tier-armor-effect').textContent, armor.description);
+  assert.equal(
+    card(armor.id).querySelector('.tier-armor-effect').textContent,
+    armor.details.summary,
+  );
   await begin(armor.id, 0, null, 'mouse', 'effect');
   await release();
   assert.deepEqual(value.rows[0].items, [armor.id]);
   assert.equal(card(armor.id).querySelector('.tier-armor-effect'), null);
   await begin(armor.id, null);
-  assert.equal(preview().querySelector('.tier-armor-effect').textContent, armor.description);
+  assert.equal(preview().querySelector('.tier-armor-effect').textContent, armor.details.summary);
   await release();
-  assert.equal(card(armor.id).querySelector('.tier-armor-effect').textContent, armor.description);
+  assert.equal(
+    card(armor.id).querySelector('.tier-armor-effect').textContent,
+    armor.details.summary,
+  );
   console.log(
     'PASS: pointer/touch dragging, insertion ghost before commit, stable middle preview, drop order, Escape/outside/cancel/blur restoration, pool return, keyboard and disabled controls',
   );

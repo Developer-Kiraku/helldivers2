@@ -1,6 +1,6 @@
 import catalog from './warbond-catalog.mjs';
 import rewards from './warbond-rewards.mjs';
-import { equipmentForId } from './equipment.mjs';
+import { equipmentForId, equipmentGroupLabels } from './equipment.mjs';
 
 export const warbondTypes = {
   standard: '기본 채권',
@@ -8,11 +8,7 @@ export const warbondTypes = {
   legendary: '전설 채권',
 };
 export const rewardTypes = {
-  primary: '주무기',
-  secondary: '보조무기',
-  throwable: '투척무기',
-  stratagem: '스트라타젬',
-  booster: '부스터',
+  ...equipmentGroupLabels,
   suit: '방어구',
   helmet: '헬멧',
   cape: '망토',
@@ -25,24 +21,33 @@ export const rewardTypes = {
 };
 const rewardById = new Map(rewards.map((item) => [item.id, item]));
 
-export function resolveWarbondReward(entry) {
-  const item = entry.equipmentId
-    ? equipmentForId(entry.equipmentId)
-    : rewardById.get(entry.rewardId);
-  if (!item) throw new Error(`Unknown warbond reward: ${entry.equipmentId || entry.rewardId}`);
-  const kind = entry.equipmentId ? item.group : item.kind;
+// Placements contain references and costs only. Canonical names, art and effects
+// always come from the shared catalogs, never from a page-local override.
+export function resolveWarbondReward({ equipmentId, rewardId, medals, amount }) {
+  if (Boolean(equipmentId) === Boolean(rewardId))
+    throw new Error('A warbond reward must reference exactly one catalog item');
+  const item = equipmentId ? equipmentForId(equipmentId) : rewardById.get(rewardId);
+  if (!item) throw new Error(`Unknown warbond reward: ${equipmentId || rewardId}`);
+  const kind = equipmentId ? item.group : item.kind;
+  const passive = item.passiveId ? equipmentForId(item.passiveId) : undefined;
+  if (item.passiveId && passive?.group !== 'armor')
+    throw new Error(`Unknown armor passive: ${item.passiveId}`);
+  const detailItem = passive || item;
   return {
     ...item,
-    ...entry,
+    ...(equipmentId ? { equipmentId } : { rewardId }),
+    medals,
     kind,
     typeLabel: rewardTypes[kind],
-    ...(entry.amount ? { label: `${entry.amount} 슈퍼 크레딧` } : {}),
-    passive: item.passiveId ? equipmentForId(item.passiveId) : undefined,
+    ...(amount ? { amount, label: `${amount} ${item.label}` } : {}),
+    passive,
+    detailsId: detailItem.details ? detailItem.id : undefined,
   };
 }
 
 export const warbonds = catalog.map((item) => {
   const cover = equipmentForId(item.id);
+  if (cover?.group !== 'warbond') throw new Error(`Unknown warbond cover: ${item.id}`);
   const pages = item.pages.map((page) => ({
     ...page,
     items: page.items.map(resolveWarbondReward),
@@ -62,11 +67,19 @@ export const warbonds = catalog.map((item) => {
       cover.label,
       cover.name,
       ...(cover.searchAliases || []),
-      ...items.flatMap((entry) => [entry.label, entry.name]),
+      ...items.flatMap((entry) => [
+        entry.label,
+        entry.name,
+        ...(entry.searchAliases || []),
+        entry.passive?.label,
+        entry.passive?.name,
+        ...(entry.passive?.searchAliases || []),
+      ]),
     ].join(' '),
   };
 });
-export const warbondForSlug = (slug) => warbonds.find((item) => item.slug === slug);
+const bySlug = new Map(warbonds.map((item) => [item.slug, item]));
+export const warbondForSlug = (slug) => bySlug.get(slug);
 export function warbondListEntries() {
   return warbonds.map(({ pages, source, ...item }) => ({ ...item, pageCount: pages.length }));
 }

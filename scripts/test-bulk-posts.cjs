@@ -157,7 +157,7 @@ module.exports = async function ({ guest, apprentice, member, deputy, admin }) {
   await apprentice.call(`/api/posts/${privatePost.id}`);
   await admin.call(endpoint, 'POST', action([privatePost.id], 'talk', 'report'));
   await apprentice.call(`/api/posts/${privatePost.id}`, 'GET', undefined, 404);
-  await guest.call(privatePost.sharePath, 'GET', undefined, 404);
+  await guest.call(privatePost.sharePath, 'GET', undefined, 307);
   await admin.call(endpoint, 'POST', action([privatePost.id], 'report'));
   const draftPost = (
     await member.call('/api/posts', 'POST', { ...draft('tierlist'), status: 'draft' })

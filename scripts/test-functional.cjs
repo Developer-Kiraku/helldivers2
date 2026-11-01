@@ -139,6 +139,7 @@ async function run() {
   await import('./test-tier-list-ui.mjs');
   await import('./test-board-management-ui.mjs');
   await import('./test-dashboard-hero.mjs');
+  await import('./test-session-ui.mjs');
   await fs.mkdir(path.join(root, 'work'), { recursive: true });
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-'));
   const file = path.join(directory, 'test-db.json');
@@ -149,20 +150,7 @@ async function run() {
       deputy = client(),
       member = client(),
       apprentice = client();
-    for (const route of [
-      '/',
-      '/profile',
-      '/boards/guide',
-      '/boards/talk',
-      '/admin/users',
-      '/admin/requests',
-      '/admin/approvals',
-      '/admin/post-history',
-      '/admin/logs',
-    ]) {
-      const { response } = await guest.call(route, 'GET', undefined, 307);
-      assert.equal(new URL(response.headers.get('location'), origin).pathname, '/login');
-    }
+    await require('./test-page-access.cjs')({ guest, client, file });
     await guest.call('/login');
     const sharingHeaders = (await guest.call('/login')).response.headers;
     assert.match(
@@ -597,18 +585,12 @@ async function run() {
     for (const board of ['notice', 'guide', 'talk', 'qna']) {
       const post = sharedBoards[board][0];
       assert.match(post.sharePath, /^\/s\/[A-Za-z0-9_-]{16}$/);
-      const anonymous = await guest.call(post.sharePath);
+      const anonymous = await guest.call(post.sharePath, 'GET', undefined, 307);
       assert.match(anonymous.response.headers.get('cache-control'), /no-store/);
       assert.match(anonymous.response.headers.get('set-cookie'), /HttpOnly/);
-      const { JSDOM } = await import('jsdom');
-      const preview = new JSDOM(anonymous.data).window.document;
-      const { postSummary } = await import('../src/lib/post-summary.mjs');
-      assert.equal(preview.querySelector('meta[property="og:title"]').content, post.title);
-      assert.equal(
-        preview.querySelector('meta[property="og:description"]').content,
-        postSummary(post),
-      );
-      assert.equal(preview.querySelector('a').getAttribute('href'), '/login');
+      assert.equal(new URL(anonymous.response.headers.get('location'), origin).pathname, '/login');
+      assert.ok(!anonymous.data.includes(post.title));
+      assert.ok(!anonymous.data.includes('og:title'));
       const pendingCookie = anonymous.response.headers.get('set-cookie').split(';')[0];
       const returning = client(`${member.cookie}; ${pendingCookie}`);
       const destination = await returning.call('/', 'GET', undefined, 307);
@@ -623,8 +605,10 @@ async function run() {
       );
       assert.match(resolved.response.headers.get('set-cookie'), /Max-Age=0/i);
     }
-    await guest.call('/s/invalid', 'GET', undefined, 404);
-    await guest.call('/s/AAAAAAAAAAAAAAAA', 'GET', undefined, 404);
+    await guest.call('/s/invalid', 'GET', undefined, 307);
+    await guest.call('/s/AAAAAAAAAAAAAAAA', 'GET', undefined, 307);
+    await member.call('/s/invalid', 'GET', undefined, 404);
+    await member.call('/s/AAAAAAAAAAAAAAAA', 'GET', undefined, 404);
     const removable = (await member.call('/api/posts', 'POST', draft('talk', '공유 삭제 검증')))
       .data.post;
     await member.call('/api/posts/' + removable.id, 'DELETE');
@@ -1319,6 +1303,7 @@ async function run() {
     assert.equal(leaveLog.actorNickname, '테스트헬다이버');
     assert.ok(leaveLog.targetCreatedAt);
     await second.call('/api/bootstrap', 'GET', undefined, 401);
+    await second.call('/warbonds', 'GET', undefined, 307);
     await guest.call('/api/auth/login', 'POST', { loginId: 'user1', password: '1234' }, 401);
     assert.equal(
       (await admin.call(`/api/posts/${concurrent[0].data.post.id}`)).data.post.author,
@@ -1342,6 +1327,7 @@ async function run() {
     }
     await admin.call('/api/auth/logout', 'POST');
     await admin.call('/api/bootstrap', 'GET', undefined, 401);
+    await admin.call('/messages', 'GET', undefined, 307);
     db = JSON.parse(await fs.readFile(file, 'utf8'));
     assert.ok(db.audit.some((a) => a.action === 'user.withdraw'));
     assert.equal(db.users.find((u) => u.id === 'u-user1').passwordHash, null);

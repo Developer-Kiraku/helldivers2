@@ -6,9 +6,9 @@ import { requirePageUser } from '@/lib/server/auth';
 import { canReadPost } from '@/lib/post-access.mjs';
 
 export default async function Page({ params }) {
+  const user = await requirePageUser();
   const { board, id } = await params;
   if (!boards[board]) notFound();
-  const user = await requirePageUser();
   const movedTo = await readStore((db) => {
     const post = db.posts.find((item) => item.id === id && !item.deletedAt);
     return post && post.board !== board && canReadPost(post, user) ? post.board : null;

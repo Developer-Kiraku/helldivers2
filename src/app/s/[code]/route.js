@@ -4,7 +4,6 @@ import { config } from '@/lib/server/config';
 import { cookieOptions, userForToken } from '@/lib/server/auth';
 import { postSharePath, validSharePath } from '@/lib/server/share-links.mjs';
 import { boards } from '@/lib/data';
-import { sharePreview } from '@/lib/server/share-preview.mjs';
 import { canReadPost } from '@/lib/post-access.mjs';
 
 export const runtime = 'nodejs';
@@ -20,34 +19,28 @@ export async function GET(request, { params }) {
     response.cookies.set('hd_shared_post', '', { ...cookieOptions, maxAge: 0 });
     return response;
   };
-  if (!validSharePath(path)) return missing();
   const result = await readStore((db) => {
+    const viewer = userForToken(db, request.cookies.get(config.cookie)?.value);
+    // Do not reveal even the existence or title of a shared post before login.
+    if (!viewer) return { signedIn: false, target: '/login' };
+    if (!validSharePath(path)) return null;
     const matches = db.posts.filter(
       (post) => !post.deletedAt && boards[post.board] && postSharePath(post) === path,
     );
     if (matches.length !== 1) return null;
-    const viewer = userForToken(db, request.cookies.get(config.cookie)?.value);
-    // Private reports never publish a title or excerpt to link-preview crawlers.
     if (!canReadPost(matches[0], viewer)) return null;
     return {
-      post: matches[0],
       target: `/boards/${matches[0].board}/${encodeURIComponent(matches[0].id)}`,
-      signedIn: Boolean(viewer),
+      signedIn: true,
     };
   });
   if (!result) return missing();
-  const response = result.signedIn
-    ? NextResponse.redirect(new URL(result.target, config.origin || request.url))
-    : new NextResponse(
-        sharePreview(result.post, new URL(path, config.origin || request.url).href),
-        {
-          headers: { 'Content-Type': 'text/html; charset=utf-8' },
-        },
-      );
+  const response = NextResponse.redirect(new URL(result.target, config.origin || request.url));
   response.headers.set('Cache-Control', 'private, no-store');
-  response.cookies.set('hd_shared_post', result.signedIn ? '' : path, {
+  const remember = !result.signedIn && validSharePath(path);
+  response.cookies.set('hd_shared_post', remember ? path : '', {
     ...cookieOptions,
-    maxAge: result.signedIn ? 0 : 3600,
+    maxAge: remember ? 3600 : 0,
   });
   return response;
 }

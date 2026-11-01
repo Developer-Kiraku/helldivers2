@@ -1,6 +1,24 @@
 import assert from 'node:assert/strict';
 import { reserveLoginAttempt } from '../src/lib/server/login-throttle.mjs';
 import { registerOAuthState, consumeOAuthState } from '../src/lib/server/oauth-state.mjs';
+import { canReadPost } from '../src/lib/post-access.mjs';
+for (const board of ['guide', 'report', 'tierlist', 'loadout']) {
+  for (const status of ['published', 'draft'])
+    assert.equal(canReadPost({ board, status, authorId: 'author' }, null), false);
+}
+assert.equal(canReadPost({ board: 'guide' }, { id: 'member', role: 'member' }), true);
+assert.equal(
+  canReadPost({ board: 'report', authorId: 'author' }, { id: 'member', role: 'member' }),
+  false,
+);
+assert.equal(
+  canReadPost({ board: 'report', authorId: 'author' }, { id: 'author', role: 'apprentice' }),
+  true,
+);
+assert.equal(
+  canReadPost({ board: 'report', authorId: 'author' }, { id: 'staff', role: 'deputy' }),
+  true,
+);
 const db = {};
 for (let i = 0; i < 8; i++) assert.equal(reserveLoginAttempt(db, 'account', 1000 + i), true);
 assert.equal(reserveLoginAttempt(db, 'account', 1010), false);

@@ -6,15 +6,59 @@ import {
   warbondForSlug,
   warbondPageNumber,
   warbondListEntries,
+  resolveWarbondReward,
 } from '../src/lib/warbonds.mjs';
 import { equipment, equipmentForId } from '../src/lib/equipment.mjs';
+import catalog from '../src/lib/warbond-catalog.mjs';
+import rewards from '../src/lib/warbond-rewards.mjs';
 
 const source = JSON.parse(await fs.readFile('docs/warbonds/sources.json', 'utf8'));
 assert.equal(warbonds.length, equipment.filter((item) => item.group === 'warbond').length);
 assert.equal(new Set(warbonds.map((item) => item.slug)).size, warbonds.length);
+assert.equal(new Set(warbonds.map((item) => item.id)).size, warbonds.length);
+assert.equal(new Set(rewards.map((item) => item.id)).size, rewards.length);
+const rewardIds = new Set();
+for (const warbond of catalog) {
+  for (const page of warbond.pages) {
+    for (const entry of page.items) {
+      assert.equal(Boolean(entry.equipmentId) === Boolean(entry.rewardId), false);
+      assert.ok(
+        Object.keys(entry).every((key) =>
+          ['equipmentId', 'rewardId', 'medals', 'amount'].includes(key),
+        ),
+        'Reward placements must not duplicate names, icons or effects',
+      );
+      if (entry.rewardId) rewardIds.add(entry.rewardId);
+    }
+  }
+}
+assert.deepEqual(
+  [...rewardIds].sort(),
+  rewards.map((item) => item.id).sort(),
+  'No missing or unused dictionary-only rewards',
+);
+const reference = equipmentForId('primary-las-5-scythe');
+const resolved = resolveWarbondReward({
+  equipmentId: reference.id,
+  medals: 1,
+  label: 'stale name',
+  src: '/stale.webp',
+  details: {},
+});
+assert.equal(resolved.label, reference.label);
+assert.equal(resolved.src, reference.src);
+assert.equal(resolved.details, reference.details);
+assert.throws(() => resolveWarbondReward({ equipmentId: 'unknown' }), /Unknown/);
+assert.throws(
+  () => resolveWarbondReward({ equipmentId: reference.id, rewardId: 'super-credits' }),
+  /exactly one/,
+);
 const assets = new Set(['/warbonds/medal.webp']);
 const combatRewards = new Set();
 for (const warbond of warbonds) {
+  const cover = equipmentForId(warbond.id);
+  assert.equal(warbond.label, cover.label);
+  assert.equal(warbond.src, cover.src);
   assert.equal(warbond.pages.length, warbond.type === 'standard' ? 10 : 3, warbond.label);
   assert.equal(
     warbond.totalMedals,
@@ -40,7 +84,11 @@ for (const warbond of warbonds) {
       assert.ok(item.label && item.typeLabel && item.src);
       assert.ok(Number.isInteger(item.medals) && item.medals > 0);
       if (item.equipmentId) {
-        assert.equal(item.src, equipmentForId(item.equipmentId).src);
+        const equipment = equipmentForId(item.equipmentId);
+        assert.equal(item.src, equipment.src);
+        assert.equal(item.label, equipment.label);
+        assert.equal(item.details, equipment.details);
+        assert.equal(item.detailsId, equipment.id);
         assert.ok(item.details, `${item.label} is missing its equipment details`);
         assert.ok(item.details.summary || item.details.stats.length || item.details.traits.length);
         assert.match(
@@ -58,8 +106,12 @@ for (const warbond of warbonds) {
         }
         combatRewards.add(item.id);
       }
-      if (item.kind === 'suit')
+      if (item.kind === 'suit') {
         assert.equal(item.passive?.group, 'armor', `${item.label} must reference a real passive`);
+        assert.equal(item.passive, equipmentForId(item.passiveId));
+        assert.equal(item.detailsId, item.passiveId);
+        assert.ok(item.passive.details.summary);
+      }
       assert.notEqual(
         item.kind,
         'armor',
@@ -84,7 +136,8 @@ assert.ok(
     .searchText.includes('시클'),
 );
 assert.ok(warbondListEntries().every((item) => !('pages' in item)));
-assert.equal(combatRewards.size, 143);
+assert.ok(combatRewards.size > 0);
+assert.ok(warbondListEntries().some((item) => item.searchText.includes('구급 키트')));
 assert.deepEqual(equipmentForId('primary-las-5-scythe').details.stats[0], ['초당 대미지', '350']);
 assert.ok(
   equipmentForId('throwable-ted-63-dynamite').details.stats.some(

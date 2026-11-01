@@ -10,6 +10,7 @@ export const equipmentGroups = [
   ['armor', '방어구 옵션'],
   ['warbond', '채권'],
 ];
+export const equipmentGroupLabels = Object.fromEntries(equipmentGroups);
 export const stratagemKinds = [
   ['support', '지원 무기'],
   ['backpack', '배낭'],

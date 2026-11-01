@@ -79,7 +79,7 @@ export default function TierList({ value, onChange, disabled = false }) {
             className="tier-armor-effect"
             id={describe ? `${descriptionId}-${item.id}` : undefined}
           >
-            {item.description || '효과 설명을 준비 중입니다.'}
+            {item.details?.summary || '효과 설명을 준비 중입니다.'}
           </p>
         )}
       </>

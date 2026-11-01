@@ -15,9 +15,7 @@ export function canDeletePost(actor, author) {
 
 // Apply before serializing any post data, including titles and attachments.
 export function canReadPost(post, viewer) {
-  if (post.status === 'draft') return Boolean(viewer && viewer.id === post.authorId);
-  return (
-    post.board !== 'report' ||
-    Boolean(viewer && (viewer.id === post.authorId || isStaff(viewer.role)))
-  );
+  if (!viewer) return false;
+  if (post.status === 'draft') return viewer.id === post.authorId;
+  return post.board !== 'report' || viewer.id === post.authorId || isStaff(viewer.role);
 }

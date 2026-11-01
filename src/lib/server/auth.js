@@ -2,6 +2,7 @@ import { validSharePath } from './share-links.mjs';
 import { presentationUser, viewRoleCookie } from '../view-role.mjs';
 import 'server-only';
 import { cookies } from 'next/headers';
+import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { config } from './config';
 import { createToken, tokenHash } from './passwords';
@@ -95,14 +96,15 @@ export const clearSessionCookie = (response) => {
   response.cookies.set(config.cookie, '', { ...cookieOptions, maxAge: 0 });
   response.cookies.set(viewRoleCookie, '', { ...cookieOptions, maxAge: 0 });
 };
-export async function getCurrentUser() {
+// Request-local only: layouts, pages and metadata share one session lookup.
+export const getCurrentUser = cache(async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get(config.cookie)?.value;
   if (!token) return null;
   return readStore((db) =>
     publicUser(presentationUser(userForToken(db, token), cookieStore.get(viewRoleCookie)?.value)),
   );
-}
+});
 export async function requirePageUser(roles) {
   const user = await getCurrentUser();
   if (!user) redirect('/login');

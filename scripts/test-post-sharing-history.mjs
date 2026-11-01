@@ -1,12 +1,10 @@
 import assert from 'node:assert/strict';
-import { JSDOM } from 'jsdom';
 import { postSummary } from '../src/lib/post-summary.mjs';
 import {
   shareMessage,
   isMobileShareDevice,
   supportsKakaoWebShare,
 } from '../src/lib/kakao-share.js';
-import { sharePreview } from '../src/lib/server/share-preview.mjs';
 import { auditLogList } from '../src/lib/server/audit-logs.mjs';
 import { withdrawMember, settleProbation, startProbation } from '../src/lib/server/probation.mjs';
 import {
@@ -40,16 +38,6 @@ const message = shareMessage(
 );
 assert.equal(message.content.title, post.title);
 assert.equal(message.content.description, postSummary(post));
-const doc = new JSDOM(sharePreview(post, 'https://example.com/s/abcdefghijklmnop')).window.document;
-assert.equal(doc.querySelector('meta[property="og:title"]').content, post.title);
-assert.equal(doc.querySelector('meta[property="og:description"]').content, postSummary(post));
-assert.equal(doc.querySelectorAll('script').length, 1);
-assert.equal(doc.querySelector('script').textContent, "location.replace('/login');");
-assert.ok(!doc.documentElement.outerHTML.includes('private-image'));
-assert.equal(
-  doc.querySelector('meta[property="og:image"]').content,
-  'https://example.com/images/community-squad.png',
-);
 
 const actor = { id: 'u1', nickname: '원래작업자', role: 'member' };
 const before = postSnapshot(post),
@@ -83,7 +71,7 @@ assert.equal(postHistoryList(db, new URLSearchParams('page=Infinity')).page, 1);
 db.audit = Array.from({ length: 25 }, (_, index) => ({ ...log, id: String(index) }));
 assert.equal(postHistoryList(db, new URLSearchParams('page=2')).logs.length, 5);
 console.log(
-  'PASS: bounded share excerpts, HTML escaping, private attachment exclusion, revision snapshots, legacy logs, filters and pagination',
+  'PASS: bounded share excerpts, revision snapshots, legacy logs, filters and pagination',
 );
 const joinedAt = '2026-10-01T01:00:00Z';
 const member = {

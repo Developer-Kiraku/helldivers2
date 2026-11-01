@@ -1,4 +1,6 @@
 import HomePage from '@/components/HomePage';
-export default function Page() {
+import { requirePageUser } from '@/lib/server/auth';
+export default async function Page() {
+  await requirePageUser();
   return <HomePage />;
 }

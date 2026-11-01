@@ -5,9 +5,9 @@ import { readStore } from '@/lib/server/store';
 import BoardEditor from '@/components/BoardEditor';
 import { canReadPost } from '@/lib/post-access.mjs';
 export default async function Page({ params }) {
+  const user = await requirePageUser();
   const { board, id } = await params;
   if (!boards[board]) notFound();
-  const user = await requirePageUser();
   const post = await readStore((db) =>
     db.posts.find((post) => post.id === id && !post.deletedAt && canReadPost(post, user)),
   );

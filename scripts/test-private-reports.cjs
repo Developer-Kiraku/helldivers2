@@ -50,7 +50,12 @@ module.exports = async function testPrivateReports({ guest, admin, deputy, membe
       assert.ok(!JSON.stringify(result.data).includes(draft.title));
     }
     for (const viewer of [guest, other]) {
-      const shared = await viewer.call(post.sharePath, 'GET', undefined, 404);
+      const shared = await viewer.call(
+        post.sharePath,
+        'GET',
+        undefined,
+        viewer === guest ? 307 : 404,
+      );
       assert.ok(!shared.data.includes(draft.title));
       assert.ok(!shared.data.includes(draft.content));
     }

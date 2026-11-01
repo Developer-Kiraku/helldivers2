@@ -38,7 +38,7 @@ module.exports = async function ({ guest, member, apprentice, deputy, admin }) {
   assert.ok(
     (await member.call('/api/bootstrap')).data.posts.tierlist.some((post) => post.id === draft.id),
   );
-  await guest.call(draft.sharePath, 'GET', undefined, 404);
+  await guest.call(draft.sharePath, 'GET', undefined, 307);
   for (const other of [apprentice, deputy, admin]) {
     await other.call(url, 'GET', undefined, 404);
     await other.call(url, 'PATCH', payload, 404);
@@ -123,7 +123,7 @@ module.exports = async function ({ guest, member, apprentice, deputy, admin }) {
   const published = (await apprentice.call(url)).data.post;
   assert.equal(published.status, 'published');
   assert.deepEqual(published.tierList, value);
-  await guest.call(published.sharePath);
+  await guest.call(published.sharePath, 'GET', undefined, 307);
   await deputy.call(url, 'PATCH', { ...payload, tierList: value, status: 'published' }, 403);
   await member.call(url, 'PATCH', { ...payload, tierList: value }, 400);
   await apprentice.call(`${url}/vote`, 'POST', { value: 1 });

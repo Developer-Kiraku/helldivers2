@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { canManagePosts } from '@/lib/post-access.mjs';
+import PageSkeleton from './PageSkeleton';
 const CommunityContext = createContext(null);
 const emptyPosts = {
   tierlist: [],
@@ -29,6 +30,21 @@ export function CommunityProvider({ children, initialUser = null }) {
   const [loadedPath, setLoadedPath] = useState(null);
   const [managementMode, setManagementMode] = useState(false);
   const [desktopMode, setDesktopMode] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  const authPage = pathname === '/login' || pathname === '/signup';
+  const clearSession = useCallback(() => {
+    // Discard any older bootstrap response still in flight when a session ends.
+    ++refreshSequence.current;
+    setUser(null);
+    setPosts(emptyPosts);
+    setStats({ totalMembers: 0, onlineMembers: 0 });
+    setUnreadMessages(0);
+    setManagementMode(false);
+  }, []);
+  useEffect(() => {
+    if (ready && !user && !authPage) router.replace('/login');
+  }, [ready, user, authPage, router]);
   useEffect(() => {
     setManagementMode(false);
   }, [pathname, user?.role, desktopMode]);
@@ -60,8 +76,7 @@ export function CommunityProvider({ children, initialUser = null }) {
       const data = await response.json();
       if (!response.ok) {
         if (response.status === 401 && !path.startsWith('auth/')) {
-          setUser(null);
-          setPosts(emptyPosts);
+          clearSession();
           router.replace('/login');
           router.refresh();
         }
@@ -69,7 +84,7 @@ export function CommunityProvider({ children, initialUser = null }) {
       }
       return data;
     },
-    [router],
+    [router, clearSession],
   );
   const refresh = useCallback(async () => {
     const sequence = ++refreshSequence.current;
@@ -77,8 +92,9 @@ export function CommunityProvider({ children, initialUser = null }) {
       const response = await fetch('/api/bootstrap', { cache: 'no-store' });
       if (sequence !== refreshSequence.current) return;
       if (response.status === 401) {
-        setUser(null);
-        setPosts(emptyPosts);
+        clearSession();
+        setReady(true);
+        setLoadedPath(pathname);
         return;
       }
       const data = await response.json();
@@ -97,7 +113,7 @@ export function CommunityProvider({ children, initialUser = null }) {
         setLoadedPath(pathname);
       }
     }
-  }, [notify, pathname]);
+  }, [notify, pathname, clearSession]);
   useEffect(() => {
     refresh();
   }, [refresh, pathname]);
@@ -112,6 +128,10 @@ export function CommunityProvider({ children, initialUser = null }) {
       if (document.visibilityState === 'hidden') return;
       try {
         const response = await fetch('/api/messages/unread', { cache: 'no-store' });
+        if (response.status === 401 && alive) {
+          await refresh();
+          return;
+        }
         if (response.ok && alive) {
           const data = await response.json();
           if (alive) setUnreadMessages(data.unreadCount);
@@ -129,7 +149,7 @@ export function CommunityProvider({ children, initialUser = null }) {
       window.removeEventListener('focus', update);
       document.removeEventListener('visibilitychange', update);
     };
-  }, [user?.id]);
+  }, [user?.id, refresh]);
   useEffect(() => {
     if (!user?.mutedUntil) return;
     let timeout;
@@ -150,8 +170,7 @@ export function CommunityProvider({ children, initialUser = null }) {
   async function logout() {
     try {
       await api('auth/logout', { method: 'POST' });
-      setUser(null);
-      setPosts(emptyPosts);
+      clearSession();
       router.replace('/login');
       router.refresh();
     } catch (error) {
@@ -207,7 +226,8 @@ export function CommunityProvider({ children, initialUser = null }) {
         canWriteNotice: signedIn && ['operator', 'deputy'].includes(role),
       }}
     >
-      {children}
+      {/* Let server page guards resolve before hiding stale client-side content. */}
+      {!hydrated || user || authPage ? children : <PageSkeleton />}
       {toast && (
         <div className="toast" role="status">
           {toast}

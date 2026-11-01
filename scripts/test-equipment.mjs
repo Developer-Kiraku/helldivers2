@@ -14,8 +14,22 @@ import {
 import { sanitizePostHtml } from '../src/lib/server/post-html.mjs';
 import { postSummary } from '../src/lib/post-summary.mjs';
 import { commentDocument, commentText } from '../src/lib/comment-editor.js';
+import detailsCatalog from '../src/lib/equipment-details-catalog.mjs';
 
 assert.equal(new Set(equipment.map((item) => item.id)).size, equipment.length);
+for (const [id, details] of Object.entries(detailsCatalog)) {
+  const item = equipmentForId(id);
+  assert.ok(item, `Orphan equipment details: ${id}`);
+  assert.equal(item.details, details, `${id} must use the shared details object`);
+  assert.ok(Array.isArray(details.stats) && Array.isArray(details.traits));
+  assert.ok(details.summary || details.stats.length || details.traits.length);
+  assert.match(details.source, /^https:\/\//);
+  assert.match(details.checkedAt, /^\d{4}-\d{2}-\d{2}$/);
+}
+for (const item of equipment.filter((entry) => entry.group === 'armor')) {
+  assert.ok(item.details?.summary, `${item.id} must have its shared armor effect`);
+  assert.ok(!('description' in item), 'Do not duplicate effects outside the details catalog');
+}
 const authorityIds = [
   'primary-r-40-sightliner',
   'secondary-p-44-mist',

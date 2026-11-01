@@ -23,7 +23,7 @@ module.exports = async function ({ guest, member }) {
       const cards = [...doc.querySelectorAll('.warbond-reward')];
       page.items.forEach((item, index) => {
         const trigger = cards[index].querySelector('button[aria-haspopup=dialog]');
-        if (item.passive?.description || item.details) {
+        if (item.detailsId) {
           assert.ok(trigger, `${item.label} must expose its options`);
           assert.equal(trigger.getAttribute('aria-expanded'), 'false');
           assert.ok(trigger.getAttribute('aria-label').includes(item.label));

@@ -1,5 +1,13 @@
 # 장비 아이콘 자료
 
+## 공통 정보 수정 위치
+
+- 이름·이미지·분류·검색 별칭: `src/lib/equipment-catalog.mjs`.
+- 모든 장비의 옵션·성능·설명·출처·확인일: `src/lib/equipment-details-catalog.mjs`. 방어구도 같은 `summary`, `stats`, `traits`, `source`, `checkedAt` 형식을 사용합니다.
+- 화면에서는 두 원본을 결합한 `src/lib/equipment.mjs`만 조회합니다. 글·댓글 아이콘, 로드아웃, 티어 메이커, 채권 사전이 같은 장비 ID와 정보를 사용합니다.
+
+채권 페이지에 장비 이름이나 설명을 복사하지 않습니다. `equipmentId`로 연결하고, 실제 방어구 보상은 `passiveId`로 공통 옵션을 연결합니다. 이름·아이콘·옵션을 위 원본에서 수정하면 연결된 모든 화면에 적용됩니다. 기존 게시물에 저장된 ID는 변경하지 않습니다.
+
 ## 2026-11-01 전쟁 채권 사전 장비 옵션
 
 사전에 포함된 주무기 49종, 보조무기 21종, 투척무기 22종, 스트라타젬 31종, 부스터 20종의 정보는 `src/lib/equipment-details-catalog.mjs`에서 관리합니다. 장비 ID로 기존 공통 목록에 결합하므로 이미지·이름·게시물 토큰을 별도로 복제하지 않습니다. 항목별 한국어 출처와 확인 기록은 `detail-sources.json`에 있습니다.
@@ -50,7 +58,7 @@
 - 충격 방지 패드 · 위험물 / 척탄병 / 강화
 - 운동량 전이 완화 (한국어판 명칭도 미확정)
 
-`sources.json`의 `descriptionWordingStatus`와 `descriptionWordingCheckedAt`에 27종의 원문 대조 여부와 5종의 확인 제한을 기록합니다. 카탈로그의 `descriptionSource`는 확인한 설명 상자로 연결됩니다. 기존 아이콘, 장비 ID, 이름 및 검색 별칭은 변경하지 않습니다.
+`sources.json`의 `descriptionWordingStatus`와 `descriptionWordingCheckedAt`에 27종의 원문 대조 여부와 5종의 확인 제한을 기록합니다. 공통 상세 정보의 `source`는 확인한 설명 상자로 연결됩니다. 기존 아이콘, 장비 ID, 이름 및 검색 별칭은 변경하지 않습니다.
 
 ### 이전 효과 대조 기록 (현재 표시 문구에는 적용하지 않음)
 

@@ -1,5 +1,7 @@
 import Link from 'next/link';
-export default function NotFound() {
+import { requirePageUser } from '@/lib/server/auth';
+export default async function NotFound() {
+  await requirePageUser();
   return (
     <section className="access-panel">
       <span className="eyebrow">MISSION NOT FOUND</span>
