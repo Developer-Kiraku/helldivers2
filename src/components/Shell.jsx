@@ -285,17 +285,14 @@ export default function Shell({ children, previewSkeleton = false }) {
           <span>HELLDIVERS 2 COMMUNITY</span>
         </Link>
         <nav className="desktop-nav" aria-label="주 메뉴">
-          {menu.map((item) => (
-            <Link key={item.href} href={item.href} className={active(item.href) ? 'active' : ''}>
-              <Icon name={item.icon} />
-              <span>{item.label}</span>
-              {item.href === '/messages' && unreadMessages > 0 && (
-                <span className="message-nav-count" aria-label={`안 읽은 쪽지 ${unreadMessages}개`}>
-                  {unreadMessages > 99 ? '99+' : unreadMessages}
-                </span>
-              )}
-            </Link>
-          ))}
+          {menu
+            .filter((item) => item.href !== '/messages')
+            .map((item) => (
+              <Link key={item.href} href={item.href} className={active(item.href) ? 'active' : ''}>
+                <Icon name={item.icon} />
+                <span>{item.label}</span>
+              </Link>
+            ))}
           {isStaff(role) && (
             <>
               <Button
