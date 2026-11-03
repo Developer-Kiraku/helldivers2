@@ -5,13 +5,7 @@ import { Puzzle, Trophy, Timer, Move, Play, Square, Check, Medal } from 'lucide-
 import { useCommunity } from './CommunityProvider';
 import { Button, Select } from './ui';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
-import {
-  slidePuzzle,
-  puzzleSolved,
-  puzzleTime,
-  puzzleMonth,
-  solvedPuzzle,
-} from '@/lib/sliding-puzzle.mjs';
+import { slidePuzzle, puzzleTime, puzzleMonth, solvedPuzzle } from '@/lib/sliding-puzzle.mjs';
 
 export default function SlidingPuzzle() {
   const { api, actualRole, role, refresh } = useCommunity();
@@ -24,7 +18,7 @@ export default function SlidingPuzzle() {
     [error, setError] = useState('');
   const [run, setRun] = useState(null),
     [board, setBoard] = useState(solvedPuzzle);
-  const [moves, setMoves] = useState([]),
+  const [moves, setMoves] = useState(0),
     [phase, setPhase] = useState('idle');
   const [elapsed, setElapsed] = useState(0),
     [result, setResult] = useState(null);
@@ -67,13 +61,23 @@ export default function SlidingPuzzle() {
       document.documentElement.classList.remove('puzzle-scroll-locked');
     };
   }, [phase, actualRole, role]);
-  function stop() {
+  async function stop() {
     if (pending.current) return;
-    setPhase('idle');
-    setRun(null);
-    setClockStarted(false);
-    started.current = 0;
+    pending.current = true;
+    setPhase('stopping');
     setError('');
+    try {
+      await api('games/sliding-puzzle/stop', { method: 'POST', body: { runId: run.id } });
+      setPhase('idle');
+      setRun(null);
+      setClockStarted(false);
+      started.current = 0;
+    } catch (err) {
+      setError(err.message);
+      setPhase('playing');
+    } finally {
+      pending.current = false;
+    }
   }
   async function start() {
     if (pending.current) return;
@@ -85,7 +89,7 @@ export default function SlidingPuzzle() {
       const data = await api('games/sliding-puzzle/start', { method: 'POST' });
       setRun(data.run);
       setBoard(data.run.board);
-      setMoves([]);
+      setMoves(0);
       setResult(null);
       started.current = 0;
       setClockStarted(false);
@@ -98,7 +102,7 @@ export default function SlidingPuzzle() {
       pending.current = false;
     }
   }
-  async function finish(history) {
+  async function finish() {
     if (pending.current) return;
     pending.current = true;
     setPhase('saving');
@@ -106,7 +110,7 @@ export default function SlidingPuzzle() {
     try {
       const data = await api('games/sliding-puzzle/finish', {
         method: 'POST',
-        body: { runId: run.id, moves: history },
+        body: { runId: run.id },
       });
       setResult(data);
       setElapsed(data.record.elapsedMs);
@@ -126,33 +130,49 @@ export default function SlidingPuzzle() {
     const slide = slidePuzzle(board, tile);
     if (!slide) return;
     const next = slide.board;
-    const history = [...moves, ...slide.moves];
     setBoard(next);
-    setMoves(history);
-    if (!started.current) {
-      const firstMoveAt = Date.now();
-      pending.current = true;
-      setError('');
+    setMoves(moves + slide.moves.length);
+    pending.current = true;
+    setError('');
+    let verified;
+    try {
+      const data = await api('games/sliding-puzzle/move', {
+        method: 'POST',
+        body: { runId: run.id, tile, step: run.step },
+      });
+      verified = data.run;
+    } catch (err) {
+      setError(err.message);
+      // A lost response may still have committed the move. Reconcile with the server.
       try {
-        await api('games/sliding-puzzle/begin', { method: 'POST', body: { runId: run.id, tile } });
-        started.current = firstMoveAt;
-        setClockStarted(true);
-      } catch (err) {
+        verified = (await api('games/sliding-puzzle/state?runId=' + encodeURIComponent(run.id)))
+          .run;
+      } catch {
         setBoard(board);
         setMoves(moves);
-        setError(err.message);
-        return;
-      } finally {
-        pending.current = false;
       }
+    } finally {
+      pending.current = false;
     }
-    if (puzzleSolved(next)) {
-      setElapsed(Date.now() - started.current);
-      void finish(history);
+    if (verified) {
+      setRun(verified);
+      setBoard(verified.board);
+      setMoves(verified.moves);
+      if (verified.startedAt) {
+        started.current = Date.now() - verified.elapsedMs;
+        setElapsed(verified.elapsedMs);
+        setClockStarted(true);
+      }
+      if (verified.stopped) {
+        setPhase('idle');
+        setClockStarted(false);
+      } else if (verified.completedAt) {
+        void finish();
+      }
     }
   }
   const playing = phase === 'playing',
-    locked = actualRole !== role || phase === 'starting' || phase === 'saving';
+    locked = actualRole !== role || ['starting', 'stopping', 'saving'].includes(phase);
   return (
     <section className="puzzle-page">
       <header className="puzzle-heading">
@@ -181,7 +201,7 @@ export default function SlidingPuzzle() {
               <span>
                 이동 횟수
                 <strong>
-                  {moves.length}
+                  {moves}
                   <small> 회</small>
                 </strong>
               </span>
@@ -246,7 +266,13 @@ export default function SlidingPuzzle() {
             onClick={playing ? stop : start}
           >
             {playing ? <Square size={17} /> : <Play size={17} />}
-            {phase === 'starting' ? '준비 중…' : playing ? '게임 정지' : '게임 시작'}
+            {phase === 'starting'
+              ? '준비 중…'
+              : phase === 'stopping'
+                ? '정지 중…'
+                : playing
+                  ? '게임 정지'
+                  : '게임 시작'}
           </Button>
           {phase === 'saving' && (
             <p role="status" className="puzzle-save-status">
@@ -276,7 +302,7 @@ export default function SlidingPuzzle() {
             </p>
           )}
           {phase === 'retry' && (
-            <Button type="button" onClick={() => finish(moves)}>
+            <Button type="button" onClick={() => finish()}>
               기록 등록 다시 시도
             </Button>
           )}
@@ -303,7 +329,7 @@ export default function SlidingPuzzle() {
             </ol>
           </div>
           <p className="puzzle-rules">
-            기록은 첫 이동부터 서버에 클리어가 접수될 때까지 측정됩니다. 1시간 안에 완성하면 자동
+            기록은 서버가 확인한 첫 이동부터 마지막 이동까지 측정됩니다. 1시간 안에 완성하면 자동
             등록됩니다.
           </p>
         </section>

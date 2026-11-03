@@ -92,20 +92,25 @@ try {
       body,
       new URLSearchParams(query),
     );
-  const finish = (user, elapsedMs, moves = [15]) => {
+  const finish = (user, elapsedMs, moves = [14, 15]) => {
     now += 5000;
     const run = call(user, 'start').run;
-    db.puzzleRuns.find((r) => r.id === run.id).board = movePuzzle(solvedPuzzle(), 15);
+    db.puzzleRuns.find((r) => r.id === run.id).board = movePuzzle(
+      movePuzzle(solvedPuzzle(), 15),
+      14,
+    );
     assert.equal(db.puzzleRuns.find((r) => r.id === run.id).startedAt, null);
     now += 60000; // Looking at the board must not count toward the clear time.
-    call(user, 'begin', { runId: run.id, tile: 15 });
+    call(user, 'move', { runId: run.id, tile: moves[0], step: 0 });
     now += elapsedMs;
+    for (let step = 1; step < moves.length; step++)
+      call(user, 'move', { runId: run.id, tile: moves[step], step });
     return { result: call(user, 'finish', { runId: run.id, moves }), id: run.id };
   };
   for (let user = 0; user < 4; user++)
-    finish(user, 4000 - user * 1000, user === 0 ? [15, 15, 15] : [15]);
+    finish(user, 4000 - user * 1000, user === 0 ? [14, 14, 14, 15] : [14, 15]);
   assert.equal(finish(0, 4000).result.improved, true);
-  assert.equal(call(0, '', {}, 'GET').mine.moves, 1);
+  assert.equal(call(0, '', {}, 'GET').mine.moves, 2);
   let table = call(0, '', {}, 'GET');
   assert.deepEqual(
     table.rankings.map((r) => r.nickname),
@@ -136,21 +141,52 @@ try {
   assert.throws(() => call(1, 'finish', { runId: slower.id, moves: [15] }), { status: 404 });
   const run = call(0, 'start').run;
   assert.throws(() => call(0, 'start'), { status: 429 });
-  db.puzzleRuns.find((r) => r.id === run.id).board = movePuzzle(solvedPuzzle(), 15);
+  db.puzzleRuns.find((r) => r.id === run.id).board = movePuzzle(movePuzzle(solvedPuzzle(), 15), 14);
   assert.throws(() => call(0, 'finish', { runId: run.id, moves: [15] }), { status: 400 });
-  assert.throws(() => call(1, 'begin', { runId: run.id, tile: 15 }), { status: 404 });
-  assert.throws(() => call(0, 'begin', { runId: run.id, tile: 1 }), { status: 400 });
-  const began = call(0, 'begin', { runId: run.id, tile: 15 });
+  assert.throws(() => call(1, 'move', { runId: run.id, tile: 14, step: 0 }), { status: 404 });
+  assert.throws(() => call(0, 'move', { runId: run.id, tile: 1, step: 0 }), { status: 400 });
+  assert.throws(() => call(0, 'move', { runId: run.id, tile: 14, step: 2 }), { status: 409 });
+  const began = call(0, 'move', { runId: run.id, tile: 14, step: 0 });
   now += 100;
-  assert.equal(call(0, 'begin', { runId: run.id, tile: 15 }).startedAt, began.startedAt);
+  assert.equal(
+    call(0, 'move', { runId: run.id, tile: 14, step: 0 }).run.startedAt,
+    began.run.startedAt,
+  );
+  assert.equal(call(0, 'state', {}, 'GET', 'runId=' + run.id).run.moves, 1);
+  assert.throws(() => call(1, 'state', {}, 'GET', 'runId=' + run.id), { status: 404 });
   assert.throws(() => call(0, 'finish', { runId: run.id, moves: [1] }), { status: 400 });
   assert.throws(() => call(0, 'finish', { runId: run.id, moves: [] }), { status: 400 });
+  assert.throws(
+    () =>
+      call(0, 'finish', { runId: run.id, moves: [14, 15], board: solvedPuzzle(), elapsedMs: 1 }),
+    { status: 400 },
+  );
+  now += 3000;
+  call(0, 'move', { runId: run.id, tile: 15, step: 1, elapsedMs: 1 });
+  now += 5000;
+  const verified = call(0, 'finish', { runId: run.id, elapsedMs: 1, moves: [], month: '2000-01' });
+  assert.equal(verified.record.elapsedMs, 3100);
+  assert.equal(verified.record.moves, 2);
+  assert.equal(verified.record.month, '2026-11');
+  assert.throws(() => call(0, 'move', { runId: run.id, tile: 15, step: 2 }), { status: 409 });
+  now += 5000;
+  const stopped = call(0, 'start').run;
+  call(0, 'stop', { runId: stopped.id });
+  call(0, 'stop', { runId: stopped.id });
+  assert.throws(() => call(0, 'move', { runId: stopped.id, tile: 15, step: 0 }), { status: 409 });
+  assert.throws(() => call(0, 'finish', { runId: stopped.id, moves: [15] }), { status: 409 });
+  db.puzzleRuns.find((r) => r.id === stopped.id).verification = undefined;
+  assert.throws(() => call(0, 'finish', { runId: stopped.id, moves: [15] }), { status: 409 });
   const oldMonthCount = db.puzzleRecords.length;
   now = Date.parse('2026-11-30T14:59:59.900Z');
   const newMonth = call(0, 'start').run;
-  db.puzzleRuns.find((r) => r.id === newMonth.id).board = movePuzzle(solvedPuzzle(), 15);
-  call(0, 'begin', { runId: newMonth.id, tile: 15 });
+  db.puzzleRuns.find((r) => r.id === newMonth.id).board = movePuzzle(
+    movePuzzle(solvedPuzzle(), 15),
+    14,
+  );
+  call(0, 'move', { runId: newMonth.id, tile: 14, step: 0 });
   now += 300;
+  call(0, 'move', { runId: newMonth.id, tile: 15, step: 1 });
   assert.equal(call(0, 'finish', { runId: newMonth.id, moves: [15] }).record.month, '2026-12');
   assert.equal(db.puzzleRecords.length, oldMonthCount + 1);
   assert.equal(call(0, '', {}, 'GET', 'month=2026-11').total, 4);

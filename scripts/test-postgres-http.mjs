@@ -75,7 +75,11 @@ try {
   } finally {
     await fixturePool.end();
   }
-  await member.call('/api/games/sliding-puzzle/begin', 'POST', { runId: puzzleRun.id, tile: 15 });
+  await member.call('/api/games/sliding-puzzle/move', 'POST', {
+    runId: puzzleRun.id,
+    tile: 15,
+    step: 0,
+  });
   const puzzleResult = (
     await member.call('/api/games/sliding-puzzle/finish', 'POST', {
       runId: puzzleRun.id,
@@ -96,8 +100,37 @@ try {
     runId: puzzleRun.id,
     moves: [15],
   });
+  const activePuzzle = (await admin.call('/api/games/sliding-puzzle/start', 'POST', {})).data.run;
+  const activeFixturePool = createPool(url.href);
+  try {
+    await activeFixturePool.query(
+      "UPDATE hd_puzzle_runs SET data=jsonb_set(data,'{board}',$1::jsonb) WHERE id=$2",
+      [JSON.stringify([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0, 14, 15]), activePuzzle.id],
+    );
+  } finally {
+    await activeFixturePool.end();
+  }
+  await admin.call('/api/games/sliding-puzzle/move', 'POST', {
+    runId: activePuzzle.id,
+    tile: 14,
+    step: 0,
+  });
   await harness.stop();
   await harness.start('work/postgres-http-unused.json', { databaseUrl: url.href });
+  const activeState = (await admin.call('/api/games/sliding-puzzle/state?runId=' + activePuzzle.id))
+    .data.run;
+  assert.equal(activeState.moves, 1);
+  assert.equal(activeState.step, 1);
+  await admin.call('/api/games/sliding-puzzle/move', 'POST', {
+    runId: activePuzzle.id,
+    tile: 15,
+    step: 1,
+  });
+  assert.equal(
+    (await admin.call('/api/games/sliding-puzzle/finish', 'POST', { runId: activePuzzle.id })).data
+      .record.moves,
+    2,
+  );
   assert.deepEqual((await member.call('/api/bootstrap')).data.user.points, pointBalance);
   assert.equal((await admin.call('/api/admin/settings/points')).data.settings.post, 25);
   console.log(

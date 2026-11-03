@@ -2,7 +2,6 @@ import { randomUUID, randomInt } from 'node:crypto';
 import { fail } from './auth';
 import {
   shufflePuzzle,
-  movePuzzle,
   slidePuzzle,
   puzzleSolved,
   puzzleMonth,
@@ -11,6 +10,18 @@ import {
 
 const ranking = (db, month) =>
   (db.puzzleRecords || []).filter((r) => r.month === month).sort(comparePuzzleRecords);
+const session = (run, now) => ({
+  id: run.id,
+  board: run.board,
+  step: run.step,
+  moves: run.moves.length,
+  startedAt: run.startedAt,
+  completedAt: run.completedAt || null,
+  stopped: Boolean(run.stoppedAt),
+  elapsedMs: run.startedAt
+    ? (run.completedAt ? Date.parse(run.completedAt) : now) - Date.parse(run.startedAt)
+    : 0,
+});
 function notifyRank(db, userId, kind, month, rank, previousRank, runId) {
   if (!db.users.some((u) => u.id === userId && u.status === 'active')) return;
   db.notifications ||= [];
@@ -75,51 +86,67 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
       board: shufflePuzzle(() => randomInt(0, 0x1000000) / 0x1000000),
       issuedAt: new Date(now).toISOString(),
       startedAt: null,
+      verification: 2,
+      step: 0,
+      moves: [],
     };
     db.puzzleRuns.push(run);
-    return { run: { id: run.id, board: run.board, startedAt: run.startedAt }, serverTime: now };
+    return { run: session(run, now), serverTime: now };
   }
-  if (segments[2] === 'begin' && segments.length === 3 && method === 'POST') {
-    const run = (db.puzzleRuns || []).find((r) => r.id === input.runId && r.userId === actor.id);
+  if (
+    segments.length === 3 &&
+    ['move', 'state', 'stop'].includes(segments[2]) &&
+    method === (segments[2] === 'state' ? 'GET' : 'POST')
+  ) {
+    const runId = segments[2] === 'state' ? query.get('runId') : input.runId;
+    const run = (db.puzzleRuns || []).find((r) => r.id === runId && r.userId === actor.id);
     if (!run) fail(404, '진행 중인 게임을 찾을 수 없습니다.');
-    if (now - Date.parse(run.issuedAt || run.startedAt) > 3600000)
-      fail(400, '대기 시간이 만료됐습니다. 다시 시작해주세요.');
-    if (!Number.isInteger(input.tile) || !slidePuzzle(run.board, input.tile))
-      fail(400, '빈칸과 같은 줄의 숫자를 선택해주세요.');
-    if (run.firstTile != null && run.firstTile !== input.tile)
-      fail(409, '이미 첫 이동이 기록된 게임입니다.');
-    if (!run.startedAt) {
-      run.startedAt = new Date(now).toISOString();
-      run.firstTile = input.tile;
-      run.firstMoves = slidePuzzle(run.board, input.tile).moves;
+    if (run.verification !== 2) fail(409, '게임 검증 방식이 변경됐습니다. 새 게임을 시작해주세요.');
+    if (segments[2] === 'state') return { run: session(run, now) };
+    if (segments[2] === 'stop') {
+      if (!run.result) run.stoppedAt ||= new Date(now).toISOString();
+      return { run: session(run, now) };
     }
-    return { startedAt: run.startedAt, serverTime: now };
+    if (run.stoppedAt) fail(409, '정지한 게임입니다. 새 게임을 시작해주세요.');
+    // Only the immediately preceding identical request can be safely retried.
+    if (run.lastMove?.step === input.step && run.lastMove.tile === input.tile)
+      return { run: session(run, now) };
+    if (run.result || run.completedAt) fail(409, '이미 완료된 게임입니다.');
+    if (now - Date.parse(run.startedAt || run.issuedAt) > 3600000)
+      fail(400, '게임 시간이 만료됐습니다. 다시 시작해주세요.');
+    if (!Number.isInteger(input.step) || input.step !== run.step)
+      fail(409, '이동 순서가 일치하지 않습니다.');
+    const slide = Number.isInteger(input.tile) && slidePuzzle(run.board, input.tile);
+    if (!slide) fail(400, '빈칸과 같은 줄의 숫자를 선택해주세요.');
+    if (run.moves.length + slide.moves.length > 10000) fail(400, '이동 횟수 제한을 초과했습니다.');
+    run.startedAt ||= new Date(now).toISOString();
+    run.board = slide.board;
+    run.moves.push(...slide.moves);
+    run.lastMove = { step: input.step, tile: input.tile };
+    run.step++;
+    if (puzzleSolved(run.board)) run.completedAt = new Date(now).toISOString();
+    return { run: session(run, now) };
   }
   if (segments[2] === 'finish' && segments.length === 3 && method === 'POST') {
     const run = (db.puzzleRuns || []).find((r) => r.id === input.runId && r.userId === actor.id);
     if (!run) fail(404, '진행 중인 게임을 찾을 수 없습니다. 다시 시작해주세요.');
     if (run.result) return run.result;
+    if (run.verification !== 2) fail(409, '게임 검증 방식이 변경됐습니다. 새 게임을 시작해주세요.');
+    if (run.stoppedAt) fail(409, '정지한 게임은 기록을 등록할 수 없습니다.');
     if (!run.startedAt) fail(400, '숫자를 처음 움직인 뒤 기록을 등록해주세요.');
-    if (now - Date.parse(run.startedAt) > 3600000)
+    if (!run.completedAt || !puzzleSolved(run.board)) fail(400, '퍼즐을 완성한 후 등록해주세요.');
+    if (
+      Date.parse(run.completedAt) - Date.parse(run.startedAt) > 3600000 ||
+      now - Date.parse(run.completedAt) > 3600000
+    )
       fail(400, '1시간이 지나 기록 등록이 만료됐습니다.');
-    if (!Array.isArray(input.moves) || !input.moves.length || input.moves.length > 10000)
-      fail(400, '이동 기록을 확인해주세요.');
-    if (run.firstMoves?.some((tile, index) => input.moves[index] !== tile))
-      fail(400, '첫 이동 기록이 일치하지 않습니다.');
-    let board = run.board;
-    for (const tile of input.moves) {
-      if (!Number.isInteger(tile)) fail(400, '올바르지 않은 이동 기록입니다.');
-      board = movePuzzle(board, tile);
-      if (!board) fail(400, '올바르지 않은 이동 기록입니다.');
-    }
-    if (!puzzleSolved(board)) fail(400, '퍼즐을 완성한 후 등록해주세요.');
     const record = {
       id: run.id,
       userId: actor.id,
-      month: puzzleMonth(now),
-      elapsedMs: now - Date.parse(run.startedAt),
-      moves: input.moves.length,
-      finishedAt: new Date(now).toISOString(),
+      month: puzzleMonth(Date.parse(run.completedAt)),
+      elapsedMs: Date.parse(run.completedAt) - Date.parse(run.startedAt),
+      moves: run.moves.length,
+      finishedAt: run.completedAt,
     };
     db.puzzleRecords ||= [];
     const before = ranking(db, record.month);

@@ -4,7 +4,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { build } from 'esbuild';
 import { JSDOM } from 'jsdom';
-import { puzzleMonth } from '../src/lib/sliding-puzzle.mjs';
+import { puzzleMonth, slidePuzzle, puzzleSolved } from '../src/lib/sliding-puzzle.mjs';
 const dom = new JSDOM('<div id="root"></div>', { url: 'http://localhost/games/sliding-puzzle' });
 const saved = new Map();
 for (const key of ['window', 'document', 'navigator', 'HTMLElement', 'Node', 'Event']) {
@@ -59,32 +59,54 @@ try {
   });
   let games = 0;
   let begins = 0;
+  let activeRun;
+  let loseMoveResponse = false;
   const month = puzzleMonth();
   window.puzzleRouter = { replace() {} };
   window.puzzleContext = {
     role: 'member',
     actualRole: 'member',
     refresh: async () => {},
-    api: async (path) => {
-      if (path.endsWith('/begin')) {
+    api: async (path, options) => {
+      if (path.endsWith('/move')) {
+        assert.equal(options.body.step, activeRun.step);
         begins++;
-        return {};
+        const slide = slidePuzzle(activeRun.board, options.body.tile);
+        activeRun = {
+          ...activeRun,
+          board: slide.board,
+          moves: activeRun.moves + slide.moves.length,
+          step: activeRun.step + 1,
+          startedAt: new Date().toISOString(),
+          elapsedMs: 0,
+          completedAt: puzzleSolved(slide.board) ? new Date().toISOString() : null,
+        };
+        if (loseMoveResponse) {
+          loseMoveResponse = false;
+          throw new Error('응답 유실 테스트');
+        }
+        return { run: activeRun };
       }
+      if (path.includes('/state?')) return { run: activeRun };
+      if (path.endsWith('/stop')) return { run: { ...activeRun, stopped: true } };
       if (path.endsWith('/start')) {
         games++;
-        return {
-          run: {
-            id: 'game-' + games,
-            board: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15],
-          },
+        activeRun = {
+          id: 'game-' + games,
+          step: 0,
+          moves: 0,
+          board: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15],
         };
+        return { run: activeRun };
       }
-      if (path.endsWith('/finish'))
+      if (path.endsWith('/finish')) {
+        assert.deepEqual(Object.keys(options.body), ['runId']);
         return {
           improved: games === 2,
           rank: 1,
           record: { month, elapsedMs: games === 1 ? 9100 : 7200, moves: 1 },
         };
+      }
       return {
         month,
         months: [month],
@@ -138,7 +160,9 @@ try {
   assert.match(result, /00:07\.200/);
   assert.match(result, /월간 최고 기록 갱신 · 1위/);
   await click(buttonByText('게임 시작'));
+  loseMoveResponse = true;
   await click(document.querySelector('[aria-label="13번 타일"]'));
+  assert.equal(activeRun.step, 1, 'A lost move response recovers the committed server state');
   const stoppedBoard = document.querySelector('.puzzle-board').innerHTML;
   await click(buttonByText('게임 정지'));
   assert.ok(buttonByText('게임 시작'));
