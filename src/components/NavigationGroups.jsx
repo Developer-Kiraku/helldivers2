@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { ChevronDown } from 'lucide-react';
 import { navigationGroups, operatorNavigation, navigationActive } from '@/lib/navigation.mjs';
 import { isStaff } from '@/lib/roles';
-import { Button } from './ui';
 import Icon from './Icon';
 
 export default function NavigationGroups({ role, mobile = false, onNavigate }) {
@@ -41,7 +40,7 @@ export default function NavigationGroups({ role, mobile = false, onNavigate }) {
               {group.label}
             </h3>
           ) : (
-            <Button
+            <button
               type="button"
               className="navigation-group-toggle"
               aria-expanded={open === group.id}
@@ -51,7 +50,7 @@ export default function NavigationGroups({ role, mobile = false, onNavigate }) {
               <Icon name={group.icon} size={18} />
               <span>{group.label}</span>
               <ChevronDown size={15} />
-            </Button>
+            </button>
           )}
           <div
             id={mobile ? undefined : 'navigation-' + group.id}

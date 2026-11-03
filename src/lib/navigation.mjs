@@ -24,7 +24,7 @@ export const navigationGroups = [
   },
   {
     id: 'other',
-    label: '기타',
+    label: '게임',
     icon: 'puzzle',
     items: [{ href: '/games/sliding-puzzle', label: '슬라이딩 퍼즐', icon: 'puzzle' }],
   },

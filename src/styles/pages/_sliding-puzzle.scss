@@ -64,6 +64,9 @@
   font-size: var(--hd-font-size-12);
 }
 .puzzle-board {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   position: relative;
   aspect-ratio: 1;
   padding: 8px;
@@ -160,6 +163,16 @@
 .puzzle-result p {
   margin: 5px 0 0;
   font-size: var(--hd-font-size-12);
+}
+.puzzle-result > div > p:first-of-type {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  color: var(--hd-color-input-text);
+  font-variant-numeric: tabular-nums;
+}
+.puzzle-result b {
+  margin-left: 4px;
 }
 .puzzle-ranking > header {
   display: flex;

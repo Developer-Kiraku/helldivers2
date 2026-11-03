@@ -143,7 +143,9 @@ export default function SlidingPuzzle() {
           <div
             className="puzzle-board"
             role="group"
-            aria-label="4 곱하기 4 퍼즐. 빈칸 옆 숫자를 선택하세요."
+            aria-label="4 곱하기 4 퍼즐. 빈칸과 같은 줄의 숫자를 선택하세요."
+            onDragStart={(event) => event.preventDefault()}
+            onContextMenu={(event) => event.preventDefault()}
             tabIndex={0}
             onKeyDown={(event) => {
               const offsets = { ArrowUp: 4, ArrowDown: -4, ArrowLeft: 1, ArrowRight: -1 };
@@ -157,6 +159,7 @@ export default function SlidingPuzzle() {
               tile ? (
                 <button
                   type="button"
+                  draggable={false}
                   key={tile}
                   style={{
                     '--tile-column': board.indexOf(tile) % 4,
@@ -198,15 +201,20 @@ export default function SlidingPuzzle() {
               기록을 등록하고 있습니다…
             </p>
           )}
-          {result && (
+          {phase === 'done' && result && (
             <div className="puzzle-result" role="status">
               <Check size={20} />
               <div>
-                <strong>퍼즐 클리어!</strong>
+                <strong>이번 게임 클리어!</strong>
                 <p>
-                  {result.improved ? '이번 달 최고 기록을 갱신했습니다.' : '기록을 등록했습니다.'}{' '}
-                  월간 {result.rank}위
+                  <span>
+                    완료 시간 <b>{puzzleTime(result.record.elapsedMs)}</b>
+                  </span>
+                  <span>
+                    이동 횟수 <b>{result.record.moves}회</b>
+                  </span>
                 </p>
+                {result.improved && <p>월간 최고 기록 갱신 · {result.rank}위</p>}
               </div>
             </div>
           )}

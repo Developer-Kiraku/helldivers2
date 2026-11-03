@@ -1,6 +1,6 @@
 .navigation-groups {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   padding: 4px 0;
 }
 .mobile-board-group h3 {
@@ -11,24 +11,37 @@
 }
 .navigation-group {
   min-width: 0;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  overflow: hidden;
+  border: 0;
+  background: transparent;
 }
 .navigation-group.is-current {
-  border-color: var(--hd-color-border);
-  background: var(--hd-color-surface);
+  background: transparent;
 }
-.desktop-nav .navigation-group-toggle.rt-Button {
+.desktop-nav .navigation-group-toggle {
   display: flex;
   width: 100%;
   justify-content: flex-start;
   gap: 11px;
-  padding: 13px 14px;
-  height: auto;
+  padding: 12px 14px;
+  min-height: 44px;
+  align-items: center;
+  border: 0;
+  border-radius: 7px;
+  font: inherit;
+  font-size: var(--hd-font-size-13);
+  cursor: pointer;
   color: var(--hd-color-text-muted);
   background: transparent;
   box-shadow: none;
+}
+.desktop-nav .navigation-group-toggle:hover {
+  background: var(--hd-color-input);
+  color: var(--hd-color-input-text);
+}
+.navigation-group-toggle:focus-visible,
+.navigation-group-items a:focus-visible {
+  outline: 2px solid var(--hd-color-accent);
+  outline-offset: 2px;
 }
 .navigation-group-toggle > span {
   flex: 1;
@@ -46,28 +59,36 @@
 }
 .navigation-group-items {
   display: grid;
-  gap: 3px;
-  padding: 0 8px 9px;
+  gap: 2px;
+  margin: 2px 0 8px 22px;
+  padding: 2px 0 2px 9px;
+  border-inline-start: 1px solid var(--hd-color-border);
 }
 .navigation-group-items[hidden] {
   display: none;
 }
 .desktop-nav .navigation-group-items > a {
   display: flex;
-  gap: 11px;
-  padding: 11px 12px;
+  gap: 9px;
+  min-height: 40px;
+  padding: 9px 10px;
   margin: 0;
   border: 0;
   border-radius: 7px;
   font-size: var(--hd-font-size-13);
 }
 .desktop-nav .navigation-group-items > a.active {
-  box-shadow: inset 3px 0 var(--hd-color-accent);
+  box-shadow: none;
   background: color-mix(in srgb, var(--hd-color-accent) 7%, transparent);
 }
 .mobile-navigation-groups {
   width: 100%;
   gap: 16px;
+}
+.mobile-navigation-groups .navigation-group-items {
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 .mobile-navigation-groups h3 {
   display: flex;
