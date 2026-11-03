@@ -40,7 +40,7 @@ export default function PhotoPostEditor({ id = null, board = 'helstagram' }) {
       setYoutubeUrl(current.youtubeUrl || '');
       setMaps(current.maps || []);
     }
-  }, [current]);
+  }, [current?.id]);
   async function selectPhotos(event) {
     const files = [...event.target.files];
     event.target.value = '';

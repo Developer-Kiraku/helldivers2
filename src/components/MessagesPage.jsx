@@ -14,6 +14,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
+import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 import Modal from './Modal';
 import { Button } from './ui';
 import Nickname from './Nickname';
@@ -179,6 +180,7 @@ export default function MessagesPage() {
   const [unreadOnly, setUnreadOnly] = useState(false);
   const [page, setPage] = useState(1);
   const [version, setVersion] = useState(0);
+  useRefreshOnReturn(() => setVersion((value) => value + 1));
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

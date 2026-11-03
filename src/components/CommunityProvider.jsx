@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { usePathname, useRouter } from 'next/navigation';
 import { canManagePosts } from '@/lib/post-access.mjs';
 import PageSkeleton from './PageSkeleton';
+import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 const CommunityContext = createContext(null);
 const emptyPosts = {
   tierlist: [],
@@ -120,6 +121,7 @@ export function CommunityProvider({ children, initialUser = null }) {
   useEffect(() => {
     refresh();
   }, [refresh, pathname]);
+  useRefreshOnReturn(refresh, Boolean(user?.id));
   useEffect(() => () => clearTimeout(timer.current), []);
   useEffect(() => {
     if (!user?.id) {
@@ -147,13 +149,9 @@ export function CommunityProvider({ children, initialUser = null }) {
       }
     };
     const timer = setInterval(update, 30000);
-    window.addEventListener('focus', update);
-    document.addEventListener('visibilitychange', update);
     return () => {
       alive = false;
       clearInterval(timer);
-      window.removeEventListener('focus', update);
-      document.removeEventListener('visibilitychange', update);
     };
   }, [user?.id, refresh]);
   useEffect(() => {

@@ -4,6 +4,7 @@ import { ActionLink, Button, Input, Label, Select, TextArea } from './ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import { useCommunity } from './CommunityProvider';
+import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 import { roleLabels } from '@/lib/roles';
 import { isMuted, muteDurations } from '@/lib/member-mute.mjs';
 import { VolumeX, Volume2 } from 'lucide-react';
@@ -38,6 +39,7 @@ export default function MembersPage() {
       setLoading(false);
     }
   }, [api]);
+  useRefreshOnReturn(load);
   useEffect(() => {
     load();
   }, [load]);

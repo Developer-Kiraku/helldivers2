@@ -2,6 +2,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
+import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 import { Button, Input, Select } from './ui';
 import { auditLogTypes } from '@/lib/audit-log-types.mjs';
 import { boards } from '@/lib/data';
@@ -26,6 +27,7 @@ export default function AuditLogPage() {
   const [type, setType] = useState('all');
   const [board, setBoard] = useState('all');
   const [refresh, setRefresh] = useState(0);
+  useRefreshOnReturn(() => setRefresh((value) => value + 1));
   const [expanded, setExpanded] = useState({});
   const [draft, setDraft] = useState(''),
     [query, setQuery] = useState('');

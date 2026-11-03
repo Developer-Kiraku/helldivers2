@@ -78,6 +78,32 @@ try {
   globalThis.fetch = async () => bootstrap();
   await mount(member);
   assert.match(document.body.textContent, /페이지 내용/);
+  const returnedRequests = [];
+  globalThis.fetch = async (url) => {
+    returnedRequests.push(url);
+    return bootstrap();
+  };
+  Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' });
+  await React.act(async () => {
+    document.dispatchEvent(new Event('visibilitychange'));
+    window.dispatchEvent(new Event('focus'));
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  });
+  assert.equal(returnedRequests.length, 0, 'Hidden screens do not revalidate');
+  Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'visible' });
+  await React.act(async () => {
+    document.dispatchEvent(new Event('visibilitychange'));
+    window.dispatchEvent(new Event('focus'));
+    window.dispatchEvent(new Event('online'));
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  });
+  assert.deepEqual(returnedRequests, ['/api/bootstrap'], 'Resume events share one data refresh');
+  assert.equal(context.unreadMessages, 3);
+  await React.act(async () => {
+    window.dispatchEvent(new Event('focus'));
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  });
+  assert.equal(returnedRequests.length, 1, 'Rapid refocus is throttled');
   let release;
   globalThis.fetch = (url) =>
     url === '/api/bootstrap'

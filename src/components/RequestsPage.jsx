@@ -5,6 +5,7 @@ import { ActionLink, Button, Label, Select, TextArea } from './ui';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { useCommunity } from './CommunityProvider';
+import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 import Icon from './Icon';
 import PageSkeleton from './PageSkeleton';
 import Modal from './Modal';
@@ -37,6 +38,7 @@ export default function RequestsPage() {
       setLoading(false);
     }
   }, [api]);
+  useRefreshOnReturn(load);
   useEffect(() => {
     load();
   }, [load]);

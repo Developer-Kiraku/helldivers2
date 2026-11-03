@@ -15,6 +15,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
+import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 
 const icons = {
   comment: MessageCircle,
@@ -44,6 +45,7 @@ export default function NotificationInbox({ compact = false, onNavigate }) {
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
   const preview = actualRole !== role;
+  useRefreshOnReturn(() => reload((value) => value + 1));
   useEffect(() => {
     let active = true;
     setData(null);
