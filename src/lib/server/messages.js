@@ -32,30 +32,31 @@ function serialize(db, message, detail = false) {
       : { preview: Array.from(message.body).slice(0, 80).join('') }),
   };
 }
+export function searchMembers(db, actor, term, allowEmpty = false) {
+  const search = (term || '').trim().toLowerCase();
+  if ((!allowEmpty && !search) || search.length > 30) return [];
+  return db.users
+    .filter(
+      (user) =>
+        user.status === 'active' &&
+        user.id !== actor.id &&
+        user.nickname.toLowerCase().includes(search),
+    )
+    .sort(
+      (a, b) =>
+        Number(b.nickname.toLowerCase() === search) - Number(a.nickname.toLowerCase() === search) ||
+        a.nickname.localeCompare(b.nickname, 'ko'),
+    )
+    .slice(0, 10);
+}
 export function handleMessages(db, actor, segments, method, input, query) {
   const messages = db.messages || [];
   const [, id, action] = segments;
   if (id === 'unread' && segments.length === 2 && method === 'GET')
     return { unreadCount: unreadMessageCount(db, actor.id) };
   if (id === 'recipients' && segments.length === 2 && method === 'GET') {
-    const search = (query.get('q') || '').trim().toLocaleLowerCase();
-    if (!search || search.length > 30) return { users: [] };
     return {
-      users: db.users
-        .filter(
-          (user) =>
-            user.id !== actor.id &&
-            user.status === 'active' &&
-            user.nickname.toLocaleLowerCase().includes(search),
-        )
-        .sort(
-          (a, b) =>
-            Number(b.nickname.toLocaleLowerCase() === search) -
-              Number(a.nickname.toLocaleLowerCase() === search) ||
-            a.nickname.localeCompare(b.nickname, 'ko'),
-        )
-        .slice(0, 10)
-        .map((user) => participant(db, user.id)),
+      users: searchMembers(db, actor, query.get('q')).map((user) => participant(db, user.id)),
     };
   }
   if (segments.length === 1 && method === 'GET') {

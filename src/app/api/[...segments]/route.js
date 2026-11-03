@@ -1,6 +1,12 @@
 import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/api-keys';
 import { bulkPosts } from '@/lib/server/bulk-posts';
-import { handleMessages, unreadMessageCount } from '@/lib/server/messages';
+import {
+  handleNotifications,
+  unreadActivityCount,
+  syncTextActivity,
+  syncVoteActivity,
+} from '@/lib/server/activity';
+import { handleMessages, unreadMessageCount, searchMembers } from '@/lib/server/messages';
 import { postFormat } from '@/lib/post-move';
 import { presentationUser, viewRoleCookie, viewRoles } from '@/lib/view-role.mjs';
 import { boards } from '@/lib/data';
@@ -71,6 +77,7 @@ function safeReason(value) {
 function bootstrap(db, actor) {
   return {
     user: publicUser(actor),
+    unreadNotifications: unreadActivityCount(db, actor),
     unreadMessages: unreadMessageCount(db, actor.id),
     posts: Object.fromEntries(
       Object.keys(boards).map((board) => [
@@ -204,6 +211,19 @@ async function handler(request, context) {
     }
     const result = await transaction((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
+      if (path === 'mentions' && method === 'GET')
+        return {
+          users: searchMembers(db, actor, new URL(request.url).searchParams.get('q'), true).map(
+            ({ id, nickname }) => ({ id, nickname }),
+          ),
+        };
+      if (segments[0] === 'notifications')
+        return handleNotifications(db, actor, segments, method, new URL(request.url).searchParams);
+      if (path === 'activity/unread' && method === 'GET')
+        return {
+          messages: unreadMessageCount(db, actor.id),
+          notifications: unreadActivityCount(db, actor),
+        };
       if (segments[0] === 'messages')
         return handleMessages(
           db,
@@ -291,6 +311,7 @@ async function handler(request, context) {
             deletedAt: null,
           };
         db.posts.unshift(post);
+        syncTextActivity(db, actor, post);
         if (post.status !== 'draft') audit(db, actor.id, 'post.create', post.id);
         return { post: serializePost(db, post, actor) };
       }
@@ -318,6 +339,7 @@ async function handler(request, context) {
           if (!wasDraft && clean.status === 'draft')
             fail(400, '게시한 티어 메이커 글은 임시저장으로 변경할 수 없습니다.');
           Object.assign(post, clean, { updatedAt: now() });
+          syncTextActivity(db, actor, post);
           if (wasDraft && post.status !== 'draft') {
             post.createdAt = now();
             audit(db, actor.id, 'post.create', post.id);
@@ -352,7 +374,17 @@ async function handler(request, context) {
         if (segments[2] === 'comments' && segments.length === 3 && method === 'POST') {
           const text = typeof input.body === 'string' ? input.body.trim() : '';
           if (!text || text.length > 1000) fail(400, '댓글은 1~1,000자로 입력해주세요.');
+          const parent =
+            input.parentId == null
+              ? null
+              : db.comments.find(
+                  (item) =>
+                    item.id === input.parentId && item.postId === post.id && !item.deletedAt,
+                );
+          if (input.parentId != null && !parent) fail(404, '답글을 달 댓글을 찾을 수 없습니다.');
           const comment = {
+            parentId: parent?.id || null,
+            rootId: parent ? parent.rootId || parent.id : null,
             id: randomUUID(),
             postId: post.id,
             authorId: actor.id,
@@ -361,18 +393,38 @@ async function handler(request, context) {
             deletedAt: null,
           };
           db.comments.push(comment);
+          syncTextActivity(db, actor, post, comment);
           audit(db, actor.id, 'comment.create', comment.id);
           return { comment: serializeComment(db, comment, actor) };
         }
         if (
           segments[2] === 'comments' &&
-          segments.length === 4 &&
-          ['PATCH', 'DELETE'].includes(method)
+          ((segments.length === 4 && ['PATCH', 'DELETE'].includes(method)) ||
+            (segments.length === 5 && segments[4] === 'vote' && method === 'POST'))
         ) {
           const comment = db.comments.find(
             (item) => item.id === segments[3] && item.postId === post.id && !item.deletedAt,
           );
           if (!comment) fail(404, '댓글을 찾을 수 없습니다.');
+          if (method === 'POST') {
+            if (![0, 1, -1].includes(input.value)) fail(400, '추천 값을 확인해주세요.');
+            const previous = comment.votes?.find((item) => item.userId === actor.id)?.value || 0;
+            if (previous !== input.value) {
+              comment.votes = (comment.votes || []).filter((item) => item.userId !== actor.id);
+              if (input.value) comment.votes.push({ userId: actor.id, value: input.value });
+              syncVoteActivity(db, actor, post, comment, input.value);
+              const action =
+                input.value === 1
+                  ? 'like'
+                  : input.value === -1
+                    ? 'dislike'
+                    : previous === 1
+                      ? 'like_cancel'
+                      : 'dislike_cancel';
+              audit(db, actor.id, `comment.vote.${action}`, comment.id);
+            }
+            return { comment: serializeComment(db, comment, actor) };
+          }
           if (comment.authorId !== actor.id)
             fail(403, '본인이 작성한 댓글만 수정하거나 삭제할 수 있습니다.');
           if (method === 'DELETE') {
@@ -384,6 +436,7 @@ async function handler(request, context) {
           if (!text || text.length > 1000) fail(400, '댓글은 1~1,000자로 입력해주세요.');
           const previousBody = comment.body;
           comment.body = mutedComment(text, actor);
+          syncTextActivity(db, actor, post, comment, true);
           comment.updatedAt = now();
           if (comment.body !== previousBody) audit(db, actor.id, 'comment.update', comment.id);
           return { comment: serializeComment(db, comment, actor) };
@@ -423,6 +476,7 @@ async function handler(request, context) {
           );
           if (input.value) db.votes.push({ postId: post.id, userId: actor.id, value: input.value });
           if (previousValue !== input.value) {
+            syncVoteActivity(db, actor, post, null, input.value);
             const action =
               input.value === 1
                 ? 'like'

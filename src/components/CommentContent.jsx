@@ -1,11 +1,12 @@
 'use client';
+import VoteButtons from './VoteButtons';
 import MuteNotice from './MuteNotice';
 import { useRef, useState } from 'react';
 import { Button } from './ui';
 import { EmoticonInput, EmoticonText } from './Emoticons';
 import { useCommunity } from './CommunityProvider';
 
-export default function CommentContent({ comment, postId, onChange }) {
+export default function CommentContent({ comment, postId, onChange, onReply }) {
   const { api, notify, refresh } = useCommunity();
   const [mode, setMode] = useState(null);
   const [draft, setDraft] = useState(comment.body);
@@ -13,25 +14,35 @@ export default function CommentContent({ comment, postId, onChange }) {
   const [error, setError] = useState('');
   const pending = useRef(false);
   function start(next) {
-    setDraft(comment.body);
+    setDraft(next === 'reply' ? '' : comment.body);
     setError('');
     setMode(next);
   }
   async function submit(event) {
     event.preventDefault();
-    if (pending.current || (mode === 'edit' && !draft.trim())) return;
+    if (pending.current || (mode !== 'delete' && !draft.trim())) return;
     pending.current = true;
     setBusy(true);
     setError('');
     try {
       const deleting = mode === 'delete';
-      const data = await api(`posts/${postId}/comments/${comment.id}`, {
-        method: deleting ? 'DELETE' : 'PATCH',
-        ...(deleting ? {} : { body: { body: draft.trim() } }),
+      const replying = mode === 'reply';
+      const data = await api(`posts/${postId}/comments${replying ? '' : '/' + comment.id}`, {
+        method: deleting ? 'DELETE' : replying ? 'POST' : 'PATCH',
+        ...(deleting
+          ? {}
+          : { body: { body: draft.trim(), ...(replying ? { parentId: comment.id } : {}) } }),
       });
-      onChange(deleting ? null : data.comment);
+      if (replying) onReply(data.comment);
+      else onChange(deleting ? null : data.comment);
       setMode(null);
-      notify(deleting ? '댓글을 삭제했습니다.' : '댓글을 수정했습니다.');
+      notify(
+        deleting
+          ? '댓글을 삭제했습니다.'
+          : replying
+            ? '답글을 등록했습니다.'
+            : '댓글을 수정했습니다.',
+      );
       await refresh();
     } catch (error) {
       setError(error.message);
@@ -42,11 +53,21 @@ export default function CommentContent({ comment, postId, onChange }) {
   }
   return (
     <div className="comment-content">
-      {mode === 'edit' ? (
-        <form onSubmit={submit} className="comment-edit-form" aria-label="댓글 수정">
+      {mode !== 'edit' && (
+        <p className="preserve-lines">
+          <EmoticonText text={comment.body} mentions={comment.mentions} />
+        </p>
+      )}
+      {(mode === 'edit' || mode === 'reply') && (
+        <form
+          onSubmit={submit}
+          className="comment-edit-form"
+          aria-label={mode === 'reply' ? '답글 작성' : '댓글 수정'}
+        >
+          {mode === 'reply' && <strong>{comment.author}님에게 답글</strong>}
           <MuteNotice />
           <EmoticonInput
-            aria-label="수정할 댓글 내용"
+            aria-label={mode === 'reply' ? '답글 내용' : '수정할 댓글 내용'}
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             maxLength={1000}
@@ -56,17 +77,28 @@ export default function CommentContent({ comment, postId, onChange }) {
           />
           <div className="comment-owner-actions">
             <Button type="submit" disabled={busy || !draft.trim()}>
-              저장
+              {mode === 'reply' ? '답글 등록' : '저장'}
             </Button>
             <Button type="button" disabled={busy} onClick={() => setMode(null)}>
               취소
             </Button>
           </div>
         </form>
-      ) : (
-        <p className="preserve-lines">
-          <EmoticonText text={comment.body} />
-        </p>
+      )}
+      {!mode && (
+        <div className="comment-reactions">
+          <Button type="button" onClick={() => start('reply')}>
+            답글
+          </Button>
+          <VoteButtons
+            postId={postId}
+            commentId={comment.id}
+            likes={comment.likes}
+            dislikes={comment.dislikes}
+            myVote={comment.myVote}
+            onChange={onChange}
+          />
+        </div>
       )}
       {comment.own && !mode && (
         <div className="comment-owner-actions" aria-label="내 댓글 관리">

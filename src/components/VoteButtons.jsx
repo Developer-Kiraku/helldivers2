@@ -4,18 +4,26 @@ import { Button } from './ui';
 import { useState } from 'react';
 import { useCommunity } from './CommunityProvider';
 import Icon from './Icon';
-export default function VoteButtons({ postId, likes = 0, dislikes = 0, myVote = 0 }) {
+export default function VoteButtons({
+  postId,
+  commentId,
+  onChange,
+  likes = 0,
+  dislikes = 0,
+  myVote = 0,
+}) {
   const { api, refresh, notify } = useCommunity();
   const [busy, setBusy] = useState(false);
   async function vote(value) {
     if (!postId) return;
     setBusy(true);
     try {
-      await api(`posts/${postId}/vote`, {
+      const result = await api(`posts/${postId}${commentId ? '/comments/' + commentId : ''}/vote`, {
         method: 'POST',
         body: { value: myVote === value ? 0 : value },
       });
-      await refresh();
+      if (commentId) onChange(result.comment);
+      else await refresh();
     } catch (error) {
       notify(error.message);
     } finally {

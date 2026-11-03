@@ -2,7 +2,7 @@
 import MuteNotice from './MuteNotice';
 import Nickname from './Nickname';
 import { EmoticonInput, EmoticonText } from './Emoticons';
-import CommentContent from './CommentContent';
+import CommentThread from './CommentThread';
 
 import Link from 'next/link';
 import { useState } from 'react';
@@ -78,7 +78,7 @@ function StandardFeedPostCard({ post, board }) {
         </Link>
       )}
       <p className="preserve-lines">
-        <EmoticonText text={post.content} />
+        <EmoticonText text={post.content} mentions={post.mentions} />
       </p>
       {image && (
         <Link href={href} className="post-image">
@@ -126,43 +126,14 @@ function StandardFeedPostCard({ post, board }) {
             ) : (
               <>
                 {comments.length ? (
-                  <ul className="comments-list feed-comments">
-                    {comments.slice(-3).map((comment) => (
-                      <li key={comment.id}>
-                        <div className="author-inline">
-                          <Avatar
-                            name={comment.author}
-                            own={comment.own}
-                            photo={comment.authorPhoto}
-                          />
-                          <strong>
-                            <Nickname
-                              name={comment.author}
-                              role={comment.authorRole}
-                              own={comment.own}
-                            />
-                          </strong>
-                        </div>
-                        <CommentContent
-                          comment={comment}
-                          postId={post.id}
-                          onChange={(updated) => {
-                            setComments((current) =>
-                              updated
-                                ? current.map((item) => (item.id === comment.id ? updated : item))
-                                : current.filter((item) => item.id !== comment.id),
-                            );
-                            if (!updated) setCount((current) => Math.max(0, current - 1));
-                          }}
-                        />
-                        <time dateTime={comment.createdAt}>
-                          {new Date(comment.createdAt).toLocaleString('ko-KR', {
-                            timeZone: 'Asia/Seoul',
-                          })}
-                        </time>
-                      </li>
-                    ))}
-                  </ul>
+                  <CommentThread
+                    comments={comments}
+                    setComments={setComments}
+                    setCount={setCount}
+                    postId={post.id}
+                    limit={3}
+                    className="feed-comments"
+                  />
                 ) : (
                   !error && (
                     <p className="field-hint">아직 댓글이 없습니다. 첫 댓글을 남겨보세요.</p>

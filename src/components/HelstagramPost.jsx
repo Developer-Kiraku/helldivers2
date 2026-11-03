@@ -9,7 +9,7 @@ import { useCommunity } from './CommunityProvider';
 import Avatar from './Avatar';
 import Nickname from './Nickname';
 import { EmoticonInput, EmoticonText } from './Emoticons';
-import CommentContent from './CommentContent';
+import CommentThread from './CommentThread';
 import PhotoCarousel from './PhotoCarousel';
 import PostShare from './PostShare';
 import ModerationActions from './ModerationActions';
@@ -158,7 +158,7 @@ export default function HelstagramPost({ post, detail = false }) {
           )}
           {post.content && (
             <p>
-              <EmoticonText text={caption} />
+              <EmoticonText text={caption} mentions={post.mentions} />
               {!expanded && post.content.length > 160 && (
                 <Button
                   type="button"
@@ -181,26 +181,13 @@ export default function HelstagramPost({ post, detail = false }) {
           {loading ? (
             <p role="status">댓글을 불러오는 중…</p>
           ) : comments.length ? (
-            <ul>
-              {(detail ? comments : comments.slice(-3)).map((item) => (
-                <li key={item.id}>
-                  <strong>
-                    <Nickname name={item.author} role={item.authorRole} own={item.own} />
-                  </strong>{' '}
-                  <CommentContent
-                    comment={item}
-                    postId={post.id}
-                    onChange={(updated) =>
-                      setComments((current) =>
-                        updated
-                          ? current.map((comment) => (comment.id === item.id ? updated : comment))
-                          : current.filter((comment) => comment.id !== item.id),
-                      )
-                    }
-                  />
-                </li>
-              ))}
-            </ul>
+            <CommentThread
+              comments={comments}
+              setComments={setComments}
+              postId={post.id}
+              limit={detail ? undefined : 3}
+              compact
+            />
           ) : (
             <p>첫 댓글을 남겨보세요.</p>
           )}

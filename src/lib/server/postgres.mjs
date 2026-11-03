@@ -6,6 +6,7 @@ export const collections = {
   users: ['hd_users', (row) => row.id],
   posts: ['hd_posts', (row) => row.id],
   comments: ['hd_comments', (row) => row.id],
+  notifications: ['hd_notifications', (row) => row.id],
   messages: ['hd_messages', (row) => row.id],
   votes: ['hd_votes', (row) => JSON.stringify([row.userId, row.postId])],
   requests: ['hd_requests', (row) => row.id],

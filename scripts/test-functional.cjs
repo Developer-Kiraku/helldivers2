@@ -192,6 +192,7 @@ async function run() {
     await require('./test-emoticons-http.cjs')({ admin, deputy, member });
     await require('./test-equipment-http.cjs')({ admin, member });
     await require('./test-warbonds-http.cjs')({ guest, member });
+    await require('./test-activity-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-messages-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-member-mute-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-loadout-http.cjs')({ guest, member, deputy });

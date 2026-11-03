@@ -1,4 +1,5 @@
 'use client';
+import MentionSuggestions from './MentionSuggestions';
 import { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import { emoticons, emoticonGroups, emoticonParts } from '@/lib/emoticons.mjs';
 import { Button } from './ui';
@@ -9,7 +10,7 @@ import { Smile } from 'lucide-react';
 import { equipmentParts } from '@/lib/equipment.mjs';
 import { EquipmentIcon, EquipmentPicker } from './Equipment';
 
-export function EmoticonText({ text }) {
+export function EmoticonText({ text, mentions }) {
   return emoticonParts(text).map((part, index) =>
     part.emoticon ? (
       <img
@@ -25,6 +26,19 @@ export function EmoticonText({ text }) {
       equipmentParts(part.text).map((piece, offset) =>
         piece.equipment ? (
           <EquipmentIcon key={`${index}-${offset}`} item={piece.equipment} />
+        ) : mentions?.length ? (
+          piece.text
+            .split(/((?<![\p{L}\p{N}_@])@[\p{L}\p{N}_]{1,16}(?![\p{L}\p{N}_]))/gu)
+            .map((word, i) =>
+              word.startsWith('@') &&
+              mentions.some((entry) => entry.name.toLowerCase() === word.slice(1).toLowerCase()) ? (
+                <strong className="mention-text" key={i}>
+                  {word}
+                </strong>
+              ) : (
+                word
+              ),
+            )
         ) : (
           piece.text
         ),
@@ -157,6 +171,7 @@ export const EmoticonInput = forwardRef(function EmoticonInput(
         aria-disabled={Boolean(props.disabled)}
       >
         <EditorContent editor={editor} />
+        <MentionSuggestions editor={editor} />
       </div>
       <EmoticonPicker
         disabled={props.disabled || props.readOnly || !editor}

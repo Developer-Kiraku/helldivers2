@@ -1,4 +1,5 @@
 'use client';
+import MentionSuggestions from './MentionSuggestions';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
@@ -468,6 +469,7 @@ const RichTextEditor = forwardRef(function RichTextEditor(
       </div>
       <div hidden={sourceMode} className="tiptap-surface">
         <EditorContent editor={editor} />
+        <MentionSuggestions editor={editor} />
       </div>
       {sourceMode && (
         <>

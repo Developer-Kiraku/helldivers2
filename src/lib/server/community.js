@@ -69,8 +69,12 @@ export function serializePost(db, post, viewer) {
 }
 export function serializeComment(db, comment, viewer) {
   const author = db.users.find((user) => user.id === comment.authorId);
+  const { votes = [], ...fields } = comment;
   return {
-    ...comment,
+    ...fields,
+    likes: votes.filter((vote) => vote.value === 1).length,
+    dislikes: votes.filter((vote) => vote.value === -1).length,
+    myVote: votes.find((vote) => vote.userId === viewer.id)?.value || 0,
     authorRole: author?.status === 'active' ? author.role : null,
     author: author?.status === 'withdrawn' ? '탈퇴한 회원' : author?.nickname || '알 수 없는 회원',
     authorPhoto: author?.status === 'active' ? author.photo : '',

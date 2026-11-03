@@ -5,7 +5,7 @@ import { LoadoutDisplay } from './Loadout';
 import TierList from './TierList';
 import TierListMeta from './TierListMeta';
 import { EmoticonInput, EmoticonText } from './Emoticons';
-import CommentContent from './CommentContent';
+import CommentThread from './CommentThread';
 import PostShare from './PostShare';
 import PostPoll from './PostPoll';
 import { Button, Label } from './ui';
@@ -108,7 +108,7 @@ function StandardArticlePage({ board, id }) {
                 ) : (
                   <>
                     <p className="preserve-lines">
-                      <EmoticonText text={post.content} />
+                      <EmoticonText text={post.content} mentions={post.mentions} />
                     </p>
                     {post.images?.map((src, index) => (
                       <img
@@ -151,38 +151,7 @@ function StandardArticlePage({ board, id }) {
                 {commentsLoading ? (
                   <CommentsSkeleton />
                 ) : (
-                  <ul className="comments-list">
-                    {comments.map((comment) => (
-                      <li key={comment.id}>
-                        <div className="author-inline">
-                          <Avatar
-                            name={comment.author}
-                            own={comment.own}
-                            photo={comment.authorPhoto}
-                          />
-                          <strong>
-                            <Nickname
-                              name={comment.author}
-                              role={comment.authorRole}
-                              own={comment.own}
-                            />
-                          </strong>
-                        </div>
-                        <CommentContent
-                          comment={comment}
-                          postId={post.id}
-                          onChange={(updated) =>
-                            setComments((current) =>
-                              updated
-                                ? current.map((item) => (item.id === comment.id ? updated : item))
-                                : current.filter((item) => item.id !== comment.id),
-                            )
-                          }
-                        />
-                        <time>{new Date(comment.createdAt).toLocaleString('ko-KR')}</time>
-                      </li>
-                    ))}
-                  </ul>
+                  <CommentThread comments={comments} setComments={setComments} postId={post.id} />
                 )}
                 <form onSubmit={addComment}>
                   <Label htmlFor="comment-body">댓글 작성</Label>

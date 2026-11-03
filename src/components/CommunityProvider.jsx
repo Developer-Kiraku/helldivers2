@@ -23,6 +23,7 @@ export function CommunityProvider({ children, initialUser = null }) {
     [ready, setReady] = useState(false),
     [toast, setToast] = useState('');
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const router = useRouter(),
     pathname = usePathname(),
     timer = useRef(null),
@@ -40,6 +41,7 @@ export function CommunityProvider({ children, initialUser = null }) {
     setPosts(emptyPosts);
     setStats({ totalMembers: 0, onlineMembers: 0 });
     setUnreadMessages(0);
+    setUnreadNotifications(0);
     setManagementMode(false);
   }, []);
   useEffect(() => {
@@ -102,6 +104,7 @@ export function CommunityProvider({ children, initialUser = null }) {
       if (!response.ok) throw new Error(data.error);
       setUser(data.user);
       setUnreadMessages(data.unreadMessages || 0);
+      setUnreadNotifications(data.unreadNotifications || 0);
       setPosts(data.posts);
       setStats(data.stats);
     } catch (error) {
@@ -127,14 +130,17 @@ export function CommunityProvider({ children, initialUser = null }) {
     const update = async () => {
       if (document.visibilityState === 'hidden') return;
       try {
-        const response = await fetch('/api/messages/unread', { cache: 'no-store' });
+        const response = await fetch('/api/activity/unread', { cache: 'no-store' });
         if (response.status === 401 && alive) {
           await refresh();
           return;
         }
         if (response.ok && alive) {
           const data = await response.json();
-          if (alive) setUnreadMessages(data.unreadCount);
+          if (alive) {
+            setUnreadMessages(data.messages);
+            setUnreadNotifications(data.notifications);
+          }
         }
       } catch {
         /* A temporary connection failure must not interrupt the current page. */
@@ -214,6 +220,8 @@ export function CommunityProvider({ children, initialUser = null }) {
         stats,
         unreadMessages,
         setUnreadMessages,
+        unreadNotifications,
+        setUnreadNotifications,
         ready: ready && loadedPath === pathname,
         notify,
         api,

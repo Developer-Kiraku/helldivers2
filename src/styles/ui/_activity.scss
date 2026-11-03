@@ -1,0 +1,103 @@
+@use '../tokens' as t;
+.notification-link,
+.comment-reactions,
+.comment-reactions .vote-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.notification-link {
+  padding: 7px 10px;
+  border: 1px solid var(--hd-color-border);
+  border-radius: 6px;
+  color: var(--hd-color-input-text);
+  text-decoration: none;
+  background: var(--hd-color-surface);
+}
+.notification-link:disabled {
+  opacity: 0.5;
+}
+.activity-page .message-row {
+  text-decoration: none;
+}
+.comment-threads .thread-reply {
+  margin-inline-start: clamp(10px, 4vw, 32px);
+  border-inline-start: 2px solid var(--hd-color-border);
+  padding-inline-start: 12px;
+}
+.reply-context,
+.removed-parent {
+  display: block;
+  color: var(--hd-color-text-muted);
+  font-size: var(--hd-font-size-12);
+  margin-bottom: 5px;
+}
+.comment-threads li:target {
+  outline: 2px solid var(--hd-color-accent);
+  outline-offset: 3px;
+}
+.comment-threads li {
+  scroll-margin-block: 100px;
+}
+.comment-reactions {
+  flex-wrap: wrap;
+  margin-block: 3px;
+}
+.comment-reactions button,
+.comment-reactions .vote-buttons button {
+  padding: 3px 7px;
+  font-size: var(--hd-font-size-12);
+  min-height: 28px;
+}
+.mention-text,
+.mention-suggestions strong,
+.comment-edit-form > strong {
+  color: var(--hd-color-accent);
+}
+.mention-suggestions {
+  position: fixed;
+  z-index: var(--hd-layer-100);
+  display: grid;
+  gap: 2px;
+  width: min(216px, 90vw);
+  max-height: min(184px, 40dvh);
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid var(--hd-color-border);
+  border-radius: 8px;
+  background: var(--hd-color-surface);
+  box-shadow: 0 5px 16px var(--hd-color-palette-0002);
+}
+.mention-suggestions strong,
+.mention-suggestions small {
+  padding: 4px 8px;
+  font-size: var(--hd-font-size-12);
+}
+.mention-suggestions button {
+  background: transparent;
+  color: var(--hd-color-input-text);
+  border: 0;
+  border-radius: 4px;
+  text-align: left;
+  padding: 6px 8px;
+}
+.mention-suggestions button:hover,
+.mention-suggestions button.selected {
+  background: var(--hd-color-palette-405047);
+}
+@media (max-width: t.breakpoint('mobile')) {
+  .mobile-brand-header .mobile-message-link {
+    left: 4px;
+    width: 36px;
+  }
+  .mobile-brand-header .mobile-notification-link {
+    left: 42px;
+  }
+  .mobile-brand-header .mobile-brand img {
+    width: min(148px, 43vw);
+  }
+  .comment-reactions button,
+  .comment-reactions .vote-buttons button {
+    min-height: 34px;
+  }
+}

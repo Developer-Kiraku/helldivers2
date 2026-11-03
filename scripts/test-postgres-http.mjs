@@ -40,7 +40,21 @@ try {
     2,
   );
   await admin.call(`/api/posts/${post.id}/poll`, 'POST', { choices: [post.poll.options[0].id] });
-  await admin.call(`/api/posts/${post.id}/comments`, 'POST', { body: 'PostgreSQL 댓글' });
+  const root = (
+    await admin.call(`/api/posts/${post.id}/comments`, 'POST', { body: 'PostgreSQL 댓글' })
+  ).data.comment;
+  const reply = (
+    await member.call(`/api/posts/${post.id}/comments`, 'POST', {
+      body: '@라미아 답글',
+      parentId: root.id,
+    })
+  ).data.comment;
+  await admin.call(`/api/posts/${post.id}/comments/${reply.id}/vote`, 'POST', { value: 1 });
+  const mention = (await admin.call('/api/notifications')).data.notifications.find(
+    (item) => item.commentId === reply.id,
+  );
+  assert.equal(mention.kind, 'mention');
+  await admin.call(`/api/notifications/${mention.id}/read`, 'POST', {});
   await admin.call('/api/admin/users/u-user2/approve', 'POST', {});
   const message = (
     await member.call('/api/messages', 'POST', {
@@ -54,7 +68,20 @@ try {
   await harness.stop();
   await harness.start('work/postgres-http-unused.json', { databaseUrl: url.href });
   const persisted = (await member.call(`/api/posts/${post.id}`)).data;
-  assert.equal(persisted.comments[0].body, 'PostgreSQL 댓글');
+  assert.equal(persisted.comments.find((item) => item.id === root.id).body, 'PostgreSQL 댓글');
+  const persistedReply = persisted.comments.find((item) => item.id === reply.id);
+  assert.equal(persistedReply.parentId, root.id);
+  assert.equal(persistedReply.likes, 1);
+  assert.ok(
+    (await admin.call('/api/notifications')).data.notifications.find(
+      (item) => item.id === mention.id,
+    ).readAt,
+  );
+  assert.ok(
+    (await member.call('/api/notifications')).data.notifications.some(
+      (item) => item.commentId === reply.id && item.kind === 'like',
+    ),
+  );
   assert.equal(persisted.post.poll.totalVoters, 1);
   assert.equal(persisted.post.views, 2);
   assert.ok(!('viewReceipts' in persisted.post));
