@@ -113,6 +113,12 @@
 .rt-DialogOverlay:has(.full-menu-modal) {
   background: var(--hd-color-alpha-387);
 }
+.rt-DialogScroll:has(.full-menu-modal) {
+  height: 100dvh;
+  padding: 16px 12px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
 
 .ui-modal.full-menu-modal .modal-header {
   flex-shrink: 0;
