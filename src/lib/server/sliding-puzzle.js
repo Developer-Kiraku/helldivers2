@@ -109,7 +109,7 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
     }
     if (run.stoppedAt) fail(409, '정지한 게임입니다. 새 게임을 시작해주세요.');
     // Only the immediately preceding identical request can be safely retried.
-    if (run.lastMove?.step === input.step && run.lastMove.tile === input.tile)
+    if (run.lastMove && run.lastMove.step === input.step && run.lastMove.tile === input.tile)
       return { run: session(run, now) };
     if (run.result || run.completedAt) fail(409, '이미 완료된 게임입니다.');
     if (now - Date.parse(run.startedAt || run.issuedAt) > 3600000)

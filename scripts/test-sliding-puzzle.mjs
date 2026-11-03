@@ -146,6 +146,8 @@ try {
   assert.throws(() => call(1, 'move', { runId: run.id, tile: 14, step: 0 }), { status: 404 });
   assert.throws(() => call(0, 'move', { runId: run.id, tile: 1, step: 0 }), { status: 400 });
   assert.throws(() => call(0, 'move', { runId: run.id, tile: 14, step: 2 }), { status: 409 });
+  for (const step of [undefined, null, -1, '0', 0.5])
+    assert.throws(() => call(0, 'move', { runId: run.id, tile: 14, step }), { status: 409 });
   const began = call(0, 'move', { runId: run.id, tile: 14, step: 0 });
   now += 100;
   assert.equal(
