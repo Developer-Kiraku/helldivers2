@@ -30,6 +30,7 @@ export default function SlidingPuzzle() {
     [result, setResult] = useState(null);
   const started = useRef(0),
     pending = useRef(false);
+  const [clockStarted, setClockStarted] = useState(false);
   useRefreshOnReturn(() => reload((v) => v + 1));
   useEffect(() => {
     let active = true;
@@ -46,10 +47,10 @@ export default function SlidingPuzzle() {
     };
   }, [api, month, version]);
   useEffect(() => {
-    if (phase !== 'playing') return;
+    if (phase !== 'playing' || !clockStarted) return;
     const timer = setInterval(() => setElapsed(Date.now() - started.current), 50);
     return () => clearInterval(timer);
-  }, [phase]);
+  }, [phase, clockStarted]);
   async function start() {
     if (pending.current) return;
     const previousPhase = phase;
@@ -62,7 +63,8 @@ export default function SlidingPuzzle() {
       setBoard(data.run.board);
       setMoves([]);
       setResult(null);
-      started.current = Date.now();
+      started.current = 0;
+      setClockStarted(false);
       setElapsed(0);
       setPhase('playing');
     } catch (err) {
@@ -95,7 +97,7 @@ export default function SlidingPuzzle() {
       pending.current = false;
     }
   }
-  function slide(tile) {
+  async function slide(tile) {
     if (phase !== 'playing' || pending.current || actualRole !== role) return;
     const slide = slidePuzzle(board, tile);
     if (!slide) return;
@@ -103,6 +105,23 @@ export default function SlidingPuzzle() {
     const history = [...moves, ...slide.moves];
     setBoard(next);
     setMoves(history);
+    if (!started.current) {
+      const firstMoveAt = Date.now();
+      pending.current = true;
+      setError('');
+      try {
+        await api('games/sliding-puzzle/begin', { method: 'POST', body: { runId: run.id, tile } });
+        started.current = firstMoveAt;
+        setClockStarted(true);
+      } catch (err) {
+        setBoard(board);
+        setMoves(moves);
+        setError(err.message);
+        return;
+      } finally {
+        pending.current = false;
+      }
+    }
     if (puzzleSolved(next)) {
       setElapsed(Date.now() - started.current);
       void finish(history);
@@ -231,7 +250,9 @@ export default function SlidingPuzzle() {
           <div className="puzzle-help">
             <strong>플레이 방법</strong>
             <ol>
-              <li>게임 시작을 누르면 숫자가 섞이고 시간이 측정됩니다.</li>
+              <li>
+                게임 시작을 누르면 숫자가 섞입니다. 첫 숫자를 움직이는 순간부터 시간이 측정됩니다.
+              </li>
               <li>
                 빈칸과 같은 가로줄·세로줄의 숫자를 누르면, 그 사이 숫자들이 빈칸 쪽으로 한꺼번에
                 미끄러집니다. 방향키로도 움직일 수 있습니다.
@@ -246,7 +267,7 @@ export default function SlidingPuzzle() {
             </ol>
           </div>
           <p className="puzzle-rules">
-            기록은 게임 시작부터 서버에 클리어가 접수될 때까지 측정됩니다. 1시간 안에 완성하면 자동
+            기록은 첫 이동부터 서버에 클리어가 접수될 때까지 측정됩니다. 1시간 안에 완성하면 자동
             등록됩니다.
           </p>
         </section>

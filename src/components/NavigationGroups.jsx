@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useId, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { navigationGroups, operatorNavigation, navigationActive } from '@/lib/navigation.mjs';
 import { isStaff } from '@/lib/roles';
 import Icon from './Icon';
@@ -37,7 +37,11 @@ export default function NavigationGroups({
     <div className={mobile ? 'navigation-groups mobile-navigation-groups' : 'navigation-groups'}>
       {groups.map((group) => (
         <section
-          className={'navigation-group' + (current === group.id ? ' is-current' : '')}
+          className={
+            'navigation-group' +
+            (current === group.id ? ' is-current' : '') +
+            (open === group.id ? ' is-open' : '')
+          }
           key={group.id}
         >
           <button
@@ -47,8 +51,10 @@ export default function NavigationGroups({
             aria-controls={'navigation-' + group.id + instance}
             onClick={() => setOpen(open === group.id ? null : group.id)}
           >
-            <Icon name={group.icon} size={18} />
-            <span>{group.label || '게시판'}</span>
+            <span className="navigation-group-icon">
+              <Icon name={group.icon} size={18} />
+            </span>
+            <span className="navigation-group-label">{group.label || '게시판'}</span>
             <ChevronDown size={15} />
           </button>
           <div
@@ -66,6 +72,7 @@ export default function NavigationGroups({
               >
                 <Icon name={item.icon} size={18} />
                 <span>{item.label}</span>
+                <ChevronRight size={14} className="navigation-item-arrow" aria-hidden="true" />
               </Link>
             ))}
           </div>

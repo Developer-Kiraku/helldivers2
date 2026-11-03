@@ -50,6 +50,7 @@ try {
     ],
   });
   let games = 0;
+  let begins = 0;
   const month = puzzleMonth();
   window.puzzleRouter = { replace() {} };
   window.puzzleContext = {
@@ -57,6 +58,10 @@ try {
     actualRole: 'member',
     refresh: async () => {},
     api: async (path) => {
+      if (path.endsWith('/begin')) {
+        begins++;
+        return {};
+      }
       if (path.endsWith('/start')) {
         games++;
         return {
@@ -87,6 +92,12 @@ try {
   const buttonByText = (text) =>
     Array.from(document.querySelectorAll('button')).find((button) => button.textContent === text);
   await click(buttonByText('게임 시작'));
+  await React.act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  });
+  assert.match(document.querySelector('.puzzle-status').textContent, /00:00\.000/);
+  await click(document.querySelector('[aria-label="1번 타일"]'));
+  assert.equal(begins, 0, 'Illegal tiles do not start the timer');
   const board = document.querySelector('.puzzle-board');
   for (const type of ['dragstart', 'contextmenu']) {
     const event = new Event(type, { bubbles: true, cancelable: true });
@@ -96,6 +107,7 @@ try {
   const tile = document.querySelector('[aria-label="15번 타일"]');
   assert.equal(tile.draggable, false);
   await click(tile);
+  assert.equal(begins, 1, 'The first legal move starts the server clock once');
   let result = document.querySelector('.puzzle-result').textContent;
   assert.match(result, /00:09\.100/);
   assert.match(result, /1회/);

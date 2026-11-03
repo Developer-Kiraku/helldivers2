@@ -96,6 +96,9 @@ try {
     now += 5000;
     const run = call(user, 'start').run;
     db.puzzleRuns.find((r) => r.id === run.id).board = movePuzzle(solvedPuzzle(), 15);
+    assert.equal(db.puzzleRuns.find((r) => r.id === run.id).startedAt, null);
+    now += 60000; // Looking at the board must not count toward the clear time.
+    call(user, 'begin', { runId: run.id, tile: 15 });
     now += elapsedMs;
     return { result: call(user, 'finish', { runId: run.id, moves }), id: run.id };
   };
@@ -134,12 +137,19 @@ try {
   const run = call(0, 'start').run;
   assert.throws(() => call(0, 'start'), { status: 429 });
   db.puzzleRuns.find((r) => r.id === run.id).board = movePuzzle(solvedPuzzle(), 15);
+  assert.throws(() => call(0, 'finish', { runId: run.id, moves: [15] }), { status: 400 });
+  assert.throws(() => call(1, 'begin', { runId: run.id, tile: 15 }), { status: 404 });
+  assert.throws(() => call(0, 'begin', { runId: run.id, tile: 1 }), { status: 400 });
+  const began = call(0, 'begin', { runId: run.id, tile: 15 });
+  now += 100;
+  assert.equal(call(0, 'begin', { runId: run.id, tile: 15 }).startedAt, began.startedAt);
   assert.throws(() => call(0, 'finish', { runId: run.id, moves: [1] }), { status: 400 });
   assert.throws(() => call(0, 'finish', { runId: run.id, moves: [] }), { status: 400 });
   const oldMonthCount = db.puzzleRecords.length;
   now = Date.parse('2026-11-30T14:59:59.900Z');
   const newMonth = call(0, 'start').run;
   db.puzzleRuns.find((r) => r.id === newMonth.id).board = movePuzzle(solvedPuzzle(), 15);
+  call(0, 'begin', { runId: newMonth.id, tile: 15 });
   now += 300;
   assert.equal(call(0, 'finish', { runId: newMonth.id, moves: [15] }).record.month, '2026-12');
   assert.equal(db.puzzleRecords.length, oldMonthCount + 1);

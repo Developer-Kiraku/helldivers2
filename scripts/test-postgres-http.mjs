@@ -75,6 +75,7 @@ try {
   } finally {
     await fixturePool.end();
   }
+  await member.call('/api/games/sliding-puzzle/begin', 'POST', { runId: puzzleRun.id, tile: 15 });
   const puzzleResult = (
     await member.call('/api/games/sliding-puzzle/finish', 'POST', {
       runId: puzzleRun.id,
