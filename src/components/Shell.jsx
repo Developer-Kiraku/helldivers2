@@ -377,6 +377,19 @@ export default function Shell({ children, previewSkeleton = false }) {
             </span>
             <div className="preview-control-groups">
               <NotificationBell key={pathname + role} />
+              <Link
+                href="/messages"
+                className="notification-link"
+                aria-label={`쪽지함${unreadMessages ? `, 안 읽은 쪽지 ${unreadMessages}개` : ''}`}
+              >
+                <Icon name="mail" size={17} />
+                쪽지
+                {unreadMessages > 0 && (
+                  <span className="message-nav-count">
+                    {unreadMessages > 99 ? '99+' : unreadMessages}
+                  </span>
+                )}
+              </Link>
               {actualRole === 'operator' &&
                 role === 'operator' &&
                 desktopMode &&
