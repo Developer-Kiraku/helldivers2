@@ -23,7 +23,8 @@ function syncActivity(db, actor, post, commentId, family, recipients, editing = 
     existing.add(item.recipientId);
     if (item.kind !== kind) {
       item.kind = kind;
-      if (!editing || kind === 'mention') Object.assign(item, { createdAt, readAt: null });
+      if (!editing || kind === 'mention')
+        Object.assign(item, { createdAt, readAt: null, deletedAt: null });
     }
     return true;
   });
@@ -94,7 +95,9 @@ export function syncVoteActivity(db, actor, post, comment, value) {
 }
 
 function visibleActivity(db, viewer) {
-  const own = (db.notifications || []).filter((item) => item.recipientId === viewer.id);
+  const own = (db.notifications || []).filter(
+    (item) => item.recipientId === viewer.id && !item.deletedAt,
+  );
   if (!own.length) return [];
   const posts = new Map(db.posts.map((item) => [item.id, item]));
   const comments = new Map(db.comments.map((item) => [item.id, item]));
@@ -117,6 +120,17 @@ export const unreadActivityCount = (db, viewer) =>
 
 export function handleNotifications(db, viewer, segments, method, query) {
   const visible = visibleActivity(db, viewer);
+  if (method === 'DELETE' && segments.length === 2) {
+    const item = (db.notifications || []).find(
+      (item) =>
+        item.id === segments[1] &&
+        item.recipientId === viewer.id &&
+        (item.deletedAt || visible.some((row) => row.id === item.id)),
+    );
+    if (!item) fail(404, '알림을 찾을 수 없습니다.');
+    item.deletedAt ||= new Date().toISOString();
+    return { unreadCount: visible.filter((row) => !row.deletedAt && !row.readAt).length };
+  }
   if (segments.length === 1 && method === 'GET') {
     visible.sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id));
     const pageSize = Math.min(20, Math.max(1, parseInt(query.get('limit'), 10) || 20));

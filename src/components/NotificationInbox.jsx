@@ -15,6 +15,7 @@ import {
   ArrowUpRight,
   Trophy,
   TrendingDown,
+  X,
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
@@ -63,7 +64,7 @@ export default function NotificationInbox({ compact = false, onNavigate }) {
   useRefreshOnReturn(() => reload((value) => value + 1));
   useEffect(() => {
     let active = true;
-    setData(null);
+    setData((current) => (current?.page === page ? current : null));
     setError('');
     api(compact ? 'notifications?limit=5' : 'notifications?page=' + page)
       .then((result) => {
@@ -92,6 +93,25 @@ export default function NotificationInbox({ compact = false, onNavigate }) {
         onNavigate?.();
         router.push(item.href);
       } else reload((v) => v + 1);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function remove(item) {
+    if (busy || preview) return;
+    setBusy(true);
+    setError('');
+    try {
+      const result = await api('notifications/' + item.id, { method: 'DELETE' });
+      setUnreadNotifications(result.unreadCount);
+      setData((current) => ({
+        ...current,
+        notifications: current.notifications.filter((row) => row.id !== item.id),
+        unreadCount: result.unreadCount,
+      }));
+      reload((value) => value + 1);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -133,50 +153,65 @@ export default function NotificationInbox({ compact = false, onNavigate }) {
             {data.notifications.map((item) => {
               const Icon = icons[item.kind];
               return (
-                <Link
+                <div
+                  className={'notification-item' + (item.readAt ? '' : ' is-unread')}
                   key={item.id}
-                  href={item.href}
-                  onNavigate={onNavigate}
-                  className={`message-row${item.readAt ? '' : ' is-unread'}`}
-                  onClick={(event) => {
-                    if (
-                      item.readAt ||
-                      preview ||
-                      event.metaKey ||
-                      event.ctrlKey ||
-                      event.shiftKey ||
-                      event.altKey
-                    )
-                      return;
-                    event.preventDefault();
-                    void read(item);
-                  }}
                 >
-                  <span className="message-row-icon">
-                    <Icon size={20} />
-                  </span>
-                  <span className="message-row-content">
-                    <span className="message-row-top">
-                      <strong>{description(item)}</strong>
-                      {!compact && (
-                        <time dateTime={item.createdAt}>
-                          {new Date(item.createdAt).toLocaleString('ko-KR', {
-                            timeZone: 'Asia/Seoul',
-                          })}
-                        </time>
-                      )}
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    onNavigate={onNavigate}
+                    className={`message-row${item.readAt ? '' : ' is-unread'}`}
+                    onClick={(event) => {
+                      if (
+                        item.readAt ||
+                        preview ||
+                        event.metaKey ||
+                        event.ctrlKey ||
+                        event.shiftKey ||
+                        event.altKey
+                      )
+                        return;
+                      event.preventDefault();
+                      void read(item);
+                    }}
+                  >
+                    <span className="message-row-icon">
+                      <Icon size={20} />
                     </span>
-                    <span className="notification-post-link">
-                      <span className="message-preview">{item.title}</span>
-                      <ArrowUpRight size={13} aria-hidden="true" />
+                    <span className="message-row-content">
+                      <span className="message-row-top">
+                        <strong>{description(item)}</strong>
+                        {!compact && (
+                          <time dateTime={item.createdAt}>
+                            {new Date(item.createdAt).toLocaleString('ko-KR', {
+                              timeZone: 'Asia/Seoul',
+                            })}
+                          </time>
+                        )}
+                      </span>
+                      <span className="notification-post-link">
+                        <span className="message-preview">{item.title}</span>
+                        <ArrowUpRight size={13} aria-hidden="true" />
+                      </span>
                     </span>
-                  </span>
-                  {!item.readAt && (
-                    <span className={compact ? 'notification-unread-dot' : 'message-read-status'}>
-                      <span className={compact ? 'sr-only' : undefined}>안 읽음</span>
-                    </span>
-                  )}
-                </Link>
+                    {!item.readAt && (
+                      <span className={compact ? 'notification-unread-dot' : 'message-read-status'}>
+                        <span className={compact ? 'sr-only' : undefined}>안 읽음</span>
+                      </span>
+                    )}
+                  </Link>
+                  <button
+                    type="button"
+                    className="notification-delete"
+                    title="알림 삭제"
+                    aria-label={'알림 삭제 · ' + item.title}
+                    disabled={busy || preview}
+                    onClick={() => remove(item)}
+                  >
+                    <X size={15} aria-hidden="true" />
+                  </button>
+                </div>
               );
             })}
           </div>

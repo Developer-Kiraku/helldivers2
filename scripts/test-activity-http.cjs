@@ -30,6 +30,23 @@ module.exports = async function ({ guest, admin, deputy, member, apprentice }) {
     bodyHtml: '<p>문의 @라미아</p><p>다음 문단</p><p>hello@부운영자</p>',
   });
   assert.equal((await list(admin, post))[0].kind, 'mention');
+  const removedMention = (await list(admin, post))[0];
+  await guest.call('/api/notifications/' + removedMention.id, 'DELETE', undefined, 401);
+  await deputy.call('/api/notifications/' + removedMention.id, 'DELETE', undefined, 404);
+  await admin.call('/api/notifications/' + removedMention.id, 'DELETE');
+  await admin.call('/api/notifications/' + removedMention.id, 'DELETE');
+  assert.equal((await list(admin, post)).length, 0);
+  await member.call('/api/posts/' + post.id, 'PATCH', {
+    category: '잡담',
+    title: post.title,
+    content: '본문',
+    bodyHtml: '<p>문의 @라미아</p><p>다음 문단</p><p>hello@부운영자</p>',
+  });
+  assert.equal(
+    (await list(admin, post)).length,
+    0,
+    'Editing an unchanged mention does not resurrect a deleted notification',
+  );
   assert.equal((await list(deputy, post)).length, 0, 'Email addresses are not mentions');
   const root = await comment(deputy, post, '부모 댓글');
   const reply = await comment(apprentice, post, '@헬다이버 @헬다이버 답글', root.id);
@@ -72,6 +89,16 @@ module.exports = async function ({ guest, admin, deputy, member, apprentice }) {
     await vote(1);
     assert.equal((await votes()).length, 1);
     assert.equal((await votes())[0].actor, null);
+    const removedVote = (await votes())[0];
+    const beforeDelete = (await recipient.call('/api/activity/unread')).data.notifications;
+    const deletion = await recipient.call('/api/notifications/' + removedVote.id, 'DELETE');
+    assert.equal(deletion.data.unreadCount, beforeDelete - 1);
+    await vote(1);
+    assert.equal(
+      (await votes()).length,
+      0,
+      'An unchanged reaction does not resurrect a deleted notification',
+    );
     const result = await vote(-1);
     if (target) {
       assert.equal(result.comment.dislikes, 1);

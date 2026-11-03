@@ -28,6 +28,51 @@
 .notification-preview-body .message-row {
   text-decoration: none;
 }
+.notification-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--hd-color-border);
+}
+.notification-item.is-unread {
+  background: color-mix(in srgb, var(--hd-color-accent) 3%, transparent);
+}
+.notification-item:last-child {
+  border-bottom: 0;
+}
+.notification-item .message-row {
+  flex: 1;
+  min-width: 0;
+  border-bottom: 0;
+}
+.notification-item .message-row.is-unread {
+  background: transparent;
+}
+.notification-delete {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 36px;
+  margin-right: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  color: var(--hd-color-text-muted);
+  background: transparent;
+  cursor: pointer;
+}
+.notification-delete:hover {
+  color: var(--hd-color-error);
+  background: var(--hd-color-input);
+}
+.notification-delete:focus-visible {
+  outline: 2px solid var(--hd-color-accent);
+  outline-offset: 1px;
+}
+.notification-delete:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 .mobile-notification-link {
   padding: 0;
   border: 0;
