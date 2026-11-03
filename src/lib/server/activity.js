@@ -118,13 +118,14 @@ export function handleNotifications(db, viewer, segments, method, query) {
   const visible = visibleActivity(db, viewer);
   if (segments.length === 1 && method === 'GET') {
     visible.sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id));
-    const pageCount = Math.max(1, Math.ceil(visible.length / 20));
+    const pageSize = Math.min(20, Math.max(1, parseInt(query.get('limit'), 10) || 20));
+    const pageCount = Math.max(1, Math.ceil(visible.length / pageSize));
     const page = Math.max(1, Math.min(pageCount, parseInt(query.get('page'), 10) || 1));
     return {
       page,
       pageCount,
       unreadCount: visible.filter((item) => !item.readAt).length,
-      notifications: visible.slice((page - 1) * 20, page * 20).map((item) => {
+      notifications: visible.slice((page - 1) * pageSize, page * pageSize).map((item) => {
         const post = db.posts.find((post) => post.id === item.postId);
         const actor = db.users.find((user) => user.id === item.actorId);
         return {

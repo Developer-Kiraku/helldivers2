@@ -17,8 +17,89 @@
 .notification-link:disabled {
   opacity: 0.5;
 }
-.activity-page .message-row {
+.activity-page .message-row,
+.notification-preview-body .message-row {
   text-decoration: none;
+}
+.mobile-notification-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.notification-popover.rt-PopoverContent {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(352px, calc(100vw - 20px));
+  max-height: min(430px, var(--radix-popover-content-available-height));
+  padding: 0;
+  overflow: hidden;
+  color: var(--hd-color-input-text);
+  background: var(--hd-color-surface);
+  border: 1px solid var(--hd-color-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 36px var(--hd-color-palette-0008);
+  z-index: var(--hd-layer-60);
+}
+.notification-popover > h2 {
+  margin: 0;
+  padding: 12px 15px;
+  font-size: var(--hd-font-size-15);
+  border-bottom: 1px solid var(--hd-color-border);
+}
+.notification-preview-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.notification-preview-body .message-row {
+  gap: 10px;
+  padding: 10px 14px;
+  font-size: var(--hd-font-size-13);
+  line-height: 1.4;
+}
+.notification-preview-body .message-row-content {
+  gap: 3px;
+}
+.notification-preview-body .message-row-top strong {
+  overflow-wrap: anywhere;
+}
+.notification-preview-body .message-preview {
+  font-size: var(--hd-font-size-12);
+}
+.notification-preview-body .message-row:last-child {
+  border-bottom: 0;
+}
+.notification-unread-dot {
+  flex: 0 0 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hd-color-accent);
+}
+.notification-preview-body .messages-empty {
+  margin: 0;
+  padding: 22px 14px;
+}
+.notification-preview-body .messages-empty h2 {
+  margin-top: 8px;
+  font-size: var(--hd-font-size-14);
+}
+.notification-preview-body .message-error {
+  margin: 12px 14px;
+}
+.notification-view-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px;
+  font-size: var(--hd-font-size-13);
+  font-weight: 650;
+  text-decoration: none;
+  color: var(--hd-color-accent);
+  border-top: 1px solid var(--hd-color-border);
+}
+.notification-popover a:hover,
+.notification-popover a:focus-visible {
+  background: var(--hd-color-input);
 }
 .comment-threads .thread-reply {
   margin-inline-start: clamp(10px, 4vw, 32px);

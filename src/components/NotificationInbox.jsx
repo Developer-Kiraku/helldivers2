@@ -34,7 +34,7 @@ function description(item) {
     '이 추가되었습니다.'
   );
 }
-export default function NotificationsPage() {
+export default function NotificationInbox({ compact = false, onNavigate }) {
   const { api, setUnreadNotifications, actualRole, role } = useCommunity();
   const router = useRouter();
   const [page, setPage] = useState(1),
@@ -47,7 +47,7 @@ export default function NotificationsPage() {
     let active = true;
     setData(null);
     setError('');
-    api('notifications?page=' + page)
+    api(compact ? 'notifications?limit=5' : 'notifications?page=' + page)
       .then((result) => {
         if (active) {
           setData(result);
@@ -60,7 +60,7 @@ export default function NotificationsPage() {
     return () => {
       active = false;
     };
-  }, [api, page, version, setUnreadNotifications, role]);
+  }, [api, page, version, setUnreadNotifications, role, compact]);
   async function read(item) {
     if (busy) return;
     setBusy(true);
@@ -70,8 +70,10 @@ export default function NotificationsPage() {
         method: 'POST',
       });
       setUnreadNotifications(result.unreadCount);
-      if (item) router.push(item.href);
-      else reload((v) => v + 1);
+      if (item) {
+        onNavigate?.();
+        router.push(item.href);
+      } else reload((v) => v + 1);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -79,22 +81,24 @@ export default function NotificationsPage() {
     }
   }
   return (
-    <section className="messages-page activity-page">
-      <header className="messages-heading">
-        <div>
-          <span className="eyebrow">ACTIVITY</span>
-          <h1>알림함</h1>
-        </div>
-        <button
-          className="notification-link"
-          type="button"
-          disabled={preview || busy || !data?.unreadCount}
-          onClick={() => read(null)}
-        >
-          <CheckCheck size={16} />
-          모두 읽음
-        </button>
-      </header>
+    <section className={compact ? 'notification-preview-body' : 'messages-page activity-page'}>
+      {!compact && (
+        <header className="messages-heading">
+          <div>
+            <span className="eyebrow">ACTIVITY</span>
+            <h1>알림함</h1>
+          </div>
+          <button
+            className="notification-link"
+            type="button"
+            disabled={preview || busy || !data?.unreadCount}
+            onClick={() => read(null)}
+          >
+            <CheckCheck size={16} />
+            모두 읽음
+          </button>
+        </header>
+      )}
       {error && (
         <p className="message-error" role="alert">
           {error} <button onClick={() => reload((v) => v + 1)}>다시 시도</button>
@@ -114,6 +118,7 @@ export default function NotificationsPage() {
                 <Link
                   key={item.id}
                   href={item.href}
+                  onNavigate={onNavigate}
                   className={`message-row${item.readAt ? '' : ' is-unread'}`}
                   onClick={(event) => {
                     if (
@@ -135,15 +140,21 @@ export default function NotificationsPage() {
                   <span className="message-row-content">
                     <span className="message-row-top">
                       <strong>{description(item)}</strong>
-                      <time dateTime={item.createdAt}>
-                        {new Date(item.createdAt).toLocaleString('ko-KR', {
-                          timeZone: 'Asia/Seoul',
-                        })}
-                      </time>
+                      {!compact && (
+                        <time dateTime={item.createdAt}>
+                          {new Date(item.createdAt).toLocaleString('ko-KR', {
+                            timeZone: 'Asia/Seoul',
+                          })}
+                        </time>
+                      )}
                     </span>
                     <span className="message-preview">{item.title}</span>
                   </span>
-                  {!item.readAt && <span className="message-read-status">안 읽음</span>}
+                  {!item.readAt && (
+                    <span className={compact ? 'notification-unread-dot' : 'message-read-status'}>
+                      <span className={compact ? 'sr-only' : undefined}>안 읽음</span>
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -154,7 +165,7 @@ export default function NotificationsPage() {
               <h2>아직 받은 알림이 없습니다.</h2>
             </div>
           )}
-          {data.pageCount > 1 && (
+          {!compact && data.pageCount > 1 && (
             <nav className="message-pagination" aria-label="알림 목록 페이지">
               <button
                 aria-label="이전 페이지"

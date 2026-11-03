@@ -11,25 +11,49 @@ import { useCommunity } from './CommunityProvider';
 import { DiscordLink, KakaoChatLink } from './CommunityLinks';
 import { isStaff, roleLabels } from '@/lib/roles';
 import { LogIn, LogOut, Menu, ChevronDown, ShieldCheck, Bell } from 'lucide-react';
+import { Popover } from '@radix-ui/themes';
+import NotificationInbox from './NotificationInbox';
 import Modal from './Modal';
 import MobileBottomNav from './MobileBottomNav';
 
-function NotificationLink({ mobile = false }) {
+function NotificationBell({ mobile = false }) {
   const { unreadNotifications = 0 } = useCommunity();
+  const [open, setOpen] = useState(false);
   return (
-    <Link
-      className={mobile ? 'mobile-message-link mobile-notification-link' : 'notification-link'}
-      href="/notifications"
-      aria-label={`알림함, 안 읽은 알림 ${unreadNotifications}개`}
-    >
-      <Bell size={mobile ? 22 : 17} aria-hidden="true" />
-      {!mobile && '알림'}
-      {unreadNotifications > 0 && (
-        <span className="message-nav-count">
-          {unreadNotifications > 99 ? '99+' : unreadNotifications}
-        </span>
-      )}
-    </Link>
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger>
+        <button
+          type="button"
+          className={mobile ? 'mobile-message-link mobile-notification-link' : 'notification-link'}
+          aria-label={`최근 알림, 안 읽은 알림 ${unreadNotifications}개`}
+        >
+          <Bell size={mobile ? 22 : 17} aria-hidden="true" />
+          {!mobile && '알림'}
+          {unreadNotifications > 0 && (
+            <span className="message-nav-count">
+              {unreadNotifications > 99 ? '99+' : unreadNotifications}
+            </span>
+          )}
+        </button>
+      </Popover.Trigger>
+      <Popover.Content
+        className="notification-popover"
+        aria-label="최근 알림"
+        align={mobile ? 'start' : 'end'}
+        sideOffset={8}
+        collisionPadding={10}
+      >
+        <h2>최근 알림</h2>
+        <NotificationInbox compact onNavigate={() => setOpen(false)} />
+        <Link
+          className="notification-view-all"
+          href="/notifications"
+          onNavigate={() => setOpen(false)}
+        >
+          전체 보기 <Icon name="arrow" size={15} />
+        </Link>
+      </Popover.Content>
+    </Popover.Root>
   );
 }
 
@@ -56,7 +80,7 @@ function MobileBrandHeader({ signedIn, logout, role }) {
           <img src="/images/helldivers-logo.png" alt="HELLDIVERS II" />
           <span>HELLDIVERS 2 COMMUNITY</span>
         </Link>
-        {signedIn && <NotificationLink mobile />}
+        {signedIn && <NotificationBell key={pathname + role} mobile />}
         {signedIn && (
           <Link
             href="/messages"
@@ -352,7 +376,7 @@ export default function Shell({ children, previewSkeleton = false }) {
               {actualRole === 'operator' && role !== actualRole ? ' · 화면 확인 중' : ''}
             </span>
             <div className="preview-control-groups">
-              <NotificationLink />
+              <NotificationBell key={pathname + role} />
               {actualRole === 'operator' &&
                 role === 'operator' &&
                 desktopMode &&
