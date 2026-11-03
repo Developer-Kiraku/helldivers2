@@ -17,6 +17,13 @@
 .notification-link:disabled {
   opacity: 0.5;
 }
+.notification-link[aria-haspopup] .message-nav-count,
+.mobile-notification-link .message-nav-count {
+  min-width: 16px;
+  height: 16px;
+  padding-inline: 4px;
+  border-radius: 8px;
+}
 .activity-page .message-row,
 .notification-preview-body .message-row {
   text-decoration: none;
