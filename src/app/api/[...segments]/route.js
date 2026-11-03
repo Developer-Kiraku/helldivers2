@@ -1,5 +1,6 @@
 import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/api-keys';
 import { bulkPosts } from '@/lib/server/bulk-posts';
+import { handlePuzzle } from '@/lib/server/sliding-puzzle';
 import {
   handleNotifications,
   unreadActivityCount,
@@ -211,6 +212,8 @@ async function handler(request, context) {
     }
     const result = await transaction((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
+      if (segments[0] === 'games' && segments[1] === 'sliding-puzzle')
+        return handlePuzzle(db, actor, segments, method, input, new URL(request.url).searchParams);
       if (path === 'mentions' && method === 'GET')
         return {
           users: searchMembers(db, actor, new URL(request.url).searchParams.get('q'), true).map(

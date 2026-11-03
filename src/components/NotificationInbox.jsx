@@ -13,11 +13,15 @@ import {
   ThumbsUp,
   ThumbsDown,
   ArrowUpRight,
+  Trophy,
+  TrendingDown,
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 
 const icons = {
+  puzzle_rank_enter: Trophy,
+  puzzle_rank_drop: TrendingDown,
   comment: MessageCircle,
   reply: Reply,
   mention: AtSign,
@@ -25,6 +29,17 @@ const icons = {
   dislike: ThumbsDown,
 };
 function description(item) {
+  if (item.kind === 'puzzle_rank_enter')
+    return item.month + ' 퍼즐 랭킹 ' + item.rank + '위 기록을 달성했습니다.';
+  if (item.kind === 'puzzle_rank_drop')
+    return (
+      item.month +
+      ' 퍼즐 랭킹이 ' +
+      item.previousRank +
+      '위에서 ' +
+      item.rank +
+      '위로 내려갔습니다.'
+    );
   if (item.kind === 'mention')
     return item.actor + '님이 ' + (item.commentId ? '댓글' : '게시글') + '에서 나를 멘션했습니다.';
   if (item.kind === 'reply') return item.actor + '님이 내 댓글에 답글을 남겼습니다.';

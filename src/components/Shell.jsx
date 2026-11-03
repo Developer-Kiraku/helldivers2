@@ -194,6 +194,7 @@ const menu = [
   { href: '/boards/loadout', label: '로드아웃', icon: 'crosshair' },
   { href: '/boards/tierlist', label: '티어 메이커', icon: 'poll' },
   { href: '/warbonds', label: '전쟁 채권 사전', icon: 'library' },
+  { href: '/games/sliding-puzzle', label: '슬라이딩 퍼즐', icon: 'puzzle' },
   { href: '/boards/talk', label: '헬다이버톡', icon: 'talk' },
   { href: '/boards/helstagram', label: '헬스타그램', icon: 'camera' },
   { href: '/boards/qna', label: '질문상담실', icon: 'question' },
@@ -463,7 +464,9 @@ export default function Shell({ children, previewSkeleton = false }) {
       </div>
       <MobileBottomNav
         boards={menu.filter(
-          (item) => item.href.startsWith('/boards/') && item.href !== '/boards/notice',
+          (item) =>
+            (item.href.startsWith('/boards/') && item.href !== '/boards/notice') ||
+            item.href.startsWith('/games/'),
         )}
       />
     </div>

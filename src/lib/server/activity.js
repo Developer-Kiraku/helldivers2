@@ -99,6 +99,7 @@ function visibleActivity(db, viewer) {
   const posts = new Map(db.posts.map((item) => [item.id, item]));
   const comments = new Map(db.comments.map((item) => [item.id, item]));
   return own.filter((item) => {
+    if (item.family === 'puzzle') return true;
     const post = posts.get(item.postId);
     const comment = item.commentId && comments.get(item.commentId);
     return (
@@ -126,6 +127,18 @@ export function handleNotifications(db, viewer, segments, method, query) {
       pageCount,
       unreadCount: visible.filter((item) => !item.readAt).length,
       notifications: visible.slice((page - 1) * pageSize, page * pageSize).map((item) => {
+        if (item.family === 'puzzle')
+          return {
+            id: item.id,
+            kind: item.kind,
+            month: item.month,
+            rank: item.rank,
+            previousRank: item.previousRank,
+            title: '슬라이딩 퍼즐 · ' + item.month,
+            createdAt: item.createdAt,
+            readAt: item.readAt,
+            href: '/games/sliding-puzzle?month=' + encodeURIComponent(item.month),
+          };
         const post = db.posts.find((post) => post.id === item.postId);
         const actor = db.users.find((user) => user.id === item.actorId);
         return {

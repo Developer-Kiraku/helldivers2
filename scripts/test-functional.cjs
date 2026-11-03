@@ -140,6 +140,7 @@ async function run() {
   await import('./test-board-management-ui.mjs');
   await import('./test-dashboard-hero.mjs');
   await import('./test-session-ui.mjs');
+  await import('./test-sliding-puzzle.mjs');
   await fs.mkdir(path.join(root, 'work'), { recursive: true });
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-'));
   const file = path.join(directory, 'test-db.json');

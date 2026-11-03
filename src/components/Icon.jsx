@@ -47,9 +47,11 @@ import {
   KeyRound,
   MapPin,
   PencilLine,
+  Puzzle,
 } from 'lucide-react';
 import { SiDiscord, SiKakaotalk, SiYoutube } from '@icons-pack/react-simple-icons';
 const icons = {
+  puzzle: Puzzle,
   crosshair: Crosshair,
   undo: Undo2,
   redo: Redo2,

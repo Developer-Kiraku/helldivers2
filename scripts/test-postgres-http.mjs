@@ -65,8 +65,43 @@ try {
   ).data.message;
   const messageReadAt = (await admin.call(`/api/messages/${message.id}/read`, 'POST', {})).data
     .message.readAt;
+  const puzzleRun = (await member.call('/api/games/sliding-puzzle/start', 'POST', {})).data.run;
+  const fixturePool = createPool(url.href);
+  try {
+    await fixturePool.query(
+      "UPDATE hd_puzzle_runs SET data=jsonb_set(data,'{board}',$1::jsonb) WHERE id=$2",
+      [JSON.stringify([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15]), puzzleRun.id],
+    );
+  } finally {
+    await fixturePool.end();
+  }
+  const puzzleResult = (
+    await member.call('/api/games/sliding-puzzle/finish', 'POST', {
+      runId: puzzleRun.id,
+      moves: [15],
+    })
+  ).data;
+  assert.equal(puzzleResult.rank, 1);
+  await member.call('/api/games/sliding-puzzle/finish', 'POST', {
+    runId: puzzleRun.id,
+    moves: [15],
+  });
   await harness.stop();
   await harness.start('work/postgres-http-unused.json', { databaseUrl: url.href });
+  const puzzleRankings = (
+    await member.call('/api/games/sliding-puzzle?month=' + puzzleResult.record.month)
+  ).data;
+  assert.equal(puzzleRankings.mine.moves, 1);
+  assert.equal(puzzleRankings.mine.elapsedMs, puzzleResult.record.elapsedMs);
+  assert.equal(
+    (await member.call('/api/notifications')).data.notifications.filter(
+      (item) => item.kind === 'puzzle_rank_enter',
+    ).length,
+    1,
+  );
+  console.log(
+    'PASS: puzzle run, monthly record and top-three notification persist across PostgreSQL restart; repeated finish is idempotent',
+  );
   const persisted = (await member.call(`/api/posts/${post.id}`)).data;
   assert.equal(persisted.comments.find((item) => item.id === root.id).body, 'PostgreSQL 댓글');
   const persistedReply = persisted.comments.find((item) => item.id === reply.id);
