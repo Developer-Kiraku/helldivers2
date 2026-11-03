@@ -143,8 +143,40 @@
   scroll-margin-block: 100px;
 }
 .comment-reactions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
   flex-wrap: wrap;
-  margin-block: 3px;
+  gap: 8px 16px;
+  margin-block: 8px 4px;
+}
+.comment-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.comment-footer-actions .comment-owner-actions {
+  margin: 0;
+  padding-inline-start: 8px;
+  border-inline-start: 1px solid var(--hd-color-border);
+}
+.comment-reactions .comment-footer-actions button {
+  background: transparent;
+  color: var(--hd-color-text-muted);
+  box-shadow: none;
+}
+.comment-reactions .comment-footer-actions .comment-reply-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--hd-color-input-text);
+}
+.comment-reactions .comment-footer-actions button:hover {
+  color: var(--hd-color-accent);
+  background: var(--hd-color-input);
+}
+.comment-reactions > .vote-buttons {
+  margin-inline-start: auto;
 }
 .comment-reactions button,
 .comment-reactions .vote-buttons button {

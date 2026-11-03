@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import { Button } from './ui';
 import { EmoticonInput, EmoticonText } from './Emoticons';
 import { useCommunity } from './CommunityProvider';
+import { Reply } from 'lucide-react';
 
 export default function CommentContent({ comment, postId, onChange, onReply }) {
   const { api, notify, refresh } = useCommunity();
@@ -87,9 +88,22 @@ export default function CommentContent({ comment, postId, onChange, onReply }) {
       )}
       {!mode && (
         <div className="comment-reactions">
-          <Button type="button" onClick={() => start('reply')}>
-            답글
-          </Button>
+          <div className="comment-footer-actions">
+            <Button type="button" className="comment-reply-button" onClick={() => start('reply')}>
+              <Reply size={15} aria-hidden="true" />
+              답글
+            </Button>
+            {comment.own && (
+              <div className="comment-owner-actions" aria-label="내 댓글 관리">
+                <Button type="button" onClick={() => start('edit')}>
+                  수정
+                </Button>
+                <Button type="button" onClick={() => start('delete')}>
+                  삭제
+                </Button>
+              </div>
+            )}
+          </div>
           <VoteButtons
             postId={postId}
             commentId={comment.id}
@@ -98,16 +112,6 @@ export default function CommentContent({ comment, postId, onChange, onReply }) {
             myVote={comment.myVote}
             onChange={onChange}
           />
-        </div>
-      )}
-      {comment.own && !mode && (
-        <div className="comment-owner-actions" aria-label="내 댓글 관리">
-          <Button type="button" onClick={() => start('edit')}>
-            수정
-          </Button>
-          <Button type="button" onClick={() => start('delete')}>
-            삭제
-          </Button>
         </div>
       )}
       {mode === 'delete' && (
