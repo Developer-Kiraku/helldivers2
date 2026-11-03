@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useCommunity } from './CommunityProvider';
 import { Button, Input, Label } from './ui';
 import MapKeysSettings from './MapKeysSettings';
+import PointSettings from './PointSettings';
 export default function ApiKeysPage() {
   const { api, role, notify } = useCommunity();
   const [data, setData] = useState(null),
@@ -50,7 +51,7 @@ export default function ApiKeysPage() {
     );
   return (
     <section className="admin-page api-keys-page">
-      <h1>API 키 관리</h1>
+      <h1>SETTING</h1>
       {error && (
         <p className="form-error" role="alert">
           {error}
@@ -60,6 +61,7 @@ export default function ApiKeysPage() {
         <p role="status">{error ? '설정을 불러오지 못했습니다.' : '설정 확인 중…'}</p>
       ) : (
         <>
+          <PointSettings />
           <form className="panel api-key-panel" onSubmit={save}>
             <header>
               <h2>카카오톡 공유</h2>

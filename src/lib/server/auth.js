@@ -46,6 +46,7 @@ export function publicUser(user) {
     role: user.role,
     actualRole: user.actualRole || user.role,
     nickname: user.nickname,
+    points: user.points || { total: 0, current: 0 },
     photo: user.photo,
     kakao: user.kakao ? { id: user.kakao.id, connectedAt: user.kakao.connectedAt } : null,
     provider: user.kakao ? 'kakao' : 'temporary',

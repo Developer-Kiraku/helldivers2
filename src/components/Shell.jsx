@@ -9,12 +9,14 @@ import Avatar from './Avatar';
 import Icon from './Icon';
 import { useCommunity } from './CommunityProvider';
 import { DiscordLink, KakaoChatLink } from './CommunityLinks';
-import { isStaff, roleLabels } from '@/lib/roles';
-import { LogIn, LogOut, Menu, ChevronDown, ShieldCheck, Bell } from 'lucide-react';
+import { roleLabels } from '@/lib/roles';
+import { LogIn, LogOut, Menu, ShieldCheck, Bell } from 'lucide-react';
 import { Popover } from '@radix-ui/themes';
 import NotificationInbox from './NotificationInbox';
 import Modal from './Modal';
 import MobileBottomNav from './MobileBottomNav';
+import NavigationGroups from './NavigationGroups';
+import { navigationGroups } from '@/lib/navigation.mjs';
 
 function NotificationBell({ mobile = false }) {
   const { unreadNotifications = 0 } = useCommunity();
@@ -109,48 +111,11 @@ function MobileBrandHeader({ signedIn, logout, role }) {
       {open && (
         <Modal className="full-menu-modal" title="전체 메뉴" onClose={() => setOpen(false)}>
           <nav className="full-menu" aria-label="전체 메뉴">
-            {menu.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                aria-current={pathname === item.href ? 'page' : undefined}
-              >
-                <Icon name={item.icon} />
-                <span>{item.label}</span>
-                {item.href === '/messages' && unreadMessages > 0 && (
-                  <span
-                    className="message-nav-count"
-                    aria-label={`안 읽은 쪽지 ${unreadMessages}개`}
-                  >
-                    {unreadMessages > 99 ? '99+' : unreadMessages}
-                  </span>
-                )}
-              </Link>
-            ))}
-            {signedIn && isStaff(role) && (
-              <>
-                <div className="nav-section-caption">운영 관리</div>
-                <Link href="/admin/users" onClick={() => setOpen(false)}>
-                  <Icon name="users" />
-                  회원 리스트
-                </Link>
-                <Link href="/admin/approvals" onClick={() => setOpen(false)}>
-                  <Icon name="approvals" />
-                  요청 승인 목록
-                </Link>
-                <Link href="/admin/logs" onClick={() => setOpen(false)}>
-                  <Icon name="logs" />
-                  로그 확인
-                </Link>
-                {role === 'operator' && (
-                  <Link href="/admin/api-keys" onClick={() => setOpen(false)}>
-                    <Icon name="keys" />
-                    API 키 관리
-                  </Link>
-                )}
-              </>
-            )}
+            <NavigationGroups
+              role={signedIn ? role : null}
+              mobile
+              onNavigate={() => setOpen(false)}
+            />
             <div className="full-menu-divider" />
             <div className="sidebar-community-links">
               <KakaoChatLink />
@@ -188,19 +153,7 @@ function MobileBrandHeader({ signedIn, logout, role }) {
     </>
   );
 }
-const menu = [
-  { href: '/boards/notice', label: '공지사항', icon: 'flag' },
-  { href: '/boards/guide', label: '공략브리핑', icon: 'target' },
-  { href: '/boards/loadout', label: '로드아웃', icon: 'crosshair' },
-  { href: '/boards/tierlist', label: '티어 메이커', icon: 'poll' },
-  { href: '/warbonds', label: '전쟁 채권 사전', icon: 'library' },
-  { href: '/games/sliding-puzzle', label: '슬라이딩 퍼즐', icon: 'puzzle' },
-  { href: '/boards/talk', label: '헬다이버톡', icon: 'talk' },
-  { href: '/boards/helstagram', label: '헬스타그램', icon: 'camera' },
-  { href: '/boards/qna', label: '질문상담실', icon: 'question' },
-  { href: '/boards/report', label: '진리부 신고', icon: 'shield' },
-  { href: '/messages', label: '쪽지함', icon: 'mail' },
-];
+const menu = navigationGroups.flatMap((group) => group.items);
 export default function Shell({ children, previewSkeleton = false }) {
   const pathname = usePathname(),
     router = useRouter();
@@ -210,7 +163,7 @@ export default function Shell({ children, previewSkeleton = false }) {
     actualRole,
     setViewRole,
     notify,
-    profile,
+    user,
     unreadMessages,
     logout,
     managementMode,
@@ -219,10 +172,6 @@ export default function Shell({ children, previewSkeleton = false }) {
     setDesktopMode,
   } = useCommunity();
   const [roleBusy, setRoleBusy] = useState(false);
-  const [adminOpen, setAdminOpen] = useState(false);
-  useEffect(() => {
-    setAdminOpen(localStorage.getItem('hd_admin_menu_open') === 'true');
-  }, []);
   const [device, setDevice] = useState('pc'),
     [isFrame, setIsFrame] = useState(false),
     [previewRoute, setPreviewRoute] = useState(pathname);
@@ -264,7 +213,6 @@ export default function Shell({ children, previewSkeleton = false }) {
     window.addEventListener('message', listener);
     return () => window.removeEventListener('message', listener);
   }, []);
-  const active = (href) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
   if (!signedIn)
     return (
       <>
@@ -286,59 +234,7 @@ export default function Shell({ children, previewSkeleton = false }) {
           <span>HELLDIVERS 2 COMMUNITY</span>
         </Link>
         <nav className="desktop-nav" aria-label="주 메뉴">
-          {menu
-            .filter((item) => item.href !== '/messages')
-            .map((item) => (
-              <Link key={item.href} href={item.href} className={active(item.href) ? 'active' : ''}>
-                <Icon name={item.icon} />
-                <span>{item.label}</span>
-              </Link>
-            ))}
-          {isStaff(role) && (
-            <>
-              <Button
-                type="button"
-                className="admin-menu-toggle"
-                aria-expanded={adminOpen}
-                aria-controls="desktop-admin-menu"
-                onClick={() => {
-                  const next = !adminOpen;
-                  setAdminOpen(next);
-                  localStorage.setItem('hd_admin_menu_open', String(next));
-                }}
-              >
-                <Icon name="shield" />
-                <span>운영 관리</span>
-                <ChevronDown size={17} className={adminOpen ? 'is-open' : ''} />
-              </Button>
-              <div id="desktop-admin-menu" hidden={!adminOpen} className="admin-menu-items">
-                <Link href="/admin/users" className={active('/admin/users') ? 'active' : ''}>
-                  <Icon name="users" />
-                  <span>회원 리스트</span>
-                </Link>
-                <Link
-                  href="/admin/approvals"
-                  className={active('/admin/approvals') ? 'active' : ''}
-                >
-                  <Icon name="approvals" />
-                  <span>요청 승인 목록</span>
-                </Link>
-                <Link href="/admin/logs" className={active('/admin/logs') ? 'active' : ''}>
-                  <Icon name="logs" />
-                  <span>로그 확인</span>
-                </Link>
-                {role === 'operator' && (
-                  <Link
-                    href="/admin/api-keys"
-                    className={active('/admin/api-keys') ? 'active' : ''}
-                  >
-                    <Icon name="keys" />
-                    <span>API 키 관리</span>
-                  </Link>
-                )}
-              </div>
-            </>
-          )}
+          <NavigationGroups role={role} />
         </nav>
         <div className="sidebar-bottom">
           <div className="sidebar-community-links">
@@ -352,6 +248,10 @@ export default function Shell({ children, previewSkeleton = false }) {
                 <Nickname own /> 님
               </Link>
               <small>{roleLabels[role]}</small>
+              <Link href="/profile" className="sidebar-points">
+                <span>현재 포인트</span>
+                <strong>{(user?.points?.current || 0).toLocaleString()} P</strong>
+              </Link>
               <div className="account-actions">
                 <Link href="/profile">
                   <Icon name="settings" size={14} />내 정보
@@ -463,6 +363,14 @@ export default function Shell({ children, previewSkeleton = false }) {
         )}
       </div>
       <MobileBottomNav
+        groups={navigationGroups.map((group) => ({
+          ...group,
+          items: group.items.filter(
+            (item) =>
+              (item.href.startsWith('/boards/') && item.href !== '/boards/notice') ||
+              item.href.startsWith('/games/'),
+          ),
+        }))}
         boards={menu.filter(
           (item) =>
             (item.href.startsWith('/boards/') && item.href !== '/boards/notice') ||

@@ -117,6 +117,10 @@ export default function ProfilePage() {
             </h2>
             <span className="badge">{roleLabels[user?.role]}</span>
             <dl className="member-info">
+              <dt>현재 포인트</dt>
+              <dd>{(user?.points?.current || 0).toLocaleString()} P</dd>
+              <dt>누적 포인트</dt>
+              <dd>{(user?.points?.total || 0).toLocaleString()} P</dd>
               <dt>로그인 방식</dt>
               <dd>{user?.provider === 'kakao' ? '카카오' : '임시 계정'}</dd>
               <dt>카카오 회원번호</dt>
@@ -153,7 +157,7 @@ export default function ProfilePage() {
                 <Link href="/admin/users">회원 리스트 →</Link>
                 <Link href="/admin/approvals">요청 승인 목록 →</Link>
                 <Link href="/admin/logs">로그 확인 →</Link>
-                {user?.role === 'operator' && <Link href="/admin/api-keys">API 키 관리 →</Link>}
+                {user?.role === 'operator' && <Link href="/admin/settings">SETTING →</Link>}
               </div>
             )}
           </section>

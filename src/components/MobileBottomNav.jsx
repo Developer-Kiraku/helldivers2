@@ -7,7 +7,10 @@ import { Button } from './ui';
 import Icon from './Icon';
 import Avatar from './Avatar';
 
-export default function MobileBottomNav({ boards }) {
+export default function MobileBottomNav({
+  boards,
+  groups = [{ id: 'boards', label: '', items: boards }],
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const active = (href) => pathname === href || pathname.startsWith(`${href}/`);
@@ -67,18 +70,25 @@ export default function MobileBottomNav({ boards }) {
             </Popover.Close>
           </header>
           <nav aria-label="커뮤니티 게시판">
-            {boards.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active(item.href) ? 'page' : undefined}
-                onClick={() => setOpen(false)}
-              >
-                <Icon name={item.icon} />
-                <span>{item.label}</span>
-                <Icon name="arrow" size={16} />
-              </Link>
-            ))}
+            {groups
+              .filter((group) => group.items.length)
+              .map((group) => (
+                <section className="mobile-board-group" key={group.id}>
+                  {group.label && <h3>{group.label}</h3>}
+                  {group.items.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      aria-current={active(item.href) ? 'page' : undefined}
+                      onClick={() => setOpen(false)}
+                    >
+                      <Icon name={item.icon} />
+                      <span>{item.label}</span>
+                      <Icon name="arrow" size={16} />
+                    </Link>
+                  ))}
+                </section>
+              ))}
           </nav>
         </Popover.Content>
       </Popover.Root>

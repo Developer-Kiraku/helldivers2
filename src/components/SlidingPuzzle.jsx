@@ -6,7 +6,7 @@ import { useCommunity } from './CommunityProvider';
 import { Button, Select } from './ui';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 import {
-  movePuzzle,
+  slidePuzzle,
   puzzleSolved,
   puzzleTime,
   puzzleMonth,
@@ -97,9 +97,10 @@ export default function SlidingPuzzle() {
   }
   function slide(tile) {
     if (phase !== 'playing' || pending.current || actualRole !== role) return;
-    const next = movePuzzle(board, tile);
-    if (!next) return;
-    const history = [...moves, tile];
+    const slide = slidePuzzle(board, tile);
+    if (!slide) return;
+    const next = slide.board;
+    const history = [...moves, ...slide.moves];
     setBoard(next);
     setMoves(history);
     if (puzzleSolved(next)) {
@@ -152,13 +153,17 @@ export default function SlidingPuzzle() {
               slide(tile);
             }}
           >
-            {board.map((tile) =>
+            {solvedPuzzle().map((tile) =>
               tile ? (
                 <button
                   type="button"
                   key={tile}
+                  style={{
+                    '--tile-column': board.indexOf(tile) % 4,
+                    '--tile-row': Math.floor(board.indexOf(tile) / 4),
+                  }}
                   className={
-                    'puzzle-tile' + (playing && movePuzzle(board, tile) ? ' can-move' : '')
+                    'puzzle-tile' + (playing && slidePuzzle(board, tile) ? ' can-move' : '')
                   }
                   aria-label={tile + '번 타일'}
                   disabled={!playing || locked}
@@ -167,13 +172,23 @@ export default function SlidingPuzzle() {
                   {tile}
                 </button>
               ) : (
-                <span key="blank" className="puzzle-blank" aria-label="빈칸">
+                <span
+                  key="blank"
+                  className="puzzle-blank"
+                  aria-label="빈칸"
+                  style={{
+                    '--tile-column': board.indexOf(0) % 4,
+                    '--tile-row': Math.floor(board.indexOf(0) / 4),
+                  }}
+                >
                   <Puzzle size={30} />
                 </span>
               ),
             )}
           </div>
-          <p className="puzzle-controls-hint">클릭·터치 또는 방향키로 이동</p>
+          <p className="puzzle-controls-hint">
+            빈칸과 같은 줄의 숫자를 누르면 한꺼번에 밀 수 있습니다.
+          </p>
           <Button type="button" className="puzzle-start" disabled={locked} onClick={start}>
             {run ? <RotateCcw size={17} /> : <Play size={17} />}
             {phase === 'starting' ? '준비 중…' : run ? '다시 시작' : '게임 시작'}
@@ -205,6 +220,23 @@ export default function SlidingPuzzle() {
               기록 등록 다시 시도
             </Button>
           )}
+          <div className="puzzle-help">
+            <strong>플레이 방법</strong>
+            <ol>
+              <li>게임 시작을 누르면 숫자가 섞이고 시간이 측정됩니다.</li>
+              <li>
+                빈칸과 같은 가로줄·세로줄의 숫자를 누르면, 그 사이 숫자들이 빈칸 쪽으로 한꺼번에
+                미끄러집니다. 방향키로도 움직일 수 있습니다.
+              </li>
+              <li>
+                왼쪽 위부터 가로로 1~15를 순서대로 맞추고, 오른쪽 아래를 빈칸으로 만들면
+                클리어입니다.
+              </li>
+              <li>
+                이동 횟수는 움직인 숫자 개수입니다. 숫자 3개를 한꺼번에 밀면 3회로 기록됩니다.
+              </li>
+            </ol>
+          </div>
           <p className="puzzle-rules">
             기록은 게임 시작부터 서버에 클리어가 접수될 때까지 측정됩니다. 1시간 안에 완성하면 자동
             등록됩니다.

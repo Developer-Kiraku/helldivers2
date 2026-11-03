@@ -14,6 +14,24 @@ export function movePuzzle(board, tile) {
   [next[from], next[blank]] = [next[blank], next[from]];
   return next;
 }
+export function slidePuzzle(board, tile) {
+  const target = board.indexOf(tile),
+    blank = board.indexOf(0);
+  if (!tile || target < 0) return null;
+  const sameRow = Math.floor(target / 4) === Math.floor(blank / 4);
+  const sameColumn = target % 4 === blank % 4;
+  if (!sameRow && !sameColumn) return null;
+  const step = sameRow ? Math.sign(target - blank) : 4 * Math.sign(target - blank);
+  const moves = [];
+  let next = board;
+  for (let index = blank + step; ; index += step) {
+    const value = board[index];
+    moves.push(value);
+    next = movePuzzle(next, value);
+    if (index === target) break;
+  }
+  return { board: next, moves };
+}
 export function shufflePuzzle(random = Math.random) {
   const board = solvedPuzzle();
   for (let i = 15; i > 0; i--) {

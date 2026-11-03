@@ -141,6 +141,7 @@ async function run() {
   await import('./test-dashboard-hero.mjs');
   await import('./test-session-ui.mjs');
   await import('./test-sliding-puzzle.mjs');
+  await import('./test-points.mjs');
   await fs.mkdir(path.join(root, 'work'), { recursive: true });
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-'));
   const file = path.join(directory, 'test-db.json');
@@ -194,6 +195,7 @@ async function run() {
     await require('./test-equipment-http.cjs')({ admin, member });
     await require('./test-warbonds-http.cjs')({ guest, member });
     await require('./test-activity-http.cjs')({ guest, admin, deputy, member, apprentice });
+    await require('./test-points-http.cjs')({ guest, admin, deputy, member, apprentice, file });
     await require('./test-messages-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-member-mute-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-loadout-http.cjs')({ guest, member, deputy });
@@ -371,7 +373,8 @@ async function run() {
     const forgedPreview = client(member.cookie + '; hd_view_role=operator');
     assert.equal((await forgedPreview.call('/api/bootstrap')).data.user.role, 'member');
     await forgedPreview.call('/api/admin/api-keys', 'GET', undefined, 403);
-    await admin.call('/admin/api-keys');
+    await admin.call('/admin/api-keys', 'GET', undefined, 307);
+    await admin.call('/admin/settings');
     for (const [account, visible] of [
       [admin, true],
       [deputy, false],
@@ -379,7 +382,7 @@ async function run() {
       [apprentice, false],
     ]) {
       const page = (await account.call('/profile')).data;
-      assert.equal(page.includes('href="/admin/api-keys"'), visible);
+      assert.equal(page.includes('href="/admin/settings"'), visible);
     }
     await deputy.call('/admin/api-keys', 'GET', undefined, 307);
     await guest.call('/api/admin/api-keys', 'GET', undefined, 401);
@@ -530,7 +533,9 @@ async function run() {
     await member.call('/api/admin/approvals', 'GET', undefined, 403);
     await apprentice.call('/api/admin/approvals', 'GET', undefined, 403);
     for (const staff of [admin, deputy]) {
-      const pending = (await staff.call('/api/admin/approvals')).data.requests;
+      const pending = (await staff.call('/api/admin/approvals')).data.requests.filter(
+        (item) => item.status === 'pending',
+      );
       assert.equal(pending.length, 1);
       assert.equal(pending[0].type, 'member_approval');
       assert.equal(pending[0].targetId, 'u-user2');

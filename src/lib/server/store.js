@@ -9,6 +9,7 @@ import { posts as samplePosts } from '../data';
 import { startProbation, settleProbation } from './probation.mjs';
 import { createPool, migrate, postgresTransaction } from './postgres.mjs';
 import { auditLogDetails } from './audit-logs.mjs';
+import { syncPointActivity } from './points.mjs';
 
 const shared = globalThis;
 shared.__hdJsonQueue ||= Promise.resolve();
@@ -150,6 +151,7 @@ export function transaction(callback, write = true) {
 }
 export const readStore = (callback) => transaction(callback, false);
 export function audit(db, actorId, action, targetId, details = {}) {
+  syncPointActivity(db, actorId, action, targetId);
   db.audit.push({
     id: randomUUID(),
     actorId,

@@ -175,7 +175,7 @@
   gap: var(--hd-space-4);
   padding-top: var(--hd-space-8);
 }
-.mobile-board-popover nav > a {
+.mobile-board-popover nav a {
   display: flex;
   align-items: center;
   gap: var(--hd-space-12);
@@ -185,12 +185,12 @@
   color: var(--hd-color-palette-dce6dc);
   text-decoration: none;
 }
-.mobile-board-popover nav > a > span {
+.mobile-board-popover nav a > span {
   flex: 1;
   min-width: 0;
 }
-.mobile-board-popover nav > a:hover,
-.mobile-board-popover nav > a[aria-current='page'] {
+.mobile-board-popover nav a:hover,
+.mobile-board-popover nav a[aria-current='page'] {
   background: var(--hd-color-palette-ffe34c12);
   color: var(--hd-color-accent);
 }

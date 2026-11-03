@@ -1,6 +1,7 @@
 import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/api-keys';
 import { bulkPosts } from '@/lib/server/bulk-posts';
 import { handlePuzzle } from '@/lib/server/sliding-puzzle';
+import { awardDailyPoints, pointSettings } from '@/lib/server/points.mjs';
 import {
   handleNotifications,
   unreadActivityCount,
@@ -210,6 +211,7 @@ async function handler(request, context) {
           ? { ...input, photo: await normalizeUploadedImage(input.photo, { avatar: true }) }
           : await normalizePostImages(input, board);
     }
+    const write = method !== 'GET' || path === 'bootstrap';
     const result = await transaction((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
       if (segments[0] === 'games' && segments[1] === 'sliding-puzzle')
@@ -278,7 +280,30 @@ async function handler(request, context) {
           return apiKeySettings(db);
         }
       }
-      if (path === 'bootstrap' && method === 'GET') return bootstrap(db, actor);
+      if (path === 'admin/settings/points') {
+        if (actor.role !== 'operator') fail(403, '총운영자만 설정을 관리할 수 있습니다.');
+        if (method === 'GET') return { settings: pointSettings(db) };
+        if (method === 'PATCH') {
+          const settings = pointSettings(db);
+          for (const field of ['post', 'comment', 'like', 'daily', 'bonusMultiplier']) {
+            const value = input[field];
+            if (
+              !Number.isInteger(value) ||
+              value < (field === 'bonusMultiplier' ? 1 : 0) ||
+              value > (field === 'bonusMultiplier' ? 100 : 1000000)
+            )
+              fail(400, '포인트는 0~1,000,000의 정수, 배율은 1~100으로 입력해주세요.');
+            settings[field] = value;
+          }
+          db.pointSettings = settings;
+          audit(db, actor.id, 'settings.points.update', 'points', { settings });
+          return { settings };
+        }
+      }
+      if (path === 'bootstrap' && method === 'GET') {
+        awardDailyPoints(db, actor);
+        return bootstrap(db, actor);
+      }
       if (path === 'profile' && method === 'PATCH') {
         if (input.nickname !== undefined)
           actor.nickname = validateNickname(input.nickname, db, actor.id);
@@ -720,7 +745,7 @@ async function handler(request, context) {
         return { request: item };
       }
       fail(404, '요청한 API를 찾을 수 없습니다.');
-    }, method !== 'GET');
+    }, write);
     const response = json(result);
     if (path === 'profile' && method === 'DELETE') clearSessionCookie(response);
     return response;

@@ -23,7 +23,7 @@ export default function VoteButtons({
         body: { value: myVote === value ? 0 : value },
       });
       if (commentId) onChange(result.comment);
-      else await refresh();
+      await refresh();
     } catch (error) {
       notify(error.message);
     } finally {

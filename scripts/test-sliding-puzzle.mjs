@@ -7,6 +7,7 @@ import {
   solvedPuzzle,
   shufflePuzzle,
   movePuzzle,
+  slidePuzzle,
   puzzleSolved,
   puzzleMonth,
   comparePuzzleRecords,
@@ -25,6 +26,10 @@ for (let sample = 0; sample < 150; sample++) {
   assert.equal(puzzleSolved(board), false);
 }
 assert.equal(movePuzzle(solvedPuzzle(), 13), null);
+assert.deepEqual(slidePuzzle(solvedPuzzle(), 13).moves, [15, 14, 13]);
+assert.deepEqual(slidePuzzle(solvedPuzzle(), 13).board.slice(12), [0, 13, 14, 15]);
+assert.deepEqual(slidePuzzle(solvedPuzzle(), 4).moves, [12, 8, 4]);
+assert.equal(slidePuzzle(solvedPuzzle(), 1), null);
 assert.equal(movePuzzle(solvedPuzzle(), 0), null);
 assert.equal(puzzleMonth(Date.parse('2026-11-30T14:59:59.999Z')), '2026-11');
 assert.equal(puzzleMonth(Date.parse('2026-11-30T15:00:00Z')), '2026-12');

@@ -82,12 +82,26 @@ try {
     })
   ).data;
   assert.equal(puzzleResult.rank, 1);
+  const pointBalance = (await member.call('/api/bootstrap')).data.user.points;
+  assert.ok(pointBalance.current >= 50);
+  await admin.call('/api/admin/settings/points', 'PATCH', {
+    post: 25,
+    comment: 5,
+    like: 2,
+    daily: 50,
+    bonusMultiplier: 2,
+  });
   await member.call('/api/games/sliding-puzzle/finish', 'POST', {
     runId: puzzleRun.id,
     moves: [15],
   });
   await harness.stop();
   await harness.start('work/postgres-http-unused.json', { databaseUrl: url.href });
+  assert.deepEqual((await member.call('/api/bootstrap')).data.user.points, pointBalance);
+  assert.equal((await admin.call('/api/admin/settings/points')).data.settings.post, 25);
+  console.log(
+    'PASS: current/cumulative points, daily attendance and configurable point settings persist across PostgreSQL restart',
+  );
   const puzzleRankings = (
     await member.call('/api/games/sliding-puzzle?month=' + puzzleResult.record.month)
   ).data;

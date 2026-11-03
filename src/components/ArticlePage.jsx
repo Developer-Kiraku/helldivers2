@@ -34,7 +34,7 @@ export default function ArticlePage({ board, id }) {
   );
 }
 function StandardArticlePage({ board, id }) {
-  const { posts, api, notify } = useCommunity();
+  const { posts, api, notify, refresh } = useCommunity();
   const post = posts[board].find((item) => item.id === id || item.id === `${board}-${id}`);
   const isDraft = post?.status === 'draft';
   usePostView(isDraft ? null : post?.id);
@@ -59,6 +59,7 @@ function StandardArticlePage({ board, id }) {
       setComments((current) => [...current, data.comment]);
       setDraft('');
       notify('댓글을 등록했습니다.');
+      await refresh();
     } catch (error) {
       setError(error.message);
     } finally {
