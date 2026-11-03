@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Puzzle, Trophy, Timer, Move, Play, RotateCcw, Check, Medal } from 'lucide-react';
+import { Puzzle, Trophy, Timer, Move, Play, Square, Check, Medal } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import { Button, Select } from './ui';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
@@ -30,6 +30,7 @@ export default function SlidingPuzzle() {
     [result, setResult] = useState(null);
   const started = useRef(0),
     pending = useRef(false);
+  const consoleRef = useRef(null);
   const [clockStarted, setClockStarted] = useState(false);
   useRefreshOnReturn(() => reload((v) => v + 1));
   useEffect(() => {
@@ -51,6 +52,29 @@ export default function SlidingPuzzle() {
     const timer = setInterval(() => setElapsed(Date.now() - started.current), 50);
     return () => clearInterval(timer);
   }, [phase, clockStarted]);
+  useEffect(() => {
+    if (phase !== 'playing' || actualRole !== role) return;
+    const media = window.matchMedia('(max-width: 760px)');
+    const update = () => {
+      if (media.matches)
+        consoleRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      document.documentElement.classList.toggle('puzzle-scroll-locked', media.matches);
+    };
+    update();
+    media.addEventListener('change', update);
+    return () => {
+      media.removeEventListener('change', update);
+      document.documentElement.classList.remove('puzzle-scroll-locked');
+    };
+  }, [phase, actualRole, role]);
+  function stop() {
+    if (pending.current) return;
+    setPhase('idle');
+    setRun(null);
+    setClockStarted(false);
+    started.current = 0;
+    setError('');
+  }
   async function start() {
     if (pending.current) return;
     const previousPhase = phase;
@@ -140,7 +164,11 @@ export default function SlidingPuzzle() {
         <p>빈칸 옆 숫자를 움직여 1부터 15까지 순서대로 맞춰보세요.</p>
       </header>
       <div className="puzzle-layout">
-        <section className="puzzle-console" aria-label="슬라이딩 퍼즐 게임">
+        <section
+          ref={consoleRef}
+          className={'puzzle-console' + (playing ? ' is-playing' : '')}
+          aria-label="슬라이딩 퍼즐 게임"
+        >
           <div className="puzzle-status">
             <div>
               <Timer size={16} />
@@ -211,9 +239,14 @@ export default function SlidingPuzzle() {
           <p className="puzzle-controls-hint">
             빈칸과 같은 줄의 숫자를 누르면 한꺼번에 밀 수 있습니다.
           </p>
-          <Button type="button" className="puzzle-start" disabled={locked} onClick={start}>
-            {run ? <RotateCcw size={17} /> : <Play size={17} />}
-            {phase === 'starting' ? '준비 중…' : run ? '다시 시작' : '게임 시작'}
+          <Button
+            type="button"
+            className="puzzle-start"
+            disabled={locked}
+            onClick={playing ? stop : start}
+          >
+            {playing ? <Square size={17} /> : <Play size={17} />}
+            {phase === 'starting' ? '준비 중…' : playing ? '게임 정지' : '게임 시작'}
           </Button>
           {phase === 'saving' && (
             <p role="status" className="puzzle-save-status">
@@ -263,6 +296,9 @@ export default function SlidingPuzzle() {
               </li>
               <li>
                 이동 횟수는 움직인 숫자 개수입니다. 숫자 3개를 한꺼번에 밀면 3회로 기록됩니다.
+              </li>
+              <li>
+                게임 정지를 누르면 현재 게임이 종료됩니다. 게임 시작을 누르면 새 퍼즐이 시작됩니다.
               </li>
             </ol>
           </div>

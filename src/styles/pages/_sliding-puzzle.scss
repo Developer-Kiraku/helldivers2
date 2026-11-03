@@ -1,4 +1,19 @@
 @use '../tokens' as t;
+@media (max-width: t.breakpoint('mobile')) {
+  html.puzzle-scroll-locked,
+  html.puzzle-scroll-locked body {
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
+  }
+  .puzzle-console {
+    scroll-margin-top: calc(88px + env(safe-area-inset-top));
+  }
+  .puzzle-console.is-playing .puzzle-board {
+    width: min(100%, max(160px, calc(100dvh - 380px)));
+    margin-inline: auto;
+  }
+}
 .puzzle-page {
   max-width: 1100px;
   margin: 0 auto;

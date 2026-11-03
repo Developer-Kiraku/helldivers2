@@ -12,6 +12,14 @@ for (const key of ['window', 'document', 'navigator', 'HTMLElement', 'Node', 'Ev
   Object.defineProperty(globalThis, key, { configurable: true, value: dom.window[key] });
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+const mediaListeners = new Set();
+const mobile = {
+  matches: true,
+  addEventListener: (_, listener) => mediaListeners.add(listener),
+  removeEventListener: (_, listener) => mediaListeners.delete(listener),
+};
+window.matchMedia = () => mobile;
+HTMLElement.prototype.scrollIntoView = () => {};
 const require = createRequire(import.meta.url),
   React = require('react');
 const { createRoot } = require('react-dom/client');
@@ -92,6 +100,8 @@ try {
   const buttonByText = (text) =>
     Array.from(document.querySelectorAll('button')).find((button) => button.textContent === text);
   await click(buttonByText('게임 시작'));
+  assert.ok(buttonByText('게임 정지'));
+  assert.ok(document.documentElement.classList.contains('puzzle-scroll-locked'));
   await React.act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 150));
   });
@@ -116,7 +126,8 @@ try {
     /갱신|등록|월간/,
     'An existing first-place record must not label every attempt as a ranking entry',
   );
-  await click(buttonByText('다시 시작'));
+  assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
+  await click(buttonByText('게임 시작'));
   assert.equal(
     document.querySelector('.puzzle-result'),
     null,
@@ -126,6 +137,28 @@ try {
   result = document.querySelector('.puzzle-result').textContent;
   assert.match(result, /00:07\.200/);
   assert.match(result, /월간 최고 기록 갱신 · 1위/);
+  await click(buttonByText('게임 시작'));
+  await click(document.querySelector('[aria-label="13번 타일"]'));
+  const stoppedBoard = document.querySelector('.puzzle-board').innerHTML;
+  await click(buttonByText('게임 정지'));
+  assert.ok(buttonByText('게임 시작'));
+  assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
+  assert.ok([...document.querySelectorAll('.puzzle-tile')].every((tile) => tile.disabled));
+  assert.equal(
+    document.querySelector('.puzzle-board').innerHTML.replaceAll(' disabled=""', ''),
+    stoppedBoard.replaceAll(' disabled=""', '').replaceAll(' can-move', ''),
+  );
+  await click(buttonByText('게임 시작'));
+  assert.equal(document.querySelectorAll('.puzzle-status strong')[1].textContent.trim(), '0 회');
+  assert.match(document.querySelector('.puzzle-status').textContent, /00:00\.000/);
+  mobile.matches = false;
+  await React.act(async () => mediaListeners.forEach((listener) => listener()));
+  assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
+  mobile.matches = true;
+  await React.act(async () => mediaListeners.forEach((listener) => listener()));
+  assert.ok(document.documentElement.classList.contains('puzzle-scroll-locked'));
+  await React.act(async () => root.unmount());
+  assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
   console.log(
     'PASS: results show the completed attempt, personal-best messaging is conditional, restarting clears the result, drag/context menu are blocked and tiles are not draggable',
   );
