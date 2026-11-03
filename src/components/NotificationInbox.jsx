@@ -12,6 +12,7 @@ import {
   Reply,
   ThumbsUp,
   ThumbsDown,
+  ArrowUpRight,
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 
@@ -148,7 +149,10 @@ export default function NotificationInbox({ compact = false, onNavigate }) {
                         </time>
                       )}
                     </span>
-                    <span className="message-preview">{item.title}</span>
+                    <span className="notification-post-link">
+                      <span className="message-preview">{item.title}</span>
+                      <ArrowUpRight size={13} aria-hidden="true" />
+                    </span>
                   </span>
                   {!item.readAt && (
                     <span className={compact ? 'notification-unread-dot' : 'message-read-status'}>
