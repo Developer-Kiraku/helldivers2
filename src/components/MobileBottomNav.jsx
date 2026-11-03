@@ -6,6 +6,7 @@ import { Popover } from '@radix-ui/themes';
 import { Button } from './ui';
 import Icon from './Icon';
 import Avatar from './Avatar';
+import NavigationGroups from './NavigationGroups';
 
 export default function MobileBottomNav({
   boards,
@@ -70,25 +71,11 @@ export default function MobileBottomNav({
             </Popover.Close>
           </header>
           <nav aria-label="커뮤니티 게시판">
-            {groups
-              .filter((group) => group.items.length)
-              .map((group) => (
-                <section className="mobile-board-group" key={group.id}>
-                  {group.label && <h3>{group.label}</h3>}
-                  {group.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      aria-current={active(item.href) ? 'page' : undefined}
-                      onClick={() => setOpen(false)}
-                    >
-                      <Icon name={item.icon} />
-                      <span>{item.label}</span>
-                      <Icon name="arrow" size={16} />
-                    </Link>
-                  ))}
-                </section>
-              ))}
+            <NavigationGroups
+              mobile
+              groups={groups.filter((group) => group.items.length)}
+              onNavigate={() => setOpen(false)}
+            />
           </nav>
         </Popover.Content>
       </Popover.Root>

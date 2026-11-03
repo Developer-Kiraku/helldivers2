@@ -1,15 +1,21 @@
 'use client';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronDown } from 'lucide-react';
 import { navigationGroups, operatorNavigation, navigationActive } from '@/lib/navigation.mjs';
 import { isStaff } from '@/lib/roles';
 import Icon from './Icon';
 
-export default function NavigationGroups({ role, mobile = false, onNavigate }) {
+export default function NavigationGroups({
+  role,
+  mobile = false,
+  onNavigate,
+  groups: providedGroups,
+}) {
   const pathname = usePathname();
-  const groups = [
+  const instance = useId();
+  const groups = providedGroups || [
     ...navigationGroups,
     ...(isStaff(role)
       ? [
@@ -34,28 +40,21 @@ export default function NavigationGroups({ role, mobile = false, onNavigate }) {
           className={'navigation-group' + (current === group.id ? ' is-current' : '')}
           key={group.id}
         >
-          {mobile ? (
-            <h3>
-              <Icon name={group.icon} size={16} />
-              {group.label}
-            </h3>
-          ) : (
-            <button
-              type="button"
-              className="navigation-group-toggle"
-              aria-expanded={open === group.id}
-              aria-controls={'navigation-' + group.id}
-              onClick={() => setOpen(open === group.id ? null : group.id)}
-            >
-              <Icon name={group.icon} size={18} />
-              <span>{group.label}</span>
-              <ChevronDown size={15} />
-            </button>
-          )}
+          <button
+            type="button"
+            className="navigation-group-toggle"
+            aria-expanded={open === group.id}
+            aria-controls={'navigation-' + group.id + instance}
+            onClick={() => setOpen(open === group.id ? null : group.id)}
+          >
+            <Icon name={group.icon} size={18} />
+            <span>{group.label || '게시판'}</span>
+            <ChevronDown size={15} />
+          </button>
           <div
-            id={mobile ? undefined : 'navigation-' + group.id}
+            id={'navigation-' + group.id + instance}
             className="navigation-group-items"
-            hidden={!mobile && open !== group.id}
+            hidden={open !== group.id}
           >
             {group.items.map((item) => (
               <Link

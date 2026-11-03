@@ -3,12 +3,6 @@
   gap: 8px;
   padding: 4px 0;
 }
-.mobile-board-group h3 {
-  margin: 10px 10px 4px;
-  color: var(--hd-color-text-muted);
-  font-size: var(--hd-font-size-11);
-  font-weight: 600;
-}
 .navigation-group {
   min-width: 0;
   border: 0;
@@ -17,7 +11,7 @@
 .navigation-group.is-current {
   background: transparent;
 }
-.desktop-nav .navigation-group-toggle {
+.navigation-group-toggle {
   display: flex;
   width: 100%;
   justify-content: flex-start;
@@ -34,7 +28,7 @@
   background: transparent;
   box-shadow: none;
 }
-.desktop-nav .navigation-group-toggle:hover {
+.navigation-group-toggle:hover {
   background: var(--hd-color-input);
   color: var(--hd-color-input-text);
 }
@@ -83,33 +77,37 @@
 }
 .mobile-navigation-groups {
   width: 100%;
-  gap: 16px;
+  gap: 4px;
 }
-.mobile-navigation-groups .navigation-group-items {
-  margin: 0;
-  padding: 0;
-  border: 0;
+.mobile-navigation-groups .navigation-group-toggle {
+  min-height: 48px;
+  padding: 12px;
+  font-size: var(--hd-font-size-14);
 }
-.mobile-navigation-groups h3 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  padding: 8px 12px;
-  color: var(--hd-color-accent);
-  font-size: var(--hd-font-size-12);
+.mobile-navigation-groups .navigation-group {
+  border-bottom: 1px solid var(--hd-color-border);
+  padding-bottom: 4px;
 }
-.full-menu .mobile-navigation-groups .navigation-group-items > a {
+.mobile-navigation-groups .navigation-group:last-child {
+  border-bottom: 0;
+}
+.mobile-navigation-groups .navigation-group-items > a {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-height: 44px;
   padding: 12px;
   border-radius: 6px;
   color: var(--hd-color-input-text);
   font-size: var(--hd-font-size-14);
   text-decoration: none;
 }
-.full-menu .mobile-navigation-groups .navigation-group-items > a.active {
+.mobile-board-popover.rt-PopoverContent {
+  max-height: min(72dvh, var(--radix-popover-content-available-height));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.mobile-navigation-groups .navigation-group-items > a.active {
   color: var(--hd-color-accent);
   background: var(--hd-color-input);
 }
