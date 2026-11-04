@@ -48,9 +48,11 @@ import {
   MapPin,
   PencilLine,
   Puzzle,
+  Dices,
 } from 'lucide-react';
 import { SiDiscord, SiKakaotalk, SiYoutube } from '@icons-pack/react-simple-icons';
 const icons = {
+  dice: Dices,
   puzzle: Puzzle,
   crosshair: Crosshair,
   undo: Undo2,

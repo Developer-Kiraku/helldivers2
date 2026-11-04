@@ -17,6 +17,7 @@ import Modal from './Modal';
 import MobileBottomNav from './MobileBottomNav';
 import NavigationGroups from './NavigationGroups';
 import { navigationGroups } from '@/lib/navigation.mjs';
+import DiceGameProvider from './DiceGameProvider';
 
 function NotificationBell({ mobile = false }) {
   const { unreadNotifications = 0 } = useCommunity();
@@ -224,159 +225,161 @@ export default function Shell({ children, previewSkeleton = false }) {
     );
   const mobile = device === 'mobile' && !isFrame;
   return (
-    <div className={`site-shell ${mobile ? 'show-mobile-preview' : ''}`}>
-      <a className="skip-link" href="#main-content">
-        본문 바로가기
-      </a>
-      <aside className="sidebar">
-        <Link href="/" className="site-brand">
-          <img src="/images/helldivers-logo.png" alt="HELLDIVERS II" />
-          <span>HELLDIVERS 2 COMMUNITY</span>
-        </Link>
-        <nav className="desktop-nav" aria-label="주 메뉴">
-          <NavigationGroups role={role} />
-        </nav>
-        <div className="sidebar-bottom">
-          <div className="sidebar-community-links">
-            <KakaoChatLink />
-            <DiscordLink />
-          </div>
-          <div className="sidebar-account">
-            <Avatar own />
-            <div>
-              <Link href="/profile" className="account-name">
-                <Nickname own /> 님
-              </Link>
-              <small>{roleLabels[role]}</small>
-              <Link href="/profile" className="sidebar-points">
-                <span>현재 포인트</span>
-                <strong>{(user?.points?.current || 0).toLocaleString()} P</strong>
-              </Link>
-              <div className="account-actions">
-                <Link href="/profile">
-                  <Icon name="settings" size={14} />내 정보
+    <DiceGameProvider enabled={!mobile}>
+      <div className={`site-shell ${mobile ? 'show-mobile-preview' : ''}`}>
+        <a className="skip-link" href="#main-content">
+          본문 바로가기
+        </a>
+        <aside className="sidebar">
+          <Link href="/" className="site-brand">
+            <img src="/images/helldivers-logo.png" alt="HELLDIVERS II" />
+            <span>HELLDIVERS 2 COMMUNITY</span>
+          </Link>
+          <nav className="desktop-nav" aria-label="주 메뉴">
+            <NavigationGroups role={role} />
+          </nav>
+          <div className="sidebar-bottom">
+            <div className="sidebar-community-links">
+              <KakaoChatLink />
+              <DiscordLink />
+            </div>
+            <div className="sidebar-account">
+              <Avatar own />
+              <div>
+                <Link href="/profile" className="account-name">
+                  <Nickname own /> 님
                 </Link>
-                <Button onClick={logout}>
-                  <Icon name="logout" size={14} />
-                  로그아웃
-                </Button>
+                <small>{roleLabels[role]}</small>
+                <Link href="/profile" className="sidebar-points">
+                  <span>현재 포인트</span>
+                  <strong>{(user?.points?.current || 0).toLocaleString()} P</strong>
+                </Link>
+                <div className="account-actions">
+                  <Link href="/profile">
+                    <Icon name="settings" size={14} />내 정보
+                  </Link>
+                  <Button onClick={logout}>
+                    <Icon name="logout" size={14} />
+                    로그아웃
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </aside>
-      <MobileBrandHeader signedIn={signedIn} logout={logout} role={role} />
-      <div className="main-column">
-        {!isFrame && (
-          <section className="preview-controls">
-            <span>
-              {roleLabels[role]} · <Nickname own />
-              {actualRole === 'operator' && role !== actualRole ? ' · 화면 확인 중' : ''}
-            </span>
-            <div className="preview-control-groups">
-              <NotificationBell key={pathname + role} />
-              <Link
-                href="/messages"
-                className="notification-link"
-                aria-label={`쪽지함${unreadMessages ? `, 안 읽은 쪽지 ${unreadMessages}개` : ''}`}
-              >
-                <Icon name="mail" size={17} />
-                쪽지
-                {unreadMessages > 0 && (
-                  <span className="message-nav-count">
-                    {unreadMessages > 99 ? '99+' : unreadMessages}
-                  </span>
+        </aside>
+        <MobileBrandHeader signedIn={signedIn} logout={logout} role={role} />
+        <div className="main-column">
+          {!isFrame && (
+            <section className="preview-controls">
+              <span>
+                {roleLabels[role]} · <Nickname own />
+                {actualRole === 'operator' && role !== actualRole ? ' · 화면 확인 중' : ''}
+              </span>
+              <div className="preview-control-groups">
+                <NotificationBell key={pathname + role} />
+                <Link
+                  href="/messages"
+                  className="notification-link"
+                  aria-label={`쪽지함${unreadMessages ? `, 안 읽은 쪽지 ${unreadMessages}개` : ''}`}
+                >
+                  <Icon name="mail" size={17} />
+                  쪽지
+                  {unreadMessages > 0 && (
+                    <span className="message-nav-count">
+                      {unreadMessages > 99 ? '99+' : unreadMessages}
+                    </span>
+                  )}
+                </Link>
+                {actualRole === 'operator' &&
+                  role === 'operator' &&
+                  desktopMode &&
+                  /^\/boards\/[^/]+\/?$/.test(pathname) && (
+                    <Button
+                      type="button"
+                      className={`management-toggle ${managementMode ? 'is-active' : ''}`}
+                      aria-pressed={managementMode}
+                      onClick={() => setManagementMode(!managementMode)}
+                    >
+                      <ShieldCheck size={17} aria-hidden="true" />
+                      관리모드
+                      <span className="management-toggle-light" aria-hidden="true" />
+                    </Button>
+                  )}
+                {actualRole === 'operator' && (
+                  <label className="view-role-selector">
+                    <span>화면 등급</span>
+                    <Select
+                      aria-label="화면 확인용 회원등급"
+                      value={role}
+                      disabled={roleBusy}
+                      onChange={async (event) => {
+                        setRoleBusy(true);
+                        try {
+                          await setViewRole(event.target.value);
+                        } catch (error) {
+                          notify(error.message);
+                        } finally {
+                          setRoleBusy(false);
+                        }
+                      }}
+                    >
+                      {Object.entries(roleLabels).map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                          {value === 'operator' ? ' (실제 등급)' : ''}
+                        </option>
+                      ))}
+                    </Select>
+                  </label>
                 )}
-              </Link>
-              {actualRole === 'operator' &&
-                role === 'operator' &&
-                desktopMode &&
-                /^\/boards\/[^/]+\/?$/.test(pathname) && (
+                <div className="segmented" aria-label="화면 크기">
                   <Button
-                    type="button"
-                    className={`management-toggle ${managementMode ? 'is-active' : ''}`}
-                    aria-pressed={managementMode}
-                    onClick={() => setManagementMode(!managementMode)}
-                  >
-                    <ShieldCheck size={17} aria-hidden="true" />
-                    관리모드
-                    <span className="management-toggle-light" aria-hidden="true" />
-                  </Button>
-                )}
-              {actualRole === 'operator' && (
-                <label className="view-role-selector">
-                  <span>화면 등급</span>
-                  <Select
-                    aria-label="화면 확인용 회원등급"
-                    value={role}
-                    disabled={roleBusy}
-                    onChange={async (event) => {
-                      setRoleBusy(true);
-                      try {
-                        await setViewRole(event.target.value);
-                      } catch (error) {
-                        notify(error.message);
-                      } finally {
-                        setRoleBusy(false);
-                      }
+                    className={device === 'pc' ? 'selected' : ''}
+                    onClick={() => {
+                      setDevice('pc');
+                      if (previewRoute !== pathname) router.push(previewRoute);
                     }}
                   >
-                    {Object.entries(roleLabels).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                        {value === 'operator' ? ' (실제 등급)' : ''}
-                      </option>
-                    ))}
-                  </Select>
-                </label>
-              )}
-              <div className="segmented" aria-label="화면 크기">
-                <Button
-                  className={device === 'pc' ? 'selected' : ''}
-                  onClick={() => {
-                    setDevice('pc');
-                    if (previewRoute !== pathname) router.push(previewRoute);
-                  }}
-                >
-                  <Icon name="desktop" size={16} />
-                  PC
-                </Button>
-                <Button
-                  className={device === 'mobile' ? 'selected' : ''}
-                  onClick={() => setDevice('mobile')}
-                >
-                  <Icon name="mobile" size={16} />
-                  모바일
-                </Button>
+                    <Icon name="desktop" size={16} />
+                    PC
+                  </Button>
+                  <Button
+                    className={device === 'mobile' ? 'selected' : ''}
+                    onClick={() => setDevice('mobile')}
+                  >
+                    <Icon name="mobile" size={16} />
+                    모바일
+                  </Button>
+                </div>
               </div>
+            </section>
+          )}
+          {mobile ? (
+            <div className="phone-preview">
+              <iframe key={role} ref={frame} src={previewRoute} title="전체 사이트 모바일 화면" />
             </div>
-          </section>
-        )}
-        {mobile ? (
-          <div className="phone-preview">
-            <iframe key={role} ref={frame} src={previewRoute} title="전체 사이트 모바일 화면" />
-          </div>
-        ) : (
-          <main id="main-content" className="page-content">
-            {children}
-          </main>
-        )}
-      </div>
-      <MobileBottomNav
-        groups={navigationGroups.map((group) => ({
-          ...group,
-          items: group.items.filter(
+          ) : (
+            <main id="main-content" className="page-content">
+              {children}
+            </main>
+          )}
+        </div>
+        <MobileBottomNav
+          groups={navigationGroups.map((group) => ({
+            ...group,
+            items: group.items.filter(
+              (item) =>
+                (item.href.startsWith('/boards/') && item.href !== '/boards/notice') ||
+                item.href.startsWith('/games/'),
+            ),
+          }))}
+          boards={menu.filter(
             (item) =>
               (item.href.startsWith('/boards/') && item.href !== '/boards/notice') ||
               item.href.startsWith('/games/'),
-          ),
-        }))}
-        boards={menu.filter(
-          (item) =>
-            (item.href.startsWith('/boards/') && item.href !== '/boards/notice') ||
-            item.href.startsWith('/games/'),
-        )}
-      />
-    </div>
+          )}
+        />
+      </div>
+    </DiceGameProvider>
   );
 }

@@ -16,6 +16,25 @@ function adjust(user, amount) {
   const balance = user.points || { total: 0, current: 0 };
   user.points = { total: balance.total + amount, current: balance.current + amount };
 }
+export function transferGamePoints(db, userId, sourceKey, amount, gameId) {
+  const user = db.users.find((item) => item.id === userId);
+  if (!user) throw Error('Game wallet owner missing');
+  db.pointLedger ||= [];
+  if (db.pointLedger.some((row) => row.userId === userId && row.sourceKey === sourceKey)) return;
+  const points = user.points || { total: 0, current: 0 };
+  if (points.current + amount < 0 && amount < 0) throw Error('Insufficient game balance');
+  user.points = { ...points, current: points.current + amount };
+  db.pointLedger.push({
+    id: randomUUID(),
+    userId,
+    sourceKey,
+    amount,
+    gameId,
+    balance: 'current',
+    createdAt: new Date().toISOString(),
+    reversedAt: null,
+  });
+}
 function grant(db, userId, sourceKey, amount, references = {}) {
   const user = db.users.find((u) => u.id === userId && u.status === 'active');
   if (!user) return;

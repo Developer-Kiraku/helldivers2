@@ -87,6 +87,39 @@ try {
     })
   ).data;
   assert.equal(puzzleResult.rank, 1);
+  await member.call('/api/games/dice/presence', 'POST', {
+    tabId: 'pg-member-1234567890',
+    page: 'dice',
+    visible: true,
+  });
+  await admin.call('/api/games/dice/presence', 'POST', {
+    tabId: 'pg-admin-1234567890',
+    page: 'dice',
+    visible: true,
+  });
+  const diceMatch = (
+    await member.call('/api/games/dice/invite', 'POST', {
+      tabId: 'pg-member-1234567890',
+      targetId: 'u-admin',
+      stake: 10,
+    })
+  ).data.game;
+  await admin.call('/api/games/dice/accept', 'POST', { gameId: diceMatch.id });
+  const dicePool = createPool(url.href);
+  const readyDice = () =>
+    dicePool.query(
+      "UPDATE hd_dice_games SET data=jsonb_set(data,'{readyAt}','0'::jsonb) WHERE id=$1",
+      [diceMatch.id],
+    );
+  await readyDice();
+  const diceCall = { gameId: diceMatch.id, round: 1, choice: 'call' };
+  await Promise.all([
+    member.call('/api/games/dice/decision', 'POST', diceCall),
+    member.call('/api/games/dice/decision', 'POST', diceCall),
+  ]);
+  await admin.call('/api/games/dice/decision', 'POST', diceCall);
+  await readyDice();
+  await dicePool.end();
   const pointBalance = (await member.call('/api/bootstrap')).data.user.points;
   const initialGrant = (await admin.call('/api/admin/settings/points')).data.initialGrant;
   assert.equal(initialGrant.count, 4);
@@ -135,6 +168,21 @@ try {
     2,
   );
   assert.deepEqual((await member.call('/api/bootstrap')).data.user.points, pointBalance);
+  const persistedDice = (
+    await member.call('/api/games/dice/presence', 'POST', {
+      tabId: 'pg-member-1234567890',
+      page: 'dice',
+      visible: true,
+    })
+  ).data.game;
+  assert.equal(persistedDice.round, 2);
+  assert.equal(persistedDice.pot, 20);
+  assert.equal(persistedDice.players.find((player) => player.id === 'u-admin').sum, null);
+  await member.call('/api/games/dice/decision', 'POST', {
+    gameId: diceMatch.id,
+    round: 2,
+    choice: 'die',
+  });
   assert.deepEqual(
     (await admin.call('/api/admin/settings/points')).data.initialGrant,
     initialGrant,

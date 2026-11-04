@@ -141,6 +141,7 @@ async function run() {
   await import('./test-dashboard-hero.mjs');
   await import('./test-session-ui.mjs');
   await import('./test-sliding-puzzle.mjs');
+  await import('./test-dice-game.mjs');
   await import('./test-puzzle-result-ui.mjs');
   await import('./test-points.mjs');
   await fs.mkdir(path.join(root, 'work'), { recursive: true });
@@ -198,6 +199,7 @@ async function run() {
     await require('./test-activity-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-puzzle-http.cjs')({ guest, admin, member, file });
     await require('./test-points-http.cjs')({ guest, admin, deputy, member, apprentice, file });
+    await require('./test-dice-http.cjs')({ guest, admin, member, apprentice, file });
     await require('./test-messages-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-member-mute-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-loadout-http.cjs')({ guest, member, deputy });

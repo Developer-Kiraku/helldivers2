@@ -10,6 +10,7 @@ import { startProbation, settleProbation } from './probation.mjs';
 import { createPool, migrate, postgresTransaction } from './postgres.mjs';
 import { auditLogDetails } from './audit-logs.mjs';
 import { syncPointActivity, awardExistingMemberPoints } from './points.mjs';
+import { settleDiceGames } from './dice-game';
 
 const shared = globalThis;
 shared.__hdJsonQueue ||= Promise.resolve();
@@ -126,7 +127,8 @@ async function load() {
 function settleStore(db) {
   const probationChanged = settleProbation(db);
   const pointsChanged = awardExistingMemberPoints(db);
-  return probationChanged || pointsChanged;
+  const gamesChanged = settleDiceGames(db);
+  return probationChanged || pointsChanged || gamesChanged;
 }
 export function transaction(callback, write = true) {
   if (process.env.DATABASE_URL) {

@@ -68,6 +68,14 @@ export function CommunityProvider({ children, initialUser = null }) {
       ),
     );
   }, []);
+  const syncPoints = useCallback((userId, points) => {
+    setUser((current) =>
+      current?.id === userId &&
+      (current.points?.current !== points.current || current.points?.total !== points.total)
+        ? { ...current, points }
+        : current,
+    );
+  }, []);
   const api = useCallback(
     async (path, options = {}) => {
       const response = await fetch(`/api/${path}`, {
@@ -225,6 +233,7 @@ export function CommunityProvider({ children, initialUser = null }) {
         api,
         refresh,
         updatePostViews,
+        syncPoints,
         login,
         logout,
         updateProfile,

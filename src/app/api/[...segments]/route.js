@@ -1,6 +1,7 @@
 import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/api-keys';
 import { bulkPosts } from '@/lib/server/bulk-posts';
 import { handlePuzzle } from '@/lib/server/sliding-puzzle';
+import { handleDiceGame } from '@/lib/server/dice-game';
 import { awardDailyPoints, pointSettings } from '@/lib/server/points.mjs';
 import {
   handleNotifications,
@@ -180,7 +181,13 @@ async function handler(request, context) {
         ? {}
         : await readJsonRequest(
             request,
-            segments[0] === 'messages' ? 16000 : path === 'profile' ? 1300000 : 13000000,
+            segments[0] === 'games'
+              ? 4096
+              : segments[0] === 'messages'
+                ? 16000
+                : path === 'profile'
+                  ? 1300000
+                  : 13000000,
           );
     if (method !== 'GET')
       await readStore((db) => {
@@ -214,6 +221,8 @@ async function handler(request, context) {
     const write = method !== 'GET' || path === 'bootstrap';
     const result = await transaction((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
+      if (segments[0] === 'games' && segments[1] === 'dice')
+        return handleDiceGame(db, actor, segments, method, input);
       if (segments[0] === 'games' && segments[1] === 'sliding-puzzle')
         return handlePuzzle(db, actor, segments, method, input, new URL(request.url).searchParams);
       if (path === 'mentions' && method === 'GET')
