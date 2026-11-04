@@ -53,6 +53,7 @@ export default function DiceGameProvider({ children, enabled = true }) {
             tabId: tabId.current,
             page: onGame ? 'dice' : 'site',
             visible: document.visibilityState !== 'hidden',
+            focused: document.hasFocus(),
           },
         });
         if (active && requestEpoch === epoch.current) {
@@ -74,12 +75,14 @@ export default function DiceGameProvider({ children, enabled = true }) {
     };
     void update();
     document.addEventListener('visibilitychange', returnToPage);
+    window.addEventListener('focus', returnToPage);
     return () => {
       active = false;
       alive.current = false;
       ++epoch.current;
       clearTimeout(timer);
       document.removeEventListener('visibilitychange', returnToPage);
+      window.removeEventListener('focus', returnToPage);
     };
   }, [enabled, user?.id, role, actualRole, onGame, api, apply]);
   useEffect(() => {
@@ -106,7 +109,10 @@ export default function DiceGameProvider({ children, enabled = true }) {
     }
   };
   const invite =
-    data?.game?.status === 'invited' && data.game.hostId !== user?.id && now < data.game.expiresAt
+    data?.game?.status === 'invited' &&
+    data.game.receivedAt &&
+    data.game.hostId !== user?.id &&
+    now < data.game.expiresAt
       ? data.game
       : null;
   const host = invite?.players.find((player) => player.id === invite.hostId);

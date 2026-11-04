@@ -42,6 +42,9 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
     })
   ).data.game;
   assert.equal(game.status, 'invited');
+  const received = (await heartbeat(apprentice, tabs.apprentice, 'site')).data.game;
+  assert.ok(received.receivedAt);
+  assert.equal(received.expiresAt - received.receivedAt, 5000);
   await member.call(
     base + 'invite',
     'POST',

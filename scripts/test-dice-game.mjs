@@ -94,9 +94,41 @@ try {
     status: 429,
   });
   assert.throws(() => call('c', 'accept', { gameId: pending.id }), { status: 404 });
-  now += 5000;
+  now += 30000;
   assert.throws(() => call('b', 'accept', { gameId: pending.id }), { status: 409 });
   assert.equal(db.pointLedger.length, 0);
+  const originalDb = db;
+  db = make();
+  const delayed = invite();
+  now += 4000;
+  presence('b', 'site', false);
+  assert.equal(
+    db.diceGames.at(-1).receivedAt,
+    null,
+    'Hidden tabs do not consume the response window',
+  );
+  call('b', 'presence', { tabId: 'b'.repeat(20), page: 'site', visible: true, focused: false });
+  assert.equal(
+    db.diceGames.at(-1).receivedAt,
+    null,
+    'An unfocused window does not consume the response window',
+  );
+  const delivered = presence('b', 'site').game;
+  assert.equal(
+    delivered.expiresAt - now,
+    5000,
+    'The recipient receives a full five seconds after delivery',
+  );
+  now += 1000;
+  assert.equal(
+    presence('b').game.expiresAt,
+    delivered.expiresAt,
+    'Polling does not reset or extend an existing invitation',
+  );
+  now = delivered.expiresAt - 1;
+  call('b', 'accept', { gameId: delayed.id });
+  assert.equal(db.diceGames.at(-1).status, 'playing');
+  db = originalDb;
   let game = accept(invite());
   const own = presence('a').game;
   assert.deepEqual(own.players.find((p) => p.id === 'b').dice, []);

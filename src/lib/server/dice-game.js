@@ -82,6 +82,7 @@ function publicGame(db, game, actor) {
     round: game.round,
     hostId: game.players[0],
     expiresAt: game.expiresAt,
+    receivedAt: game.receivedAt || null,
     readyAt: game.readyAt || null,
     deadlineAt: game.deadlineAt || null,
     revealAt: game.revealAt || null,
@@ -138,7 +139,8 @@ function createGame(db, players, stake, now, invited = true) {
     round: 0,
     revision: 1,
     createdAt: now,
-    expiresAt: now + 5000,
+    expiresAt: now + 30000,
+    receivedAt: null,
     bets: Object.fromEntries(players.map((id) => [id, 0])),
     dice: Object.fromEntries(players.map((id) => [id, []])),
     actions: {},
@@ -163,7 +165,8 @@ export function handleDiceGame(db, actor, segments, method, input) {
       typeof input.tabId !== 'string' ||
       !/^[a-zA-Z0-9-]{16,64}$/.test(input.tabId) ||
       !['site', 'dice'].includes(input.page) ||
-      typeof input.visible !== 'boolean'
+      typeof input.visible !== 'boolean' ||
+      (input.focused !== undefined && typeof input.focused !== 'boolean')
     )
       fail(400, '접속 정보를 확인해주세요.');
     db.dicePresence = (db.dicePresence || []).filter(
@@ -177,6 +180,16 @@ export function handleDiceGame(db, actor, segments, method, input) {
       page: input.page,
       visible: input.visible,
     });
+    if (input.visible && input.focused !== false) {
+      const invitation = (db.diceGames || []).findLast(
+        (game) => game.status === 'invited' && game.players[1] === actor.id && !game.receivedAt,
+      );
+      if (invitation) {
+        invitation.receivedAt = now;
+        invitation.expiresAt = now + 5000;
+        invitation.revision++;
+      }
+    }
     return snapshot(db, actor, now, input.page);
   }
   if (action === 'invite') {

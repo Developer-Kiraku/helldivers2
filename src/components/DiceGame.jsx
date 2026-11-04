@@ -141,7 +141,9 @@ export default function DiceGame() {
               </p>
               {game?.status === 'invited' && (
                 <strong className="dice-invite-count">
-                  {Math.max(0, (game.expiresAt - now) / 1000).toFixed(1)}초 남음
+                  {game.receivedAt
+                    ? Math.max(0, (game.expiresAt - now) / 1000).toFixed(1) + '초 남음'
+                    : '상대가 초대를 확인하면 5초 동안 응답할 수 있습니다.'}
                 </strong>
               )}
             </div>
