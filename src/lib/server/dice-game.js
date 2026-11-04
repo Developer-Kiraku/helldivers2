@@ -109,6 +109,7 @@ function snapshot(db, actor, now, page = '') {
   const own = (db.diceGames || []).filter((game) => game.players.includes(actor.id));
   const game = own.findLast(active) || own.at(-1);
   return {
+    viewerId: actor.id,
     serverTime: now,
     points: member(db, actor.id).points || { total: 0, current: 0 },
     inviteAvailableAt: (member(db, actor.id).lastDiceInviteAt || 0) + 5000,

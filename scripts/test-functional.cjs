@@ -143,6 +143,7 @@ async function run() {
   await import('./test-sliding-puzzle.mjs');
   await import('./test-puzzle-rewards.mjs');
   await import('./test-dice-game.mjs');
+  await import('./test-dice-ui.mjs');
   await import('./test-puzzle-result-ui.mjs');
   await import('./test-points.mjs');
   await fs.mkdir(path.join(root, 'work'), { recursive: true });

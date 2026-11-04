@@ -15,6 +15,7 @@ export default function DiceGameProvider({ children, enabled = true }) {
     router = useRouter();
   const onGame = pathname === '/games/dice' || pathname === '/test-user';
   const [data, setData] = useState(null),
+    [pendingInvite, setPendingInvite] = useState(null),
     [error, setError] = useState(''),
     [connectionError, setConnectionError] = useState(''),
     [busy, setBusy] = useState(false),
@@ -22,17 +23,34 @@ export default function DiceGameProvider({ children, enabled = true }) {
   const tabId = useRef(null),
     epoch = useRef(0),
     offset = useRef(0),
-    alive = useRef(false);
+    alive = useRef(false),
+    command = useRef(null),
+    latest = useRef(null);
   const apply = useCallback(
     (result) => {
+      if (result.viewerId !== user?.id) return false;
+      if (result.game && !result.game.players.some((player) => player.id === user.id)) return false;
+      if (
+        latest.current &&
+        (result.serverTime < latest.current.serverTime ||
+          (result.game?.id === latest.current.game?.id &&
+            result.game?.revision < latest.current.game?.revision))
+      )
+        return false;
+      latest.current = result;
       offset.current = result.serverTime - Date.now();
       setNow(result.serverTime);
       setData(result);
       syncPoints(user.id, result.points);
+      return true;
     },
     [syncPoints, user?.id],
   );
   useEffect(() => {
+    setData(null);
+    setPendingInvite(null);
+    latest.current = null;
+    command.current = null;
     if (!enabled || !user?.id || actualRole !== role) {
       setData(null);
       return;
@@ -45,6 +63,10 @@ export default function DiceGameProvider({ children, enabled = true }) {
       running = false;
     const update = async () => {
       if (!active || running) return;
+      if (command.current) {
+        timer = setTimeout(update, 1000);
+        return;
+      }
       running = true;
       const requestEpoch = epoch.current;
       try {
@@ -57,7 +79,7 @@ export default function DiceGameProvider({ children, enabled = true }) {
             focused: document.hasFocus(),
           },
         });
-        if (active && requestEpoch === epoch.current) {
+        if (active && requestEpoch === epoch.current && !command.current) {
           apply(result);
           setConnectionError('');
         }
@@ -91,8 +113,13 @@ export default function DiceGameProvider({ children, enabled = true }) {
     return () => clearInterval(timer);
   }, []);
   const act = async (action, body = {}) => {
-    if (busy || !enabled || role !== actualRole) return;
+    if (command.current || !enabled || role !== actualRole) return;
     const requestEpoch = ++epoch.current;
+    command.current = requestEpoch;
+    if (action === 'invite') {
+      const target = data?.online.find((player) => player.id === body.targetId);
+      setPendingInvite({ targetId: body.targetId, nickname: target?.nickname || '선택한 대원' });
+    }
     setBusy(true);
     setError('');
     try {
@@ -101,25 +128,39 @@ export default function DiceGameProvider({ children, enabled = true }) {
         body: { ...body, tabId: tabId.current },
       });
       if (!alive.current || requestEpoch !== epoch.current) return;
-      apply(result);
-      if (action === 'accept' && !onGame) router.push('/games/dice');
+      if (apply(result) && action === 'accept' && !onGame) router.push('/games/dice');
     } catch (err) {
-      if (alive.current) setError(err.message);
+      if (alive.current && requestEpoch === epoch.current) setError(err.message);
     } finally {
-      if (alive.current) setBusy(false);
+      if (command.current === requestEpoch) {
+        command.current = null;
+        if (alive.current && requestEpoch === epoch.current) {
+          setBusy(false);
+          setPendingInvite(null);
+        }
+      }
     }
   };
+  const visibleData = enabled && role === actualRole && data?.viewerId === user?.id ? data : null;
   const invite =
-    data?.game?.status === 'invited' &&
-    data.game.receivedAt &&
-    data.game.hostId !== user?.id &&
-    now < data.game.expiresAt
-      ? data.game
+    visibleData?.game?.status === 'invited' &&
+    visibleData.game.receivedAt &&
+    visibleData.game.hostId !== user?.id &&
+    now < visibleData.game.expiresAt
+      ? visibleData.game
       : null;
   const host = invite?.players.find((player) => player.id === invite.hostId);
   return (
     <DiceContext.Provider
-      value={{ data, error: error || connectionError, busy, now, act, tabId: tabId.current }}
+      value={{
+        data: visibleData,
+        pendingInvite: visibleData ? pendingInvite : null,
+        error: error || connectionError,
+        busy,
+        now,
+        act,
+        tabId: tabId.current,
+      }}
     >
       {children}
       {enabled && invite && (

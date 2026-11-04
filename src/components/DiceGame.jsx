@@ -23,7 +23,7 @@ export default function DiceGame() {
   const context = useDiceGame();
   const [stake, setStake] = useState(100),
     [multiplier, setMultiplier] = useState(2);
-  const { data, now = 0, error, busy, act } = context || {};
+  const { data, pendingInvite, now = 0, error, busy, act } = context || {};
   const game = data?.game,
     mine = game?.players.find((player) => player.id === user.id),
     opponent = game?.players.find((player) => player.id !== user.id);
@@ -34,13 +34,18 @@ export default function DiceGame() {
   const inProgress = playing || revealing;
   const arenaRef = useRef(null);
   useEffect(() => {
-    if (!inProgress || !window.matchMedia('(max-width: 760px)').matches) return;
-    arenaRef.current?.scrollIntoView({
-      block: 'start',
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? 'instant'
-        : 'smooth',
+    if (!inProgress) return;
+    // Let the invitation dialog close and restore focus before moving to the arena.
+    const frame = requestAnimationFrame(() => {
+      arenaRef.current?.focus({ preventScroll: true });
+      arenaRef.current?.scrollIntoView({
+        block: 'start',
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'instant'
+          : 'smooth',
+      });
     });
+    return () => cancelAnimationFrame(frame);
   }, [game?.id, inProgress]);
   const rolling = (playing || revealing) && now < game.readyAt;
   const preview = role !== actualRole;
@@ -87,7 +92,12 @@ export default function DiceGame() {
       )}
       {!data && !preview && <p role="status">로그인 중인 대원을 확인하고 있습니다…</p>}
       <div className="dice-layout">
-        <section ref={arenaRef} className="dice-arena" aria-label="민주주의 주사위 게임판">
+        <section
+          ref={arenaRef}
+          className={'dice-arena' + (inProgress ? ' is-active' : '')}
+          tabIndex={-1}
+          aria-label="민주주의 주사위 게임판"
+        >
           <div className="dice-arena-top">
             <span className="dice-live-label">
               <i />
@@ -101,6 +111,17 @@ export default function DiceGame() {
             </span>
             <span>{game ? '최소 베팅 ' + number(game.stake) + ' P' : '1 : 1 POINT MATCH'}</span>
           </div>
+          {inProgress && (
+            <div className="dice-match-status" role="status" aria-live="polite" aria-atomic="true">
+              <Dices size={24} />
+              <div>
+                <strong>{game.round === 1 ? '승부가 시작되었습니다!' : '게임 진행 중'}</strong>
+                <p>
+                  {opponent?.nickname}님과의 승부 · {game.round}번째 턴
+                </p>
+              </div>
+            </div>
+          )}
           <div className="dice-turns">
             {['첫 번째 선택', '두 번째 선택', '마지막 공개'].map((label, index) => (
               <span
@@ -118,28 +139,35 @@ export default function DiceGame() {
               </span>
             ))}
           </div>
-          {!game || !['playing', 'revealing', 'finished'].includes(game.status) ? (
+          {pendingInvite || !game || !['playing', 'revealing', 'finished'].includes(game.status) ? (
             <div className="dice-empty-table">
               <Dices size={64} />
               <h2>
-                {!data
-                  ? '진행 중인 게임을 불러옵니다'
-                  : game?.status === 'invited'
-                    ? '대원의 응답을 기다립니다'
-                    : '오늘의 승부를 시작해보세요'}
+                {pendingInvite
+                  ? '초대를 보내고 있습니다'
+                  : !data
+                    ? '진행 중인 게임을 불러옵니다'
+                    : game?.status === 'invited'
+                      ? '대원의 응답을 기다립니다'
+                      : '오늘의 승부를 시작해보세요'}
               </h2>
               <p>
-                {!data
-                  ? '저장된 주사위와 베팅 상태를 확인하고 있습니다.'
-                  : game?.status === 'invited'
-                    ? opponent?.nickname + '님에게 초대를 보냈습니다.'
-                    : game?.status === 'expired'
-                      ? '초대가 만료되었습니다. 로그인 중인 대원을 다시 초대해보세요.'
-                      : game?.status === 'declined'
-                        ? '상대가 초대를 거절했습니다.'
-                        : '오른쪽 대원 목록에서 최소 베팅액을 선택하고 초대하세요.'}
+                {pendingInvite
+                  ? pendingInvite.nickname + '님에게 초대를 보내고 있습니다.'
+                  : !data
+                    ? '저장된 주사위와 베팅 상태를 확인하고 있습니다.'
+                    : game?.status === 'invited'
+                      ? opponent?.nickname +
+                        (game.hostId === user.id
+                          ? '님에게 초대를 보냈습니다.'
+                          : '님에게 초대받았습니다.')
+                      : game?.status === 'expired'
+                        ? '초대가 만료되었습니다. 로그인 중인 대원을 다시 초대해보세요.'
+                        : game?.status === 'declined'
+                          ? '상대가 초대를 거절했습니다.'
+                          : '오른쪽 대원 목록에서 최소 베팅액을 선택하고 초대하세요.'}
               </p>
-              {game?.status === 'invited' && (
+              {!pendingInvite && game?.status === 'invited' && (
                 <strong className="dice-invite-count">
                   {game.receivedAt
                     ? Math.max(0, (game.expiresAt - now) / 1000).toFixed(1) + '초 남음'
@@ -383,6 +411,7 @@ export default function DiceGame() {
                   disabled={
                     active || player.busy || busy || preview || cooldown > 0 || wallet < stake
                   }
+                  aria-label={player.nickname + '님 초대'}
                   onClick={() => act('invite', { targetId: player.id, stake })}
                 >
                   초대
