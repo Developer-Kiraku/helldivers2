@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
-  Scissors,
   HandFist,
   Hand,
   Coins,
@@ -30,7 +29,27 @@ const apiPath = 'games/rps';
 const number = (value = 0) => value.toLocaleString('ko-KR');
 const labels = Object.fromEntries(rpsChoices.map((choice) => [choice.id, choice.label]));
 const outcomeLabels = { win: '승리', draw: '무승부', lose: '패배' };
-const glyphs = { scissors: Scissors, rock: HandFist, paper: Hand };
+function ScissorsHand({ size = 60, strokeWidth = 1.6, ...props }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="m6.3 14.2-2.3-9.5a1.9 1.9 0 0 1 3.7-.9L10 11l3.7-7.8a1.9 1.9 0 1 1 3.4 1.6L14 11.4" />
+      <path d="M18 14v-3a2 2 0 0 0-4 0v3" />
+      <path d="m7 15-1.76-1.76a2 2 0 0 0-2.83 2.82l3.6 3.6C7.5 21.14 9.2 22 12 22h2a8 8 0 0 0 8-8v-1a2 2 0 1 0-4 0" />
+      <path d="M10 18a3 3 0 0 1 3-3h1" />
+    </svg>
+  );
+}
+const glyphs = { scissors: ScissorsHand, rock: HandFist, paper: Hand };
 function Gesture({ choice, size = 60 }) {
   const Glyph = glyphs[choice] || CircleHelp;
   return <Glyph size={size} strokeWidth={1.6} aria-hidden="true" />;
