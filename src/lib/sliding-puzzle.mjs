@@ -51,6 +51,7 @@ export function shufflePuzzle(random = Math.random) {
 }
 export const puzzleMonth = (time = Date.now()) =>
   new Date(Number(time) + 9 * 3600000).toISOString().slice(0, 7);
+export const puzzleMonthlyPrizes = [10000, 5000, 2500];
 export const comparePuzzleRecords = (a, b) =>
   a.elapsedMs - b.elapsedMs ||
   a.moves - b.moves ||

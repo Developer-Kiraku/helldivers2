@@ -219,6 +219,36 @@
   color: var(--hd-color-accent);
   font-size: var(--hd-font-size-12);
 }
+.puzzle-prizes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 18px;
+  > div {
+    padding: 12px 6px;
+    border: 1px solid var(--hd-color-border);
+    border-radius: 8px;
+    background: var(--hd-color-input);
+    text-align: center;
+  }
+  span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    color: var(--hd-color-text-muted);
+    font-size: var(--hd-font-size-12);
+  }
+  strong {
+    display: block;
+    margin-top: 8px;
+    color: var(--hd-color-accent);
+    font-size: var(--hd-font-size-16);
+  }
+  small {
+    font-size: var(--hd-font-size-11);
+  }
+}
 .puzzle-my-record strong {
   display: block;
   margin-top: 4px;

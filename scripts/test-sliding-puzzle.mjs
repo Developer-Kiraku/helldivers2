@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { build } from 'esbuild';
+import { settlePuzzleRewards, puzzleRewardDueAt } from '../src/lib/server/puzzle-rewards.mjs';
 import {
   solvedPuzzle,
   shufflePuzzle,
@@ -193,6 +194,19 @@ try {
   assert.equal(db.puzzleRecords.length, oldMonthCount + 1);
   assert.equal(call(0, '', {}, 'GET', 'month=2026-11').total, 4);
   assert.equal(call(0, '', {}, 'GET', 'month=2026-12').total, 1);
+  now = puzzleRewardDueAt('2026-11');
+  settlePuzzleRewards(db, now);
+  const winner = db.puzzleRewards[0].recipients[0];
+  const prizeNotification = handleNotifications(
+    db,
+    db.users.find((user) => user.id === winner.userId),
+    ['notifications'],
+    'GET',
+    new URLSearchParams(),
+  ).notifications.find((item) => item.kind === 'puzzle_monthly_reward');
+  assert.equal(prizeNotification.amount, 10000);
+  assert.equal(prizeNotification.rank, 1);
+  assert.equal(prizeNotification.href, '/games/sliding-puzzle?month=2026-11');
   console.log(
     'PASS: solvable shuffles, legal moves, server time/replay, monthly personal bests, KST boundary, ties, private ownership, retry idempotency and podium entry/displacement notifications',
   );

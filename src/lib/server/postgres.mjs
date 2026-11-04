@@ -9,6 +9,7 @@ export const collections = {
   notifications: ['hd_notifications', (row) => row.id],
   puzzleRuns: ['hd_puzzle_runs', (row) => row.id],
   puzzleRecords: ['hd_puzzle_records', (row) => row.id],
+  puzzleRewards: ['hd_puzzle_rewards', (row) => row.id],
   diceGames: ['hd_dice_games', (row) => row.id],
   dicePresence: ['hd_dice_presence', (row) => row.id],
   pointLedger: ['hd_point_ledger', (row) => row.id],

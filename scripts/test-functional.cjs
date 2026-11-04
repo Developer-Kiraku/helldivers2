@@ -141,6 +141,7 @@ async function run() {
   await import('./test-dashboard-hero.mjs');
   await import('./test-session-ui.mjs');
   await import('./test-sliding-puzzle.mjs');
+  await import('./test-puzzle-rewards.mjs');
   await import('./test-dice-game.mjs');
   await import('./test-puzzle-result-ui.mjs');
   await import('./test-points.mjs');

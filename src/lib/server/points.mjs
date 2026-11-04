@@ -68,6 +68,9 @@ export function awardManualPoints(db, userIds, requestId, amount, actorId, reaso
   for (const userId of userIds)
     grant(db, userId, 'manual:' + requestId, amount, { grantId: requestId, actorId, reason });
 }
+export function awardPuzzlePrize(db, userId, month, rank, amount) {
+  grant(db, userId, 'puzzle:monthly:' + month, amount, { month, rank });
+}
 export function awardSignupPoints(db, user) {
   grant(db, user.id, 'signup:' + user.id, pointSettings(db).signup);
 }

@@ -12,6 +12,7 @@ import { auditLogDetails } from './audit-logs.mjs';
 import { syncPointActivity, awardExistingMemberPoints } from './points.mjs';
 import { settleDiceGames } from './dice-game';
 import { settleTestPlayerSessions } from './test-player';
+import { settlePuzzleRewards } from './puzzle-rewards.mjs';
 
 const shared = globalThis;
 shared.__hdJsonQueue ||= Promise.resolve();
@@ -130,7 +131,10 @@ function settleStore(db) {
   const pointsChanged = awardExistingMemberPoints(db);
   const gamesChanged = settleDiceGames(db);
   const testSessionsChanged = settleTestPlayerSessions(db);
-  return probationChanged || pointsChanged || gamesChanged || testSessionsChanged;
+  const puzzleRewardsChanged = settlePuzzleRewards(db);
+  return (
+    probationChanged || pointsChanged || gamesChanged || testSessionsChanged || puzzleRewardsChanged
+  );
 }
 export function transaction(callback, write = true) {
   if (process.env.DATABASE_URL) {

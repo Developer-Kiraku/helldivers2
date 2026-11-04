@@ -21,6 +21,7 @@ import { useCommunity } from './CommunityProvider';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 
 const icons = {
+  puzzle_monthly_reward: Trophy,
   puzzle_rank_enter: Trophy,
   puzzle_rank_drop: TrendingDown,
   comment: MessageCircle,
@@ -30,6 +31,8 @@ const icons = {
   dislike: ThumbsDown,
 };
 function description(item) {
+  if (item.kind === 'puzzle_monthly_reward')
+    return `${item.month} 퍼즐 월간 ${item.rank}위 보상 ${item.amount.toLocaleString()}P가 지급되었습니다.`;
   if (item.kind === 'puzzle_rank_enter')
     return item.month + ' 퍼즐 랭킹 ' + item.rank + '위 기록을 달성했습니다.';
   if (item.kind === 'puzzle_rank_drop')

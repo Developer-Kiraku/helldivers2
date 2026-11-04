@@ -148,6 +148,7 @@ export function handleNotifications(db, viewer, segments, method, query) {
             month: item.month,
             rank: item.rank,
             previousRank: item.previousRank,
+            ...(item.kind === 'puzzle_monthly_reward' ? { amount: item.amount } : {}),
             title: '슬라이딩 퍼즐 · ' + item.month,
             createdAt: item.createdAt,
             readAt: item.readAt,

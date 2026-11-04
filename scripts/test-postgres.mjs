@@ -8,6 +8,7 @@ import {
 } from '../src/lib/server/postgres.mjs';
 import { reserveLoginAttempt } from '../src/lib/server/login-throttle.mjs';
 import { registerOAuthState, consumeOAuthState } from '../src/lib/server/oauth-state.mjs';
+import { settlePuzzleRewards, puzzleRewardDueAt } from '../src/lib/server/puzzle-rewards.mjs';
 
 // Creates only disposable test data in a new isolated schema; never clears application tables.
 const url = new URL(process.env.DATABASE_URL);
@@ -138,6 +139,39 @@ try {
     db.messages = [];
   });
   assert.equal((await read()).messages.length, 0);
+  await postgresTransaction(pool, (db) => {
+    db.users[0].status = 'active';
+    db.users[0].points = { current: 20, total: 40 };
+    db.puzzleRecords = [
+      {
+        id: 'reward-record',
+        userId: 'test-user',
+        month: '2026-11',
+        elapsedMs: 1000,
+        moves: 20,
+        finishedAt: '2026-11-20T00:00:00Z',
+      },
+    ];
+  });
+  const rewardsOptions = {
+    write: false,
+    settle: (db) => settlePuzzleRewards(db, puzzleRewardDueAt('2026-11')),
+  };
+  await Promise.all(
+    [pool, other].map((connection) => postgresTransaction(connection, () => null, rewardsOptions)),
+  );
+  assert.equal((await read()).users[0].points.current, 10020);
+  assert.equal((await read()).users[0].points.total, 10040);
+  assert.equal((await read()).puzzleRewards.length, 1);
+  assert.equal((await read()).notifications.length, 1);
+  await pool.end();
+  pool = createPool(url.href);
+  await postgresTransaction(pool, () => null, rewardsOptions);
+  assert.equal(
+    (await read()).pointLedger.length,
+    1,
+    'Monthly rewards pay once across processes and restarts',
+  );
   console.log(
     'PASS: PostgreSQL import, migration, nested polls, two-pool concurrency, rollback, expiry on rejected requests, record removal and reconnect persistence',
   );

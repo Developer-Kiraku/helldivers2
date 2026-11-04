@@ -5,7 +5,13 @@ import { Puzzle, Trophy, Timer, Move, Play, Square, Check, Medal } from 'lucide-
 import { useCommunity } from './CommunityProvider';
 import { Button, Select } from './ui';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
-import { slidePuzzle, puzzleTime, puzzleMonth, solvedPuzzle } from '@/lib/sliding-puzzle.mjs';
+import {
+  slidePuzzle,
+  puzzleTime,
+  puzzleMonth,
+  solvedPuzzle,
+  puzzleMonthlyPrizes,
+} from '@/lib/sliding-puzzle.mjs';
 
 export default function SlidingPuzzle() {
   const { api, actualRole, role, refresh } = useCommunity();
@@ -407,6 +413,23 @@ export default function SlidingPuzzle() {
             한국 시간 기준 · 회원별 월간 최고 기록
             <br />
             클리어 시간 → 이동 횟수 → 먼저 달성한 순서
+          </p>
+          <div className="puzzle-prizes" aria-label="월간 랭킹 보상">
+            {puzzleMonthlyPrizes.map((amount, index) => (
+              <div key={index}>
+                <span>
+                  <Trophy size={14} /> {index + 1}위
+                </span>
+                <strong>
+                  {amount.toLocaleString()}
+                  <small> P</small>
+                </strong>
+              </div>
+            ))}
+          </div>
+          <p className="puzzle-rules">
+            매월 1일 01시(한국 시간)부터 전월 보상을 자동 지급합니다. 월말 완료 기록의 등록 유예
+            1시간 후 확정하며, 누적·현재 포인트에 모두 반영됩니다. 2026년 11월 기록부터 적용됩니다.
           </p>
           {rankError && (
             <p className="form-error" role="alert">
