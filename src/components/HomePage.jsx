@@ -30,7 +30,8 @@ function Clock() {
 }
 
 export default function HomePage() {
-  const { signedIn, posts, stats, ready } = useCommunity();
+  const { signedIn, posts: allPosts, homePosts, stats, ready } = useCommunity();
+  const posts = homePosts || allPosts;
   if (!ready) return <PageSkeleton path="/" />;
   return (
     <div className="home-page">

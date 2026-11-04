@@ -92,10 +92,10 @@ function bootstrap(db, actor, postsMode = 'all') {
     unreadMessages: unreadMessageCount(db, actor.id),
     ...(postsMode !== 'none'
       ? {
-          posts: Object.fromEntries(
+          [postsMode === 'home-summary' ? 'homePosts' : 'posts']: Object.fromEntries(
             Object.keys(boards).map((board) => [
               board,
-              postsMode === 'home' && !['notice', 'guide', 'talk'].includes(board)
+              postsMode === 'home-summary' && !['notice', 'guide', 'talk'].includes(board)
                 ? []
                 : db.posts
                     .filter(
@@ -106,10 +106,10 @@ function bootstrap(db, actor, postsMode = 'all') {
                         Number(b.pinned) - Number(a.pinned) ||
                         b.createdAt.localeCompare(a.createdAt),
                     )
-                    .slice(0, postsMode === 'home' ? (board === 'talk' ? 6 : 5) : undefined)
+                    .slice(0, postsMode === 'home-summary' ? (board === 'talk' ? 6 : 5) : undefined)
                     .map((post) => {
                       const item = serializePost(db, post, actor);
-                      return postsMode === 'home'
+                      return postsMode === 'home-summary'
                         ? Object.fromEntries(
                             [
                               'id',
@@ -429,7 +429,7 @@ async function handler(request, context) {
       if (path === 'bootstrap' && method === 'GET') {
         awardDailyPoints(db, actor);
         const mode = new URL(request.url).searchParams.get('posts');
-        return bootstrap(db, actor, ['none', 'home'].includes(mode) ? mode : 'all');
+        return bootstrap(db, actor, ['none', 'home-summary'].includes(mode) ? mode : 'all');
       }
       if (path === 'profile' && method === 'PATCH') {
         if (input.nickname !== undefined)

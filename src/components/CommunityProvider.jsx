@@ -20,6 +20,7 @@ const emptyPosts = {
 export function CommunityProvider({ children, initialUser = null, apiPrefix = '' }) {
   const [user, setUser] = useState(initialUser),
     [posts, setPosts] = useState(emptyPosts),
+    [homePosts, setHomePosts] = useState(emptyPosts),
     [stats, setStats] = useState({ totalMembers: 0, onlineMembers: 0 }),
     [ready, setReady] = useState(false),
     [toast, setToast] = useState('');
@@ -40,6 +41,7 @@ export function CommunityProvider({ children, initialUser = null, apiPrefix = ''
     ++refreshSequence.current;
     setUser(null);
     setPosts(emptyPosts);
+    setHomePosts(emptyPosts);
     setStats({ totalMembers: 0, onlineMembers: 0 });
     setUnreadMessages(0);
     setUnreadNotifications(0);
@@ -101,7 +103,7 @@ export function CommunityProvider({ children, initialUser = null, apiPrefix = ''
     const sequence = ++refreshSequence.current;
     try {
       const postsMode =
-        pathname === '/' ? 'home' : pathname.startsWith('/boards/') ? 'all' : 'none';
+        pathname === '/' ? 'home-summary' : pathname.startsWith('/boards/') ? 'all' : 'none';
       const response = await fetch(
         '/api/' + apiPrefix + 'bootstrap' + (postsMode === 'all' ? '' : '?posts=' + postsMode),
         { cache: 'no-store' },
@@ -120,6 +122,8 @@ export function CommunityProvider({ children, initialUser = null, apiPrefix = ''
       setUnreadMessages(data.unreadMessages || 0);
       setUnreadNotifications(data.unreadNotifications || 0);
       if (data.posts) setPosts(data.posts);
+      if (data.homePosts) setHomePosts(data.homePosts);
+      else if (postsMode === 'home-summary' && data.posts) setHomePosts(data.posts);
       setStats(data.stats);
     } catch (error) {
       if (sequence === refreshSequence.current)
@@ -230,6 +234,7 @@ export function CommunityProvider({ children, initialUser = null, apiPrefix = ''
         setViewRole,
         profile,
         posts,
+        homePosts,
         stats,
         unreadMessages,
         setUnreadMessages,

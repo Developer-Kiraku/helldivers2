@@ -86,6 +86,19 @@ try {
     '비공개 글',
     'A lightweight bootstrap preserves the existing post cache',
   );
+  globalThis.fetch = async () =>
+    response(200, {
+      user: member,
+      stats: { totalMembers: 1 },
+      homePosts: { talk: [{ title: '메인 요약' }] },
+    });
+  await React.act(async () => context.refresh());
+  assert.equal(context.homePosts.talk[0].title, '메인 요약');
+  assert.equal(
+    context.posts.talk[0].title,
+    '비공개 글',
+    'A home summary cannot overwrite content used by editors',
+  );
   const returnedRequests = [];
   globalThis.fetch = async (url) => {
     returnedRequests.push(url);
@@ -162,6 +175,16 @@ try {
     /페이지 내용/,
     'Signup remains accessible without a session',
   );
+  await unmount();
+  window.testPath = '/';
+  globalThis.fetch = async () => bootstrap();
+  await mount(member);
+  assert.equal(
+    context.homePosts.talk[0].title,
+    '비공개 글',
+    'Home remains visible with a legacy bootstrap response during rollout',
+  );
+  await unmount();
   console.log(
     'PASS: session expiry hides protected content, logout invalidates in-flight responses, public login/signup remain accessible',
   );
