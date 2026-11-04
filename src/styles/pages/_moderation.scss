@@ -345,10 +345,18 @@ body:has(.guest-content) {
 
 .api-keys-page {
   max-width: var(--hd-size-1200);
+  display: grid;
+  gap: var(--hd-space-24);
+}
+.api-keys-page > h1 {
+  margin-bottom: 0;
 }
 .api-key-panel {
+  display: grid;
+  gap: var(--hd-space-16);
+  min-width: 0;
   padding: var(--hd-space-20);
-  margin-top: var(--hd-space-20);
+  margin: 0;
 }
 .api-key-panel header,
 .api-key-status,
@@ -370,7 +378,7 @@ body:has(.guest-content) {
 .api-key-panel p,
 .api-key-panel details {
   font-size: var(--hd-font-size-14);
-  margin: var(--hd-space-12) 0;
+  margin: 0;
 }
 .api-key-panel code {
   overflow-wrap: anywhere;
@@ -380,7 +388,33 @@ body:has(.guest-content) {
   min-width: 0;
 }
 .api-key-status {
-  padding: var(--hd-space-12) 0;
+  padding: 0;
+}
+.api-key-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.api-key-actions {
+  padding-top: var(--hd-space-16);
+  border-top: 1px solid var(--hd-color-border);
+  row-gap: var(--hd-space-12);
+}
+.api-key-actions > a {
+  padding: var(--hd-space-8) var(--hd-space-12);
+  border-radius: 6px;
+  background: var(--hd-color-input);
+  font-size: var(--hd-font-size-12);
+}
+.api-key-panel > details {
+  padding: var(--hd-space-16);
+  border: 1px solid var(--hd-color-border);
+  border-radius: 8px;
+}
+.api-key-panel details[open] > :not(summary) {
+  margin-top: var(--hd-space-12);
+}
+.api-key-panel > .ui-label {
+  margin-bottom: calc(-1 * var(--hd-space-8));
 }
 .api-key-panel summary {
   cursor: pointer;

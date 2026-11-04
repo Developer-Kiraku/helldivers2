@@ -16,6 +16,7 @@ import { tokenHash } from '@/lib/server/passwords';
 import { validateNickname, now } from '@/lib/server/community';
 import { startProbation } from '@/lib/server/probation.mjs';
 import { readJsonRequest } from '@/lib/server/request-json';
+import { awardSignupPoints } from '@/lib/server/points.mjs';
 
 export async function POST(request) {
   try {
@@ -61,6 +62,7 @@ export async function POST(request) {
       };
       startProbation(user);
       db.users.push(user);
+      awardSignupPoints(db, user);
       db.pendingRegistrations = db.pendingRegistrations.filter((item) => item !== pending);
       const token = createSession(db, user);
       audit(db, user.id, 'user.register', user.id, {

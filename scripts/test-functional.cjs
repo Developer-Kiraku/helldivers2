@@ -1262,6 +1262,7 @@ async function run() {
       401,
     );
     assert.equal(registered.role, 'apprentice');
+    assert.deepEqual(registered.points, { total: 10000, current: 10000 });
     assert.equal(registered.kakao.id, 'test-kakao-verified-1');
     assert.equal(registered.probationStartedAt, registered.createdAt);
     assert.ok(Date.parse(registered.probationExpiresAt) > Date.parse(registered.createdAt));

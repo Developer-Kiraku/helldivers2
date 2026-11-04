@@ -1,5 +1,35 @@
 import assert from 'node:assert/strict';
-import { awardDailyPoints, syncPointActivity, pointDay } from '../src/lib/server/points.mjs';
+import {
+  awardDailyPoints,
+  syncPointActivity,
+  pointDay,
+  awardSignupPoints,
+  awardExistingMemberPoints,
+} from '../src/lib/server/points.mjs';
+const welcomeDb = {
+  users: [
+    { id: 'existing', status: 'active', points: { total: 200, current: 30 } },
+    { id: 'gone', status: 'withdrawn' },
+  ],
+};
+assert.equal(awardExistingMemberPoints(welcomeDb), true);
+assert.deepEqual(welcomeDb.users[0].points, { total: 10200, current: 10030 });
+assert.equal(welcomeDb.users[1].points, undefined);
+assert.equal(awardExistingMemberPoints(welcomeDb), false);
+const newcomer = { id: 'new', status: 'active' };
+welcomeDb.users.push(newcomer);
+awardSignupPoints(welcomeDb, newcomer);
+awardSignupPoints(welcomeDb, newcomer);
+assert.deepEqual(newcomer.points, { total: 10000, current: 10000 });
+welcomeDb.pointSettings = { signup: 2500 };
+awardSignupPoints(welcomeDb, newcomer);
+assert.equal(newcomer.points.total, 10000);
+const nextMember = { id: 'next', status: 'active' };
+welcomeDb.users.push(nextMember);
+awardSignupPoints(welcomeDb, nextMember);
+assert.equal(nextMember.points.current, 2500);
+awardExistingMemberPoints(welcomeDb);
+assert.equal(nextMember.points.current, 2500);
 assert.equal(pointDay(Date.parse('2026-11-04T14:59:59Z')), '2026-11-04');
 assert.equal(pointDay(Date.parse('2026-11-04T15:00:00Z')), '2026-11-05');
 for (const board of [

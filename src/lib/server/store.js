@@ -9,7 +9,7 @@ import { posts as samplePosts } from '../data';
 import { startProbation, settleProbation } from './probation.mjs';
 import { createPool, migrate, postgresTransaction } from './postgres.mjs';
 import { auditLogDetails } from './audit-logs.mjs';
-import { syncPointActivity } from './points.mjs';
+import { syncPointActivity, awardExistingMemberPoints } from './points.mjs';
 
 const shared = globalThis;
 shared.__hdJsonQueue ||= Promise.resolve();
@@ -123,6 +123,11 @@ async function load() {
 
 // One process owns this JSON store. Every read/write joins the same queue.
 // Replace these repository functions when moving to MariaDB/PostgreSQL.
+function settleStore(db) {
+  const probationChanged = settleProbation(db);
+  const pointsChanged = awardExistingMemberPoints(db);
+  return probationChanged || pointsChanged;
+}
 export function transaction(callback, write = true) {
   if (process.env.DATABASE_URL) {
     if (!shared.__hdPgPool) shared.__hdPgPool = createPool();
@@ -135,13 +140,13 @@ export function transaction(callback, write = true) {
       postgresTransaction(shared.__hdPgPool, callback, {
         write,
         seed: createSeed,
-        settle: settleProbation,
+        settle: settleStore,
       }),
     );
   }
   const operation = shared.__hdJsonQueue.then(async () => {
     const db = await load();
-    if (settleProbation(db)) await atomicWrite(db);
+    if (settleStore(db)) await atomicWrite(db);
     const result = await callback(db);
     if (write) await atomicWrite(db);
     return result;

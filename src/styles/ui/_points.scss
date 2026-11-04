@@ -14,13 +14,36 @@
 }
 .point-settings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 16px;
-  margin: 18px 0;
+  margin: 0;
 }
 .point-settings-grid label {
   display: grid;
   gap: 8px;
+  font-size: var(--hd-font-size-12);
+  padding: 16px;
+  border: 1px solid var(--hd-color-border);
+  border-radius: 8px;
+  background: var(--hd-color-input);
+}
+.point-settings-grid .point-signup-setting {
+  border-color: color-mix(in srgb, var(--hd-color-accent) 40%, var(--hd-color-border));
+}
+.point-settings-grid .ui-input {
+  flex: 1;
+  min-width: 0;
+}
+.point-grant-summary {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--hd-color-input);
+  color: var(--hd-color-accent);
+}
+.point-grant-summary span {
+  display: block;
+  margin-top: 4px;
+  color: var(--hd-color-text-muted);
   font-size: var(--hd-font-size-12);
 }
 .point-settings-grid label > div {
@@ -30,12 +53,6 @@
 }
 .point-settings-grid input {
   width: 100%;
-}
-.point-settings-grid label:last-child {
-  grid-column: 1 / -1;
-}
-.point-settings-grid label:last-child > div {
-  max-width: 280px;
 }
 .point-settings-grid label > div > span {
   color: var(--hd-color-text-muted);

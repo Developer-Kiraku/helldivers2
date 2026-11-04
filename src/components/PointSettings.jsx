@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useCommunity } from './CommunityProvider';
 import { Button, Input, Label } from './ui';
 const fields = [
+  ['signup', '최초 회원가입'],
   ['post', '게시글 작성'],
   ['comment', '댓글 작성'],
   ['like', '추천 · 누른 회원과 작성자 각각'],
@@ -12,13 +13,17 @@ const fields = [
 export default function PointSettings() {
   const { api, notify } = useCommunity();
   const [settings, setSettings] = useState(null),
+    [initialGrant, setInitialGrant] = useState(null),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
   useEffect(() => {
     let active = true;
     api('admin/settings/points')
       .then((data) => {
-        if (active) setSettings(data.settings);
+        if (active) {
+          setSettings(data.settings);
+          setInitialGrant(data.initialGrant);
+        }
       })
       .catch((err) => {
         if (active) setError(err.message);
@@ -60,7 +65,10 @@ export default function PointSettings() {
         <>
           <div className="point-settings-grid">
             {fields.map(([field, label]) => (
-              <Label key={field}>
+              <Label
+                key={field}
+                className={field === 'signup' ? 'point-signup-setting' : undefined}
+              >
                 {label}
                 <div>
                   <Input
@@ -86,9 +94,17 @@ export default function PointSettings() {
           <p>
             하루 기준은 한국 시간 00시입니다. 본인 글·댓글에 누른 추천은 포인트 적립에서 제외됩니다.
           </p>
-          <Button type="submit" disabled={busy}>
-            {busy ? '저장 중…' : '포인트 설정 저장'}
-          </Button>
+          {initialGrant && (
+            <p className="point-grant-summary">
+              기존 회원 {initialGrant.count}명 · 1인당 {initialGrant.amount.toLocaleString('ko-KR')}
+              P 지급 완료<span>누적·현재 포인트에 각각 반영 · 중복 지급 없음</span>
+            </p>
+          )}
+          <div className="api-key-actions">
+            <Button type="submit" disabled={busy}>
+              {busy ? '저장 중…' : '포인트 설정 저장'}
+            </Button>
+          </div>
         </>
       )}
     </form>

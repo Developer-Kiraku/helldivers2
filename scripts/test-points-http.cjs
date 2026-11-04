@@ -18,6 +18,14 @@ module.exports = async function ({ guest, admin, deputy, member, apprentice, fil
   await guest.call(settingsPath, 'GET', undefined, 401);
   for (const actor of users.slice(1)) await actor.call(settingsPath, 'GET', undefined, 403);
   await admin.call(settingsPath, 'PATCH', defaults);
+  const welcome = (await admin.call(settingsPath)).data;
+  assert.equal(welcome.settings.signup, 10000);
+  assert.equal(welcome.initialGrant.amount, 10000);
+  assert.equal(welcome.initialGrant.count, 4);
+  await admin.call(settingsPath, 'PATCH', { ...defaults, signup: -1 }, 400);
+  await admin.call(settingsPath, 'PATCH', { ...defaults, signup: 2500 });
+  assert.equal((await admin.call(settingsPath)).data.settings.signup, 2500);
+  await admin.call(settingsPath, 'PATCH', { ...defaults, signup: 10000 });
   await admin.call(settingsPath, 'PATCH', { ...defaults, post: -1 }, 400);
   await admin.call(settingsPath, 'PATCH', { ...defaults, like: 1.1 }, 400);
   await admin.call(settingsPath, 'PATCH', { ...defaults, bonusMultiplier: 0 }, 400);

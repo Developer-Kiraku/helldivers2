@@ -282,10 +282,12 @@ async function handler(request, context) {
       }
       if (path === 'admin/settings/points') {
         if (actor.role !== 'operator') fail(403, '총운영자만 설정을 관리할 수 있습니다.');
-        if (method === 'GET') return { settings: pointSettings(db) };
+        if (method === 'GET')
+          return { settings: pointSettings(db), initialGrant: db.initialMemberPointGrant || null };
         if (method === 'PATCH') {
           const settings = pointSettings(db);
-          for (const field of ['post', 'comment', 'like', 'daily', 'bonusMultiplier']) {
+          for (const field of ['post', 'comment', 'like', 'daily', 'signup', 'bonusMultiplier']) {
+            if (field === 'signup' && input[field] === undefined) continue;
             const value = input[field];
             if (
               !Number.isInteger(value) ||

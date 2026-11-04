@@ -5,6 +5,7 @@ export const defaultPointSettings = {
   comment: 5,
   like: 2,
   daily: 50,
+  signup: 10000,
   bonusMultiplier: 2,
 };
 export const doublePointBoards = ['guide', 'loadout', 'tierlist'];
@@ -43,6 +44,21 @@ function reverse(db, matches) {
     const user = db.users.find((u) => u.id === row.userId);
     if (user) adjust(user, -row.amount);
   }
+}
+export function awardSignupPoints(db, user) {
+  grant(db, user.id, 'signup:' + user.id, pointSettings(db).signup);
+}
+// A persistent campaign marker freezes the recipients at deployment, including dormant members.
+export function awardExistingMemberPoints(db) {
+  if (db.initialMemberPointGrant) return false;
+  const users = db.users.filter((user) => user.status === 'active');
+  for (const user of users) grant(db, user.id, 'welcome:2026-11', 10000);
+  db.initialMemberPointGrant = {
+    amount: 10000,
+    count: users.length,
+    completedAt: new Date().toISOString(),
+  };
+  return true;
 }
 export function awardDailyPoints(db, actor) {
   if (actor.actualRole) return;

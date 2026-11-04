@@ -88,6 +88,9 @@ try {
   ).data;
   assert.equal(puzzleResult.rank, 1);
   const pointBalance = (await member.call('/api/bootstrap')).data.user.points;
+  const initialGrant = (await admin.call('/api/admin/settings/points')).data.initialGrant;
+  assert.equal(initialGrant.count, 4);
+  assert.equal(initialGrant.amount, 10000);
   assert.ok(pointBalance.current >= 50);
   await admin.call('/api/admin/settings/points', 'PATCH', {
     post: 25,
@@ -132,6 +135,10 @@ try {
     2,
   );
   assert.deepEqual((await member.call('/api/bootstrap')).data.user.points, pointBalance);
+  assert.deepEqual(
+    (await admin.call('/api/admin/settings/points')).data.initialGrant,
+    initialGrant,
+  );
   assert.equal((await admin.call('/api/admin/settings/points')).data.settings.post, 25);
   console.log(
     'PASS: current/cumulative points, daily attendance and configurable point settings persist across PostgreSQL restart',
