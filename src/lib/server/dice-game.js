@@ -2,6 +2,7 @@ import { randomInt, randomUUID } from 'node:crypto';
 import { fail } from './auth';
 import { transferGamePoints } from './points.mjs';
 import { diceInviteMs, diceMaxMultiplier } from '../dice-rules.mjs';
+import { diceSkin, isDiceSkin } from '../dice-skins.mjs';
 
 export const diceStakeOptions = [10, 100, 1000];
 const active = (game) =>
@@ -211,6 +212,7 @@ function publicGame(db, game, actor) {
       id,
       nickname: member(db, id)?.status === 'active' ? member(db, id).nickname : '탈퇴한 회원',
       photo: member(db, id)?.photo || '',
+      skin: diceSkin(member(db, id)?.diceSkin).id,
       bet:
         game.bets[id] - (game.status === 'playing' && id !== actor.id ? currentBet(game, id) : 0),
       dice:
@@ -229,11 +231,15 @@ function publicGame(db, game, actor) {
 }
 function snapshot(db, actor, now, page = '') {
   const own = (db.diceGames || []).filter((game) => game.players.includes(actor.id));
-  const game = own.findLast(active) || own.at(-1);
+  const latest = own.at(-1);
+  const game =
+    own.findLast(active) ||
+    (latest?.status === 'finished' && now >= latest.finishedAt + 5000 ? null : latest);
   return {
     viewerId: actor.id,
     serverTime: now,
     points: member(db, actor.id).points || { total: 0, current: 0 },
+    skin: diceSkin(member(db, actor.id).diceSkin).id,
     inviteAvailableAt: (member(db, actor.id).lastDiceInviteAt || 0) + 5000,
     game: publicGame(db, game, actor),
     online:
@@ -287,6 +293,11 @@ export function handleDiceGame(db, actor, segments, method, input) {
   if (actor.actualRole) fail(403, '화면 확인 모드에서는 게임을 이용할 수 없습니다.');
   const action = segments[2];
   if (segments.length !== 3 || method !== 'POST') fail(404, '게임 요청을 찾을 수 없습니다.');
+  if (action === 'skin') {
+    if (!isDiceSkin(input.skin)) fail(400, '사용할 수 있는 주사위 스킨을 선택해주세요.');
+    member(db, actor.id).diceSkin = input.skin;
+    return snapshot(db, actor, now, 'dice');
+  }
   if (action === 'presence') {
     if (
       typeof input.tabId !== 'string' ||

@@ -115,8 +115,8 @@
   touch-action: manipulation;
   transition:
     background 120ms,
-    left 200ms ease-out,
-    top 200ms ease-out;
+    left 100ms ease-out,
+    top 100ms ease-out;
   z-index: 1;
 }
 .puzzle-tile.can-move {

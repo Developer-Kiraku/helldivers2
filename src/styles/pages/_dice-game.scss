@@ -673,7 +673,7 @@
   gap: 6px;
   padding: 13px;
   border-radius: 8px;
-  border: 2px solid color-mix(in srgb, var(--hd-color-input-text) 32%, var(--hd-color-border));
+  border: 2px solid var(--dice-edge);
   background:
     repeating-linear-gradient(
       0deg,
@@ -682,12 +682,12 @@
     ),
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--hd-color-input-text) 18%, var(--hd-color-background)),
-      var(--hd-color-input) 48%,
-      var(--hd-color-background)
+      color-mix(in srgb, var(--hd-color-input-text) 18%, var(--dice-shell)),
+      var(--dice-panel) 48%,
+      var(--dice-shell)
     );
   box-shadow:
-    inset 0 0 0 3px var(--hd-color-background),
+    inset 0 0 0 3px var(--dice-shell),
     inset 0 0 16px var(--hd-color-palette-0005),
     0 0 1px var(--hd-color-black);
   backface-visibility: hidden;
@@ -696,7 +696,7 @@
   content: '';
   position: absolute;
   inset: 5px;
-  border: 1px solid color-mix(in srgb, var(--hd-color-accent) 28%, var(--hd-color-border));
+  border: 1px solid var(--dice-trim);
   border-radius: 3px;
   pointer-events: none;
 }
@@ -709,8 +709,8 @@
   height: 4px;
   background: repeating-linear-gradient(
     125deg,
-    var(--hd-color-accent) 0 3px,
-    var(--hd-color-background) 3px 6px
+    var(--dice-accent) 0 3px,
+    var(--dice-shell) 3px 6px
   );
   pointer-events: none;
 }
@@ -718,18 +718,19 @@
   border-radius: 3px;
   background: linear-gradient(
     145deg,
-    color-mix(in srgb, var(--hd-color-accent) 76%, var(--hd-color-input-text)),
-    var(--hd-color-accent)
+    color-mix(in srgb, var(--dice-pip) 76%, var(--dice-pip-highlight)),
+    var(--dice-pip)
   );
-  border: 1px solid color-mix(in srgb, var(--hd-color-accent) 65%, var(--hd-color-background));
+  border: 1px solid color-mix(in srgb, var(--dice-pip) 65%, var(--dice-shell));
   box-shadow:
-    inset 0 1px 1px var(--hd-color-input-text),
-    0 2px 3px var(--hd-color-palette-0008);
+    inset 0 1px 1px var(--dice-pip-highlight),
+    0 2px 3px var(--hd-color-palette-0008),
+    0 0 7px var(--dice-pip-glow);
 }
 .dice-face b {
   grid-area: 1 / 1 / 4 / 4;
   place-self: center;
-  color: var(--hd-color-accent);
+  color: var(--dice-pip);
   font-size: var(--hd-font-size-30);
 }
 .face-1 {

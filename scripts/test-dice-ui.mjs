@@ -156,6 +156,38 @@ try {
   const memberRows = document.querySelectorAll('.dice-member');
   assert.match(memberRows[0].textContent, /새대원초대 가능/);
   assert.match(memberRows[1].textContent, /이전대원자리 비움/);
+  await React.act(async () => document.querySelector('.dice-skin-trigger').click());
+  assert.equal(document.querySelectorAll('.dice-skin-option').length, 4);
+  assert.deepEqual(
+    [...document.querySelectorAll('.dice-skin-preview .dice-scene')].map((el) => el.dataset.skin),
+    ['helldiver', 'super-earth', 'eagle', 'automaton'],
+  );
+  await React.act(async () => document.querySelector('[aria-label="이글 스킨"]').click());
+  assert.equal(calls.at(-1).name, 'games/dice/skin');
+  assert.equal(calls.at(-1).options.body.skin, 'eagle');
+  assert.ok([...document.querySelectorAll('.dice-skin-option')].every((el) => el.disabled));
+  await reply(calls.at(-1), {
+    ...snapshot(game('old-game', 'old', '이전대원', 'finished'), 1100),
+    skin: 'eagle',
+  });
+  assert.equal(
+    document.querySelector('[aria-label="이글 스킨"]').getAttribute('aria-pressed'),
+    'true',
+  );
+  assert.match(document.querySelector('.dice-skin-trigger').textContent, /이글/);
+  await React.act(async () =>
+    [...document.querySelectorAll('[role="dialog"] button')]
+      .find((el) => el.textContent === '닫기')
+      .click(),
+  );
+  await focus();
+  await reply(calls.at(-1), { ...snapshot(null, 1200), skin: 'eagle' });
+  assert.equal(document.querySelector('.dice-result'), null);
+  assert.ok(
+    document.querySelector('.dice-empty-table'),
+    'A finished-game reset restores the lobby',
+  );
+  assert.equal(document.querySelector('[aria-label="새대원님 초대"]').disabled, false);
   await React.act(async () => {
     const invite = document.querySelector('[aria-label="새대원님 초대"]');
     invite.click();

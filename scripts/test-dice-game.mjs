@@ -461,6 +461,63 @@ try {
   });
   assert.equal(peer().focused, false, 'Leaving a non-game page releases presence');
   assert.throws(() => call('b', 'presence', { ...presenceBody, sequence: -1 }), { status: 400 });
+  db = make();
+  assert.equal(presence('a').skin, 'helldiver');
+  for (const skin of ['helldiver', 'super-earth', 'eagle', 'automaton']) {
+    assert.equal(call('a', 'skin', { skin, userId: 'b' }).skin, skin);
+    assert.equal(db.users[0].diceSkin, skin);
+    assert.equal(
+      db.users[1].diceSkin,
+      undefined,
+      'Skin updates only affect the authenticated user',
+    );
+  }
+  assert.throws(() => call('a', 'skin', { skin: 'invalid' }), { status: 400 });
+  assert.throws(
+    () =>
+      handleDiceGame(
+        db,
+        { ...db.users[0], actualRole: 'admin' },
+        ['games', 'dice', 'skin'],
+        'POST',
+        { skin: 'eagle' },
+      ),
+    { status: 403 },
+  );
+  db = JSON.parse(JSON.stringify(db));
+  assert.equal(presence('a').skin, 'automaton', 'Skin survives stored-state reload');
+  const styled = accept(invite());
+  const beforeSkin = JSON.stringify({
+    game: styled,
+    points: db.users.map((u) => u.points),
+    ledger: db.pointLedger,
+  });
+  call('a', 'skin', { skin: 'eagle' });
+  assert.equal(
+    JSON.stringify({ game: styled, points: db.users.map((u) => u.points), ledger: db.pointLedger }),
+    beforeSkin,
+    'Changing skins never rerolls, changes deadlines or moves points',
+  );
+  const styledPeer = presence('b').game.players.find((p) => p.id === 'a');
+  assert.equal(styledPeer.skin, 'eagle');
+  assert.deepEqual(styledPeer.dice, [null], 'Sharing a skin does not expose private dice');
+  call('a', 'stop', { gameId: styled.id });
+  decide('a', styled, 'die');
+  decide('b', styled, 'die');
+  now = styled.finishedAt + 4999;
+  assert.equal(presence('a').game.id, styled.id, 'Final result remains briefly visible');
+  now++;
+  assert.equal(
+    presence('a').game,
+    null,
+    'A fully finished series returns to the lobby after five seconds',
+  );
+  assert.equal(presence('b').game, null);
+  db = JSON.parse(JSON.stringify(db));
+  now += 60000;
+  assert.equal(presence('a').game, null, 'Reloading does not revive a finished game');
+  assert.equal(db.diceGames.length, 1, 'Stored match history is retained');
+  assert.equal(presence('a').skin, 'eagle');
   console.log(
     'PASS: dice invitations/cancellation, foreground presence and stale-event ordering, exact/insufficient balances, private rolls, atomic bets/settlement, automatic rounds, stop/navigation/deadline races, refresh recovery, disconnect/timeout/low-balance termination',
   );

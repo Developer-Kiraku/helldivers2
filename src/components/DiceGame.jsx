@@ -15,6 +15,7 @@ import {
 import { useCommunity } from './CommunityProvider';
 import { useDiceGame } from './DiceGameProvider';
 import Dice3D from './Dice3D';
+import DiceSkinPicker from './DiceSkinPicker';
 import Avatar from './Avatar';
 import { Button } from './ui';
 import { diceMaxMultiplier } from '@/lib/dice-rules.mjs';
@@ -85,7 +86,7 @@ export default function DiceGame() {
     ? !game.winnerId
       ? '무승부 · 베팅액 반환'
       : game.winnerId === user.id
-        ? '승리! 판돈을 획득했습니다.'
+        ? '승리! 배팅액을 획득했습니다.'
         : '이번 승부는 아쉽게 패배했어요.'
     : '';
   return (
@@ -99,15 +100,18 @@ export default function DiceGame() {
           </h1>
           <p>두 번째 주사위는 서로 공개합니다. 네 번째 주사위까지의 합으로 승부합니다.</p>
         </div>
-        <div className="dice-wallet">
-          <Coins size={20} />
-          <span>
-            사용 가능한 포인트
-            <strong>
-              {number(wallet)}
-              <small> P</small>
-            </strong>
-          </span>
+        <div className="dice-heading-actions">
+          <DiceSkinPicker />
+          <div className="dice-wallet">
+            <Coins size={20} />
+            <span>
+              사용 가능한 포인트
+              <strong>
+                {number(wallet)}
+                <small> P</small>
+              </strong>
+            </span>
+          </div>
         </div>
       </header>
       {preview && <p className="form-error">실제 등급으로 돌아오면 게임에 참여할 수 있습니다.</p>}
@@ -299,6 +303,7 @@ export default function DiceGame() {
                         </strong>
                       </div>
                       <Dice3D
+                        skin={player.skin}
                         key={game.id + ':' + game.round + ':' + player.id}
                         rollKey={game.id + ':' + game.round + ':' + player.id}
                         durationMs={game.readyAt - now}
@@ -339,7 +344,7 @@ export default function DiceGame() {
               </div>
               <div className="dice-pot">
                 <Coins size={22} />
-                <span>총 판돈</span>
+                <span>총 배팅액</span>
                 <strong>
                   {number(game.pot)} <small>P</small>
                 </strong>
@@ -424,8 +429,8 @@ export default function DiceGame() {
                     </p>
                   )}
                   <p>
-                    양쪽 선택 후 판정합니다. 둘 다 DIE면 무승부, 한쪽만 DIE면 이전 턴까지의 판돈으로
-                    정산합니다.
+                    양쪽 선택 후 판정합니다. 둘 다 DIE면 무승부, 한쪽만 DIE면 이전 턴까지의
+                    배팅액으로 정산합니다.
                   </p>
                 </div>
               )}
@@ -450,7 +455,7 @@ export default function DiceGame() {
                           ? '상대 회원이 탈퇴하여 승부가 종료됐습니다.'
                           : !game.winnerId
                             ? '두 대원 모두 DIE를 선택하여 베팅액을 돌려받습니다.'
-                            : '이번 턴의 베팅액은 반환하고 이전 턴까지의 판돈만 정산했습니다.'}
+                            : '이번 턴의 베팅액은 반환하고 이전 턴까지의 배팅액만 정산했습니다.'}
                   </p>
                 </div>
               )}
@@ -553,11 +558,11 @@ export default function DiceGame() {
           </li>
           <li>
             3턴까지 두 대원 모두 CALL하면 네 번째 주사위를 굴려 전부 공개합니다. 합이 높은 대원이
-            판돈 전체를 가져갑니다. 동점은 각자 베팅액을 돌려받습니다.
+            배팅액 전체를 가져갑니다. 동점은 각자 베팅액을 돌려받습니다.
           </li>
           <li>
             두 대원의 선택은 모두 결정할 때까지 비공개입니다. 둘 다 DIE면 무승부로 베팅액을
-            반환합니다. 한쪽만 DIE면 해당 턴의 CALL 베팅액을 돌려준 뒤 이전 턴까지의 판돈만 상대가
+            반환합니다. 한쪽만 DIE면 해당 턴의 CALL 베팅액을 돌려준 뒤 이전 턴까지의 배팅액만 상대가
             가져갑니다. 30초 동안 선택하지 않으면 DIE로 처리합니다.
           </li>
           <li>

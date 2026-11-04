@@ -1,0 +1,202 @@
+@use '../tokens' as t;
+
+.dice-scene {
+  --dice-shell: var(--hd-color-background);
+  --dice-panel: var(--hd-color-input);
+  --dice-edge: color-mix(in srgb, var(--hd-color-input-text) 32%, var(--hd-color-border));
+  --dice-trim: color-mix(in srgb, var(--hd-color-accent) 28%, var(--hd-color-border));
+  --dice-accent: var(--hd-color-accent);
+  --dice-pip: var(--hd-color-accent);
+  --dice-pip-highlight: var(--hd-color-input-text);
+  --dice-pip-glow: var(--hd-color-transparent);
+}
+.dice-scene[data-skin='super-earth'] {
+  --dice-shell: var(--hd-color-dice-navy);
+  --dice-panel: color-mix(in srgb, var(--hd-color-dice-navy) 75%, var(--hd-color-background));
+  --dice-edge: var(--hd-color-dice-gold);
+  --dice-trim: var(--hd-color-dice-gold);
+  --dice-accent: var(--hd-color-dice-gold);
+  --dice-pip: var(--hd-color-dice-ivory);
+  .dice-face::after {
+    display: none;
+  }
+}
+.dice-scene[data-skin='eagle'] {
+  --dice-shell: var(--hd-color-dice-white-armor);
+  --dice-panel: var(--hd-color-dice-white-armor);
+  --dice-edge: var(--hd-color-dice-steel);
+  --dice-trim: var(--hd-color-dice-steel);
+  --dice-accent: var(--hd-color-dice-red-stripe);
+  --dice-pip: var(--hd-color-background);
+  --dice-pip-highlight: var(--hd-color-border);
+  .dice-face::after {
+    top: 5px;
+    left: 8px;
+    bottom: auto;
+    height: 6px;
+  }
+}
+.dice-scene[data-skin='automaton'] {
+  --dice-shell: var(--hd-color-dice-iron);
+  --dice-panel: color-mix(in srgb, var(--hd-color-dice-iron) 70%, var(--hd-color-black));
+  --dice-edge: var(--hd-color-dice-steel);
+  --dice-trim: var(--hd-color-dice-steel);
+  --dice-accent: var(--hd-color-dice-red-light);
+  --dice-pip: var(--hd-color-dice-red-light);
+  --dice-pip-highlight: var(--hd-color-dice-red-stripe);
+  --dice-pip-glow: color-mix(in srgb, var(--hd-color-dice-red-light) 45%, transparent);
+  .dice-face::before {
+    background:
+      radial-gradient(circle at 3px 3px, var(--hd-color-dice-steel) 1px, transparent 2px),
+      radial-gradient(
+        circle at calc(100% - 3px) calc(100% - 3px),
+        var(--hd-color-dice-steel) 1px,
+        transparent 2px
+      );
+  }
+}
+.dice-insignia {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36%;
+  height: 10%;
+  color: var(--dice-accent);
+  pointer-events: none;
+}
+.dice-scene[data-skin='eagle'] .dice-insignia {
+  color: var(--dice-pip);
+}
+.dice-heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dice-skin-trigger.ui-button {
+  gap: 8px;
+  min-height: 42px;
+  strong {
+    color: var(--hd-color-accent);
+  }
+}
+.dice-skin-modal .modal-body {
+  padding-top: 12px;
+}
+.dice-skin-hint {
+  margin: 0 0 18px;
+  font-size: var(--hd-font-size-12);
+  color: var(--hd-color-text-muted);
+}
+.dice-skin-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.dice-skin-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 22px 10px 16px;
+  border: 1px solid var(--hd-color-border);
+  border-radius: 14px;
+  background: radial-gradient(
+    ellipse at 50% 35%,
+    var(--hd-color-surface),
+    var(--hd-color-background)
+  );
+  transition:
+    border-color 160ms ease,
+    background 160ms ease;
+  text-align: center;
+  &:hover,
+  &[aria-pressed='true'] {
+    border-color: var(--hd-color-accent);
+    background: radial-gradient(
+      ellipse at 50% 35%,
+      color-mix(in srgb, var(--hd-color-accent) 8%, var(--hd-color-surface)),
+      var(--hd-color-background)
+    );
+  }
+  &:focus-visible {
+    outline: 2px solid var(--hd-color-accent);
+    outline-offset: 3px;
+  }
+  > strong {
+    font-size: var(--hd-font-size-14);
+    color: var(--hd-color-input-text);
+  }
+  > small {
+    font-size: var(--hd-font-size-11);
+    color: var(--hd-color-text-muted);
+  }
+}
+.dice-skin-code {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: var(--hd-font-size-11);
+  color: var(--hd-color-text-muted);
+}
+.dice-skin-check {
+  position: absolute;
+  top: 11px;
+  right: 12px;
+  color: var(--hd-color-accent);
+}
+.dice-skin-preview {
+  display: block;
+  padding: 0 8px 7px;
+  pointer-events: none;
+}
+.dice-skin-preview .dice-scene {
+  --dice-size: 66px;
+  margin: 16px 0 18px;
+}
+.dice-skin-preview .dice-face {
+  padding: 10px;
+  gap: 4px;
+}
+.dice-skin-status {
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: var(--hd-font-size-12);
+  color: var(--hd-color-accent);
+}
+@media (max-width: t.breakpoint('mobile')) {
+  .dice-heading-actions {
+    width: 100%;
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .dice-skin-trigger.ui-button {
+    width: 100%;
+  }
+  .dice-skin-options {
+    gap: 9px;
+  }
+  .dice-skin-option {
+    padding-inline: 7px;
+    border-radius: 10px;
+  }
+  .dice-skin-option > small {
+    font-size: var(--hd-font-size-10);
+  }
+  .dice-skin-preview .dice-scene {
+    --dice-size: 58px;
+  }
+  .dice-skin-preview .dice-face {
+    padding: 9px;
+    gap: 3px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dice-skin-option {
+    transition: none;
+  }
+}

@@ -14,6 +14,16 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
     change(db);
     await fs.writeFile(file, JSON.stringify(db));
   };
+  await guest.call(base + 'skin', 'POST', { skin: 'eagle' }, 401);
+  for (const skin of ['helldiver', 'super-earth', 'eagle', 'automaton']) {
+    assert.equal(
+      (await member.call(base + 'skin', 'POST', { skin, userId: 'u-user2' })).data.skin,
+      skin,
+    );
+  }
+  await member.call(base + 'skin', 'POST', { skin: 'unknown' }, 400);
+  assert.equal((await heartbeat(member, tabs.member)).data.skin, 'automaton');
+  assert.equal((await heartbeat(apprentice, tabs.apprentice, 'site')).data.skin, 'helldiver');
   await guest.call(
     base + 'presence',
     'POST',
@@ -70,6 +80,12 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   assert.equal(state.game.players.find((player) => player.id === 'u-user2').sum, null);
   assert.deepEqual(state.game.players.find((player) => player.id === 'u-user2').dice, [null]);
   assert.equal(state.game.publicDieIndex, 1);
+  assert.equal(
+    (await heartbeat(apprentice, tabs.apprentice)).data.game.players.find(
+      (player) => player.id === 'u-user1',
+    ).skin,
+    'automaton',
+  );
   assert.equal((await heartbeat(admin, tabs.admin)).data.game, null);
   await member.call(base + 'decision', 'POST', { gameId: game.id, round: 1, choice: 'call' }, 409);
   await fixture((db) => {
@@ -148,8 +164,11 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   assert.equal((await heartbeat(member, tabs.member)).data.game.winnerId, null);
   assert.deepEqual((await heartbeat(member, tabs.member)).data.points, state.points);
   await fixture((db) => {
+    db.diceGames.find((item) => item.id === rematch.id).finishedAt = Date.now() - 5001;
     db.users.find((user) => user.id === 'u-user1').lastDiceInviteAt = Date.now() - 5001;
   });
+  assert.equal((await heartbeat(member, tabs.member)).data.game, null);
+  assert.equal((await heartbeat(apprentice, tabs.apprentice)).data.game, null);
   const pending = (
     await member.call(base + 'invite', 'POST', {
       tabId: tabs.member,
