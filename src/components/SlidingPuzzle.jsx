@@ -25,6 +25,11 @@ export default function SlidingPuzzle() {
   const started = useRef(0),
     pending = useRef(false);
   const consoleRef = useRef(null);
+  const moveQueue = useRef([]),
+    moving = useRef(false),
+    visualBoard = useRef(board),
+    verifiedRun = useRef(null),
+    touchActivation = useRef(false);
   const [clockStarted, setClockStarted] = useState(false);
   useRefreshOnReturn(() => reload((v) => v + 1));
   useEffect(() => {
@@ -70,6 +75,8 @@ export default function SlidingPuzzle() {
       await api('games/sliding-puzzle/stop', { method: 'POST', body: { runId: run.id } });
       setPhase('idle');
       setRun(null);
+      verifiedRun.current = null;
+      moveQueue.current = [];
       setClockStarted(false);
       started.current = 0;
     } catch (err) {
@@ -89,6 +96,9 @@ export default function SlidingPuzzle() {
       const data = await api('games/sliding-puzzle/start', { method: 'POST' });
       setRun(data.run);
       setBoard(data.run.board);
+      verifiedRun.current = data.run;
+      visualBoard.current = data.run.board;
+      moveQueue.current = [];
       setMoves(0);
       setResult(null);
       started.current = 0;
@@ -126,36 +136,59 @@ export default function SlidingPuzzle() {
     }
   }
   async function slide(tile) {
-    if (phase !== 'playing' || pending.current || actualRole !== role) return;
-    const slide = slidePuzzle(board, tile);
-    if (!slide) return;
-    const next = slide.board;
-    setBoard(next);
-    setMoves(moves + slide.moves.length);
+    if (phase !== 'playing' || (pending.current && !moving.current) || actualRole !== role) return;
+    const movement = slidePuzzle(visualBoard.current, tile);
+    if (!movement) return;
+    visualBoard.current = movement.board;
+    setBoard(movement.board);
+    setMoves((value) => value + movement.moves.length);
+    moveQueue.current.push(tile);
+    if (moving.current) return;
+    moving.current = true;
     pending.current = true;
     setError('');
-    let verified;
     try {
-      const data = await api('games/sliding-puzzle/move', {
-        method: 'POST',
-        body: { runId: run.id, tile, step: run.step },
-      });
-      verified = data.run;
-    } catch (err) {
-      setError(err.message);
-      // A lost response may still have committed the move. Reconcile with the server.
-      try {
-        verified = (await api('games/sliding-puzzle/state?runId=' + encodeURIComponent(run.id)))
-          .run;
-      } catch {
-        setBoard(board);
-        setMoves(moves);
+      while (moveQueue.current.length) {
+        const current = verifiedRun.current;
+        const nextTile = moveQueue.current.shift();
+        try {
+          const data = await api('games/sliding-puzzle/move', {
+            method: 'POST',
+            body: { runId: current.id, tile: nextTile, step: current.step },
+          });
+          verifiedRun.current = data.run;
+        } catch (err) {
+          setError(err.message);
+          // Do not replay queued touches when a response may already have committed.
+          moveQueue.current = [];
+          try {
+            verifiedRun.current = (
+              await api('games/sliding-puzzle/state?runId=' + encodeURIComponent(current.id))
+            ).run;
+          } catch {
+            verifiedRun.current = current;
+          }
+          break;
+        }
+        const verified = verifiedRun.current;
+        if (verified.startedAt) {
+          started.current = Date.now() - verified.elapsedMs;
+          setElapsed(verified.elapsedMs);
+          setClockStarted(true);
+        }
+        if (verified.stopped || verified.completedAt) {
+          moveQueue.current = [];
+          break;
+        }
       }
     } finally {
+      moving.current = false;
       pending.current = false;
     }
+    const verified = verifiedRun.current;
     if (verified) {
       setRun(verified);
+      visualBoard.current = verified.board;
       setBoard(verified.board);
       setMoves(verified.moves);
       if (verified.startedAt) {
@@ -237,7 +270,21 @@ export default function SlidingPuzzle() {
                   }
                   aria-label={tile + '번 타일'}
                   disabled={!playing || locked}
-                  onClick={() => slide(tile)}
+                  onPointerDown={(event) => {
+                    if (event.pointerType !== 'touch') {
+                      touchActivation.current = false;
+                      return;
+                    }
+                    if (!event.isPrimary) return;
+                    event.preventDefault();
+                    touchActivation.current = true;
+                    void slide(tile);
+                  }}
+                  onClick={(event) => {
+                    // Touch activates on contact; ignore its later compatibility click.
+                    if (event.detail && touchActivation.current) return;
+                    void slide(tile);
+                  }}
                 >
                   {tile}
                 </button>

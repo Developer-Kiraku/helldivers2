@@ -61,6 +61,8 @@ try {
   let begins = 0;
   let activeRun;
   let loseMoveResponse = false;
+  let holdMove;
+  const moveRequests = [];
   const month = puzzleMonth();
   window.puzzleRouter = { replace() {} };
   window.puzzleContext = {
@@ -69,6 +71,12 @@ try {
     refresh: async () => {},
     api: async (path, options) => {
       if (path.endsWith('/move')) {
+        moveRequests.push({ ...options.body });
+        if (holdMove) {
+          const wait = holdMove;
+          holdMove = null;
+          await wait;
+        }
         assert.equal(options.body.step, activeRun.step);
         begins++;
         const slide = slidePuzzle(activeRun.board, options.body.tile);
@@ -181,10 +189,64 @@ try {
   mobile.matches = true;
   await React.act(async () => mediaListeners.forEach((listener) => listener()));
   assert.ok(document.documentElement.classList.contains('puzzle-scroll-locked'));
+  let releaseMove;
+  holdMove = new Promise((resolve) => (releaseMove = resolve));
+  const beforeTouches = moveRequests.length;
+  const touch = async (number, primary = true) =>
+    React.act(async () => {
+      const event = new Event('pointerdown', { bubbles: true, cancelable: true });
+      Object.assign(event, { pointerType: 'touch', isPrimary: primary });
+      const tile = document.querySelector(`[aria-label="${number}번 타일"]`);
+      tile.dispatchEvent(event);
+      tile.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, detail: 1 }));
+    });
+  await touch(13);
+  assert.equal(moveRequests.length, beforeTouches + 1);
+  await touch(14);
+  assert.equal(
+    moveRequests.length,
+    beforeTouches + 1,
+    'Rapid touches wait for the prior server step',
+  );
+  assert.equal(
+    document.querySelector('[aria-label="14번 타일"]').style.getPropertyValue('--tile-column'),
+    '1',
+    'The second touch animates immediately while the first response is pending',
+  );
+  await React.act(async () => releaseMove());
+  assert.equal(moveRequests.length, beforeTouches + 2, 'Both rapid touches are sent exactly once');
+  assert.deepEqual(
+    moveRequests.slice(-2).map(({ tile, step }) => [tile, step]),
+    [
+      [13, 0],
+      [14, 1],
+    ],
+  );
+  assert.equal(activeRun.moves, 4);
+  await touch(13, false);
+  assert.equal(
+    moveRequests.length,
+    beforeTouches + 2,
+    'Secondary fingers cannot create extra moves',
+  );
+  await click(document.querySelector('[aria-label="13번 타일"]'));
+  assert.equal(
+    moveRequests.length,
+    beforeTouches + 3,
+    'Keyboard activation still works after a touch',
+  );
+  await React.act(async () => {
+    const tile = document.querySelector('[aria-label="14번 타일"]');
+    const event = new Event('pointerdown', { bubbles: true });
+    Object.assign(event, { pointerType: 'mouse', isPrimary: true });
+    tile.dispatchEvent(event);
+    tile.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, detail: 1 }));
+  });
+  assert.equal(moveRequests.length, beforeTouches + 4, 'Mouse input still works after touch input');
   await React.act(async () => root.unmount());
   assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
   console.log(
-    'PASS: results show the completed attempt, personal-best messaging is conditional, restarting clears the result, drag/context menu are blocked and tiles are not draggable',
+    'PASS: per-attempt results, scroll lock, immediate touch, queued rapid touches, no duplicate compatibility clicks, secondary-finger rejection, mouse/keyboard input and lost-response recovery',
   );
 } finally {
   await React.act(async () => root.unmount());
