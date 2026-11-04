@@ -70,10 +70,45 @@ module.exports = async function ({ guest, admin, member, file }) {
     'State/stop/finish retries cannot duplicate result notifications',
   );
   const stopped = (await admin.call(base + '/start', 'POST', {})).data.run;
+  const batchFixture = JSON.parse(await fs.readFile(file, 'utf8'));
+  batchFixture.puzzleRuns.find((item) => item.id === stopped.id).board = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15,
+  ];
+  await fs.writeFile(file, JSON.stringify(batchFixture));
+  await admin.call(base + '/move', 'POST', { runId: stopped.id, tile: 13, step: 0 });
+  const batch = { runId: stopped.id, step: 1, tiles: [14, 13, 14] };
+  const batched = (await admin.call(base + '/move', 'POST', batch)).data.run;
+  assert.equal(batched.step, 4);
+  assert.equal(batched.moves, 8);
+  const repeatedBatch = (await admin.call(base + '/move', 'POST', batch)).data.run;
+  assert.ok(repeatedBatch.elapsedMs >= batched.elapsedMs);
+  assert.deepEqual({ ...repeatedBatch, elapsedMs: 0 }, { ...batched, elapsedMs: 0 });
+  await admin.call(base + '/move', 'POST', { runId: stopped.id, step: 4, tiles: [13, 2] }, 400);
+  assert.equal((await admin.call(base + '/state?runId=' + stopped.id)).data.run.step, 4);
   await admin.call(base + '/stop', 'POST', { runId: stopped.id });
   await admin.call(base + '/move', 'POST', { runId: stopped.id, tile: 15, step: 0 }, 409);
   await admin.call(base + '/finish', 'POST', { runId: stopped.id, moves: [15] }, 409);
   assert.equal((await admin.call(base + '/state?runId=' + stopped.id)).data.run.stopped, true);
+  const legacyFixture = JSON.parse(await fs.readFile(file, 'utf8'));
+  const legacy = legacyFixture.puzzleRuns.find((item) => item.id === stopped.id);
+  Object.assign(legacy, {
+    board: Array.from({ length: 16 }, (_, i) => (i + 1) % 16),
+    completedAt: new Date().toISOString(),
+    startedAt: new Date(Date.now() - 1000).toISOString(),
+    moves: [15],
+    step: 1,
+  });
+  delete legacy.stoppedAt;
+  delete legacy.result;
+  await fs.writeFile(file, JSON.stringify(legacyFixture));
+  const recovered = (await admin.call(base + '/state?runId=' + stopped.id)).data.run.result;
+  assert.ok(recovered);
+  assert.ok(
+    JSON.parse(await fs.readFile(file, 'utf8')).puzzleRecords.some(
+      (item) => item.id === stopped.id,
+    ),
+    'State recovery persists a legacy completed record rather than only returning it',
+  );
   console.log(
     'PASS: server-authoritative puzzle moves/time/count, forged finish rejection, owner isolation, concurrent retry deduplication, sequential steps, stop invalidation and result idempotency',
   );

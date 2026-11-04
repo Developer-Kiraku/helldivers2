@@ -62,6 +62,7 @@ try {
   let activeRun;
   let loseMoveResponse = false;
   let holdMove;
+  let rejectBeforeCommit = false;
   let autoResult = false,
     finishRequests = 0,
     stopRequests = 0,
@@ -85,17 +86,35 @@ try {
           holdMove = null;
           await wait;
         }
+        if (rejectBeforeCommit) {
+          rejectBeforeCommit = false;
+          throw new Error('요청 전송 유실');
+        }
+        const tiles = options.body.tiles || [options.body.tile];
+        if (options.body.step < targetRun.step) {
+          assert.deepEqual(targetRun.lastPacket, { step: options.body.step, tiles });
+          if (loseStateResponse) throw new Error('응답 재시도도 실패');
+          return { run: targetRun };
+        }
         assert.equal(options.body.step, targetRun.step);
         begins++;
-        const slide = slidePuzzle(targetRun.board, options.body.tile);
+        let board = targetRun.board,
+          added = 0;
+        for (const tile of tiles) {
+          const slide = slidePuzzle(board, tile);
+          assert.ok(slide);
+          board = slide.board;
+          added += slide.moves.length;
+        }
         targetRun = {
           ...targetRun,
-          board: slide.board,
-          moves: targetRun.moves + slide.moves.length,
-          step: targetRun.step + 1,
+          board,
+          moves: targetRun.moves + added,
+          step: targetRun.step + tiles.length,
+          lastPacket: { step: options.body.step, tiles },
           startedAt: new Date().toISOString(),
           elapsedMs: 0,
-          completedAt: puzzleSolved(slide.board) ? new Date().toISOString() : null,
+          completedAt: puzzleSolved(board) ? new Date().toISOString() : null,
         };
         if (autoResult && targetRun.completedAt)
           targetRun.result = {
@@ -240,10 +259,10 @@ try {
   await React.act(async () => releaseMove());
   assert.equal(moveRequests.length, beforeTouches + 2, 'Both rapid touches are sent exactly once');
   assert.deepEqual(
-    moveRequests.slice(-2).map(({ tile, step }) => [tile, step]),
+    moveRequests.slice(-2).map(({ tiles, step }) => [tiles, step]),
     [
-      [13, 0],
-      [14, 1],
+      [[13], 0],
+      [[14], 1],
     ],
   );
   assert.equal(activeRun.moves, 4);
@@ -316,6 +335,42 @@ try {
   await click(buttonByText('게임 정지'));
   assert.ok(buttonByText('게임 시작'), 'Failed stop transport still releases the local controls');
   assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
+  loseStopResponse = false;
+  await click(buttonByText('게임 시작'));
+  holdMove = new Promise((resolve) => (releaseMove = resolve));
+  loseMoveResponse = true;
+  const burstStart = moveRequests.length;
+  await React.act(async () => {
+    for (let i = 0; i < 40; i++) {
+      document.querySelector('[aria-label="13번 타일"]').click();
+      document.querySelector('[aria-label="14번 타일"]').click();
+    }
+    document.querySelector('[aria-label="15번 타일"]').click();
+  });
+  assert.ok(document.querySelector('.puzzle-save-status'));
+  await React.act(async () => releaseMove());
+  assert.ok(
+    document.querySelector('.puzzle-result'),
+    'A lost response cannot discard queued moves after the visual board is solved',
+  );
+  assert.equal(activeRun.step, 81);
+  assert.equal(activeRun.moves, 161);
+  assert.equal(
+    moveRequests.length - burstStart,
+    2,
+    'Eighty queued actions are verified as one batch instead of eighty round trips',
+  );
+  assert.equal(moveRequests.at(-1).tiles.length, 80);
+  await click(buttonByText('게임 시작'));
+  rejectBeforeCommit = true;
+  const retryStart = moveRequests.length;
+  await click(document.querySelector('[aria-label="15번 타일"]'));
+  assert.ok(
+    document.querySelector('.puzzle-result'),
+    'An uncommitted packet is retried without losing the final move',
+  );
+  assert.equal(activeRun.moves, 1);
+  assert.equal(moveRequests.length - retryStart, 2);
   await React.act(async () => root.unmount());
   assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
   console.log(

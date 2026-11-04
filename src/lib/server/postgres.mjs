@@ -105,10 +105,15 @@ const snapshot = (db) =>
   Object.fromEntries(Object.keys(collections).map((key) => [key, rowsFor(db, key)]));
 async function load(client, metadata) {
   const db = { ...metadata };
-  for (const [key, [table]] of Object.entries(collections)) {
-    const { rows } = await client.query(`SELECT data FROM ${table} ORDER BY position,id`);
-    db[key] = rows.map((row) => row.data);
-  }
+  // Keep the same locked snapshot without a network round trip for every table.
+  const union = Object.entries(collections)
+    .map(([key, [table]]) => `SELECT '${key}' AS collection,position,id,data FROM ${table}`)
+    .join(' UNION ALL ');
+  const { rows } = await client.query(
+    `SELECT collection,data FROM (${union}) AS entities ORDER BY collection,position,id`,
+  );
+  for (const key of Object.keys(collections)) db[key] = [];
+  for (const row of rows) db[row.collection].push(row.data);
   return db;
 }
 async function save(client, db, previous = {}) {

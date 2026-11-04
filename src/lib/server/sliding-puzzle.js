@@ -84,6 +84,8 @@ function savePuzzleResult(db, run, now) {
 }
 export function handlePuzzle(db, actor, segments, method, input, query) {
   const now = Date.now();
+  if (method !== 'GET' && actor.actualRole)
+    fail(403, '화면 확인 중에는 변경할 수 없습니다. 실제 등급으로 돌아온 뒤 이용해주세요.');
   if (segments.length === 2 && method === 'GET') {
     const month = query.get('month') || puzzleMonth(now);
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) fail(400, '월을 확인해주세요.');
@@ -159,22 +161,44 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
       return { run: session(run, now) };
     }
     if (run.stoppedAt) fail(409, '정지한 게임입니다. 새 게임을 시작해주세요.');
+    if (!Number.isInteger(input.step)) fail(409, '이동 순서가 일치하지 않습니다.');
+    const tiles = input.tiles === undefined ? [input.tile] : input.tiles;
+    if (
+      !Array.isArray(tiles) ||
+      !tiles.length ||
+      tiles.length > 128 ||
+      (input.tiles !== undefined && input.tile !== undefined) ||
+      tiles.some((tile) => !Number.isInteger(tile) || tile < 1 || tile > 15)
+    )
+      fail(400, '이동할 숫자를 확인해주세요.');
     // Only the immediately preceding identical request can be safely retried.
-    if (run.lastMove && run.lastMove.step === input.step && run.lastMove.tile === input.tile)
+    if (
+      run.lastMove &&
+      run.lastMove.step === input.step &&
+      JSON.stringify(run.lastMove.tiles || [run.lastMove.tile]) === JSON.stringify(tiles)
+    )
       return { run: session(run, now) };
     if (run.result || run.completedAt) fail(409, '이미 완료된 게임입니다.');
     if (now - Date.parse(run.startedAt || run.issuedAt) > 3600000)
       fail(400, '게임 시간이 만료됐습니다. 다시 시작해주세요.');
-    if (!Number.isInteger(input.step) || input.step !== run.step)
-      fail(409, '이동 순서가 일치하지 않습니다.');
-    const slide = Number.isInteger(input.tile) && slidePuzzle(run.board, input.tile);
-    if (!slide) fail(400, '빈칸과 같은 줄의 숫자를 선택해주세요.');
-    if (run.moves.length + slide.moves.length > 10000) fail(400, '이동 횟수 제한을 초과했습니다.');
+    if (input.step !== run.step) fail(409, '이동 순서가 일치하지 않습니다.');
+    if (!run.startedAt && tiles.length !== 1)
+      fail(400, '첫 이동은 숫자 하나를 선택해 시작해주세요.');
+    let board = run.board;
+    const moves = [];
+    for (const tile of tiles) {
+      if (puzzleSolved(board)) fail(400, '퍼즐 완성 이후의 이동은 처리할 수 없습니다.');
+      const slide = slidePuzzle(board, tile);
+      if (!slide) fail(400, '빈칸과 같은 줄의 숫자를 선택해주세요.');
+      board = slide.board;
+      moves.push(...slide.moves);
+    }
+    if (run.moves.length + moves.length > 10000) fail(400, '이동 횟수 제한을 초과했습니다.');
     run.startedAt ||= new Date(now).toISOString();
-    run.board = slide.board;
-    run.moves.push(...slide.moves);
-    run.lastMove = { step: input.step, tile: input.tile };
-    run.step++;
+    run.board = board;
+    run.moves.push(...moves);
+    run.lastMove = { step: input.step, tiles };
+    run.step += tiles.length;
     if (puzzleSolved(run.board)) {
       run.completedAt = new Date(now).toISOString();
       savePuzzleResult(db, run, now);

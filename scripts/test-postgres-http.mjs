@@ -78,7 +78,7 @@ try {
   const savedPuzzle = (
     await member.call('/api/games/sliding-puzzle/move', 'POST', {
       runId: puzzleRun.id,
-      tile: 15,
+      tiles: [15],
       step: 0,
     })
   ).data.run;

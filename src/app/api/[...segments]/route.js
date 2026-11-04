@@ -235,7 +235,7 @@ async function handler(request, context) {
                     ? 1300000
                     : 13000000,
           );
-    if (method !== 'GET')
+    if (method !== 'GET' && !(segments[0] === 'games' && segments[1] === 'sliding-puzzle'))
       await readStore((db) => {
         if (presentationUser(requireUser(db, token), viewRole)?.actualRole)
           fail(403, '화면 확인 중에는 변경할 수 없습니다. 실제 등급으로 돌아온 뒤 이용해주세요.');
@@ -264,7 +264,7 @@ async function handler(request, context) {
           ? { ...input, photo: await normalizeUploadedImage(input.photo, { avatar: true }) }
           : await normalizePostImages(input, board);
     }
-    const write = method !== 'GET' || path === 'bootstrap';
+    const write = method !== 'GET' || path === 'bootstrap' || path === 'games/sliding-puzzle/state';
     const result = await transaction((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
       if (path === 'admin/settings/point-grants') {
@@ -826,8 +826,18 @@ async function handler(request, context) {
     if (path === 'profile' && method === 'DELETE') clearSessionCookie(response);
     return response;
   } catch (error) {
-    if (error instanceof AppError || error instanceof ImageUploadError)
+    if (error instanceof AppError || error instanceof ImageUploadError) {
+      if (new URL(request.url).pathname.startsWith('/api/games/sliding-puzzle/'))
+        console.warn(
+          'Puzzle request rejected:',
+          JSON.stringify({
+            path: new URL(request.url).pathname,
+            status: error.status,
+            message: error.message,
+          }),
+        );
       return json({ error: error.message }, error.status);
+    }
     console.error('Community API error:', error);
     return json({ error: '요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.' }, 500);
   }

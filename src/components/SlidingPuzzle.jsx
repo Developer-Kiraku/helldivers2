@@ -33,6 +33,7 @@ export default function SlidingPuzzle() {
     pending = useRef(false);
   const consoleRef = useRef(null);
   const moveQueue = useRef([]),
+    packetRef = useRef(null),
     moving = useRef(false),
     visualBoard = useRef(board),
     verifiedRun = useRef(null),
@@ -130,6 +131,7 @@ export default function SlidingPuzzle() {
     const token = ++generation.current;
     cancelRequests();
     moveQueue.current = [];
+    packetRef.current = null;
     moving.current = false;
     pending.current = true;
     setPhase('stopping');
@@ -171,6 +173,7 @@ export default function SlidingPuzzle() {
       verifiedRun.current = data.run;
       visualBoard.current = data.run.board;
       moveQueue.current = [];
+      packetRef.current = null;
       setMoves(0);
       setResult(null);
       started.current = 0;
@@ -208,6 +211,24 @@ export default function SlidingPuzzle() {
       if (token === generation.current) pending.current = false;
     }
   }
+  function acknowledge(current, packet) {
+    if (current.result || current.stopped) {
+      moveQueue.current = [];
+      packetRef.current = null;
+    } else if (current.step === packet.step + packet.tiles.length) {
+      moveQueue.current.splice(0, packet.tiles.length);
+      packetRef.current = null;
+    } else if (current.step !== packet.step) {
+      throw new Error(
+        '이동 순서가 달라졌습니다. 다른 화면에서 같은 퍼즐을 진행 중인지 확인해주세요.',
+      );
+    } else {
+      verifiedRun.current = current;
+      return false;
+    }
+    verifiedRun.current = current;
+    return true;
+  }
   async function recover() {
     if (pending.current || !verifiedRun.current) return;
     const token = generation.current;
@@ -221,7 +242,11 @@ export default function SlidingPuzzle() {
           'games/sliding-puzzle/state?runId=' + encodeURIComponent(verifiedRun.current.id),
         )
       ).run;
+      if (token !== generation.current) return;
+      if (packetRef.current) acknowledge(current, packetRef.current);
+      verifiedRun.current = current;
     } catch (err) {
+      current = null;
       if (token === generation.current) {
         setPhase('sync-error');
         setError(err.message);
@@ -229,26 +254,14 @@ export default function SlidingPuzzle() {
     } finally {
       if (token === generation.current) pending.current = false;
     }
-    if (current) applyRun(current, token);
+    if (!current || token !== generation.current) return;
+    if (moveQueue.current.length && !current.result && !current.stopped) {
+      setPhase(puzzleSolved(visualBoard.current) ? 'checking' : 'playing');
+      void flushMoves();
+    } else applyRun(current, token);
   }
-  async function slide(tile) {
-    if (
-      phaseRef.current !== 'playing' ||
-      (pending.current && !moving.current) ||
-      actualRole !== role
-    )
-      return;
-    const movement = slidePuzzle(visualBoard.current, tile);
-    if (!movement) return;
-    visualBoard.current = movement.board;
-    setBoard(movement.board);
-    setMoves((value) => value + movement.moves.length);
-    moveQueue.current.push(tile);
-    if (puzzleSolved(movement.board)) {
-      setPhase('checking');
-      setClockStarted(false);
-    }
-    if (moving.current) return;
+  async function flushMoves() {
+    if (moving.current || pending.current) return;
     const token = generation.current;
     moving.current = true;
     pending.current = true;
@@ -256,32 +269,45 @@ export default function SlidingPuzzle() {
     try {
       while (moveQueue.current.length && token === generation.current) {
         const current = verifiedRun.current;
-        const nextTile = moveQueue.current.shift();
-        try {
-          const data = await request('games/sliding-puzzle/move', {
-            method: 'POST',
-            body: { runId: current.id, tile: nextTile, step: current.step },
-          });
-          if (token !== generation.current) return;
-          verifiedRun.current = data.run;
-        } catch (err) {
-          if (token !== generation.current) return;
-          setError(err.message);
-          moveQueue.current = [];
+        const packet = packetRef.current || {
+          runId: current.id,
+          step: current.step,
+          tiles: moveQueue.current.slice(0, 128),
+        };
+        packetRef.current = packet;
+        let confirmed = false,
+          failure;
+        for (let attempt = 0; attempt < 2 && !confirmed; attempt++) {
           try {
-            const data = await request(
-              'games/sliding-puzzle/state?runId=' + encodeURIComponent(current.id),
-            );
+            const data = await request('games/sliding-puzzle/move', {
+              method: 'POST',
+              body: packet,
+            });
             if (token !== generation.current) return;
-            verifiedRun.current = data.run;
-          } catch (stateError) {
+            confirmed = acknowledge(data.run, packet);
+          } catch (err) {
             if (token !== generation.current) return;
-            setPhase('sync-error');
-            setClockStarted(false);
-            setError(stateError.message);
-            return;
+            failure = err;
+            try {
+              const data = await request(
+                'games/sliding-puzzle/state?runId=' + encodeURIComponent(packet.runId),
+              );
+              if (token !== generation.current) return;
+              confirmed = acknowledge(data.run, packet);
+            } catch (stateError) {
+              if (token !== generation.current) return;
+              failure = stateError;
+            }
           }
-          break;
+        }
+        if (!confirmed) {
+          setPhase('sync-error');
+          setClockStarted(false);
+          setError(
+            (failure?.message || '서버에서 이동을 확인하지 못했습니다.') +
+              ' 이동 내역은 보관 중입니다. 게임 상태 다시 확인을 눌러 이어서 처리해주세요.',
+          );
+          return;
         }
         const verified = verifiedRun.current;
         if (verified.startedAt && phaseRef.current === 'playing') {
@@ -291,6 +317,7 @@ export default function SlidingPuzzle() {
         }
         if (verified.stopped || verified.completedAt) {
           moveQueue.current = [];
+          packetRef.current = null;
           break;
         }
       }
@@ -301,6 +328,20 @@ export default function SlidingPuzzle() {
       }
     }
     if (token === generation.current && verifiedRun.current) applyRun(verifiedRun.current, token);
+  }
+  function slide(tile) {
+    if (phaseRef.current !== 'playing' || actualRole !== role) return;
+    const movement = slidePuzzle(visualBoard.current, tile);
+    if (!movement) return;
+    visualBoard.current = movement.board;
+    setBoard(movement.board);
+    setMoves((value) => value + movement.moves.length);
+    moveQueue.current.push(tile);
+    if (puzzleSolved(movement.board)) {
+      setPhase('checking');
+      setClockStarted(false);
+    }
+    void flushMoves();
   }
   const playing = phase === 'playing',
     canStop = ['playing', 'checking', 'saving', 'sync-error'].includes(phase),

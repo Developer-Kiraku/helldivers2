@@ -207,6 +207,46 @@ try {
   assert.equal(prizeNotification.amount, 10000);
   assert.equal(prizeNotification.rank, 1);
   assert.equal(prizeNotification.href, '/games/sliding-puzzle?month=2026-11');
+  const batchRun = call(0, 'start').run;
+  const storedBatch = db.puzzleRuns.find((item) => item.id === batchRun.id);
+  storedBatch.board = movePuzzle(solvedPuzzle(), 15);
+  assert.throws(() => call(0, 'move', { runId: batchRun.id, step: 0, tiles: [13, 14, 15] }), {
+    status: 400,
+  });
+  call(0, 'move', { runId: batchRun.id, step: 0, tiles: [13] });
+  const untouched = structuredClone(storedBatch);
+  for (const tiles of [[], null, ['15'], [0], Array(129).fill(13), [14, 2], [14, 15, 15]]) {
+    assert.throws(() => call(0, 'move', { runId: batchRun.id, step: 1, tiles }), { status: 400 });
+    assert.deepEqual(storedBatch, untouched, 'Rejected batches cannot partially mutate the run');
+  }
+  assert.throws(() => call(0, 'move', { runId: batchRun.id, step: 0, tile: 13, tiles: [13] }), {
+    status: 400,
+  });
+  const packet = { runId: batchRun.id, step: 1, tiles: [14, 15] };
+  const batchDone = call(0, 'move', packet).run;
+  assert.equal(batchDone.step, 3);
+  assert.equal(batchDone.moves, 5);
+  assert.ok(batchDone.result);
+  const notices = db.notifications.length;
+  assert.deepEqual(
+    call(0, 'move', packet).run,
+    batchDone,
+    'An identical batch retry returns its committed result',
+  );
+  assert.equal(db.notifications.length, notices);
+  assert.throws(() => call(0, 'move', { ...packet, tiles: [15] }), { status: 409 });
+  assert.throws(
+    () =>
+      handlePuzzle(
+        db,
+        { ...db.users[0], actualRole: 'operator' },
+        ['games', 'sliding-puzzle', 'start'],
+        'POST',
+        {},
+        new URLSearchParams(),
+      ),
+    { status: 403 },
+  );
   console.log(
     'PASS: solvable shuffles, legal moves, server time/replay, monthly personal bests, KST boundary, ties, private ownership, retry idempotency and podium entry/displacement notifications',
   );
