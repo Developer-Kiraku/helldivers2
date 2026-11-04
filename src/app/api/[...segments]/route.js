@@ -85,25 +85,48 @@ function safeReason(value) {
   if (reason.length < 2 || reason.length > 1000) fail(400, '사유를 2~1,000자로 입력해주세요.');
   return reason;
 }
-function bootstrap(db, actor, includePosts = true) {
+function bootstrap(db, actor, postsMode = 'all') {
   return {
     user: publicUser(actor),
     unreadNotifications: unreadActivityCount(db, actor),
     unreadMessages: unreadMessageCount(db, actor.id),
-    ...(includePosts
+    ...(postsMode !== 'none'
       ? {
           posts: Object.fromEntries(
             Object.keys(boards).map((board) => [
               board,
-              db.posts
-                .filter(
-                  (post) => post.board === board && !post.deletedAt && canReadPost(post, actor),
-                )
-                .sort(
-                  (a, b) =>
-                    Number(b.pinned) - Number(a.pinned) || b.createdAt.localeCompare(a.createdAt),
-                )
-                .map((post) => serializePost(db, post, actor)),
+              postsMode === 'home' && !['notice', 'guide', 'talk'].includes(board)
+                ? []
+                : db.posts
+                    .filter(
+                      (post) => post.board === board && !post.deletedAt && canReadPost(post, actor),
+                    )
+                    .sort(
+                      (a, b) =>
+                        Number(b.pinned) - Number(a.pinned) ||
+                        b.createdAt.localeCompare(a.createdAt),
+                    )
+                    .slice(0, postsMode === 'home' ? (board === 'talk' ? 6 : 5) : undefined)
+                    .map((post) => {
+                      const item = serializePost(db, post, actor);
+                      return postsMode === 'home'
+                        ? Object.fromEntries(
+                            [
+                              'id',
+                              'board',
+                              'title',
+                              'category',
+                              'date',
+                              'author',
+                              'authorRole',
+                              'own',
+                              'comments',
+                              'likes',
+                              'pinned',
+                            ].map((key) => [key, item[key]]),
+                          )
+                        : item;
+                    }),
             ]),
           ),
         }
@@ -405,7 +428,8 @@ async function handler(request, context) {
       }
       if (path === 'bootstrap' && method === 'GET') {
         awardDailyPoints(db, actor);
-        return bootstrap(db, actor, new URL(request.url).searchParams.get('posts') !== 'none');
+        const mode = new URL(request.url).searchParams.get('posts');
+        return bootstrap(db, actor, ['none', 'home'].includes(mode) ? mode : 'all');
       }
       if (path === 'profile' && method === 'PATCH') {
         if (input.nickname !== undefined)

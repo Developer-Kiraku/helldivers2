@@ -100,9 +100,10 @@ export function CommunityProvider({ children, initialUser = null, apiPrefix = ''
   const refresh = useCallback(async () => {
     const sequence = ++refreshSequence.current;
     try {
-      const includePosts = pathname === '/' || pathname.startsWith('/boards/');
+      const postsMode =
+        pathname === '/' ? 'home' : pathname.startsWith('/boards/') ? 'all' : 'none';
       const response = await fetch(
-        '/api/' + apiPrefix + 'bootstrap' + (includePosts ? '' : '?posts=none'),
+        '/api/' + apiPrefix + 'bootstrap' + (postsMode === 'all' ? '' : '?posts=' + postsMode),
         { cache: 'no-store' },
       );
       if (sequence !== refreshSequence.current) return;

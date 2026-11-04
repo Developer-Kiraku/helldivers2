@@ -612,6 +612,17 @@ async function run() {
     );
     assert.ok(lightBootstrap.stats.totalMembers > 0);
     assert.ok(Array.isArray(sharedBoards.notice), 'Default board bootstrap remains complete');
+    const homeBootstrap = (await member.call('/api/bootstrap?posts=home')).data;
+    assert.equal(homeBootstrap.posts.notice.length, Math.min(5, sharedBoards.notice.length));
+    assert.equal(homeBootstrap.posts.guide.length, Math.min(5, sharedBoards.guide.length));
+    assert.equal(homeBootstrap.posts.talk.length, Math.min(6, sharedBoards.talk.length));
+    assert.equal(homeBootstrap.posts.qna.length, 0);
+    assert.ok(
+      homeBootstrap.posts.guide.every(
+        (item) => !Object.hasOwn(item, 'bodyHtml') && !Object.hasOwn(item, 'content'),
+      ),
+      'Home summaries omit full article bodies',
+    );
     assert.equal(sharedBoards.notice.find((p) => p.authorId === 'u-admin').authorRole, 'operator');
     assert.equal(sharedBoards.notice.find((p) => p.authorId === 'u-subadmin').authorRole, 'deputy');
     for (const board of ['notice', 'guide', 'talk', 'qna']) {
