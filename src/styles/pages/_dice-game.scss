@@ -57,6 +57,7 @@
   align-items: start;
 }
 .dice-arena {
+  position: relative;
   scroll-margin-top: 24px;
   min-width: 0;
   padding: 24px;
@@ -506,6 +507,91 @@
     color: var(--hd-color-input-text);
   }
 }
+.dice-game-start {
+  position: absolute;
+  z-index: 3;
+  top: 100px;
+  inset-inline: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+  padding: 26px 16px;
+  border: 1px solid var(--hd-color-accent);
+  border-radius: 16px;
+  color: var(--hd-color-accent);
+  background: var(--hd-color-background);
+  box-shadow: 0 12px 40px var(--hd-color-palette-0005);
+  pointer-events: none;
+  animation: dice-game-entry 1800ms ease both;
+  span {
+    font-size: var(--hd-font-size-14);
+  }
+  strong {
+    font-size: var(--hd-font-size-24);
+  }
+  small {
+    color: var(--hd-color-text-muted);
+  }
+}
+.dice-next-game {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid var(--hd-color-accent);
+  border-radius: 12px;
+  color: var(--hd-color-accent);
+  background: var(--hd-color-input);
+  strong {
+    font-size: var(--hd-font-size-14);
+  }
+  p {
+    margin: 5px 0 0;
+    color: var(--hd-color-text-muted);
+    font-size: var(--hd-font-size-12);
+  }
+}
+.dice-next-count {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: var(--hd-color-background);
+  background: var(--hd-color-accent);
+  font-size: var(--hd-font-size-24);
+  font-weight: 700;
+  animation: dice-count-entry 250ms ease-out;
+}
+@keyframes dice-game-entry {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.94);
+  }
+  12%,
+  78% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+@keyframes dice-count-entry {
+  from {
+    transform: scale(1.15);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+.dice-multipliers[data-round='2'] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 .dice-rules {
   padding: 20px;
   margin-top: 22px;
@@ -560,11 +646,12 @@
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transform: rotateX(-12deg) rotateY(18deg) rotateX(var(--dice-x)) rotateY(var(--dice-y));
+  transform: rotateX(var(--dice-tilt-x)) rotateY(var(--dice-tilt-y)) rotateZ(var(--dice-tilt-z))
+    rotateX(var(--dice-x)) rotateY(var(--dice-y));
   transition: transform 400ms ease;
 }
 .dice-cube.is-rolling {
-  animation: dice-tumble 1800ms cubic-bezier(0.12, 0.5, 0.3, 1) both;
+  animation: dice-tumble var(--dice-duration) linear both;
 }
 .dice-face {
   position: absolute;
@@ -612,16 +699,27 @@
 }
 @keyframes dice-tumble {
   0% {
-    transform: translateY(-28px) rotateX(calc(var(--dice-x) + 720deg))
-      rotateY(calc(var(--dice-y) + 1080deg));
+    transform: translate(var(--dice-start-x), -38px) rotateX(var(--dice-tilt-x))
+      rotateY(var(--dice-tilt-y)) rotateZ(var(--dice-tilt-z))
+      rotateX(calc(var(--dice-x) + var(--dice-spin-x)))
+      rotateY(calc(var(--dice-y) + var(--dice-spin-y)));
+    animation-timing-function: cubic-bezier(0.12, 0.65, 0.25, 1);
   }
-  65% {
-    transform: translateY(6px) rotateX(calc(var(--dice-x) + 120deg))
-      rotateY(calc(var(--dice-y) + 180deg));
+  72% {
+    transform: translateY(5px) rotateX(var(--dice-tilt-x)) rotateY(var(--dice-tilt-y))
+      rotateZ(var(--dice-tilt-z)) rotateX(calc(var(--dice-x) - 18deg))
+      rotateY(calc(var(--dice-y) + 24deg));
+    animation-timing-function: ease-out;
+  }
+  88% {
+    transform: translateY(-4px) rotateX(var(--dice-tilt-x)) rotateY(var(--dice-tilt-y))
+      rotateZ(var(--dice-tilt-z)) rotateX(calc(var(--dice-x) + 5deg))
+      rotateY(calc(var(--dice-y) - 7deg));
+    animation-timing-function: ease-in-out;
   }
   100% {
-    transform: translateY(0) rotateX(-12deg) rotateY(18deg) rotateX(var(--dice-x))
-      rotateY(var(--dice-y));
+    transform: translateY(0) rotateX(var(--dice-tilt-x)) rotateY(var(--dice-tilt-y))
+      rotateZ(var(--dice-tilt-z)) rotateX(var(--dice-x)) rotateY(var(--dice-y));
   }
 }
 @media (max-width: t.breakpoint('mobile')) {
@@ -713,6 +811,10 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .dice-game-start,
+  .dice-next-count {
+    animation: none;
+  }
   .dice-cube.is-rolling {
     animation: none;
   }

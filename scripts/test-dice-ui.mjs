@@ -115,7 +115,9 @@ try {
     status,
     revision,
     stake: 100,
-    round: status === 'finished' ? 3 : status === 'playing' ? 1 : 0,
+    round: status === 'finished' ? 4 : status === 'playing' ? 1 : 0,
+    roundCount: 4,
+    firstDiePublic: true,
     players: [
       { id: 'me', nickname: '나', dice: [1], sum: 1, bet: 0 },
       { id: peer, nickname, dice: [2], sum: 2, bet: 0 },
@@ -175,6 +177,13 @@ try {
   );
   assert.equal(scrolls.length, 1, 'Desktop players scroll to the arena at game start');
   assert.equal(document.activeElement, document.querySelector('.dice-arena'));
+  assert.equal(document.querySelectorAll('.dice-turns > span').length, 4);
+  assert.equal(document.querySelectorAll('.dice-history > span').length, 8);
+  assert.equal(
+    document.querySelectorAll('.dice-face b').length,
+    0,
+    'Both first dice have visible numbered faces',
+  );
   await focus();
   await reply(calls.at(-1), snapshot(game('new-game', 'new', '새대원', 'invited', 1), 4000));
   assert.equal(
@@ -204,21 +213,51 @@ try {
   assert.match(document.querySelector('.dice-continuation').textContent, /나님이 이번 판까지만/);
   window.matchMedia = () => ({ matches: true });
   await focus();
-  await reply(calls.at(-1), snapshot(game('rematch', 'new', '새대원', 'playing', 1), 5000));
+  await reply(
+    calls.at(-1),
+    snapshot({ ...game('rematch', 'new', '새대원', 'playing', 1), matchNumber: 2 }, 5000),
+  );
+  assert.match(document.querySelector('.dice-game-start').textContent, /다음 게임 시작2번째 게임/);
   assert.equal(scrolls.length, 2, 'A new match scrolls on mobile as well');
   assert.equal(
     scrolls.at(-1).options.behavior,
     'instant',
     'Reduced-motion preference is respected',
   );
+  for (const [round, max] of [
+    [2, 5],
+    [3, 10],
+  ]) {
+    await focus();
+    await reply(
+      calls.at(-1),
+      snapshot(
+        { ...game('rematch', 'new', '새대원', 'playing', round), round, readyAt: 0 },
+        5000 + round * 100,
+      ),
+    );
+    assert.deepEqual(
+      [...document.querySelectorAll('.dice-multipliers button')].map(
+        (button) => button.textContent,
+      ),
+      Array.from({ length: max - 1 }, (_, index) => `${index + 2}배`),
+    );
+    assert.ok(
+      document
+        .querySelector('.dice-continuation')
+        .compareDocumentPosition(document.querySelector('.dice-duel')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      'Stop control precedes the dice on PC and mobile',
+    );
+  }
   // A pending poll from before the next invite must not replace its response.
   await focus();
-  await reply(calls.at(-1), snapshot(game('rematch', 'new', '새대원', 'finished', 2), 6000));
+  await reply(calls.at(-1), snapshot(game('rematch', 'new', '새대원', 'finished', 4), 6000));
   await focus();
   const stale = calls.at(-1);
   await React.act(async () => document.querySelector('[aria-label="이전대원님 초대"]').click());
   await reply(calls.at(-1), snapshot(game('third', 'old', '이전대원'), 8000));
-  await reply(stale, snapshot(game('rematch', 'new', '새대원', 'finished', 2), 7000));
+  await reply(stale, snapshot(game('rematch', 'new', '새대원', 'finished', 4), 7000));
   assert.equal(probe.data.game.id, 'third');
   assert.match(
     document.querySelector('.dice-empty-table').textContent,

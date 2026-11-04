@@ -128,6 +128,7 @@ try {
   now = delivered.expiresAt - 1;
   call('b', 'accept', { gameId: delayed.id });
   assert.equal(db.diceGames.at(-1).status, 'playing');
+  assert.equal(db.diceGames.at(-1).matchNumber, 1);
   db = make();
   const expiring = invite();
   const received = presence('b', 'site').game;
@@ -138,7 +139,8 @@ try {
   db = originalDb;
   let game = accept(invite());
   const own = presence('a').game;
-  assert.deepEqual(own.players.find((p) => p.id === 'b').dice, []);
+  assert.deepEqual(own.players.find((p) => p.id === 'b').dice, [game.dice.b[0]]);
+  assert.equal(own.roundCount, 4);
   assert.equal(own.players.find((p) => p.id === 'b').sum, null);
   assert.equal(own.players.find((p) => p.id === 'a').dice.length, 1);
   decide('a', game);
@@ -165,18 +167,25 @@ try {
   assert.equal(db.users[0].points.current, 9900);
   assert.throws(() => decide('a', game, 'call', 11), { status: 400 });
   decide('a', game, 'call', 2);
-  decide('b', game, 'call', 10);
+  assert.throws(() => decide('b', game, 'call', 6), { status: 400 });
+  decide('b', game, 'call', 5);
+  assert.equal(game.round, 3);
+  assert.equal(game.status, 'playing');
+  assert.deepEqual(presence('a').game.players.find((p) => p.id === 'b').dice, [game.dice.b[0]]);
+  now += 1800;
+  decide('a', game, 'call', 2);
+  decide('b', game, 'call', 2);
   assert.equal(game.status, 'revealing');
   assert.equal(presence('a').game.players.find((p) => p.id === 'b').sum, null);
-  game.dice.a = [6, 6, 6];
-  game.dice.b = [1, 1, 1];
+  game.dice.a = [6, 6, 6, 6];
+  game.dice.b = [1, 1, 1, 1];
   now = game.revealAt;
   const revealed = presence('a').game;
   assert.equal(revealed.winnerId, 'a');
-  assert.equal(revealed.pot, 1400);
-  assert.equal(revealed.players.find((p) => p.id === 'b').sum, 3);
-  assert.equal(db.users[0].points.current, 11100);
-  assert.equal(db.users[1].points.current, 8900);
+  assert.equal(revealed.pot, 1300);
+  assert.equal(revealed.players.find((p) => p.id === 'b').sum, 4);
+  assert.equal(db.users[0].points.current, 10800);
+  assert.equal(db.users[1].points.current, 9200);
   const ledgerSize = db.pointLedger.length;
   settleDiceGames(db, now);
   decide('a', game, 'call', 2, 2);
@@ -191,6 +200,7 @@ try {
   presence('b');
   assert.equal(db.diceGames.length, 3);
   assert.equal(db.diceGames.at(-1).status, 'playing');
+  assert.equal(db.diceGames.at(-1).matchNumber, 2);
   presence('a');
   presence('b');
   assert.equal(db.diceGames.length, 3);
@@ -231,6 +241,7 @@ try {
   db = make();
   const waitingGame = accept(invite());
   decide('a', waitingGame, 'die');
+  decide('b', waitingGame, 'die');
   presence('a');
   presence('b');
   now += 5000;
@@ -255,9 +266,12 @@ try {
       }
       if (mode === 'tie') {
         decide('a', test, 'call', 3);
-        decide('b', test, 'call', 8);
-        test.dice.a = [1, 2, 3];
-        test.dice.b = [3, 2, 1];
+        decide('b', test, 'call', 5);
+        now += 1800;
+        decide('a', test, 'call', 2);
+        decide('b', test, 'call', 4);
+        test.dice.a = [1, 2, 3, 4];
+        test.dice.b = [4, 3, 2, 1];
         now = test.revealAt;
         settleDiceGames(db, now);
         assert.equal(test.winnerId, null);
@@ -295,8 +309,62 @@ try {
   decide('a', poor);
   decide('b', poor);
   now += 1800;
-  assert.throws(() => decide('a', poor, 'call', 10), { status: 400 });
-  assert.equal(db.users[0].points.current, 9000);
+  db.users[0].points.current = 1000;
+  assert.throws(() => decide('a', poor, 'call', 5), { status: 400 });
+  assert.equal(db.users[0].points.current, 1000);
+  for (const turn of [1, 2, 3]) {
+    for (const choices of [
+      ['die', 'die'],
+      ['die', 'call'],
+      ['call', 'die'],
+    ]) {
+      for (const order of [
+        ['a', 'b'],
+        ['b', 'a'],
+      ]) {
+        db = make();
+        const test = accept(invite());
+        while (test.round < turn) {
+          decide('a', test, 'call', 2);
+          decide('b', test, 'call', 3);
+          now += 1800;
+        }
+        const prior = { ...test.bets };
+        const choose = (id) => decide(id, test, choices[id === 'a' ? 0 : 1], id === 'a' ? 2 : 5);
+        choose(order[0]);
+        assert.equal(test.status, 'playing', 'First DIE waits for both decisions');
+        const peerView = presence(order[1]).game;
+        assert.equal(peerView.players.find((p) => p.id === order[0]).decision, 'locked');
+        assert.equal(peerView.players.find((p) => p.id === order[0]).bet, prior[order[0]]);
+        assert.equal(
+          peerView.pot,
+          prior.a + prior.b,
+          'Pending CALL amounts cannot disclose a choice',
+        );
+        choose(order[1]);
+        const winner = choices[0] === choices[1] ? null : choices[0] === 'call' ? 'a' : 'b';
+        assert.equal(test.winnerId, winner);
+        assert.equal(test.status, 'finished');
+        assert.equal(presence('a').game.pot, prior.a + prior.b, 'Only earlier turns are contested');
+        assert.equal(
+          db.users[0].points.current,
+          winner === 'a' ? 10000 + prior.b : winner === 'b' ? 10000 - prior.a : 10000,
+        );
+        assert.equal(db.users[1].points.current, 20000 - db.users[0].points.current);
+        const entries = db.pointLedger.length;
+        choose(order[1]);
+        settleDiceGames(db, now);
+        assert.equal(db.pointLedger.length, entries, 'Retry cannot repeat refunds or payout');
+      }
+    }
+  }
+  db = make();
+  const dieTimeout = accept(invite());
+  decide('a', dieTimeout, 'die');
+  now = dieTimeout.deadlineAt;
+  settleDiceGames(db, now);
+  assert.equal(dieTimeout.winnerId, null, 'DIE plus an unanswered turn is a draw');
+  assert.equal(dieTimeout.autoContinue, false);
   console.log(
     'PASS: dice invitations, private rolls, atomic bets/settlement, automatic rounds, stop/navigation/deadline races, refresh recovery, disconnect/timeout/low-balance termination',
   );

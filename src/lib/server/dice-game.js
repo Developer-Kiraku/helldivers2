@@ -1,7 +1,7 @@
 import { randomInt, randomUUID } from 'node:crypto';
 import { fail } from './auth';
 import { transferGamePoints } from './points.mjs';
-import { diceInviteMs } from '../dice-rules.mjs';
+import { diceInviteMs, diceMaxMultiplier } from '../dice-rules.mjs';
 
 export const diceStakeOptions = [10, 100, 1000];
 const active = (game) =>
@@ -9,6 +9,11 @@ const active = (game) =>
   (game.status === 'finished' && game.autoContinue && !game.nextGameId);
 const member = (db, id) => db.users.find((user) => user.id === id);
 const balance = (db, id) => member(db, id)?.points?.current || 0;
+const rounds = (game) => (game.rulesVersion === 2 ? 4 : 3);
+const currentBet = (game, id) => {
+  const action = game.actions[game.round]?.[id];
+  return action?.choice === 'call' ? game.stake * action.multiplier : 0;
+};
 const isLoggedIn = (db, id, now) =>
   (db.sessions || []).some(
     (session) => session.userId === id && Date.parse(session.expiresAt) > now,
@@ -62,11 +67,28 @@ function continueSeries(db, game, now) {
     stopSeries(game, 'left');
     return;
   }
-  game.nextGameId = createGame(db, game.players, game.stake, now, false).id;
+  game.nextGameId = createGame(
+    db,
+    game.players,
+    game.stake,
+    now,
+    false,
+    (game.matchNumber || 1) + 1,
+  ).id;
   game.revision++;
 }
 function finish(db, game, winnerId, reason, now) {
   if (game.status === 'finished') return;
+  // A folded turn never joins the contested pot. Return its reserved CALLs
+  // before awarding only the money committed in completed earlier turns.
+  if (reason !== 'showdown') {
+    for (const id of game.players) {
+      const refund = currentBet(game, id);
+      if (!refund) continue;
+      transferGamePoints(db, id, `dice:${game.id}:refund:${game.round}`, refund, game.id);
+      game.bets[id] -= refund;
+    }
+  }
   const pot = game.players.reduce((sum, id) => sum + game.bets[id], 0);
   for (const id of game.players) {
     const amount = winnerId ? (id === winnerId ? pot : 0) : game.bets[id];
@@ -114,7 +136,7 @@ export function settleDiceGames(db, now = Date.now()) {
       if (unavailable.length || now >= game.deadlineAt) {
         const folded = unavailable.length
           ? unavailable
-          : game.players.filter((id) => !game.actions[game.round]?.[id]);
+          : game.players.filter((id) => game.actions[game.round]?.[id]?.choice !== 'call');
         finish(
           db,
           game,
@@ -148,6 +170,9 @@ function publicGame(db, game, actor) {
     status: game.status,
     stake: game.stake,
     round: game.round,
+    roundCount: rounds(game),
+    matchNumber: game.matchNumber || 1,
+    firstDiePublic: game.rulesVersion === 2,
     hostId: game.players[0],
     expiresAt: game.expiresAt,
     receivedAt: game.receivedAt || null,
@@ -164,16 +189,32 @@ function publicGame(db, game, actor) {
     rematch: [],
     rematchDeclined: true,
     nextGameId: game.nextGameId || null,
-    pot: game.players.reduce((sum, id) => sum + game.bets[id], 0),
+    pot: game.players.reduce(
+      (sum, id) =>
+        sum +
+        game.bets[id] -
+        (game.status === 'playing' && id !== actor.id ? currentBet(game, id) : 0),
+      0,
+    ),
     players: game.players.map((id) => ({
       id,
       nickname: member(db, id)?.status === 'active' ? member(db, id).nickname : '탈퇴한 회원',
       photo: member(db, id)?.photo || '',
-      bet: game.bets[id],
-      dice: revealed || id === actor.id ? game.dice[id] : [],
+      bet:
+        game.bets[id] - (game.status === 'playing' && id !== actor.id ? currentBet(game, id) : 0),
+      dice:
+        revealed || id === actor.id
+          ? game.dice[id]
+          : game.rulesVersion === 2
+            ? game.dice[id].slice(0, 1)
+            : [],
       sum:
         revealed || id === actor.id ? game.dice[id].reduce((sum, value) => sum + value, 0) : null,
-      decision: game.actions[game.round]?.[id]?.choice || null,
+      decision: game.actions[game.round]?.[id]
+        ? revealed || id === actor.id
+          ? game.actions[game.round][id].choice
+          : 'locked'
+        : null,
     })),
   };
 }
@@ -204,9 +245,11 @@ function snapshot(db, actor, now, page = '') {
         : [],
   };
 }
-function createGame(db, players, stake, now, invited = true) {
+function createGame(db, players, stake, now, invited = true, matchNumber = 1) {
   const game = {
     id: randomUUID(),
+    rulesVersion: 2,
+    matchNumber,
     players,
     stake,
     status: invited ? 'invited' : 'playing',
@@ -343,7 +386,12 @@ export function handleDiceGame(db, actor, segments, method, input) {
       beginRound(game, now);
     }
   } else if (action === 'decision') {
-    if (![1, 2].includes(input.round) || !['call', 'die'].includes(input.choice))
+    if (
+      !Number.isInteger(input.round) ||
+      input.round < 1 ||
+      input.round >= rounds(game) ||
+      !['call', 'die'].includes(input.choice)
+    )
       fail(400, 'CALL 또는 DIE를 선택해주세요.');
     const previous = game.actions[input.round]?.[actor.id];
     const multiplier = input.round === 1 ? 1 : input.multiplier;
@@ -361,29 +409,27 @@ export function handleDiceGame(db, actor, segments, method, input) {
     game.actions[input.round] ||= {};
     if (input.choice === 'die') {
       game.actions[input.round][actor.id] = { choice: 'die' };
-      finish(
-        db,
-        game,
-        game.players.find((id) => id !== actor.id),
-        'die',
-        now,
-      );
     } else {
       if (
         !Number.isInteger(multiplier) ||
         multiplier < (input.round === 1 ? 1 : 2) ||
-        multiplier > 10
+        multiplier > diceMaxMultiplier(input.round)
       )
-        fail(400, '2~10배 중 선택해주세요.');
+        fail(400, `2~${diceMaxMultiplier(input.round)}배 중 선택해주세요.`);
       const amount = game.stake * multiplier;
       if (balance(db, actor.id) < amount) fail(400, '베팅할 포인트가 부족합니다.');
       transferGamePoints(db, actor.id, 'dice:' + game.id + ':bet:' + input.round, -amount, game.id);
       game.bets[actor.id] += amount;
       game.actions[input.round][actor.id] = { choice: 'call', multiplier };
-      game.revision++;
-      if (game.players.every((id) => game.actions[input.round][id])) {
+    }
+    game.revision++;
+    if (game.players.every((id) => game.actions[input.round][id])) {
+      const callers = game.players.filter((id) => game.actions[input.round][id].choice === 'call');
+      if (callers.length < 2) {
+        finish(db, game, callers.length === 1 ? callers[0] : null, 'die', now);
+      } else {
         beginRound(game, now);
-        if (game.round === 3) {
+        if (game.round === rounds(game)) {
           game.status = 'revealing';
           game.revealAt = now + 2200;
         }

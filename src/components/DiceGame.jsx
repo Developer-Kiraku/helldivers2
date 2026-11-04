@@ -16,6 +16,7 @@ import { useDiceGame } from './DiceGameProvider';
 import Dice3D from './Dice3D';
 import Avatar from './Avatar';
 import { Button } from './ui';
+import { diceMaxMultiplier } from '@/lib/dice-rules.mjs';
 
 const number = (value) => (value || 0).toLocaleString('ko-KR');
 export default function DiceGame() {
@@ -33,6 +34,11 @@ export default function DiceGame() {
   const active =
     ['invited', 'playing', 'revealing'].includes(game?.status) || Boolean(game?.autoContinue);
   const inProgress = playing || revealing;
+  const roundCount = game?.roundCount || 4;
+  const matchNumber = game?.matchNumber || 1;
+  const maxMultiplier = diceMaxMultiplier(game?.round || 1);
+  const selectedMultiplier = Math.min(multiplier, maxMultiplier);
+  useEffect(() => setMultiplier(2), [game?.id, game?.round]);
   const arenaRef = useRef(null);
   useEffect(() => {
     if (!inProgress) return;
@@ -50,7 +56,7 @@ export default function DiceGame() {
   }, [game?.id, inProgress]);
   const rolling = (playing || revealing) && now < game.readyAt;
   const preview = role !== actualRole;
-  const bet = (game?.stake || stake) * (game?.round === 2 ? multiplier : 1);
+  const bet = (game?.stake || stake) * selectedMultiplier;
   const waiting = Boolean(mine?.decision);
   const canChoose = playing && !rolling && !waiting && !busy && !preview;
   const seconds = Math.max(0, ((game?.deadlineAt || now) - now) / 1000);
@@ -89,7 +95,7 @@ export default function DiceGame() {
             <Dices size={29} />
             민주주의 주사위
           </h1>
-          <p>세 번의 주사위, 두 번의 선택. 마지막에 합계가 높은 대원이 승리합니다.</p>
+          <p>첫 주사위는 공개, 다음 두 번은 비공개. 네 번째 주사위까지의 합으로 승부합니다.</p>
         </div>
         <div className="dice-wallet">
           <Coins size={20} />
@@ -129,11 +135,45 @@ export default function DiceGame() {
             </span>
             <span>{game ? '최소 베팅 ' + number(game.stake) + ' P' : '1 : 1 POINT MATCH'}</span>
           </div>
+          {playing && game.round === 1 && rolling && (
+            <div key={game.id} className="dice-game-start" role="status">
+              <Dices size={28} />
+              <span>{matchNumber > 1 ? '다음 게임 시작' : '게임 시작'}</span>
+              <strong>{matchNumber}번째 게임</strong>
+              <small>첫 주사위를 공개합니다</small>
+            </div>
+          )}
+          {!pendingInvite && (inProgress || finished) && (
+            <div className={'dice-continuation' + (!game.autoContinue ? ' is-stopping' : '')}>
+              <div role="status" aria-live="polite">
+                <strong>
+                  {game.autoContinue
+                    ? '연속 게임'
+                    : finished
+                      ? '연속 게임 종료'
+                      : '이번 판 종료 후 마칩니다'}
+                </strong>
+                <p>{continuationMessage}</p>
+              </div>
+              {game.autoContinue && (
+                <Button
+                  type="button"
+                  disabled={busy || preview}
+                  onClick={() => act('stop', { gameId: game.id })}
+                >
+                  <Square size={14} /> 이번 판까지만
+                </Button>
+              )}
+            </div>
+          )}
           {inProgress && (
             <div className="dice-match-status" role="status" aria-live="polite" aria-atomic="true">
               <Dices size={24} />
               <div>
-                <strong>{game.round === 1 ? '승부가 시작되었습니다!' : '게임 진행 중'}</strong>
+                <strong>
+                  {matchNumber}번째 게임 ·{' '}
+                  {game.round === 1 ? '승부가 시작되었습니다!' : '게임 진행 중'}
+                </strong>
                 <p>
                   {opponent?.nickname}님과의 승부 · {game.round}번째 턴
                 </p>
@@ -141,7 +181,13 @@ export default function DiceGame() {
             </div>
           )}
           <div className="dice-turns">
-            {['첫 번째 선택', '두 번째 선택', '마지막 공개'].map((label, index) => (
+            {Array.from({ length: roundCount }, (_, index) =>
+              index === roundCount - 1
+                ? '최종 공개'
+                : index === 0
+                  ? '첫 공개 · 선택'
+                  : `${index + 1}번째 선택`,
+            ).map((label, index) => (
               <span
                 key={label}
                 className={
@@ -199,7 +245,8 @@ export default function DiceGame() {
                 {[mine, opponent].map((player) => {
                   const self = player.id === user.id;
                   const hidden = !self && !finished;
-                  const value = hidden ? null : player.dice.at(-1);
+                  const firstVisible = game.firstDiePublic && game.round === 1;
+                  const value = hidden && !firstVisible ? null : player.dice.at(-1);
                   return (
                     <div
                       key={player.id}
@@ -216,30 +263,46 @@ export default function DiceGame() {
                       </div>
                       <div className="dice-player-score">
                         <small>
-                          {hidden ? (
+                          {hidden && !firstVisible ? (
                             <>
                               <LockKeyhole size={12} /> 비공개 합계
                             </>
                           ) : self ? (
                             '나의 합계'
+                          ) : firstVisible && !finished ? (
+                            '공개된 첫 주사위'
                           ) : (
                             '상대 합계'
                           )}
                         </small>
-                        <strong>{hidden || rolling ? '—' : player.sum}</strong>
+                        <strong>
+                          {rolling || (hidden && !firstVisible)
+                            ? '—'
+                            : hidden
+                              ? player.dice[0]
+                              : player.sum}
+                        </strong>
                       </div>
                       <Dice3D
                         key={game.id + ':' + game.round + ':' + player.id}
+                        rollKey={game.id + ':' + game.round + ':' + player.id}
+                        durationMs={game.readyAt - now}
                         value={value}
                         rolling={rolling}
                       />
                       <div className="dice-history">
-                        {[0, 1, 2].map((index) => (
+                        {Array.from({ length: roundCount }, (_, index) => (
                           <span key={index}>
-                            {hidden ? (
+                            {index >= game.round ? (
+                              '·'
+                            ) : hidden && !(game.firstDiePublic && index === 0) ? (
                               <LockKeyhole size={13} />
                             ) : player.dice[index] != null ? (
-                              player.dice[index]
+                              rolling && index === game.round - 1 ? (
+                                '·'
+                              ) : (
+                                player.dice[index]
+                              )
                             ) : (
                               '·'
                             )}
@@ -250,7 +313,9 @@ export default function DiceGame() {
                         베팅 <b>{number(player.bet)} P</b>
                       </span>
                       {player.decision && !finished && (
-                        <span className="dice-decision">{player.decision.toUpperCase()} 완료</span>
+                        <span className="dice-decision">
+                          {self ? player.decision.toUpperCase() + ' 완료' : '선택 완료'}
+                        </span>
                       )}
                     </div>
                   );
@@ -282,19 +347,25 @@ export default function DiceGame() {
                   <div className="dice-deadline">
                     <span style={{ width: Math.min(100, (seconds / 30) * 100) + '%' }} />
                   </div>
-                  {game.round === 2 && (
-                    <div className="dice-multipliers" aria-label="두 번째 턴 베팅 배수">
-                      {Array.from({ length: 9 }, (_, index) => index + 2).map((value) => (
-                        <button
-                          key={value}
-                          type="button"
-                          aria-pressed={multiplier === value}
-                          disabled={!canChoose || wallet < game.stake * value}
-                          onClick={() => setMultiplier(value)}
-                        >
-                          {value}배
-                        </button>
-                      ))}
+                  {game.round > 1 && (
+                    <div
+                      className="dice-multipliers"
+                      data-round={game.round}
+                      aria-label={`${game.round}번째 턴 베팅 배수`}
+                    >
+                      {Array.from({ length: maxMultiplier - 1 }, (_, index) => index + 2).map(
+                        (value) => (
+                          <button
+                            key={value}
+                            type="button"
+                            aria-pressed={selectedMultiplier === value}
+                            disabled={!canChoose || wallet < game.stake * value}
+                            onClick={() => setMultiplier(value)}
+                          >
+                            {value}배
+                          </button>
+                        ),
+                      )}
                     </div>
                   )}
                   <div className="dice-choice-actions">
@@ -307,7 +378,7 @@ export default function DiceGame() {
                           gameId: game.id,
                           round: game.round,
                           choice: 'call',
-                          multiplier,
+                          multiplier: selectedMultiplier,
                         })
                       }
                     >
@@ -328,7 +399,8 @@ export default function DiceGame() {
                   </div>
                   <p>
                     {wallet < bet && !waiting ? '선택한 금액을 베팅할 포인트가 부족합니다. ' : ''}
-                    DIE 또는 시간 초과 시 기존 판돈을 포기합니다.
+                    양쪽 선택 후 판정합니다. 둘 다 DIE면 무승부, 한쪽만 DIE면 이전 턴까지의 판돈으로
+                    정산합니다.
                   </p>
                 </div>
               )}
@@ -346,36 +418,32 @@ export default function DiceGame() {
                   <h2>{resultTitle}</h2>
                   <p>
                     {game.reason === 'showdown'
-                      ? '주사위 3개의 합으로 결정된 결과입니다.'
+                      ? `주사위 ${roundCount}개의 합으로 결정된 결과입니다.`
                       : game.reason === 'timeout'
                         ? '선택 시간이 초과되어 승부가 종료됐습니다.'
                         : game.reason === 'left'
                           ? '상대 회원이 탈퇴하여 승부가 종료됐습니다.'
-                          : 'DIE 선택으로 승부가 종료됐습니다.'}
+                          : !game.winnerId
+                            ? '두 대원 모두 DIE를 선택하여 베팅액을 돌려받습니다.'
+                            : '이번 턴의 베팅액은 반환하고 이전 턴까지의 판돈만 정산했습니다.'}
                   </p>
                 </div>
               )}
-              <div className={'dice-continuation' + (!game.autoContinue ? ' is-stopping' : '')}>
-                <div role="status" aria-live="polite">
-                  <strong>
-                    {game.autoContinue
-                      ? '연속 게임'
-                      : finished
-                        ? '연속 게임 종료'
-                        : '이번 판 종료 후 마칩니다'}
-                  </strong>
-                  <p>{continuationMessage}</p>
+              {finished && game.autoContinue && (
+                <div className="dice-next-game" role="status">
+                  <span className="dice-next-count" key={nextSeconds}>
+                    {nextSeconds || '·'}
+                  </span>
+                  <div>
+                    <strong>
+                      {nextSeconds > 0 ? '잠시 후 다음 게임이 시작됩니다' : '대원 접속 확인 중'}
+                    </strong>
+                    <p>
+                      {matchNumber + 1}번째 게임 · 최소 베팅 {number(game.stake)} P
+                    </p>
+                  </div>
                 </div>
-                {game.autoContinue && (
-                  <Button
-                    type="button"
-                    disabled={busy || preview}
-                    onClick={() => act('stop', { gameId: game.id })}
-                  >
-                    <Square size={14} /> 이번 판까지만
-                  </Button>
-                )}
-              </div>
+              )}
             </>
           )}
         </section>
@@ -445,20 +513,21 @@ export default function DiceGame() {
         <ol>
           <li>10·100·1,000P 중 최소 베팅액을 골라 현재 로그인 중인 대원을 초대합니다.</li>
           <li>
-            1턴에는 각자 주사위 하나를 보고 CALL 또는 DIE를 선택합니다. CALL은 최소 금액만큼
+            1턴에는 서로의 첫 주사위를 보고 CALL 또는 DIE를 선택합니다. CALL은 최소 금액만큼
             베팅합니다.
           </li>
           <li>
-            2턴에는 주사위 하나를 더 보고 최소 금액의 2~10배를 추가로 베팅합니다. 서로 다른 배수도
-            가능합니다.
+            2·3턴에는 본인의 주사위를 하나씩 더 보고 추가로 베팅합니다. 2턴은 최소 금액의 2~5배,
+            3턴은 2~10배 중 선택하며 서로 다른 배수도 가능합니다.
           </li>
           <li>
-            두 대원 모두 CALL하면 세 번째 주사위를 굴려 전부 공개합니다. 합이 높은 대원이 판돈
-            전체를 가져갑니다. 동점은 각자 베팅액을 돌려받습니다.
+            3턴까지 두 대원 모두 CALL하면 네 번째 주사위를 굴려 전부 공개합니다. 합이 높은 대원이
+            판돈 전체를 가져갑니다. 동점은 각자 베팅액을 돌려받습니다.
           </li>
           <li>
-            DIE 또는 30초 시간 초과 시 기존 판돈을 포기합니다. 두 대원 모두 선택하지 않은 채 시간이
-            지나면 각자 베팅액을 반환합니다.
+            두 대원의 선택은 모두 결정할 때까지 비공개입니다. 둘 다 DIE면 무승부로 베팅액을
+            반환합니다. 한쪽만 DIE면 해당 턴의 CALL 베팅액을 돌려준 뒤 이전 턴까지의 판돈만 상대가
+            가져갑니다. 30초 동안 선택하지 않으면 DIE로 처리합니다.
           </li>
           <li>
             결과를 5초 동안 확인한 뒤 같은 최소 금액으로 다음 판이 자동 시작됩니다. 한 명이 ‘이번
