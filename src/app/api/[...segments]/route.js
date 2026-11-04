@@ -1,6 +1,7 @@
 import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/api-keys';
 import { bulkPosts } from '@/lib/server/bulk-posts';
 import { handlePuzzle } from '@/lib/server/sliding-puzzle';
+import { dashboardRanking } from '@/lib/server/rankings';
 import { handleDiceGame } from '@/lib/server/dice-game';
 import { handlePointGrants } from '@/lib/server/point-grants';
 import {
@@ -95,7 +96,7 @@ function bootstrap(db, actor, postsMode = 'all') {
           [postsMode === 'home-summary' ? 'homePosts' : 'posts']: Object.fromEntries(
             Object.keys(boards).map((board) => [
               board,
-              postsMode === 'home-summary' && !['notice', 'guide', 'talk'].includes(board)
+              postsMode === 'home-summary' && !['notice', 'guide'].includes(board)
                 ? []
                 : db.posts
                     .filter(
@@ -106,7 +107,7 @@ function bootstrap(db, actor, postsMode = 'all') {
                         Number(b.pinned) - Number(a.pinned) ||
                         b.createdAt.localeCompare(a.createdAt),
                     )
-                    .slice(0, postsMode === 'home-summary' ? (board === 'talk' ? 6 : 5) : undefined)
+                    .slice(0, postsMode === 'home-summary' ? 5 : undefined)
                     .map((post) => {
                       const item = serializePost(db, post, actor);
                       return postsMode === 'home-summary'
@@ -154,6 +155,7 @@ async function handler(request, context) {
     const gameRequest = segments[0] === 'games' && ['dice', 'sliding-puzzle'].includes(segments[1]);
     const operationalOptions =
       gameRequest ||
+      segments[0] === 'rankings' ||
       segments[0] === 'test-player' ||
       path.startsWith('admin/test-player/') ||
       [
@@ -314,6 +316,8 @@ async function handler(request, context) {
     const write = method !== 'GET' || path === 'bootstrap' || path === 'games/sliding-puzzle/state';
     const result = await transact((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
+      if (segments[0] === 'rankings' && segments.length === 2 && method === 'GET')
+        return dashboardRanking(db, actor, segments[1], new URL(request.url).searchParams);
       if (path === 'admin/settings/point-grants') {
         const result = handlePointGrants(db, actor, method, input);
         if (method === 'POST' && result.created)

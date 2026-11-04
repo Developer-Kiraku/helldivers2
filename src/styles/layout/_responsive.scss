@@ -72,9 +72,6 @@
   .home-board-grid {
     grid-template-columns: 1fr;
   }
-  .talk-preview-grid {
-    grid-template-columns: 1fr 1fr;
-  }
   .status-strip > div {
     padding: var(--hd-space-16);
   }
@@ -279,9 +276,6 @@
   }
   .latest-list time {
     display: none;
-  }
-  .talk-preview-grid {
-    grid-template-columns: 1fr;
   }
   .page-heading {
     align-items: flex-start;

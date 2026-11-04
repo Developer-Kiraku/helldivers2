@@ -211,9 +211,6 @@
   color: var(--hd-color-palette-95a18f);
   white-space: nowrap;
 }
-.home-talk {
-  margin-top: var(--hd-space-24);
-}
 .poll-add {
   margin: var(--hd-space-18) 0;
 }
@@ -406,29 +403,4 @@
     display: block;
     text-align: right;
   }
-}
-.talk-preview-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--hd-space-13);
-}
-.talk-preview-card {
-  display: block;
-  border: var(--hd-size-1) solid var(--hd-color-palette-3b4640);
-  background: var(--hd-color-palette-272e2a);
-  border-radius: var(--hd-radius-4);
-  padding: var(--hd-space-18);
-}
-.talk-preview-card:hover {
-  border-color: var(--hd-color-palette-6a7d6a);
-}
-.talk-preview-card small,
-.talk-preview-card footer {
-  font-size: var(--hd-font-size-12);
-  color: var(--hd-color-palette-9eb09d);
-}
-.talk-preview-card h3 {
-  font-size: var(--hd-font-size-14);
-  line-height: var(--hd-leading-1-8);
-  margin: var(--hd-space-12) 0;
 }

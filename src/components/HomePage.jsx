@@ -1,5 +1,5 @@
 'use client';
-import Nickname from './Nickname';
+import DashboardRankings from './DashboardRankings';
 import DashboardHero from './DashboardHero';
 
 import Link from 'next/link';
@@ -94,44 +94,7 @@ export default function HomePage() {
           </section>
         ))}
       </div>
-      <section className="panel home-talk">
-        <header className="section-heading">
-          <h2>
-            <Icon name="talk" />
-            헬다이버톡
-          </h2>
-          <Link href="/boards/talk">전체 보기 ↗</Link>
-        </header>
-        <div className="talk-preview-grid">
-          {posts.talk.slice(0, 6).map((post) => (
-            <Link key={post.id} className="talk-preview-card" href={`/boards/talk/${post.id}`}>
-              <small>
-                {post.category}
-                {signedIn ? (
-                  <>
-                    {' '}
-                    · <Nickname name={post.author} role={post.authorRole} own={post.own} />
-                  </>
-                ) : (
-                  ' · 회원 전용'
-                )}
-              </small>
-              <h3 title={signedIn ? post.title : undefined}>
-                {signedIn ? post.title : '동료들의 이야기가 기다리고 있어요.'}
-              </h3>
-              <footer>
-                {signedIn ? (
-                  <>
-                    추천 {post.likes} · 댓글 {post.comments}
-                  </>
-                ) : (
-                  <>로그인하고 읽기 →</>
-                )}
-              </footer>
-            </Link>
-          ))}
-        </div>
-      </section>
+      <DashboardRankings />
     </div>
   );
 }

@@ -8,8 +8,23 @@ import {
   comparePuzzleRecords,
 } from '../sliding-puzzle.mjs';
 
-const ranking = (db, month) =>
+export const puzzleRanking = (db, month) =>
   (db.puzzleRecords || []).filter((r) => r.month === month).sort(comparePuzzleRecords);
+export function serializePuzzleRank(db, actor, row, index) {
+  const user = db.users.find((u) => u.id === row.userId);
+  const active = user?.status === 'active';
+  return {
+    id: row.id,
+    rank: index + 1,
+    elapsedMs: row.elapsedMs,
+    moves: row.moves,
+    finishedAt: row.finishedAt,
+    own: row.userId === actor.id,
+    nickname: active ? user.nickname : '탈퇴한 회원',
+    photo: active ? user.photo || '' : '',
+    role: active ? user.role : 'member',
+  };
+}
 const session = (run, now) => ({
   id: run.id,
   board: run.board,
@@ -59,7 +74,7 @@ function savePuzzleResult(db, run, now) {
     finishedAt: run.completedAt,
   };
   db.puzzleRecords ||= [];
-  const before = ranking(db, record.month);
+  const before = puzzleRanking(db, record.month);
   const previous = before.find((r) => r.userId === run.userId);
   const improved = !previous || comparePuzzleRecords(record, previous) < 0;
   if (improved) {
@@ -67,7 +82,7 @@ function savePuzzleResult(db, run, now) {
       (r) => r.month !== record.month || r.userId !== run.userId,
     );
     db.puzzleRecords.push(record);
-    const after = ranking(db, record.month);
+    const after = puzzleRanking(db, record.month);
     const rank = after.findIndex((r) => r.userId === run.userId) + 1;
     const oldRank = before.findIndex((r) => r.userId === run.userId) + 1;
     if (rank <= 3)
@@ -78,7 +93,7 @@ function savePuzzleResult(db, run, now) {
         notifyRank(db, old.userId, 'puzzle_rank_drop', record.month, newRank, index + 1, run.id);
     }
   }
-  const rank = ranking(db, record.month).findIndex((r) => r.userId === run.userId) + 1;
+  const rank = puzzleRanking(db, record.month).findIndex((r) => r.userId === run.userId) + 1;
   run.result = { record, improved, rank };
   return run.result;
 }
@@ -89,18 +104,8 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
   if (segments.length === 2 && method === 'GET') {
     const month = query.get('month') || puzzleMonth(now);
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) fail(400, '월을 확인해주세요.');
-    const rows = ranking(db, month);
-    const serialize = (row, index) => ({
-      rank: index + 1,
-      elapsedMs: row.elapsedMs,
-      moves: row.moves,
-      finishedAt: row.finishedAt,
-      own: row.userId === actor.id,
-      nickname:
-        db.users.find((u) => u.id === row.userId)?.status === 'active'
-          ? db.users.find((u) => u.id === row.userId).nickname
-          : '탈퇴한 회원',
-    });
+    const rows = puzzleRanking(db, month);
+    const serialize = (row, index) => serializePuzzleRank(db, actor, row, index);
     const own = rows.findIndex((r) => r.userId === actor.id);
     return {
       month,

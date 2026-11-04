@@ -139,6 +139,7 @@ async function run() {
   await import('./test-tier-list-ui.mjs');
   await import('./test-board-management-ui.mjs');
   await import('./test-dashboard-hero.mjs');
+  await import('./test-dashboard-rankings-ui.mjs');
   await import('./test-session-ui.mjs');
   await import('./test-sliding-puzzle.mjs');
   await import('./test-puzzle-rewards.mjs');
@@ -203,6 +204,7 @@ async function run() {
     await require('./test-puzzle-http.cjs')({ guest, admin, member, file });
     await require('./test-points-http.cjs')({ guest, admin, deputy, member, apprentice, file });
     await require('./test-dice-http.cjs')({ guest, admin, member, apprentice, file });
+    await require('./test-dashboard-rankings-http.cjs')({ guest, member, file });
     await require('./test-test-player-http.cjs')({ guest, admin, deputy, member, client, file });
     await require('./test-point-grants-http.cjs')({
       guest,
@@ -620,7 +622,11 @@ async function run() {
     );
     assert.equal(homeBootstrap.homePosts.notice.length, Math.min(5, sharedBoards.notice.length));
     assert.equal(homeBootstrap.homePosts.guide.length, Math.min(5, sharedBoards.guide.length));
-    assert.equal(homeBootstrap.homePosts.talk.length, Math.min(6, sharedBoards.talk.length));
+    assert.equal(
+      homeBootstrap.homePosts.talk.length,
+      0,
+      'Dashboard no longer requests talk previews',
+    );
     assert.equal(homeBootstrap.homePosts.qna.length, 0);
     assert.ok(
       homeBootstrap.homePosts.guide.every(

@@ -24,8 +24,7 @@
 .home-board-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.latest-panel,
-.talk-preview-card {
+.latest-panel {
   min-width: 0;
 }
 .latest-title,
@@ -47,11 +46,6 @@
 .board-title > .community-icon,
 .latest-list time {
   flex-shrink: 0;
-}
-.talk-preview-card h3 {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .board-mobile-views {
   display: none;

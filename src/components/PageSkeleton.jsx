@@ -126,7 +126,10 @@ export default function PageSkeleton({ path }) {
           <Rows />
           <Rows />
         </div>
-        <Card />
+        <div className="sk-grid">
+          <Rows />
+          <Rows />
+        </div>
       </>
     );
   else if (editor)
