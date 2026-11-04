@@ -385,6 +385,10 @@
 }
 .dice-member-list {
   margin-top: 16px;
+  max-height: 420px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 .dice-member {
   display: flex;
@@ -578,6 +582,9 @@
   }
 }
 @media (max-width: t.breakpoint('mobile')) {
+  .dice-member-list {
+    max-height: 280px;
+  }
   .dice-layout:has(.dice-empty-table) .dice-lobby {
     order: -1;
   }
