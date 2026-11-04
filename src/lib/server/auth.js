@@ -6,7 +6,7 @@ import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { config } from './config';
 import { createToken, tokenHash } from './passwords';
-import { readStore } from './store';
+import { readStore, operationalCollections } from './store';
 import { isMuted } from '../member-mute.mjs';
 
 export class AppError extends Error {
@@ -105,8 +105,10 @@ export const getCurrentUser = cache(async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get(config.cookie)?.value;
   if (!token) return null;
-  return readStore((db) =>
-    publicUser(presentationUser(userForToken(db, token), cookieStore.get(viewRoleCookie)?.value)),
+  return readStore(
+    (db) =>
+      publicUser(presentationUser(userForToken(db, token), cookieStore.get(viewRoleCookie)?.value)),
+    { collections: operationalCollections },
   );
 });
 export async function requirePageUser(roles) {

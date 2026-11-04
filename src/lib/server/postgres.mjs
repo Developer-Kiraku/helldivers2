@@ -101,23 +101,29 @@ function rowsFor(db, key) {
   }
   return rows;
 }
-const snapshot = (db) =>
-  Object.fromEntries(Object.keys(collections).map((key) => [key, rowsFor(db, key)]));
-async function load(client, metadata) {
+const metadataFor = (db) =>
+  Object.fromEntries(Object.entries(db).filter(([key]) => !collections[key]));
+const snapshot = (db, keys = Object.keys(collections)) =>
+  Object.fromEntries(keys.map((key) => [key, rowsFor(db, key)]));
+async function load(client, metadata, keys) {
   const db = { ...metadata };
   // Keep the same locked snapshot without a network round trip for every table.
-  const union = Object.entries(collections)
-    .map(([key, [table]]) => `SELECT '${key}' AS collection,position,id,data FROM ${table}`)
+  const union = keys
+    .map((key) => `SELECT '${key}' AS collection,position,id,data FROM ${collections[key][0]}`)
     .join(' UNION ALL ');
   const { rows } = await client.query(
     `SELECT collection,data FROM (${union}) AS entities ORDER BY collection,position,id`,
   );
-  for (const key of Object.keys(collections)) db[key] = [];
+  for (const key of keys) db[key] = [];
   for (const row of rows) db[row.collection].push(row.data);
   return db;
 }
-async function save(client, db, previous = {}) {
-  for (const [key, [table]] of Object.entries(collections)) {
+async function save(client, db, previous = {}, keys = Object.keys(collections), previousMetadata) {
+  for (const key of Object.keys(collections))
+    if (!keys.includes(key) && db[key] !== undefined)
+      throw Error('Collection outside transaction scope: ' + key);
+  for (const key of keys) {
+    const [table] = collections[key];
     const before = previous[key] || new Map(),
       after = rowsFor(db, key);
     const removed = [...before.keys()].filter((id) => !after.has(id));
@@ -132,21 +138,25 @@ async function save(client, db, previous = {}) {
       );
     }
   }
-  const metadata = Object.fromEntries(Object.entries(db).filter(([key]) => !collections[key]));
-  await client.query('UPDATE hd_meta SET data=$1::jsonb WHERE id=1', [JSON.stringify(metadata)]);
+  const metadata = JSON.stringify(metadataFor(db));
+  if (metadata !== previousMetadata)
+    await client.query('UPDATE hd_meta SET data=$1::jsonb WHERE id=1', [metadata]);
 }
 export async function postgresTransaction(
   pool,
   callback,
-  { write = true, seed, settle = () => false } = {},
+  { write = true, seed, settle = () => false, collections: selected } = {},
 ) {
+  const keys = selected ? [...new Set(selected)] : Object.keys(collections);
+  if (!keys.length || keys.some((key) => !Object.hasOwn(collections, key)))
+    throw Error('Invalid transaction scope');
   const client = await pool.connect();
   let done = false;
   try {
     await client.query('BEGIN');
     const { rows } = await client.query('SELECT data FROM hd_meta WHERE id=1 FOR UPDATE');
     if (!rows.length) throw Error('Database is not initialized. Run npm run db:migrate');
-    let db = await load(client, rows[0].data);
+    let db = await load(client, rows[0].data, keys);
     if (!db.schemaVersion) {
       db = seed
         ? seed()
@@ -155,14 +165,19 @@ export async function postgresTransaction(
             ...Object.fromEntries(Object.keys(collections).map((key) => [key, []])),
           };
       await save(client, db);
+      if (selected)
+        db = { ...metadataFor(db), ...Object.fromEntries(keys.map((key) => [key, db[key] || []])) };
     }
-    const before = snapshot(db);
-    if (settle(db)) await save(client, db, before);
-    const baseline = snapshot(db);
+    const before = snapshot(db, keys);
+    const beforeMetadata = JSON.stringify(metadataFor(db));
+    const settled = settle(db);
+    if (settled) await save(client, db, before, keys, beforeMetadata);
+    const baseline = settled ? snapshot(db, keys) : before;
+    const baselineMetadata = settled ? JSON.stringify(metadataFor(db)) : beforeMetadata;
     await client.query('SAVEPOINT domain_operation');
     try {
       const result = await callback(db);
-      if (write) await save(client, db, baseline);
+      if (write) await save(client, db, baseline, keys, baselineMetadata);
       await client.query('COMMIT');
       done = true;
       return result;

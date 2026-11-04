@@ -100,7 +100,11 @@ export function CommunityProvider({ children, initialUser = null, apiPrefix = ''
   const refresh = useCallback(async () => {
     const sequence = ++refreshSequence.current;
     try {
-      const response = await fetch('/api/' + apiPrefix + 'bootstrap', { cache: 'no-store' });
+      const includePosts = pathname === '/' || pathname.startsWith('/boards/');
+      const response = await fetch(
+        '/api/' + apiPrefix + 'bootstrap' + (includePosts ? '' : '?posts=none'),
+        { cache: 'no-store' },
+      );
       if (sequence !== refreshSequence.current) return;
       if (response.status === 401) {
         clearSession();
@@ -114,7 +118,7 @@ export function CommunityProvider({ children, initialUser = null, apiPrefix = ''
       setUser(data.user);
       setUnreadMessages(data.unreadMessages || 0);
       setUnreadNotifications(data.unreadNotifications || 0);
-      setPosts(data.posts);
+      if (data.posts) setPosts(data.posts);
       setStats(data.stats);
     } catch (error) {
       if (sequence === refreshSequence.current)

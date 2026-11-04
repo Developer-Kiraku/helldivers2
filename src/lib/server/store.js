@@ -136,7 +136,21 @@ function settleStore(db) {
     probationChanged || pointsChanged || gamesChanged || testSessionsChanged || puzzleRewardsChanged
   );
 }
-export function transaction(callback, write = true) {
+// Includes every collection used by automatic settlement, without post bodies/media.
+export const operationalCollections = [
+  'users',
+  'sessions',
+  'audit',
+  'pointLedger',
+  'pointGrants',
+  'puzzleRecords',
+  'puzzleRewards',
+  'notifications',
+  'puzzleRuns',
+  'diceGames',
+  'dicePresence',
+];
+export function transaction(callback, write = true, options = {}) {
   if (process.env.DATABASE_URL) {
     if (!shared.__hdPgPool) shared.__hdPgPool = createPool();
     if (!shared.__hdPgReady)
@@ -146,6 +160,7 @@ export function transaction(callback, write = true) {
       });
     return shared.__hdPgReady.then(() =>
       postgresTransaction(shared.__hdPgPool, callback, {
+        collections: options.collections,
         write,
         seed: createSeed,
         settle: settleStore,
@@ -162,7 +177,7 @@ export function transaction(callback, write = true) {
   shared.__hdJsonQueue = operation.catch(() => {});
   return operation;
 }
-export const readStore = (callback) => transaction(callback, false);
+export const readStore = (callback, options) => transaction(callback, false, options);
 export function audit(db, actorId, action, targetId, details = {}) {
   syncPointActivity(db, actorId, action, targetId);
   db.audit.push({

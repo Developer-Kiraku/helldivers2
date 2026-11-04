@@ -78,6 +78,14 @@ try {
   globalThis.fetch = async () => bootstrap();
   await mount(member);
   assert.match(document.body.textContent, /페이지 내용/);
+  globalThis.fetch = async () =>
+    response(200, { user: member, stats: { totalMembers: 1 }, unreadMessages: 3 });
+  await React.act(async () => context.refresh());
+  assert.equal(
+    context.posts.talk[0].title,
+    '비공개 글',
+    'A lightweight bootstrap preserves the existing post cache',
+  );
   const returnedRequests = [];
   globalThis.fetch = async (url) => {
     returnedRequests.push(url);
@@ -97,7 +105,11 @@ try {
     window.dispatchEvent(new Event('online'));
     await new Promise((resolve) => setTimeout(resolve, 150));
   });
-  assert.deepEqual(returnedRequests, ['/api/bootstrap'], 'Resume events share one data refresh');
+  assert.deepEqual(
+    returnedRequests,
+    ['/api/bootstrap?posts=none'],
+    'Non-board screens omit post bodies while resume events share one data refresh',
+  );
   assert.equal(context.unreadMessages, 3);
   await React.act(async () => {
     window.dispatchEvent(new Event('focus'));
@@ -106,7 +118,7 @@ try {
   assert.equal(returnedRequests.length, 1, 'Rapid refocus is throttled');
   let release;
   globalThis.fetch = (url) =>
-    url === '/api/bootstrap'
+    url === '/api/bootstrap?posts=none'
       ? new Promise((resolve) => {
           release = resolve;
         })

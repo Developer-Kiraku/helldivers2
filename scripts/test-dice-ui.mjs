@@ -4,6 +4,11 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { build } from 'esbuild';
 import { JSDOM } from 'jsdom';
+import { dicePollDelay } from '../src/lib/dice-rules.mjs';
+assert.equal(dicePollDelay({ onGame: false, visible: true, activeGame: false }), 5000);
+assert.equal(dicePollDelay({ onGame: false, visible: true, activeGame: true }), 1000);
+assert.equal(dicePollDelay({ onGame: true, visible: true, activeGame: false }), 1000);
+assert.equal(dicePollDelay({ onGame: true, visible: false, activeGame: true }), 15000);
 const dom = new JSDOM('<div id="root"></div>', { url: 'http://localhost/games/dice' });
 const saved = new Map();
 for (const key of [

@@ -25,7 +25,7 @@ import { canReadPost } from '@/lib/post-access.mjs';
 import { createPoll, castBallot, serializePoll, pollClosed } from '@/lib/server/polls';
 import { NextResponse } from 'next/server';
 import { randomUUID } from 'node:crypto';
-import { transaction, readStore, audit } from '@/lib/server/store';
+import { transaction, readStore, audit, operationalCollections } from '@/lib/server/store';
 import { config } from '@/lib/server/config';
 import { auditLogList } from '@/lib/server/audit-logs.mjs';
 import { isMuted, muteDurations, muteExpiry, muteNotice } from '@/lib/member-mute.mjs';
@@ -85,22 +85,29 @@ function safeReason(value) {
   if (reason.length < 2 || reason.length > 1000) fail(400, '사유를 2~1,000자로 입력해주세요.');
   return reason;
 }
-function bootstrap(db, actor) {
+function bootstrap(db, actor, includePosts = true) {
   return {
     user: publicUser(actor),
     unreadNotifications: unreadActivityCount(db, actor),
     unreadMessages: unreadMessageCount(db, actor.id),
-    posts: Object.fromEntries(
-      Object.keys(boards).map((board) => [
-        board,
-        db.posts
-          .filter((post) => post.board === board && !post.deletedAt && canReadPost(post, actor))
-          .sort(
-            (a, b) => Number(b.pinned) - Number(a.pinned) || b.createdAt.localeCompare(a.createdAt),
-          )
-          .map((post) => serializePost(db, post, actor)),
-      ]),
-    ),
+    ...(includePosts
+      ? {
+          posts: Object.fromEntries(
+            Object.keys(boards).map((board) => [
+              board,
+              db.posts
+                .filter(
+                  (post) => post.board === board && !post.deletedAt && canReadPost(post, actor),
+                )
+                .sort(
+                  (a, b) =>
+                    Number(b.pinned) - Number(a.pinned) || b.createdAt.localeCompare(a.createdAt),
+                )
+                .map((post) => serializePost(db, post, actor)),
+            ]),
+          ),
+        }
+      : {}),
     stats: {
       totalMembers: db.users.filter((user) => user.status === 'active').length,
       onlineMembers: new Set(
@@ -121,12 +128,26 @@ async function handler(request, context) {
     const { segments } = await context.params;
     const path = segments.join('/');
     const method = request.method;
+    const gameRequest = segments[0] === 'games' && ['dice', 'sliding-puzzle'].includes(segments[1]);
+    const operationalOptions =
+      gameRequest ||
+      segments[0] === 'test-player' ||
+      path.startsWith('admin/test-player/') ||
+      [
+        'admin/api-keys',
+        'admin/settings/points',
+        'admin/settings/point-grants',
+        'integrations/maps',
+      ].includes(path)
+        ? { collections: operationalCollections }
+        : {};
+    const transact = (callback, write = true) => transaction(callback, write, operationalOptions);
     if (!['GET', 'HEAD'].includes(method)) verifyOrigin(request);
     const token = request.cookies.get(config.cookie)?.value;
     const viewRole = request.cookies.get(viewRoleCookie)?.value;
     if (segments[0] === 'test-player' || path.startsWith('admin/test-player/')) {
       const input = method === 'GET' ? {} : await readJsonRequest(request, 4096);
-      const result = await transaction((db) => {
+      const result = await transact((db) => {
         const owner = testPlayerOwner(db, token);
         if (path === 'admin/test-player/status' && method === 'GET')
           return testPlayerStatus(db, owner, token);
@@ -235,11 +256,14 @@ async function handler(request, context) {
                     ? 1300000
                     : 13000000,
           );
-    if (method !== 'GET' && !(segments[0] === 'games' && segments[1] === 'sliding-puzzle'))
-      await readStore((db) => {
-        if (presentationUser(requireUser(db, token), viewRole)?.actualRole)
-          fail(403, '화면 확인 중에는 변경할 수 없습니다. 실제 등급으로 돌아온 뒤 이용해주세요.');
-      });
+    if (method !== 'GET' && !gameRequest)
+      await readStore(
+        (db) => {
+          if (presentationUser(requireUser(db, token), viewRole)?.actualRole)
+            fail(403, '화면 확인 중에는 변경할 수 없습니다. 실제 등급으로 돌아온 뒤 이용해주세요.');
+        },
+        { collections: operationalCollections },
+      );
     if (
       (path === 'profile' && method === 'PATCH' && input.photo !== undefined) ||
       (path === 'posts' && method === 'POST') ||
@@ -265,7 +289,7 @@ async function handler(request, context) {
           : await normalizePostImages(input, board);
     }
     const write = method !== 'GET' || path === 'bootstrap' || path === 'games/sliding-puzzle/state';
-    const result = await transaction((db) => {
+    const result = await transact((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
       if (path === 'admin/settings/point-grants') {
         const result = handlePointGrants(db, actor, method, input);
@@ -357,7 +381,10 @@ async function handler(request, context) {
       if (path === 'admin/settings/points') {
         if (actor.role !== 'operator') fail(403, '총운영자만 설정을 관리할 수 있습니다.');
         if (method === 'GET')
-          return { settings: pointSettings(db), initialGrant: db.initialMemberPointGrant || null };
+          return {
+            settings: pointSettings(db),
+            initialGrant: db.initialMemberPointGrant || null,
+          };
         if (method === 'PATCH') {
           const settings = pointSettings(db);
           for (const field of ['post', 'comment', 'like', 'daily', 'signup', 'bonusMultiplier']) {
@@ -378,7 +405,7 @@ async function handler(request, context) {
       }
       if (path === 'bootstrap' && method === 'GET') {
         awardDailyPoints(db, actor);
-        return bootstrap(db, actor);
+        return bootstrap(db, actor, new URL(request.url).searchParams.get('posts') !== 'none');
       }
       if (path === 'profile' && method === 'PATCH') {
         if (input.nickname !== undefined)

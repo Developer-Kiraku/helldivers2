@@ -5,7 +5,7 @@ import { Dices, Timer } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import Modal from './Modal';
 import { Button } from './ui';
-import { diceInviteMs } from '@/lib/dice-rules.mjs';
+import { diceInviteMs, dicePollDelay } from '@/lib/dice-rules.mjs';
 
 const DiceContext = createContext(null);
 export const useDiceGame = () => useContext(DiceContext);
@@ -25,7 +25,8 @@ export default function DiceGameProvider({ children, enabled = true }) {
     offset = useRef(0),
     alive = useRef(false),
     command = useRef(null),
-    latest = useRef(null);
+    latest = useRef(null),
+    activeGame = useRef(false);
   const apply = useCallback(
     (result) => {
       if (result.viewerId !== user?.id) return false;
@@ -38,6 +39,7 @@ export default function DiceGameProvider({ children, enabled = true }) {
       )
         return false;
       latest.current = result;
+      activeGame.current = ['invited', 'playing', 'revealing'].includes(result.game?.status);
       offset.current = result.serverTime - Date.now();
       setNow(result.serverTime);
       setData(result);
@@ -50,6 +52,7 @@ export default function DiceGameProvider({ children, enabled = true }) {
     setData(null);
     setPendingInvite(null);
     latest.current = null;
+    activeGame.current = false;
     command.current = null;
     if (!enabled || !user?.id || actualRole !== role) {
       setData(null);
@@ -87,7 +90,15 @@ export default function DiceGameProvider({ children, enabled = true }) {
         if (active && onGame) setConnectionError(err.message);
       } finally {
         running = false;
-        if (active) timer = setTimeout(update, document.visibilityState === 'hidden' ? 5000 : 1000);
+        if (active)
+          timer = setTimeout(
+            update,
+            dicePollDelay({
+              onGame,
+              visible: document.visibilityState !== 'hidden',
+              activeGame: activeGame.current,
+            }),
+          );
       }
     };
     const returnToPage = () => {
@@ -109,9 +120,15 @@ export default function DiceGameProvider({ children, enabled = true }) {
     };
   }, [enabled, user?.id, role, actualRole, onGame, api, apply]);
   useEffect(() => {
+    if (
+      !enabled ||
+      !user?.id ||
+      (!onGame && !['invited', 'playing', 'revealing'].includes(data?.game?.status))
+    )
+      return;
     const timer = setInterval(() => setNow(Date.now() + offset.current), 100);
     return () => clearInterval(timer);
-  }, []);
+  }, [enabled, user?.id, onGame, data?.game?.status]);
   const act = async (action, body = {}) => {
     if (command.current || !enabled || role !== actualRole) return;
     const requestEpoch = ++epoch.current;

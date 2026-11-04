@@ -603,6 +603,15 @@ async function run() {
     await member.call('/api/posts', 'POST', draft('notice'), 403);
     await apprentice.call('/api/posts', 'POST', draft('notice'), 403);
     const sharedBoards = (await member.call('/api/bootstrap')).data.posts;
+    const lightBootstrap = (await member.call('/api/bootstrap?posts=none')).data;
+    assert.equal(lightBootstrap.user.id, 'u-user1');
+    assert.equal(
+      Object.hasOwn(lightBootstrap, 'posts'),
+      false,
+      'Game/settings/dictionary bootstrap omits all post bodies',
+    );
+    assert.ok(lightBootstrap.stats.totalMembers > 0);
+    assert.ok(Array.isArray(sharedBoards.notice), 'Default board bootstrap remains complete');
     assert.equal(sharedBoards.notice.find((p) => p.authorId === 'u-admin').authorRole, 'operator');
     assert.equal(sharedBoards.notice.find((p) => p.authorId === 'u-subadmin').authorRole, 'deputy');
     for (const board of ['notice', 'guide', 'talk', 'qna']) {

@@ -44,6 +44,39 @@ try {
   const read = () => postgresTransaction(pool, (db) => structuredClone(db), { write: false });
   assert.equal((await read()).sessions.length, 0);
   assert.equal((await read()).posts[0].poll.options[0].text, '찬성');
+  const scopedOptions = { collections: ['users', 'sessions', 'audit'] };
+  await postgresTransaction(
+    pool,
+    (db) => {
+      assert.equal(db.posts, undefined, 'Operational scopes never load post bodies');
+      db.users[0].nickname = '경량 조회 테스트';
+      db.performanceCheck = { saved: true };
+    },
+    scopedOptions,
+  );
+  assert.equal((await read()).users[0].nickname, '경량 조회 테스트');
+  assert.equal((await read()).posts.length, 1, 'Unloaded collections are preserved');
+  assert.equal((await read()).performanceCheck.saved, true);
+  await assert.rejects(
+    postgresTransaction(
+      pool,
+      (db) => {
+        db.users[0].nickname = '취소되어야 함';
+        db.posts = [];
+      },
+      scopedOptions,
+    ),
+    /outside transaction scope/,
+  );
+  assert.equal((await read()).users[0].nickname, '경량 조회 테스트');
+  assert.equal((await read()).posts.length, 1);
+  await postgresTransaction(
+    pool,
+    (db) => {
+      db.users[0].nickname = '테스트';
+    },
+    scopedOptions,
+  );
   await Promise.all(
     Array.from({ length: 12 }, (_, index) =>
       postgresTransaction(index % 2 ? pool : other, async (db) => {
