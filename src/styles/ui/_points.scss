@@ -126,6 +126,15 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   gap: 16px;
 }
+.point-grant-picker-footer {
+  flex-wrap: wrap;
+}
+.point-grant-selection-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
 .point-grant-fields label {
   display: grid;
   gap: 8px;

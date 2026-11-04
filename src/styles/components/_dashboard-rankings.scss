@@ -139,6 +139,20 @@
     height: 52px;
   }
 }
+@media (min-width: (t.breakpoint('tablet') + 1px)) {
+  .home-rankings-grid {
+    align-items: stretch;
+  }
+  .home-ranking-panel {
+    display: flex;
+    flex-direction: column;
+  }
+  .home-ranking-list,
+  .home-ranking-empty,
+  .home-ranking-loading {
+    flex: 1;
+  }
+}
 @media (max-width: t.breakpoint('tablet')) {
   .home-rankings-grid {
     grid-template-columns: minmax(0, 1fr);

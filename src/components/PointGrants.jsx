@@ -172,10 +172,22 @@ export default function PointGrants() {
                 {!filtered.length && <p>조건에 맞는 회원이 없습니다.</p>}
               </div>
               <div className="point-grant-picker-footer">
-                <span>{ids.length}명 선택</span>
-                <Button type="button" disabled={busy || !ids.length} onClick={() => setIds([])}>
-                  선택 해제
-                </Button>
+                <span aria-live="polite">
+                  {ids.length} / {data.users.length}명 선택
+                </span>
+                <div className="point-grant-selection-actions">
+                  <Button
+                    type="button"
+                    disabled={busy || data.users.every((user) => ids.includes(user.id))}
+                    title={`전체 회원 ${data.users.length}명 선택`}
+                    onClick={() => setIds(data.users.map((user) => user.id))}
+                  >
+                    전체 선택
+                  </Button>
+                  <Button type="button" disabled={busy || !ids.length} onClick={() => setIds([])}>
+                    전체 해제
+                  </Button>
+                </div>
               </div>
             </div>
           ) : (
