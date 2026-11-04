@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Flag,
   Square,
+  X,
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import { useDiceGame } from './DiceGameProvider';
@@ -230,7 +231,11 @@ export default function DiceGame() {
                         ? '초대가 만료되었습니다. 로그인 중인 대원을 다시 초대해보세요.'
                         : game?.status === 'declined'
                           ? '상대가 초대를 거절했습니다.'
-                          : '오른쪽 대원 목록에서 최소 베팅액을 선택하고 초대하세요.'}
+                          : game?.status === 'cancelled'
+                            ? game.hostId === user.id
+                              ? '초대를 취소했습니다. 다른 대원을 초대할 수 있습니다.'
+                              : '상대가 초대를 취소했습니다.'
+                            : '오른쪽 대원 목록에서 최소 베팅액을 선택하고 초대하세요.'}
               </p>
               {!pendingInvite && game?.status === 'invited' && (
                 <strong className="dice-invite-count">
@@ -238,6 +243,15 @@ export default function DiceGame() {
                     ? Math.max(0, (game.expiresAt - now) / 1000).toFixed(1) + '초 남음'
                     : '상대가 초대를 확인하면 1분 동안 응답할 수 있습니다.'}
                 </strong>
+              )}
+              {!pendingInvite && game?.status === 'invited' && game.hostId === user.id && (
+                <Button
+                  type="button"
+                  disabled={busy || preview}
+                  onClick={() => act('cancel', { gameId: game.id })}
+                >
+                  <X size={16} /> 초대 취소
+                </Button>
               )}
             </div>
           ) : (

@@ -291,6 +291,42 @@ try {
     /이전대원님에게 초대를 보냈습니다/,
   );
   await focus();
+  const beforeCancel = calls.at(-1);
+  const cancelButton = document.querySelector('.dice-empty-table button');
+  assert.equal(cancelButton.textContent.trim(), '초대 취소');
+  await React.act(async () => {
+    cancelButton.click();
+    cancelButton.click();
+  });
+  assert.equal(calls.filter((call) => call.name.endsWith('/cancel')).length, 1);
+  assert.equal(calls.at(-1).options.body.gameId, 'third');
+  assert.equal(cancelButton.disabled, true);
+  await reply(calls.at(-1), snapshot(game('third', 'old', '이전대원', 'cancelled', 2), 8500));
+  await reply(beforeCancel, snapshot(game('third', 'old', '이전대원'), 8200));
+  assert.match(document.querySelector('.dice-empty-table').textContent, /초대를 취소했습니다/);
+  assert.equal(document.querySelector('.dice-empty-table button'), null);
+  assert.equal(document.querySelector('[aria-label="새대원님 초대"]').disabled, false);
+  await focus();
+  const incoming = { ...game('incoming', 'new', '새대원'), hostId: 'new' };
+  await reply(calls.at(-1), snapshot(incoming, 8600));
+  assert.ok(document.querySelector('[role="dialog"]'), 'Recipients see the invitation');
+  assert.equal(
+    document.querySelector('.dice-empty-table button'),
+    null,
+    'Only the sender can cancel',
+  );
+  await focus();
+  await reply(calls.at(-1), snapshot({ ...incoming, status: 'cancelled', revision: 2 }, 8700));
+  assert.equal(
+    document.querySelector('[role="dialog"]'),
+    null,
+    'Cancellation closes the recipient dialog',
+  );
+  assert.match(
+    document.querySelector('.dice-empty-table').textContent,
+    /상대가 초대를 취소했습니다/,
+  );
+  await focus();
   const oldIdentity = calls.at(-1);
   window.diceCommunity = {
     ...window.diceCommunity,
@@ -314,7 +350,7 @@ try {
   });
   assert.equal(calls.at(-1).options.body.page, 'site', 'SPA departure announces the page change');
   console.log(
-    'PASS: invite target identity, rapid-click lock, mutation/poll ordering, stale revisions, account isolation, start banner and desktop/mobile scroll once per match',
+    'PASS: invite target identity, cancellation and recipient dialog dismissal, rapid-click lock, mutation/poll ordering, stale revisions, account isolation, start banner and desktop/mobile scroll once per match',
   );
 } finally {
   await React.act(async () => root.unmount());

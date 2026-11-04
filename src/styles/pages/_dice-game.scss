@@ -355,9 +355,14 @@
 .dice-stakes,
 .dice-multipliers {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px;
   margin-bottom: 16px;
+}
+.dice-stakes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.dice-multipliers {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 .dice-stakes button,
 .dice-multipliers button {

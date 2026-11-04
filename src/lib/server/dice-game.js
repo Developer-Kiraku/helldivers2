@@ -365,7 +365,14 @@ export function handleDiceGame(db, actor, segments, method, input) {
     (item) => item.id === input.gameId && item.players.includes(actor.id),
   );
   if (!game) fail(404, '게임을 찾을 수 없습니다.');
-  if (action === 'accept' || action === 'decline') {
+  if (action === 'cancel') {
+    if (game.players[0] !== actor.id) fail(403, '초대를 보낸 회원만 취소할 수 있습니다.');
+    if (game.status === 'cancelled') return snapshot(db, actor, now, 'dice');
+    if (game.status !== 'invited') fail(409, '이미 응답했거나 만료된 초대는 취소할 수 없습니다.');
+    game.status = 'cancelled';
+    stopSeries(game, 'requested', actor.id);
+    game.revision++;
+  } else if (action === 'accept' || action === 'decline') {
     if (game.players[1] !== actor.id) fail(403, '초대받은 회원만 응답할 수 있습니다.');
     if (action === 'accept' && ['playing', 'revealing', 'finished'].includes(game.status))
       return snapshot(db, actor, now, 'dice');

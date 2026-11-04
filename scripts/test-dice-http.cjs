@@ -126,7 +126,32 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   await apprentice.call(base + 'decision', 'POST', { gameId: rematch.id, round: 1, choice: 'die' });
   assert.equal((await heartbeat(member, tabs.member)).data.game.winnerId, null);
   assert.deepEqual((await heartbeat(member, tabs.member)).data.points, state.points);
+  await fixture((db) => {
+    db.users.find((user) => user.id === 'u-user1').lastDiceInviteAt = Date.now() - 5001;
+  });
+  const pending = (
+    await member.call(base + 'invite', 'POST', {
+      tabId: tabs.member,
+      targetId: 'u-user2',
+      stake: 10,
+    })
+  ).data.game;
+  await guest.call(base + 'cancel', 'POST', { gameId: pending.id }, 401);
+  await admin.call(base + 'cancel', 'POST', { gameId: pending.id }, 404);
+  await apprentice.call(base + 'cancel', 'POST', { gameId: pending.id }, 403);
+  const cancelled = await Promise.all([
+    member.call(base + 'cancel', 'POST', { gameId: pending.id }),
+    member.call(base + 'cancel', 'POST', { gameId: pending.id }),
+  ]);
+  assert.equal(cancelled[0].data.game.status, 'cancelled');
+  assert.equal(cancelled[0].data.game.autoContinue, false);
+  assert.equal(cancelled[0].data.game.revision, cancelled[1].data.game.revision);
+  assert.deepEqual(cancelled[0].data.points, state.points);
+  const cancellationNotice = (await heartbeat(apprentice, tabs.apprentice, 'site')).data;
+  assert.equal(cancellationNotice.game.status, 'cancelled');
+  assert.deepEqual(cancellationNotice.points, peer.points);
+  await apprentice.call(base + 'accept', 'POST', { gameId: pending.id }, 409);
   console.log(
-    'PASS: dice HTTP auth, private rolls, concurrent CALL deduplication, unequal bets, current-only settlement, automatic rounds and stop authorization',
+    'PASS: dice HTTP auth, private rolls, concurrent CALL/cancel deduplication, invitation cancellation authorization, unequal bets, current-only settlement, automatic rounds and stop authorization',
   );
 };

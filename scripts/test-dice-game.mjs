@@ -390,8 +390,32 @@ try {
   settleDiceGames(db, now);
   assert.equal(dieTimeout.winnerId, null, 'DIE plus an unanswered turn is a draw');
   assert.equal(dieTimeout.autoContinue, false);
+  db = make();
+  const cancellable = invite();
+  const cancel = (id = 'a') => call(id, 'cancel', { gameId: cancellable.id });
+  assert.throws(() => cancel('c'), { status: 404 });
+  assert.throws(() => cancel('b'), { status: 403 });
+  const cancelled = cancel();
+  assert.equal(cancelled.game.status, 'cancelled');
+  assert.equal(cancelled.game.autoContinue, false);
+  assert.ok(cancelled.online.every((user) => !user.busy));
+  assert.equal(presence('b', 'site').game.status, 'cancelled');
+  assert.equal(cancel().game.revision, cancelled.game.revision, 'Cancel retries are idempotent');
+  assert.throws(() => call('b', 'accept', { gameId: cancellable.id }), { status: 409 });
+  assert.throws(() => call('a', 'invite', { tabId: 'a'.repeat(20), targetId: 'b', stake: 100 }), {
+    status: 429,
+  });
+  assert.ok(db.users.every((user) => user.points.current === 10000));
+  assert.equal(db.pointLedger.length, 0, 'Invitation cancellation never moves points');
+  const replacement = invite();
+  assert.equal(cancel().game.id, replacement.id, 'A late retry cannot cancel a new invitation');
+  assert.equal(presence('b').game.status, 'invited');
+  const accepted = accept(replacement);
+  assert.throws(() => call('a', 'cancel', { gameId: accepted.id }), { status: 409 });
+  assert.equal(accepted.status, 'playing', 'Accept winning the race keeps the game running');
+  assert.equal(accepted.autoContinue, true);
   console.log(
-    'PASS: dice invitations, private rolls, atomic bets/settlement, automatic rounds, stop/navigation/deadline races, refresh recovery, disconnect/timeout/low-balance termination',
+    'PASS: dice invitations/cancellation, private rolls, atomic bets/settlement, automatic rounds, stop/navigation/deadline races, refresh recovery, disconnect/timeout/low-balance termination',
   );
 } finally {
   Date.now = originalNow;
