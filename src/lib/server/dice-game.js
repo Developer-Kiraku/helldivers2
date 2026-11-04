@@ -4,7 +4,9 @@ import { transferGamePoints } from './points.mjs';
 import { diceInviteMs } from '../dice-rules.mjs';
 
 export const diceStakeOptions = [10, 100, 1000];
-const active = (game) => ['invited', 'playing', 'revealing'].includes(game.status);
+const active = (game) =>
+  ['invited', 'playing', 'revealing'].includes(game.status) ||
+  (game.status === 'finished' && game.autoContinue && !game.nextGameId);
 const member = (db, id) => db.users.find((user) => user.id === id);
 const balance = (db, id) => member(db, id)?.points?.current || 0;
 const isLoggedIn = (db, id, now) =>
@@ -16,6 +18,51 @@ function beginRound(game, now) {
   for (const id of game.players) game.dice[id].push(randomInt(1, 7));
   game.readyAt = now + 1800;
   game.deadlineAt = game.readyAt + 30000;
+  game.revision++;
+}
+function stopSeries(game, reason, userId = null) {
+  if (!game.autoContinue) return;
+  game.autoContinue = false;
+  game.stopReason = reason;
+  game.stopBy = userId;
+  game.revision++;
+}
+function continueSeries(db, game, now) {
+  if (game.status !== 'finished' || !game.autoContinue || game.nextGameId) return;
+  if (game.players.some((id) => member(db, id)?.status !== 'active' || !isLoggedIn(db, id, now))) {
+    stopSeries(game, 'left');
+    return;
+  }
+  if (game.players.some((id) => balance(db, id) < game.stake)) {
+    stopSeries(game, 'points');
+    return;
+  }
+  if (now < game.nextRoundAt) return;
+  // Require both players to have returned to the game after settlement. A reload
+  // can reconnect, while an abandoned page never starts an endless series.
+  const present = game.players.every((id) =>
+    (db.dicePresence || []).some(
+      (row) =>
+        row.userId === id &&
+        row.page === 'dice' &&
+        row.seenAt >= game.finishedAt &&
+        now - row.seenAt < 20000,
+    ),
+  );
+  if (!present) {
+    if (now >= game.nextRoundAt + 30000) stopSeries(game, 'left');
+    return;
+  }
+  if (
+    db.diceGames.some(
+      (item) =>
+        item.id !== game.id && active(item) && item.players.some((id) => game.players.includes(id)),
+    )
+  ) {
+    stopSeries(game, 'left');
+    return;
+  }
+  game.nextGameId = createGame(db, game.players, game.stake, now, false).id;
   game.revision++;
 }
 function finish(db, game, winnerId, reason, now) {
@@ -30,15 +77,35 @@ function finish(db, game, winnerId, reason, now) {
     winnerId,
     reason,
     finishedAt: now,
-    rematch: [],
+    nextRoundAt: now + 5000,
     revision: game.revision + 1,
   });
+  if (reason === 'timeout' || reason === 'left') stopSeries(game, reason);
 }
 export function settleDiceGames(db, now = Date.now()) {
   let changed = false;
   for (const game of db.diceGames || []) {
+    if (
+      game.status === 'finished' &&
+      game.autoContinue &&
+      !game.nextGameId &&
+      now >= game.nextRoundAt + 30000 &&
+      !game.players.every((id) =>
+        (db.dicePresence || []).some(
+          (row) =>
+            row.userId === id &&
+            row.page === 'dice' &&
+            row.seenAt >= game.finishedAt &&
+            now - row.seenAt < 20000,
+        ),
+      )
+    ) {
+      stopSeries(game, 'left');
+      changed = true;
+    }
     if (game.status === 'invited' && now >= game.expiresAt) {
       game.status = 'expired';
+      stopSeries(game, 'left');
       game.revision++;
       changed = true;
     }
@@ -89,8 +156,13 @@ function publicGame(db, game, actor) {
     revealAt: game.revealAt || null,
     winnerId: game.winnerId || null,
     reason: game.reason || null,
-    rematch: game.rematch || [],
-    rematchDeclined: Boolean(game.rematchDeclined),
+    autoContinue: Boolean(game.autoContinue),
+    nextRoundAt: game.autoContinue ? game.nextRoundAt || null : null,
+    stopReason: game.stopReason || null,
+    stopBy: game.stopBy || null,
+    // Keep already-open clients from crashing while the new UI rolls out.
+    rematch: [],
+    rematchDeclined: true,
     nextGameId: game.nextGameId || null,
     pot: game.players.reduce((sum, id) => sum + game.bets[id], 0),
     players: game.players.map((id) => ({
@@ -146,7 +218,7 @@ function createGame(db, players, stake, now, invited = true) {
     bets: Object.fromEntries(players.map((id) => [id, 0])),
     dice: Object.fromEntries(players.map((id) => [id, []])),
     actions: {},
-    rematch: [],
+    autoContinue: true,
   };
   db.diceGames ||= [];
   // Retain recent settlement history while bounding the hot game-state collection.
@@ -166,11 +238,29 @@ export function handleDiceGame(db, actor, segments, method, input) {
     if (
       typeof input.tabId !== 'string' ||
       !/^[a-zA-Z0-9-]{16,64}$/.test(input.tabId) ||
-      !['site', 'dice'].includes(input.page) ||
+      !['site', 'dice', 'away'].includes(input.page) ||
       typeof input.visible !== 'boolean' ||
       (input.focused !== undefined && typeof input.focused !== 'boolean')
     )
       fail(400, '접속 정보를 확인해주세요.');
+    const previous = (db.dicePresence || []).find(
+      (row) => row.userId === actor.id && row.tabId === input.tabId,
+    );
+    const own = (db.diceGames || []).findLast(
+      (game) => active(game) && game.players.includes(actor.id),
+    );
+    if (
+      input.page === 'site' &&
+      previous?.page === 'dice' &&
+      own &&
+      (own.status !== 'invited' || own.players[0] === actor.id)
+    ) {
+      stopSeries(own, 'left', actor.id);
+      if (own.status === 'invited') {
+        own.status = 'expired';
+        own.revision++;
+      }
+    }
     db.dicePresence = (db.dicePresence || []).filter(
       (row) => now - row.seenAt < 60000 && !(row.userId === actor.id && row.tabId === input.tabId),
     );
@@ -192,6 +282,9 @@ export function handleDiceGame(db, actor, segments, method, input) {
         invitation.revision++;
       }
     }
+    // Evaluate continuation only after this heartbeat, so a navigation away wins
+    // over a next-round deadline arriving in the same request.
+    if (own) continueSeries(db, own, now);
     return snapshot(db, actor, now, input.page);
   }
   if (action === 'invite') {
@@ -236,6 +329,7 @@ export function handleDiceGame(db, actor, segments, method, input) {
     if (game.status !== 'invited') fail(409, '초대가 만료되었거나 이미 처리됐습니다.');
     if (action === 'decline') {
       game.status = 'declined';
+      stopSeries(game, 'requested', actor.id);
       game.revision++;
     } else {
       if (
@@ -245,6 +339,7 @@ export function handleDiceGame(db, actor, segments, method, input) {
       )
         fail(400, '참여 가능한 회원과 포인트를 확인해주세요.');
       game.status = 'playing';
+      game.autoContinue = true;
       beginRound(game, now);
     }
   } else if (action === 'decision') {
@@ -294,39 +389,16 @@ export function handleDiceGame(db, actor, segments, method, input) {
         }
       }
     }
-  } else if (action === 'rematch') {
-    if (game.status !== 'finished') fail(409, '승부가 끝난 뒤 선택해주세요.');
-    if (game.rematchDeclined) fail(409, '상대가 재대결을 종료했습니다.');
-    if (
-      !game.nextGameId &&
-      (db.diceGames || []).some(
-        (item) =>
-          item.id !== game.id &&
-          active(item) &&
-          item.players.some((id) => game.players.includes(id)),
-      )
-    )
-      fail(409, '이미 다른 초대 또는 게임이 진행 중입니다.');
-    if (input.accept !== true) {
-      game.rematchDeclined = true;
-      game.rematch = [];
-      game.revision++;
-    } else if (!game.nextGameId) {
-      if (balance(db, actor.id) < game.stake) fail(400, '재대결할 포인트가 부족합니다.');
-      if (!game.rematch.includes(actor.id)) {
-        game.rematch.push(actor.id);
-        game.revision++;
-      }
-      if (game.players.every((id) => game.rematch.includes(id))) {
-        if (
-          game.players.some(
-            (id) => member(db, id)?.status !== 'active' || balance(db, id) < game.stake,
-          )
-        )
-          fail(400, '상대의 포인트가 부족하거나 탈퇴한 상태입니다.');
-        game.nextGameId = createGame(db, game.players, game.stake, now, false).id;
-      }
+  } else if (action === 'stop' || (action === 'rematch' && input.accept === false)) {
+    let current = game;
+    while (current.nextGameId) {
+      const next = db.diceGames.find((item) => item.id === current.nextGameId);
+      if (!next) break;
+      current = next;
     }
+    if (!['playing', 'revealing', 'finished'].includes(current.status))
+      fail(409, '게임이 시작된 뒤 선택해주세요.');
+    stopSeries(current, 'requested', actor.id);
   } else fail(404, '게임 요청을 찾을 수 없습니다.');
   return snapshot(db, actor, now, 'dice');
 }

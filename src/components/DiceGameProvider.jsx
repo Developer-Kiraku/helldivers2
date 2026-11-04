@@ -39,7 +39,9 @@ export default function DiceGameProvider({ children, enabled = true }) {
       )
         return false;
       latest.current = result;
-      activeGame.current = ['invited', 'playing', 'revealing'].includes(result.game?.status);
+      activeGame.current =
+        ['invited', 'playing', 'revealing'].includes(result.game?.status) ||
+        Boolean(result.game?.autoContinue);
       offset.current = result.serverTime - Date.now();
       setNow(result.serverTime);
       setData(result);
@@ -107,9 +109,19 @@ export default function DiceGameProvider({ children, enabled = true }) {
         void update();
       }
     };
+    const leaveDocument = () => {
+      if (!onGame) return;
+      void api('games/dice/presence', {
+        method: 'POST',
+        keepalive: true,
+        body: { tabId: tabId.current, page: 'away', visible: false, focused: false },
+      }).catch(() => {});
+    };
     void update();
     document.addEventListener('visibilitychange', returnToPage);
     window.addEventListener('focus', returnToPage);
+    window.addEventListener('pageshow', returnToPage);
+    window.addEventListener('pagehide', leaveDocument);
     return () => {
       active = false;
       alive.current = false;
@@ -117,6 +129,8 @@ export default function DiceGameProvider({ children, enabled = true }) {
       clearTimeout(timer);
       document.removeEventListener('visibilitychange', returnToPage);
       window.removeEventListener('focus', returnToPage);
+      window.removeEventListener('pageshow', returnToPage);
+      window.removeEventListener('pagehide', leaveDocument);
     };
   }, [enabled, user?.id, role, actualRole, onGame, api, apply]);
   useEffect(() => {

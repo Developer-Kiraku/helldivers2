@@ -79,7 +79,7 @@ try {
             resolveDir: process.cwd(),
             contents:
               args.path === 'next/navigation'
-                ? 'export const usePathname=()=>"/games/dice";export const useRouter=()=>window.diceRouter;'
+                ? 'export const usePathname=()=>window.dicePath||"/games/dice";export const useRouter=()=>window.diceRouter;'
                 : args.path === './CommunityProvider'
                   ? 'export const useCommunity=()=>window.diceCommunity;'
                   : args.path === './ui'
@@ -125,6 +125,7 @@ try {
     readyAt: Date.now() + 1800,
     deadlineAt: Date.now() + 31800,
     rematch: [],
+    autoContinue: status === 'playing',
     pot: 0,
   });
   const snapshot = (game, serverTime, viewerId = 'me') => ({
@@ -182,6 +183,25 @@ try {
     'A lower revision cannot overwrite an accepted game',
   );
   assert.equal(scrolls.length, 1, 'Ordinary polling does not repeatedly scroll');
+  assert.match(document.querySelector('.dice-continuation').textContent, /이번 판까지만/);
+  await React.act(async () => {
+    document.querySelector('.dice-continuation button').click();
+  });
+  assert.equal(calls.at(-1).name, 'games/dice/stop');
+  assert.equal(calls.at(-1).options.body.gameId, 'new-game');
+  await reply(
+    calls.at(-1),
+    snapshot(
+      {
+        ...game('new-game', 'new', '새대원', 'playing', 3),
+        autoContinue: false,
+        stopBy: 'me',
+        stopReason: 'requested',
+      },
+      4500,
+    ),
+  );
+  assert.match(document.querySelector('.dice-continuation').textContent, /나님이 이번 판까지만/);
   window.matchMedia = () => ({ matches: true });
   await focus();
   await reply(calls.at(-1), snapshot(game('rematch', 'new', '새대원', 'playing', 1), 5000));
@@ -215,6 +235,18 @@ try {
   await reply(oldIdentity, snapshot(game('third', 'old', '이전대원'), 9000));
   await reply(calls.at(-1), snapshot(null, 10000, 'me'));
   assert.equal(probe.data, null, 'A response for another member is never displayed');
+  await React.act(async () => window.dispatchEvent(new Event('pagehide')));
+  assert.equal(calls.at(-1).options.keepalive, true);
+  assert.equal(
+    calls.at(-1).options.body.page,
+    'away',
+    'Reload releases page presence without stopping the series',
+  );
+  await React.act(async () => {
+    window.dicePath = '/';
+    render();
+  });
+  assert.equal(calls.at(-1).options.body.page, 'site', 'SPA departure announces the page change');
   console.log(
     'PASS: invite target identity, rapid-click lock, mutation/poll ordering, stale revisions, account isolation, start banner and desktop/mobile scroll once per match',
   );

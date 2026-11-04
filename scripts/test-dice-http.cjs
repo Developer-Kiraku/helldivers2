@@ -102,17 +102,21 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   assert.equal(peer.points.total, peerBefore.total);
   await member.call(base + 'decision', 'POST', { ...first, round: 2, multiplier: 2 });
   assert.deepEqual((await heartbeat(member, tabs.member)).data.points, state.points);
-  await member.call(base + 'rematch', 'POST', { gameId: game.id, accept: true });
-  const rematch = (
-    await apprentice.call(base + 'rematch', 'POST', { gameId: game.id, accept: true })
-  ).data.game;
+  await admin.call(base + 'stop', 'POST', { gameId: game.id }, 404);
+  await fixture((db) => {
+    db.diceGames.find((item) => item.id === game.id).nextRoundAt = Date.now() - 1;
+  });
+  const rematch = (await heartbeat(apprentice, tabs.apprentice)).data.game;
   assert.notEqual(rematch.id, game.id);
+  assert.equal((await heartbeat(member, tabs.member)).data.game.id, rematch.id);
+  await member.call(base + 'stop', 'POST', { gameId: rematch.id });
+  assert.equal((await heartbeat(apprentice, tabs.apprentice)).data.game.autoContinue, false);
   await fixture((db) => {
     db.diceGames.find((item) => item.id === rematch.id).readyAt = Date.now() - 1;
   });
   await member.call(base + 'decision', 'POST', { gameId: rematch.id, round: 1, choice: 'die' });
   assert.deepEqual((await heartbeat(member, tabs.member)).data.points, state.points);
   console.log(
-    'PASS: dice HTTP auth/page-only invitations, cooldown, private rolls, out-of-turn rejection, concurrent CALL deduplication, unequal bets, current-only settlement and mutual rematches',
+    'PASS: dice HTTP auth, private rolls, concurrent CALL deduplication, unequal bets, current-only settlement, automatic rounds and stop authorization',
   );
 };

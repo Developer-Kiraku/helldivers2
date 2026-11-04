@@ -479,12 +479,32 @@
   font-size: var(--hd-font-size-12);
   color: var(--hd-color-text-muted);
 }
-.dice-rematch-actions {
+.dice-continuation {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
   flex-wrap: wrap;
   margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--hd-color-border);
+  border-radius: 12px;
+  background: var(--hd-color-input);
+  strong {
+    color: var(--hd-color-accent);
+    font-size: var(--hd-font-size-12);
+  }
+  p {
+    margin: 5px 0 0;
+    color: var(--hd-color-text-muted);
+    font-size: var(--hd-font-size-12);
+  }
+  .ui-button {
+    flex-shrink: 0;
+  }
+  &.is-stopping strong {
+    color: var(--hd-color-input-text);
+  }
 }
 .dice-rules {
   padding: 20px;

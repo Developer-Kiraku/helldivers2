@@ -134,6 +134,7 @@ try {
   now = received.expiresAt;
   assert.throws(() => call('b', 'accept', { gameId: expiring.id }), { status: 409 });
   assert.equal(db.diceGames.at(-1).status, 'expired');
+  assert.equal(db.diceGames.at(-1).autoContinue, false, 'Expired invitations release the lobby');
   db = originalDb;
   let game = accept(invite());
   const own = presence('a').game;
@@ -181,13 +182,61 @@ try {
   decide('a', game, 'call', 2, 2);
   assert.equal(db.pointLedger.length, ledgerSize);
   unchangedTotals();
-  call('a', 'rematch', { gameId: game.id, accept: true });
+  assert.ok(revealed.autoContinue);
+  presence('b');
+  now += 4999;
+  presence('a');
   assert.equal(db.diceGames.length, 2);
-  call('b', 'rematch', { gameId: game.id, accept: true });
+  now++;
+  presence('b');
   assert.equal(db.diceGames.length, 3);
   assert.equal(db.diceGames.at(-1).status, 'playing');
-  call('a', 'rematch', { gameId: game.id, accept: true });
+  presence('a');
+  presence('b');
   assert.equal(db.diceGames.length, 3);
+  assert.equal(db.pointLedger.length, ledgerSize, 'Automatic next games never place bets');
+  call('a', 'stop', { gameId: game.id });
+  assert.equal(db.diceGames.at(-1).autoContinue, false, 'A late stop follows the same series');
+  assert.equal(db.diceGames.at(-1).stopBy, 'a');
+  for (const stopMode of ['stop', 'navigate', 'reload', 'close', 'poor']) {
+    db = make();
+    const test = accept(invite());
+    if (stopMode === 'stop') {
+      assert.throws(() => call('c', 'stop', { gameId: test.id }), { status: 404 });
+      call('a', 'stop', { gameId: test.id });
+      call('a', 'stop', { gameId: test.id });
+      assert.equal(test.status, 'playing');
+    }
+    if (stopMode === 'navigate') presence('b', 'site');
+    decide('a', test);
+    decide('b', test, 'die');
+    assert.equal(db.users[0].points.current, 10000, 'Current round is still settled');
+    if (stopMode === 'poor') db.users[1].points.current = 0;
+    presence('a');
+    if (['reload', 'close'].includes(stopMode)) presence('b', 'away', false);
+    else if (stopMode !== 'navigate') presence('b');
+    now += 5000;
+    presence('a');
+    assert.equal(db.diceGames.length, 1);
+    if (stopMode === 'reload') {
+      const resumed = presence('b').game;
+      assert.notEqual(resumed.id, test.id, 'Returning from a refresh resumes automatic play');
+      assert.equal(db.diceGames.length, 2);
+    } else if (stopMode === 'close') {
+      now += 30000;
+      settleDiceGames(db, now);
+      assert.equal(test.autoContinue, false, 'An abandoned page cannot retain an endless series');
+    } else assert.equal(test.autoContinue, false);
+  }
+  db = make();
+  const waitingGame = accept(invite());
+  decide('a', waitingGame, 'die');
+  presence('a');
+  presence('b');
+  now += 5000;
+  presence('b', 'site');
+  assert.equal(db.diceGames.length, 1, 'Navigation at the next-round deadline prevents a new game');
+  assert.equal(waitingGame.autoContinue, false);
   for (const mode of ['die-first', 'die-second', 'tie', 'timeout-one', 'timeout-both', 'left']) {
     db = make();
     const test = accept(invite());
@@ -220,6 +269,7 @@ try {
         now = test.deadlineAt;
         settleDiceGames(db, now);
         assert.equal(test.winnerId, 'a');
+        assert.equal(test.autoContinue, false);
       }
       if (mode === 'timeout-both') {
         now = test.deadlineAt;
@@ -248,7 +298,7 @@ try {
   assert.throws(() => decide('a', poor, 'call', 10), { status: 400 });
   assert.equal(db.users[0].points.current, 9000);
   console.log(
-    'PASS: dice invitation presence/expiry/cooldown, secret serialization, server rolls, staged CALL/DIE, unequal bets, atomic current-only wallets, duplicate requests, draw/fold/timeouts/withdrawal and mutual rematches',
+    'PASS: dice invitations, private rolls, atomic bets/settlement, automatic rounds, stop/navigation/deadline races, refresh recovery, disconnect/timeout/low-balance termination',
   );
 } finally {
   Date.now = originalNow;

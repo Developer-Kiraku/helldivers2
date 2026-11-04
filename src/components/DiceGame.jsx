@@ -9,7 +9,7 @@ import {
   Trophy,
   ArrowRight,
   Flag,
-  RotateCcw,
+  Square,
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import { useDiceGame } from './DiceGameProvider';
@@ -30,7 +30,8 @@ export default function DiceGame() {
   const playing = game?.status === 'playing',
     revealing = game?.status === 'revealing',
     finished = game?.status === 'finished';
-  const active = ['invited', 'playing', 'revealing'].includes(game?.status);
+  const active =
+    ['invited', 'playing', 'revealing'].includes(game?.status) || Boolean(game?.autoContinue);
   const inProgress = playing || revealing;
   const arenaRef = useRef(null);
   useEffect(() => {
@@ -55,6 +56,23 @@ export default function DiceGame() {
   const seconds = Math.max(0, ((game?.deadlineAt || now) - now) / 1000);
   const cooldown = Math.max(0, ((data?.inviteAvailableAt || 0) - now) / 1000);
   const wallet = data?.points.current ?? user.points.current;
+  const nextSeconds = Math.max(0, Math.ceil(((game?.nextRoundAt || now) - now) / 1000));
+  const stopName = game?.players.find((player) => player.id === game.stopBy)?.nickname;
+  const continuationMessage = game?.autoContinue
+    ? finished
+      ? nextSeconds > 0
+        ? `${nextSeconds}초 후 같은 최소 금액으로 다음 판이 시작됩니다.`
+        : '대원들의 게임 접속을 확인하고 있습니다.'
+      : '결과 확인 후 다음 판이 자동으로 시작됩니다.'
+    : game?.stopReason === 'requested'
+      ? `${stopName || '상대 대원'}님이 이번 판까지만 선택했습니다.`
+      : game?.stopReason === 'left'
+        ? '대원이 게임 페이지를 떠나 연속 게임을 종료합니다.'
+        : game?.stopReason === 'points'
+          ? '최소 베팅 포인트가 부족하여 연속 게임을 종료했습니다.'
+          : game?.stopReason === 'timeout'
+            ? '응답 시간이 초과되어 연속 게임을 종료했습니다.'
+            : '게임이 종료되었습니다. 다른 대원을 초대할 수 있습니다.';
   const resultTitle = finished
     ? !game.winnerId
       ? '무승부 · 베팅액 반환'
@@ -335,40 +353,29 @@ export default function DiceGame() {
                           ? '상대 회원이 탈퇴하여 승부가 종료됐습니다.'
                           : 'DIE 선택으로 승부가 종료됐습니다.'}
                   </p>
-                  <div className="dice-rematch-actions">
-                    <Button
-                      type="button"
-                      disabled={
-                        busy ||
-                        game.rematchDeclined ||
-                        game.rematch.includes(user.id) ||
-                        wallet < game.stake
-                      }
-                      onClick={() => act('rematch', { gameId: game.id, accept: true })}
-                    >
-                      <RotateCcw size={16} />
-                      {game.rematch.includes(user.id)
-                        ? '상대의 재대결 동의를 기다립니다'
-                        : '같은 금액으로 재대결'}
-                    </Button>
-                    <Button
-                      type="button"
-                      disabled={busy || game.rematchDeclined}
-                      onClick={() => act('rematch', { gameId: game.id, accept: false })}
-                    >
-                      그만하기
-                    </Button>
-                  </div>
-                  {!game.rematchDeclined &&
-                    game.rematch.includes(opponent.id) &&
-                    !game.rematch.includes(user.id) && (
-                      <p>{opponent.nickname}님이 재대결을 기다리고 있습니다.</p>
-                    )}
-                  {game.rematchDeclined && (
-                    <p>재대결을 종료했습니다. 다른 대원을 초대할 수 있습니다.</p>
-                  )}
                 </div>
               )}
+              <div className={'dice-continuation' + (!game.autoContinue ? ' is-stopping' : '')}>
+                <div role="status" aria-live="polite">
+                  <strong>
+                    {game.autoContinue
+                      ? '연속 게임'
+                      : finished
+                        ? '연속 게임 종료'
+                        : '이번 판 종료 후 마칩니다'}
+                  </strong>
+                  <p>{continuationMessage}</p>
+                </div>
+                {game.autoContinue && (
+                  <Button
+                    type="button"
+                    disabled={busy || preview}
+                    onClick={() => act('stop', { gameId: game.id })}
+                  >
+                    <Square size={14} /> 이번 판까지만
+                  </Button>
+                )}
+              </div>
             </>
           )}
         </section>
@@ -454,8 +461,10 @@ export default function DiceGame() {
             지나면 각자 베팅액을 반환합니다.
           </li>
           <li>
-            결과 화면에서 두 대원이 모두 재대결에 동의하면 같은 최소 금액으로 새 게임이 시작됩니다.
-            베팅과 정산은 현재 포인트에만 반영됩니다.
+            결과를 5초 동안 확인한 뒤 같은 최소 금액으로 다음 판이 자동 시작됩니다. 한 명이 ‘이번
+            판까지만’을 누르거나 게임 페이지를 떠나면 현재 판까지만 진행합니다. 새로고침하면 진행
+            중인 게임에 복귀합니다. 응답 시간 초과·포인트 부족 시에는 연속 게임이 종료됩니다. 베팅과
+            정산은 현재 포인트에만 반영됩니다.
           </li>
         </ol>
       </details>
