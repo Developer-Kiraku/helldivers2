@@ -634,10 +634,24 @@
 }
 .dice-scene {
   --dice-size: 84px;
+  position: relative;
   width: var(--dice-size);
   height: var(--dice-size);
   margin: 24px 0 14px;
   perspective: 600px;
+}
+.dice-scene::before {
+  content: '';
+  position: absolute;
+  inset: auto -12px -17px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    var(--hd-color-palette-0008),
+    var(--hd-color-transparent) 70%
+  );
+  pointer-events: none;
 }
 .dice-cube {
   width: 100%;
@@ -658,23 +672,64 @@
   grid-template: repeat(3, 1fr) / repeat(3, 1fr);
   gap: 6px;
   padding: 13px;
-  border-radius: 13px;
-  border: 1px solid var(--hd-color-input-border);
-  background: linear-gradient(135deg, var(--hd-color-input-text), var(--hd-color-text-muted));
+  border-radius: 8px;
+  border: 2px solid color-mix(in srgb, var(--hd-color-input-text) 32%, var(--hd-color-border));
+  background:
+    repeating-linear-gradient(
+      0deg,
+      var(--hd-color-transparent) 0 3px,
+      var(--hd-color-palette-0002) 3px 4px
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--hd-color-input-text) 18%, var(--hd-color-background)),
+      var(--hd-color-input) 48%,
+      var(--hd-color-background)
+    );
   box-shadow:
-    inset 0 0 12px var(--hd-color-palette-0002),
-    0 0 1px var(--hd-color-palette-0005);
+    inset 0 0 0 3px var(--hd-color-background),
+    inset 0 0 16px var(--hd-color-palette-0005),
+    0 0 1px var(--hd-color-black);
   backface-visibility: hidden;
 }
+.dice-face::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid color-mix(in srgb, var(--hd-color-accent) 28%, var(--hd-color-border));
+  border-radius: 3px;
+  pointer-events: none;
+}
+.dice-face::after {
+  content: '';
+  position: absolute;
+  right: 9px;
+  bottom: 4px;
+  width: 22px;
+  height: 4px;
+  background: repeating-linear-gradient(
+    125deg,
+    var(--hd-color-accent) 0 3px,
+    var(--hd-color-background) 3px 6px
+  );
+  pointer-events: none;
+}
 .dice-face i {
-  border-radius: 50%;
-  background: var(--hd-color-background);
-  box-shadow: inset 1px 2px 2px var(--hd-color-palette-0005);
+  border-radius: 3px;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--hd-color-accent) 76%, var(--hd-color-input-text)),
+    var(--hd-color-accent)
+  );
+  border: 1px solid color-mix(in srgb, var(--hd-color-accent) 65%, var(--hd-color-background));
+  box-shadow:
+    inset 0 1px 1px var(--hd-color-input-text),
+    0 2px 3px var(--hd-color-palette-0008);
 }
 .dice-face b {
   grid-area: 1 / 1 / 4 / 4;
   place-self: center;
-  color: var(--hd-color-background);
+  color: var(--hd-color-accent);
   font-size: var(--hd-font-size-30);
 }
 .face-1 {
@@ -784,7 +839,16 @@
   .dice-face {
     padding: 10px;
     gap: 4px;
-    border-radius: 10px;
+    border-radius: 6px;
+  }
+  .dice-face::before {
+    inset: 4px;
+  }
+  .dice-face::after {
+    right: 7px;
+    bottom: 3px;
+    width: 16px;
+    height: 3px;
   }
   .dice-versus {
     width: 30px;
