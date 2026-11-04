@@ -6,9 +6,9 @@ export const diceStakeOptions = [10, 100, 1000];
 const active = (game) => ['invited', 'playing', 'revealing'].includes(game.status);
 const member = (db, id) => db.users.find((user) => user.id === id);
 const balance = (db, id) => member(db, id)?.points?.current || 0;
-const isPresent = (db, id, now) =>
-  (db.dicePresence || []).some(
-    (row) => row.userId === id && row.visible && now - row.seenAt < 8000,
+const isLoggedIn = (db, id, now) =>
+  (db.sessions || []).some(
+    (session) => session.userId === id && Date.parse(session.expiresAt) > now,
   );
 function beginRound(game, now) {
   game.round++;
@@ -116,7 +116,7 @@ function snapshot(db, actor, now, page = '') {
         ? db.users
             .filter(
               (user) =>
-                user.status === 'active' && user.id !== actor.id && isPresent(db, user.id, now),
+                user.status === 'active' && user.id !== actor.id && isLoggedIn(db, user.id, now),
             )
             .map((user) => ({
               id: user.id,
@@ -196,8 +196,8 @@ export function handleDiceGame(db, actor, segments, method, input) {
     if (!diceStakeOptions.includes(input.stake) || input.targetId === actor.id)
       fail(400, '상대와 최소 베팅금액을 확인해주세요.');
     const target = member(db, input.targetId);
-    if (!target || target.status !== 'active' || !isPresent(db, target.id, now))
-      fail(409, '현재 접속 중인 회원만 초대할 수 있습니다.');
+    if (!target || target.status !== 'active' || !isLoggedIn(db, target.id, now))
+      fail(409, '현재 로그인 상태인 회원만 초대할 수 있습니다.');
     if (
       (db.diceGames || []).some(
         (game) => active(game) && game.players.some((id) => [actor.id, target.id].includes(id)),

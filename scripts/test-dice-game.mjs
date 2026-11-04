@@ -39,6 +39,10 @@ try {
     })),
     diceGames: [],
     pointLedger: [],
+    sessions: ['a', 'b', 'c'].map((userId) => ({
+      userId,
+      expiresAt: new Date(now + 86400000).toISOString(),
+    })),
   });
   let db = make();
   const call = (id, action, input = {}) => {
@@ -69,6 +73,17 @@ try {
   const unchangedTotals = () => assert.ok(db.users.every((user) => user.points.total === 10000));
   presence('a', 'site');
   presence('b');
+  assert.ok(
+    presence('a').online.some((user) => user.id === 'c'),
+    'A logged-in member without a game-page heartbeat is eligible',
+  );
+  db.sessions.find((session) => session.userId === 'c').expiresAt = new Date(now - 1).toISOString();
+  presence('c');
+  assert.ok(
+    !presence('a').online.some((user) => user.id === 'c'),
+    'An expired login is excluded even with fresh presence',
+  );
+  presence('a', 'site');
   assert.throws(() => call('a', 'invite', { tabId: 'a'.repeat(20), targetId: 'b', stake: 100 }), {
     status: 403,
   });
@@ -82,7 +97,7 @@ try {
   now += 5000;
   assert.throws(() => call('b', 'accept', { gameId: pending.id }), { status: 409 });
   assert.equal(db.pointLedger.length, 0);
-  const game = accept(invite());
+  let game = accept(invite());
   const own = presence('a').game;
   assert.deepEqual(own.players.find((p) => p.id === 'b').dice, []);
   assert.equal(own.players.find((p) => p.id === 'b').sum, null);
@@ -90,6 +105,19 @@ try {
   decide('a', game);
   decide('a', game); // Retry is not another debit.
   assert.equal(db.users[0].points.current, 9900);
+  const savedGame = JSON.parse(JSON.stringify(game));
+  db = JSON.parse(JSON.stringify(db));
+  game = db.diceGames.find((item) => item.id === savedGame.id);
+  const resumed = call('a', 'presence', {
+    tabId: 'new-tab-after-refresh-12345',
+    page: 'dice',
+    visible: true,
+  }).game;
+  assert.equal(resumed.id, savedGame.id);
+  assert.equal(resumed.deadlineAt, savedGame.deadlineAt);
+  assert.equal(resumed.pot, 100);
+  assert.equal(resumed.players.find((player) => player.id === 'a').decision, 'call');
+  assert.deepEqual(resumed.players.find((player) => player.id === 'a').dice, savedGame.dice.a);
   decide('b', game);
   assert.equal(game.round, 2);
   assert.throws(() => decide('a', game), { status: 409 }); // Still rolling.

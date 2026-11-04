@@ -117,7 +117,7 @@ export default function DiceGameProvider({ children, enabled = true }) {
       {children}
       {enabled && invite && (
         <Modal
-          title="주사위 대결 초대"
+          title="민주주의 주사위 초대"
           className="dice-invite-modal"
           onClose={() => act('decline', { gameId: invite.id })}
           footer={
@@ -143,7 +143,7 @@ export default function DiceGameProvider({ children, enabled = true }) {
             <Dices size={40} />
           </div>
           <p>
-            <strong>{host?.nickname}</strong>님이 주사위 대결에 초대했습니다.
+            <strong>{host?.nickname}</strong>님이 민주주의 주사위에 초대했습니다.
           </p>
           <div className="dice-invite-stake">
             최소 베팅 <strong>{invite.stake.toLocaleString()} P</strong>

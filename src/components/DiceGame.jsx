@@ -53,7 +53,7 @@ export default function DiceGame() {
           <span className="eyebrow">SQUAD VS SQUAD</span>
           <h1>
             <Dices size={29} />
-            주사위 대결
+            민주주의 주사위
           </h1>
           <p>세 번의 주사위, 두 번의 선택. 마지막에 합계가 높은 대원이 승리합니다.</p>
         </div>
@@ -74,9 +74,9 @@ export default function DiceGame() {
           {error}
         </p>
       )}
-      {!data && !preview && <p role="status">대원들의 접속 상태를 확인하고 있습니다…</p>}
+      {!data && !preview && <p role="status">로그인 중인 대원을 확인하고 있습니다…</p>}
       <div className="dice-layout">
-        <section className="dice-arena" aria-label="주사위 대결 게임판">
+        <section className="dice-arena" aria-label="민주주의 주사위 게임판">
           <div className="dice-arena-top">
             <span className="dice-live-label">
               <i />
@@ -111,18 +111,22 @@ export default function DiceGame() {
             <div className="dice-empty-table">
               <Dices size={64} />
               <h2>
-                {game?.status === 'invited'
-                  ? '대원의 응답을 기다립니다'
-                  : '오늘의 승부를 시작해보세요'}
+                {!data
+                  ? '진행 중인 게임을 불러옵니다'
+                  : game?.status === 'invited'
+                    ? '대원의 응답을 기다립니다'
+                    : '오늘의 승부를 시작해보세요'}
               </h2>
               <p>
-                {game?.status === 'invited'
-                  ? opponent?.nickname + '님에게 초대를 보냈습니다.'
-                  : game?.status === 'expired'
-                    ? '초대가 만료되었습니다. 접속 중인 대원을 다시 초대해보세요.'
-                    : game?.status === 'declined'
-                      ? '상대가 초대를 거절했습니다.'
-                      : '오른쪽 대원 목록에서 최소 베팅액을 선택하고 초대하세요.'}
+                {!data
+                  ? '저장된 주사위와 베팅 상태를 확인하고 있습니다.'
+                  : game?.status === 'invited'
+                    ? opponent?.nickname + '님에게 초대를 보냈습니다.'
+                    : game?.status === 'expired'
+                      ? '초대가 만료되었습니다. 로그인 중인 대원을 다시 초대해보세요.'
+                      : game?.status === 'declined'
+                        ? '상대가 초대를 거절했습니다.'
+                        : '오른쪽 대원 목록에서 최소 베팅액을 선택하고 초대하세요.'}
               </p>
               {game?.status === 'invited' && (
                 <strong className="dice-invite-count">
@@ -168,7 +172,7 @@ export default function DiceGame() {
                       <Dice3D
                         key={game.id + ':' + game.round + ':' + player.id}
                         value={value}
-                        rolling={playing || revealing}
+                        rolling={rolling}
                       />
                       <div className="dice-history">
                         {[0, 1, 2].map((index) => (
@@ -331,7 +335,7 @@ export default function DiceGame() {
           <header>
             <div>
               <Users size={19} />
-              <h2>접속 중인 대원</h2>
+              <h2>로그인 중인 대원</h2>
             </div>
             <span>{data?.online.length || 0}</span>
           </header>
@@ -373,7 +377,7 @@ export default function DiceGame() {
               </div>
             ))}
             {data && !data.online.length && (
-              <p className="dice-no-members">현재 접속 중인 다른 대원이 없습니다.</p>
+              <p className="dice-no-members">현재 로그인 중인 다른 대원이 없습니다.</p>
             )}
           </div>
           {cooldown > 0 && <p className="dice-cooldown">다음 초대까지 {cooldown.toFixed(1)}초</p>}
@@ -390,7 +394,7 @@ export default function DiceGame() {
       <details className="dice-rules">
         <summary>게임 방법 · 포인트 정산</summary>
         <ol>
-          <li>10·100·1,000P 중 최소 베팅액을 골라 현재 접속 중인 대원을 초대합니다.</li>
+          <li>10·100·1,000P 중 최소 베팅액을 골라 현재 로그인 중인 대원을 초대합니다.</li>
           <li>
             1턴에는 각자 주사위 하나를 보고 CALL 또는 DIE를 선택합니다. CALL은 최소 금액만큼
             베팅합니다.

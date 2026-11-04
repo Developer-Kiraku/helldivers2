@@ -21,15 +21,19 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
     401,
   );
   await heartbeat(member, tabs.member, 'site');
-  await heartbeat(apprentice, tabs.apprentice);
   await member.call(
     base + 'invite',
     'POST',
     { tabId: tabs.member, targetId: 'u-user2', stake: 10 },
     403,
   );
-  const before = (await heartbeat(member, tabs.member)).data.points;
-  const peerBefore = (await heartbeat(apprentice, tabs.apprentice)).data.points;
+  const lobby = (await heartbeat(member, tabs.member)).data;
+  const before = lobby.points;
+  assert.ok(
+    lobby.online.some((user) => user.id === 'u-user2'),
+    'Logged-in member can be invited without visiting the game page',
+  );
+  const peerBefore = (await apprentice.call('/api/bootstrap')).data.user.points;
   const game = (
     await member.call(base + 'invite', 'POST', {
       tabId: tabs.member,
@@ -61,6 +65,11 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
     member.call(base + 'decision', 'POST', first),
   ]);
   assert.equal((await heartbeat(member, tabs.member)).data.points.current, before.current - 10);
+  const resumed = (await heartbeat(member, 'refreshed-tab-1234567890')).data.game;
+  assert.equal(resumed.id, game.id);
+  assert.equal(resumed.round, 1);
+  assert.equal(resumed.players.find((player) => player.id === 'u-user1').decision, 'call');
+  assert.equal(resumed.pot, 10);
   await apprentice.call(base + 'decision', 'POST', first);
   await fixture((db) => {
     db.diceGames.find((item) => item.id === game.id).readyAt = Date.now() - 1;
