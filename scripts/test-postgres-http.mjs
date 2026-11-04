@@ -75,17 +75,15 @@ try {
   } finally {
     await fixturePool.end();
   }
-  await member.call('/api/games/sliding-puzzle/move', 'POST', {
-    runId: puzzleRun.id,
-    tile: 15,
-    step: 0,
-  });
-  const puzzleResult = (
-    await member.call('/api/games/sliding-puzzle/finish', 'POST', {
+  const savedPuzzle = (
+    await member.call('/api/games/sliding-puzzle/move', 'POST', {
       runId: puzzleRun.id,
-      moves: [15],
+      tile: 15,
+      step: 0,
     })
-  ).data;
+  ).data.run;
+  const puzzleResult = savedPuzzle.result;
+  assert.ok(puzzleResult, 'The final move persists the result without a finish request');
   assert.equal(puzzleResult.rank, 1);
   await member.call('/api/games/dice/presence', 'POST', {
     tabId: 'pg-member-1234567890',

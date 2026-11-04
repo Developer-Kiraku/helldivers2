@@ -145,6 +145,7 @@ async function run() {
   await import('./test-dice-game.mjs');
   await import('./test-dice-ui.mjs');
   await import('./test-puzzle-result-ui.mjs');
+  await import('./test-puzzle-requests.mjs');
   await import('./test-points.mjs');
   await fs.mkdir(path.join(root, 'work'), { recursive: true });
   const directory = await fs.mkdtemp(path.join(root, 'work', 'hd-functional-'));

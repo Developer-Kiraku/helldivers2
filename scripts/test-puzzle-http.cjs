@@ -37,6 +37,20 @@ module.exports = async function ({ guest, admin, member, file }) {
   const complete = (await member.call(base + '/move', 'POST', { runId: run.id, tile: 15, step: 1 }))
     .data.run;
   assert.ok(complete.completedAt);
+  assert.equal(complete.result.record.finishedAt, complete.completedAt);
+  const automaticallySaved = JSON.parse(await fs.readFile(file, 'utf8'));
+  assert.ok(
+    automaticallySaved.puzzleRecords.some((row) => row.id === run.id),
+    'The last verified move saves the result without a finish request',
+  );
+  const notificationCount = automaticallySaved.notifications.length;
+  assert.deepEqual(
+    (await member.call(base + '/state?runId=' + run.id)).data.run.result,
+    complete.result,
+  );
+  const stoppedCompleted = (await member.call(base + '/stop', 'POST', { runId: run.id })).data.run;
+  assert.equal(stoppedCompleted.stopped, false, 'Stop cannot discard an already completed record');
+  assert.deepEqual(stoppedCompleted.result, complete.result);
   const result = (
     await member.call(base + '/finish', 'POST', {
       runId: run.id,
@@ -50,6 +64,11 @@ module.exports = async function ({ guest, admin, member, file }) {
   assert.equal(result.record.finishedAt, complete.completedAt);
   assert.notEqual(result.record.month, '2000-01');
   assert.deepEqual((await member.call(base + '/finish', 'POST', { runId: run.id })).data, result);
+  assert.equal(
+    JSON.parse(await fs.readFile(file, 'utf8')).notifications.length,
+    notificationCount,
+    'State/stop/finish retries cannot duplicate result notifications',
+  );
   const stopped = (await admin.call(base + '/start', 'POST', {})).data.run;
   await admin.call(base + '/stop', 'POST', { runId: stopped.id });
   await admin.call(base + '/move', 'POST', { runId: stopped.id, tile: 15, step: 0 }, 409);

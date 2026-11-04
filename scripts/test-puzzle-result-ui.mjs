@@ -62,7 +62,13 @@ try {
   let activeRun;
   let loseMoveResponse = false;
   let holdMove;
+  let autoResult = false,
+    finishRequests = 0,
+    stopRequests = 0,
+    loseStateResponse = false,
+    loseStopResponse = false;
   const moveRequests = [];
+  const moveSignals = [];
   const month = puzzleMonth();
   window.puzzleRouter = { replace() {} };
   window.puzzleContext = {
@@ -71,32 +77,49 @@ try {
     refresh: async () => {},
     api: async (path, options) => {
       if (path.endsWith('/move')) {
+        let targetRun = activeRun;
         moveRequests.push({ ...options.body });
+        moveSignals.push(options.signal);
         if (holdMove) {
           const wait = holdMove;
           holdMove = null;
           await wait;
         }
-        assert.equal(options.body.step, activeRun.step);
+        assert.equal(options.body.step, targetRun.step);
         begins++;
-        const slide = slidePuzzle(activeRun.board, options.body.tile);
-        activeRun = {
-          ...activeRun,
+        const slide = slidePuzzle(targetRun.board, options.body.tile);
+        targetRun = {
+          ...targetRun,
           board: slide.board,
-          moves: activeRun.moves + slide.moves.length,
-          step: activeRun.step + 1,
+          moves: targetRun.moves + slide.moves.length,
+          step: targetRun.step + 1,
           startedAt: new Date().toISOString(),
           elapsedMs: 0,
           completedAt: puzzleSolved(slide.board) ? new Date().toISOString() : null,
         };
+        if (autoResult && targetRun.completedAt)
+          targetRun.result = {
+            record: { month, elapsedMs: 1200, moves: targetRun.moves },
+            improved: true,
+            rank: 1,
+          };
+        if (activeRun.id === targetRun.id) activeRun = targetRun;
         if (loseMoveResponse) {
           loseMoveResponse = false;
           throw new Error('응답 유실 테스트');
         }
+        return { run: targetRun };
+      }
+      if (path.includes('/state?')) {
+        if (loseStateResponse) throw new Error('상태 조회 실패');
         return { run: activeRun };
       }
-      if (path.includes('/state?')) return { run: activeRun };
-      if (path.endsWith('/stop')) return { run: { ...activeRun, stopped: true } };
+      if (path.endsWith('/stop')) {
+        stopRequests++;
+        if (loseStopResponse) throw new Error('정지 응답 실패');
+        activeRun = { ...activeRun, stopped: true };
+        return { run: activeRun };
+      }
       if (path.endsWith('/start')) {
         games++;
         activeRun = {
@@ -108,6 +131,7 @@ try {
         return { run: activeRun };
       }
       if (path.endsWith('/finish')) {
+        finishRequests++;
         assert.deepEqual(Object.keys(options.body), ['runId']);
         return {
           improved: games === 2,
@@ -243,10 +267,59 @@ try {
     tile.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, detail: 1 }));
   });
   assert.equal(moveRequests.length, beforeTouches + 4, 'Mouse input still works after touch input');
+  await click(buttonByText('게임 정지'));
+  await click(buttonByText('게임 시작'));
+  autoResult = true;
+  holdMove = new Promise((resolve) => (releaseMove = resolve));
+  const stopsBefore = stopRequests;
+  await click(document.querySelector('[aria-label="15번 타일"]'));
+  assert.match(document.querySelector('.puzzle-save-status').textContent, /서버에서 확인/);
+  assert.ok(
+    [...document.querySelectorAll('.puzzle-tile')].every((tile) => tile.disabled),
+    'Solving the visual board blocks further moves',
+  );
+  assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
+  await click(buttonByText('게임 정지'));
+  assert.equal(stopRequests, stopsBefore + 1, 'Stop preempts a pending move immediately');
+  assert.equal(moveSignals.at(-1).aborted, true, 'Stop cancels the outstanding move transport');
+  assert.ok(buttonByText('게임 시작'));
+  await click(buttonByText('게임 시작'));
+  const nextId = activeRun.id;
+  await React.act(async () => releaseMove());
+  assert.equal(activeRun.id, nextId);
+  assert.equal(
+    document.querySelector('.puzzle-result'),
+    null,
+    'A late completion response cannot end the next game',
+  );
+  assert.equal(document.querySelectorAll('.puzzle-status strong')[1].textContent.trim(), '0 회');
+  window.puzzleContext.refresh = () => new Promise(() => {});
+  const finishesBefore = finishRequests;
+  await click(document.querySelector('[aria-label="15번 타일"]'));
+  assert.match(document.querySelector('.puzzle-result').textContent, /00:01\.200/);
+  assert.equal(
+    finishRequests,
+    finishesBefore,
+    'An atomic server result needs no second finish request',
+  );
+  await click(buttonByText('게임 시작'));
+  assert.ok(buttonByText('게임 정지'), 'A stalled bootstrap refresh cannot lock the next game');
+  loseMoveResponse = true;
+  loseStateResponse = true;
+  await click(document.querySelector('[aria-label="13번 타일"]'));
+  assert.ok(buttonByText('게임 상태 다시 확인'));
+  assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
+  loseStateResponse = false;
+  await click(buttonByText('게임 상태 다시 확인'));
+  assert.ok(document.documentElement.classList.contains('puzzle-scroll-locked'));
+  loseStopResponse = true;
+  await click(buttonByText('게임 정지'));
+  assert.ok(buttonByText('게임 시작'), 'Failed stop transport still releases the local controls');
+  assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
   await React.act(async () => root.unmount());
   assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
   console.log(
-    'PASS: per-attempt results, scroll lock, immediate touch, queued rapid touches, no duplicate compatibility clicks, secondary-finger rejection, mouse/keyboard input and lost-response recovery',
+    'PASS: puzzle completion, pending-move stop/cancellation, stale-response isolation, stalled-refresh restart, sync recovery, failed-stop unlock and touch/keyboard/mouse input',
   );
 } finally {
   await React.act(async () => root.unmount());

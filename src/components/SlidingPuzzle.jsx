@@ -5,12 +5,14 @@ import { Puzzle, Trophy, Timer, Move, Play, Square, Check, Medal } from 'lucide-
 import { useCommunity } from './CommunityProvider';
 import { Button, Select } from './ui';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
+import { puzzleRequest } from '@/lib/puzzle-request.mjs';
 import {
   slidePuzzle,
   puzzleTime,
   puzzleMonth,
   solvedPuzzle,
   puzzleMonthlyPrizes,
+  puzzleSolved,
 } from '@/lib/sliding-puzzle.mjs';
 
 export default function SlidingPuzzle() {
@@ -22,10 +24,9 @@ export default function SlidingPuzzle() {
     [version, reload] = useState(0);
   const [rankError, setRankError] = useState(''),
     [error, setError] = useState('');
-  const [run, setRun] = useState(null),
-    [board, setBoard] = useState(solvedPuzzle);
+  const [board, setBoard] = useState(solvedPuzzle);
   const [moves, setMoves] = useState(0),
-    [phase, setPhase] = useState('idle');
+    [phase, setPhaseState] = useState('idle');
   const [elapsed, setElapsed] = useState(0),
     [result, setResult] = useState(null);
   const started = useRef(0),
@@ -36,6 +37,22 @@ export default function SlidingPuzzle() {
     visualBoard = useRef(board),
     verifiedRun = useRef(null),
     touchActivation = useRef(false);
+  const generation = useRef(0),
+    controllers = useRef(new Set()),
+    phaseRef = useRef('idle');
+  function setPhase(value) {
+    phaseRef.current = value;
+    setPhaseState(value);
+  }
+  const request = (path, options) => puzzleRequest(api, path, options, controllers.current);
+  const cancelRequests = () => controllers.current.forEach((controller) => controller.abort());
+  useEffect(
+    () => () => {
+      ++generation.current;
+      controllers.current.forEach((controller) => controller.abort());
+    },
+    [],
+  );
   const [clockStarted, setClockStarted] = useState(false);
   useRefreshOnReturn(() => reload((v) => v + 1));
   useEffect(() => {
@@ -72,35 +89,84 @@ export default function SlidingPuzzle() {
       document.documentElement.classList.remove('puzzle-scroll-locked');
     };
   }, [phase, actualRole, role]);
+  function complete(data, token) {
+    if (token !== generation.current) return;
+    setResult(data);
+    setElapsed(data.record.elapsedMs);
+    setMoves(data.record.moves);
+    setClockStarted(false);
+    setError('');
+    setPhase('done');
+    router.replace('/games/sliding-puzzle?month=' + data.record.month, { scroll: false });
+    reload((value) => value + 1);
+    // A bootstrap refresh must never keep the game controls locked.
+    void Promise.resolve(refresh()).catch(() => {});
+  }
+  function applyRun(current, token) {
+    if (token !== generation.current) return;
+    verifiedRun.current = current;
+    visualBoard.current = current.board;
+    setBoard(current.board);
+    setMoves(current.moves);
+    if (current.result) {
+      complete(current.result, token);
+    } else if (current.stopped) {
+      setPhase('idle');
+      setClockStarted(false);
+    } else if (current.completedAt) {
+      void finish(current);
+    } else {
+      if (current.startedAt) {
+        started.current = Date.now() - current.elapsedMs;
+        setElapsed(current.elapsedMs);
+        setClockStarted(true);
+      }
+      setPhase('playing');
+    }
+  }
   async function stop() {
-    if (pending.current) return;
+    const current = verifiedRun.current;
+    if (!current || ['idle', 'done', 'starting', 'stopping'].includes(phaseRef.current)) return;
+    const token = ++generation.current;
+    cancelRequests();
+    moveQueue.current = [];
+    moving.current = false;
     pending.current = true;
     setPhase('stopping');
+    setClockStarted(false);
     setError('');
     try {
-      await api('games/sliding-puzzle/stop', { method: 'POST', body: { runId: run.id } });
-      setPhase('idle');
-      setRun(null);
-      verifiedRun.current = null;
-      moveQueue.current = [];
-      setClockStarted(false);
-      started.current = 0;
+      const data = await request('games/sliding-puzzle/stop', {
+        method: 'POST',
+        body: { runId: current.id },
+      });
+      if (token !== generation.current) return;
+      if (data.run.result) complete(data.run.result, token);
+      else {
+        verifiedRun.current = null;
+        setPhase('idle');
+      }
     } catch (err) {
-      setError(err.message);
-      setPhase('playing');
+      if (token !== generation.current) return;
+      verifiedRun.current = null;
+      setPhase('idle');
+      setError(
+        '서버의 정지 확인을 받지 못했습니다. 다시 시작하면 새 게임으로 진행됩니다. ' + err.message,
+      );
     } finally {
-      pending.current = false;
+      if (token === generation.current) pending.current = false;
     }
   }
   async function start() {
     if (pending.current) return;
-    const previousPhase = phase;
+    const token = ++generation.current;
+    cancelRequests();
     pending.current = true;
     setPhase('starting');
     setError('');
     try {
-      const data = await api('games/sliding-puzzle/start', { method: 'POST' });
-      setRun(data.run);
+      const data = await request('games/sliding-puzzle/start', { method: 'POST' });
+      if (token !== generation.current) return;
       setBoard(data.run.board);
       verifiedRun.current = data.run;
       visualBoard.current = data.run.board;
@@ -112,72 +178,113 @@ export default function SlidingPuzzle() {
       setElapsed(0);
       setPhase('playing');
     } catch (err) {
+      if (token !== generation.current) return;
       setError(err.message);
-      setPhase(previousPhase);
+      setPhase('idle');
     } finally {
-      pending.current = false;
+      if (token === generation.current) pending.current = false;
     }
   }
-  async function finish() {
+  async function finish(current = verifiedRun.current) {
+    if (!current) return;
+    const token = generation.current;
+    if (current.result) return complete(current.result, token);
     if (pending.current) return;
     pending.current = true;
     setPhase('saving');
+    setClockStarted(false);
     setError('');
     try {
-      const data = await api('games/sliding-puzzle/finish', {
+      const data = await request('games/sliding-puzzle/finish', {
         method: 'POST',
-        body: { runId: run.id },
+        body: { runId: current.id },
       });
-      setResult(data);
-      setElapsed(data.record.elapsedMs);
-      setPhase('done');
-      router.replace('/games/sliding-puzzle?month=' + data.record.month, { scroll: false });
-      reload((v) => v + 1);
-      await refresh();
+      complete(data, token);
     } catch (err) {
+      if (token !== generation.current) return;
       setPhase('retry');
       setError(err.message);
     } finally {
-      pending.current = false;
+      if (token === generation.current) pending.current = false;
     }
   }
+  async function recover() {
+    if (pending.current || !verifiedRun.current) return;
+    const token = generation.current;
+    pending.current = true;
+    setPhase('checking');
+    setError('');
+    let current;
+    try {
+      current = (
+        await request(
+          'games/sliding-puzzle/state?runId=' + encodeURIComponent(verifiedRun.current.id),
+        )
+      ).run;
+    } catch (err) {
+      if (token === generation.current) {
+        setPhase('sync-error');
+        setError(err.message);
+      }
+    } finally {
+      if (token === generation.current) pending.current = false;
+    }
+    if (current) applyRun(current, token);
+  }
   async function slide(tile) {
-    if (phase !== 'playing' || (pending.current && !moving.current) || actualRole !== role) return;
+    if (
+      phaseRef.current !== 'playing' ||
+      (pending.current && !moving.current) ||
+      actualRole !== role
+    )
+      return;
     const movement = slidePuzzle(visualBoard.current, tile);
     if (!movement) return;
     visualBoard.current = movement.board;
     setBoard(movement.board);
     setMoves((value) => value + movement.moves.length);
     moveQueue.current.push(tile);
+    if (puzzleSolved(movement.board)) {
+      setPhase('checking');
+      setClockStarted(false);
+    }
     if (moving.current) return;
+    const token = generation.current;
     moving.current = true;
     pending.current = true;
     setError('');
     try {
-      while (moveQueue.current.length) {
+      while (moveQueue.current.length && token === generation.current) {
         const current = verifiedRun.current;
         const nextTile = moveQueue.current.shift();
         try {
-          const data = await api('games/sliding-puzzle/move', {
+          const data = await request('games/sliding-puzzle/move', {
             method: 'POST',
             body: { runId: current.id, tile: nextTile, step: current.step },
           });
+          if (token !== generation.current) return;
           verifiedRun.current = data.run;
         } catch (err) {
+          if (token !== generation.current) return;
           setError(err.message);
-          // Do not replay queued touches when a response may already have committed.
           moveQueue.current = [];
           try {
-            verifiedRun.current = (
-              await api('games/sliding-puzzle/state?runId=' + encodeURIComponent(current.id))
-            ).run;
-          } catch {
-            verifiedRun.current = current;
+            const data = await request(
+              'games/sliding-puzzle/state?runId=' + encodeURIComponent(current.id),
+            );
+            if (token !== generation.current) return;
+            verifiedRun.current = data.run;
+          } catch (stateError) {
+            if (token !== generation.current) return;
+            setPhase('sync-error');
+            setClockStarted(false);
+            setError(stateError.message);
+            return;
           }
           break;
         }
         const verified = verifiedRun.current;
-        if (verified.startedAt) {
+        if (verified.startedAt && phaseRef.current === 'playing') {
           started.current = Date.now() - verified.elapsedMs;
           setElapsed(verified.elapsedMs);
           setClockStarted(true);
@@ -188,30 +295,16 @@ export default function SlidingPuzzle() {
         }
       }
     } finally {
-      moving.current = false;
-      pending.current = false;
-    }
-    const verified = verifiedRun.current;
-    if (verified) {
-      setRun(verified);
-      visualBoard.current = verified.board;
-      setBoard(verified.board);
-      setMoves(verified.moves);
-      if (verified.startedAt) {
-        started.current = Date.now() - verified.elapsedMs;
-        setElapsed(verified.elapsedMs);
-        setClockStarted(true);
-      }
-      if (verified.stopped) {
-        setPhase('idle');
-        setClockStarted(false);
-      } else if (verified.completedAt) {
-        void finish();
+      if (token === generation.current) {
+        moving.current = false;
+        pending.current = false;
       }
     }
+    if (token === generation.current && verifiedRun.current) applyRun(verifiedRun.current, token);
   }
   const playing = phase === 'playing',
-    locked = actualRole !== role || ['starting', 'stopping', 'saving'].includes(phase);
+    canStop = ['playing', 'checking', 'saving', 'sync-error'].includes(phase),
+    locked = actualRole !== role || ['starting', 'stopping'].includes(phase);
   return (
     <section className="puzzle-page">
       <header className="puzzle-heading">
@@ -225,7 +318,7 @@ export default function SlidingPuzzle() {
       <div className="puzzle-layout">
         <section
           ref={consoleRef}
-          className={'puzzle-console' + (playing ? ' is-playing' : '')}
+          className={'puzzle-console' + (canStop ? ' is-playing' : '')}
           aria-label="슬라이딩 퍼즐 게임"
         >
           <div className="puzzle-status">
@@ -316,20 +409,20 @@ export default function SlidingPuzzle() {
             type="button"
             className="puzzle-start"
             disabled={locked}
-            onClick={playing ? stop : start}
+            onClick={canStop ? stop : start}
           >
-            {playing ? <Square size={17} /> : <Play size={17} />}
+            {canStop ? <Square size={17} /> : <Play size={17} />}
             {phase === 'starting'
               ? '준비 중…'
               : phase === 'stopping'
                 ? '정지 중…'
-                : playing
+                : canStop
                   ? '게임 정지'
                   : '게임 시작'}
           </Button>
-          {phase === 'saving' && (
+          {['saving', 'checking'].includes(phase) && (
             <p role="status" className="puzzle-save-status">
-              기록을 등록하고 있습니다…
+              퍼즐 완료 여부와 기록을 서버에서 확인하고 있습니다…
             </p>
           )}
           {phase === 'done' && result && (
@@ -357,6 +450,11 @@ export default function SlidingPuzzle() {
           {phase === 'retry' && (
             <Button type="button" onClick={() => finish()}>
               기록 등록 다시 시도
+            </Button>
+          )}
+          {phase === 'sync-error' && (
+            <Button type="button" onClick={recover}>
+              게임 상태 다시 확인
             </Button>
           )}
           <div className="puzzle-help">

@@ -18,6 +18,7 @@ const session = (run, now) => ({
   startedAt: run.startedAt,
   completedAt: run.completedAt || null,
   stopped: Boolean(run.stoppedAt),
+  result: run.result || null,
   elapsedMs: run.startedAt
     ? (run.completedAt ? Date.parse(run.completedAt) : now) - Date.parse(run.startedAt)
     : 0,
@@ -37,6 +38,49 @@ function notifyRank(db, userId, kind, month, rank, previousRank, runId) {
     createdAt: new Date().toISOString(),
     readAt: null,
   });
+}
+function savePuzzleResult(db, run, now) {
+  if (run.result) return run.result;
+  if (run.verification !== 2) fail(409, '게임 검증 방식이 변경됐습니다. 새 게임을 시작해주세요.');
+  if (run.stoppedAt) fail(409, '정지한 게임은 기록을 등록할 수 없습니다.');
+  if (!run.startedAt) fail(400, '숫자를 처음 움직인 뒤 기록을 등록해주세요.');
+  if (!run.completedAt || !puzzleSolved(run.board)) fail(400, '퍼즐을 완성한 후 등록해주세요.');
+  if (
+    Date.parse(run.completedAt) - Date.parse(run.startedAt) > 3600000 ||
+    now - Date.parse(run.completedAt) > 3600000
+  )
+    fail(400, '1시간이 지나 기록 등록이 만료됐습니다.');
+  const record = {
+    id: run.id,
+    userId: run.userId,
+    month: puzzleMonth(Date.parse(run.completedAt)),
+    elapsedMs: Date.parse(run.completedAt) - Date.parse(run.startedAt),
+    moves: run.moves.length,
+    finishedAt: run.completedAt,
+  };
+  db.puzzleRecords ||= [];
+  const before = ranking(db, record.month);
+  const previous = before.find((r) => r.userId === run.userId);
+  const improved = !previous || comparePuzzleRecords(record, previous) < 0;
+  if (improved) {
+    db.puzzleRecords = db.puzzleRecords.filter(
+      (r) => r.month !== record.month || r.userId !== run.userId,
+    );
+    db.puzzleRecords.push(record);
+    const after = ranking(db, record.month);
+    const rank = after.findIndex((r) => r.userId === run.userId) + 1;
+    const oldRank = before.findIndex((r) => r.userId === run.userId) + 1;
+    if (rank <= 3)
+      notifyRank(db, run.userId, 'puzzle_rank_enter', record.month, rank, oldRank || null, run.id);
+    for (const [index, old] of before.slice(0, 3).entries()) {
+      const newRank = after.findIndex((r) => r.userId === old.userId) + 1;
+      if (newRank > index + 1)
+        notifyRank(db, old.userId, 'puzzle_rank_drop', record.month, newRank, index + 1, run.id);
+    }
+  }
+  const rank = ranking(db, record.month).findIndex((r) => r.userId === run.userId) + 1;
+  run.result = { record, improved, rank };
+  return run.result;
 }
 export function handlePuzzle(db, actor, segments, method, input, query) {
   const now = Date.now();
@@ -102,6 +146,13 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
     const run = (db.puzzleRuns || []).find((r) => r.id === runId && r.userId === actor.id);
     if (!run) fail(404, '진행 중인 게임을 찾을 수 없습니다.');
     if (run.verification !== 2) fail(409, '게임 검증 방식이 변경됐습니다. 새 게임을 시작해주세요.');
+    if (
+      run.completedAt &&
+      !run.result &&
+      !run.stoppedAt &&
+      now - Date.parse(run.completedAt) <= 3600000
+    )
+      savePuzzleResult(db, run, now);
     if (segments[2] === 'state') return { run: session(run, now) };
     if (segments[2] === 'stop') {
       if (!run.result) run.stoppedAt ||= new Date(now).toISOString();
@@ -124,53 +175,16 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
     run.moves.push(...slide.moves);
     run.lastMove = { step: input.step, tile: input.tile };
     run.step++;
-    if (puzzleSolved(run.board)) run.completedAt = new Date(now).toISOString();
+    if (puzzleSolved(run.board)) {
+      run.completedAt = new Date(now).toISOString();
+      savePuzzleResult(db, run, now);
+    }
     return { run: session(run, now) };
   }
   if (segments[2] === 'finish' && segments.length === 3 && method === 'POST') {
     const run = (db.puzzleRuns || []).find((r) => r.id === input.runId && r.userId === actor.id);
     if (!run) fail(404, '진행 중인 게임을 찾을 수 없습니다. 다시 시작해주세요.');
-    if (run.result) return run.result;
-    if (run.verification !== 2) fail(409, '게임 검증 방식이 변경됐습니다. 새 게임을 시작해주세요.');
-    if (run.stoppedAt) fail(409, '정지한 게임은 기록을 등록할 수 없습니다.');
-    if (!run.startedAt) fail(400, '숫자를 처음 움직인 뒤 기록을 등록해주세요.');
-    if (!run.completedAt || !puzzleSolved(run.board)) fail(400, '퍼즐을 완성한 후 등록해주세요.');
-    if (
-      Date.parse(run.completedAt) - Date.parse(run.startedAt) > 3600000 ||
-      now - Date.parse(run.completedAt) > 3600000
-    )
-      fail(400, '1시간이 지나 기록 등록이 만료됐습니다.');
-    const record = {
-      id: run.id,
-      userId: actor.id,
-      month: puzzleMonth(Date.parse(run.completedAt)),
-      elapsedMs: Date.parse(run.completedAt) - Date.parse(run.startedAt),
-      moves: run.moves.length,
-      finishedAt: run.completedAt,
-    };
-    db.puzzleRecords ||= [];
-    const before = ranking(db, record.month);
-    const previous = before.find((r) => r.userId === actor.id);
-    const improved = !previous || comparePuzzleRecords(record, previous) < 0;
-    if (improved) {
-      db.puzzleRecords = db.puzzleRecords.filter(
-        (r) => r.month !== record.month || r.userId !== actor.id,
-      );
-      db.puzzleRecords.push(record);
-      const after = ranking(db, record.month);
-      const rank = after.findIndex((r) => r.userId === actor.id) + 1;
-      const oldRank = before.findIndex((r) => r.userId === actor.id) + 1;
-      if (rank <= 3)
-        notifyRank(db, actor.id, 'puzzle_rank_enter', record.month, rank, oldRank || null, run.id);
-      for (const [index, old] of before.slice(0, 3).entries()) {
-        const newRank = after.findIndex((r) => r.userId === old.userId) + 1;
-        if (newRank > index + 1)
-          notifyRank(db, old.userId, 'puzzle_rank_drop', record.month, newRank, index + 1, run.id);
-      }
-    }
-    const rank = ranking(db, record.month).findIndex((r) => r.userId === actor.id) + 1;
-    run.result = { record, improved, rank };
-    return run.result;
+    return savePuzzleResult(db, run, now);
   }
   fail(404, '게임 요청을 찾을 수 없습니다.');
 }
