@@ -126,6 +126,10 @@ try {
   await render();
   assert.equal(document.querySelector('.rps-stakes [aria-pressed=true]').textContent, '100 P');
   assert.equal(document.querySelectorAll('.rps-stakes button').length, 4);
+  const opponentHand = () => document.querySelector('.is-opponent .rps-hand').innerHTML;
+  const waitingHand = opponentHand();
+  await React.act(async () => new Promise((resolve) => setTimeout(resolve, 650)));
+  assert.notEqual(opponentHand(), waitingHand, 'The opponent cycles through hands while waiting');
   failNext = true;
   await click('100 P로 도전');
   const packet = posts[0];
@@ -138,6 +142,14 @@ try {
   assert.match(document.querySelector('[role=dialog]').textContent, /10배 당첨|민주주의의 대승리/);
   assert.match(document.querySelector('.rps-reward-copy').textContent, /1,000 P 지급/);
   assert.equal(synced.at(-1)[1].current, 1900);
+  assert.equal(document.querySelector('.is-opponent strong').textContent, '가위');
+  const revealedHand = opponentHand();
+  await React.act(async () => new Promise((resolve) => setTimeout(resolve, 650)));
+  assert.equal(
+    opponentHand(),
+    revealedHand,
+    'The revealed server hand stays still after the round',
+  );
   await click('확인');
   assert.equal(document.querySelector('[role=dialog]'), null);
   await click('보상 보기');

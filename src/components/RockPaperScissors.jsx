@@ -160,13 +160,28 @@ function Game() {
     [pending, setPending] = useState(null),
     [reward, setReward] = useState(null),
     [clock, setClock] = useState(Date.now()),
-    [cooldownUntil, setCooldownUntil] = useState(0);
+    [cooldownUntil, setCooldownUntil] = useState(0),
+    [opponentPreview, setOpponentPreview] = useState(rpsChoices[0].id);
   const pendingRef = useRef(null),
     busyRef = useRef(false),
     alive = useRef(true),
     sequence = useRef(0);
   const storageKey = 'hd-rps-pending:' + user.id;
   const preview = role !== actualRole;
+  const opponentCycling = busy || !data?.round;
+  useEffect(() => {
+    if (!opponentCycling) return;
+    let index = 0;
+    setOpponentPreview(rpsChoices[index].id);
+    const interval = setInterval(
+      () => {
+        index = (index + 1) % rpsChoices.length;
+        setOpponentPreview(rpsChoices[index].id);
+      },
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 600 : 180,
+    );
+    return () => clearInterval(interval);
+  }, [opponentCycling]);
   const remember = useCallback(
     (packet) => {
       pendingRef.current = packet;
@@ -339,9 +354,9 @@ function Game() {
             <div className="rps-contender is-opponent">
               <span>상대</span>
               <div className="rps-hand">
-                <Gesture choice={busy ? 'rock' : round?.opponent} />
+                <Gesture choice={opponentCycling ? opponentPreview : round.opponent} />
               </div>
-              <strong>{busy ? '승부 중' : labels[round?.opponent] || '준비 완료'}</strong>
+              <strong>{opponentCycling ? '선택 중' : labels[round.opponent]}</strong>
             </div>
           </div>
           <div
@@ -512,14 +527,14 @@ function Game() {
           </section>
         </aside>
       </div>
-      <details className="rps-probabilities panel">
-        <summary>
-          <span>
+      <section className="rps-probabilities panel" aria-label="승리 배율 확률">
+        <header>
+          <h2>
             <Sparkles size={18} />
             승리 배율 확률
-          </span>
-          <small>1배 30% · 10배 1%</small>
-        </summary>
+          </h2>
+          <small>전체 확률 공개 · 합계 100%</small>
+        </header>
         <p>승리한 경우에 적용되는 확률입니다. 상대의 가위·바위·보는 각각 같은 확률로 결정됩니다.</p>
         <div>
           {rpsRewards.map((item) => (
@@ -533,7 +548,7 @@ function Game() {
             </div>
           ))}
         </div>
-      </details>
+      </section>
       {reward && (
         <RewardReveal key={reward.requestId} round={reward} onClose={() => setReward(null)} />
       )}

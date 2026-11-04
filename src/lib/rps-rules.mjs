@@ -7,7 +7,7 @@ export const rpsChoices = [
   { id: 'paper', label: '보' },
 ];
 // Integer weights out of 1,000 keep the displayed probabilities exact.
-export const rpsRewards = [300, 220, 160, 110, 80, 50, 30, 25, 15, 10].map((weight, index) => ({
+export const rpsRewards = [200, 300, 180, 110, 80, 50, 35, 20, 15, 10].map((weight, index) => ({
   multiplier: index + 1,
   weight,
   percent: weight / 10,

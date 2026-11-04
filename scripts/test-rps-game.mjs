@@ -17,9 +17,10 @@ assert.deepEqual(
   counts,
   rpsRewards.map((item) => item.weight),
 );
-assert.equal(counts[0], 300);
+assert.equal(counts[0], 200);
+assert.equal(counts[1], 300);
 assert.equal(counts[9], 10);
-assert.ok(counts.every((count, i) => !i || count < counts[i - 1]));
+assert.ok(counts.every((count, i) => i < 2 || count < counts[i - 1]));
 for (const mine of rpsChoices) {
   assert.deepEqual(rpsChoices.map((opponent) => rpsOutcome(mine.id, opponent.id)).sort(), [
     'draw',

@@ -388,21 +388,13 @@
 .rps-probabilities.panel {
   margin-top: 24px;
   border-radius: 14px;
-  summary {
+  > header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    cursor: pointer;
-    list-style: none;
-    &::-webkit-details-marker {
-      display: none;
-    }
-    &::after {
-      content: '+';
-      color: var(--hd-color-accent);
-    }
-    > span {
+    > h2 {
+      margin: 0;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -414,9 +406,6 @@
       font-size: var(--hd-font-size-11);
       color: var(--hd-color-text-muted);
     }
-  }
-  &[open] summary::after {
-    content: '−';
   }
   > p {
     font-size: var(--hd-font-size-12);
@@ -719,10 +708,10 @@
   }
   .rps-probabilities.panel {
     padding: 18px;
-    summary {
+    > header {
       flex-wrap: wrap;
     }
-    summary > span {
+    > header > h2 {
       font-size: var(--hd-font-size-13);
     }
   }
