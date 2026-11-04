@@ -94,6 +94,7 @@
 .puzzle-blank {
   position: absolute;
   width: calc((100% - 37px) / 4);
+  height: calc((100% - 37px) / 4);
   left: calc(8px + var(--tile-column) * (100% - 9px) / 4);
   top: calc(8px + var(--tile-row) * (100% - 9px) / 4);
   aspect-ratio: 1;
@@ -103,6 +104,8 @@
   border-radius: 7px;
 }
 .puzzle-tile {
+  padding: 0;
+  line-height: 1;
   border: 1px solid var(--hd-color-border);
   background: var(--hd-color-input);
   color: var(--hd-color-text-muted);
