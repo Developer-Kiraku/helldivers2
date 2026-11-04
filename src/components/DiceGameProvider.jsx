@@ -5,6 +5,7 @@ import { Dices, Timer } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import Modal from './Modal';
 import { Button } from './ui';
+import { diceInviteMs } from '@/lib/dice-rules.mjs';
 
 const DiceContext = createContext(null);
 export const useDiceGame = () => useContext(DiceContext);
@@ -159,7 +160,12 @@ export default function DiceGameProvider({ children, enabled = true }) {
             자동으로 닫힙니다.
           </p>
           <div className="dice-invite-progress">
-            <span style={{ width: Math.max(0, (invite.expiresAt - now) / 50) + '%' }} />
+            <span
+              style={{
+                width:
+                  Math.min(100, Math.max(0, ((invite.expiresAt - now) / diceInviteMs) * 100)) + '%',
+              }}
+            />
           </div>
           {error && (
             <p role="alert" className="form-error">

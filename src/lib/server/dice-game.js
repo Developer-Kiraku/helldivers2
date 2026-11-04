@@ -1,6 +1,7 @@
 import { randomInt, randomUUID } from 'node:crypto';
 import { fail } from './auth';
 import { transferGamePoints } from './points.mjs';
+import { diceInviteMs } from '../dice-rules.mjs';
 
 export const diceStakeOptions = [10, 100, 1000];
 const active = (game) => ['invited', 'playing', 'revealing'].includes(game.status);
@@ -139,7 +140,7 @@ function createGame(db, players, stake, now, invited = true) {
     round: 0,
     revision: 1,
     createdAt: now,
-    expiresAt: now + 30000,
+    expiresAt: now + diceInviteMs,
     receivedAt: null,
     bets: Object.fromEntries(players.map((id) => [id, 0])),
     dice: Object.fromEntries(players.map((id) => [id, []])),
@@ -186,7 +187,7 @@ export function handleDiceGame(db, actor, segments, method, input) {
       );
       if (invitation) {
         invitation.receivedAt = now;
-        invitation.expiresAt = now + 5000;
+        invitation.expiresAt = now + diceInviteMs;
         invitation.revision++;
       }
     }

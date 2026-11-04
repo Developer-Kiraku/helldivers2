@@ -94,7 +94,7 @@ try {
     status: 429,
   });
   assert.throws(() => call('c', 'accept', { gameId: pending.id }), { status: 404 });
-  now += 30000;
+  now += 60000;
   assert.throws(() => call('b', 'accept', { gameId: pending.id }), { status: 409 });
   assert.equal(db.pointLedger.length, 0);
   const originalDb = db;
@@ -116,10 +116,10 @@ try {
   const delivered = presence('b', 'site').game;
   assert.equal(
     delivered.expiresAt - now,
-    5000,
-    'The recipient receives a full five seconds after delivery',
+    60000,
+    'The recipient receives a full minute after delivery',
   );
-  now += 1000;
+  now += 5001;
   assert.equal(
     presence('b').game.expiresAt,
     delivered.expiresAt,
@@ -128,6 +128,12 @@ try {
   now = delivered.expiresAt - 1;
   call('b', 'accept', { gameId: delayed.id });
   assert.equal(db.diceGames.at(-1).status, 'playing');
+  db = make();
+  const expiring = invite();
+  const received = presence('b', 'site').game;
+  now = received.expiresAt;
+  assert.throws(() => call('b', 'accept', { gameId: expiring.id }), { status: 409 });
+  assert.equal(db.diceGames.at(-1).status, 'expired');
   db = originalDb;
   let game = accept(invite());
   const own = presence('a').game;

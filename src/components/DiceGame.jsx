@@ -143,7 +143,7 @@ export default function DiceGame() {
                 <strong className="dice-invite-count">
                   {game.receivedAt
                     ? Math.max(0, (game.expiresAt - now) / 1000).toFixed(1) + '초 남음'
-                    : '상대가 초대를 확인하면 5초 동안 응답할 수 있습니다.'}
+                    : '상대가 초대를 확인하면 1분 동안 응답할 수 있습니다.'}
                 </strong>
               )}
             </div>
@@ -397,7 +397,7 @@ export default function DiceGame() {
           <div className="dice-lobby-note">
             <Timer size={16} />
             <p>
-              초대는 5초 동안 표시됩니다.
+              초대는 1분 동안 표시됩니다.
               <br />
               초대를 수락해도 CALL 전에는 포인트가 차감되지 않습니다.
             </p>
