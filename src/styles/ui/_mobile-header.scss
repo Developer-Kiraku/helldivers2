@@ -10,6 +10,112 @@
 .mobile-auth-action {
   display: none;
 }
+.mobile-menu-account {
+  padding: 17px;
+  margin-bottom: 10px;
+  border: 1px solid color-mix(in srgb, var(--hd-color-accent) 24%, var(--hd-color-border));
+  border-radius: 16px;
+  background:
+    radial-gradient(
+      ellipse at top right,
+      color-mix(in srgb, var(--hd-color-accent) 8%, transparent),
+      transparent 75%
+    ),
+    var(--hd-color-input);
+}
+.mobile-menu-profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--hd-color-input-text);
+  text-decoration: none;
+  .avatar {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 12px;
+  }
+  .mobile-menu-identity {
+    min-width: 0;
+    flex: 1;
+  }
+  .member-nickname {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--hd-font-size-15);
+    font-weight: 700;
+  }
+  small {
+    display: block;
+    margin-top: 3px;
+    color: var(--hd-color-text-muted);
+    font-size: var(--hd-font-size-11);
+  }
+}
+.mobile-menu-profile-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--hd-color-text-muted);
+  font-size: var(--hd-font-size-11);
+  white-space: nowrap;
+}
+.mobile-menu-wallet {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 18px 0 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--hd-color-border);
+  border-bottom: 1px solid var(--hd-color-border);
+  > span {
+    font-size: var(--hd-font-size-12);
+    color: var(--hd-color-text-muted);
+  }
+  strong {
+    color: var(--hd-color-accent);
+    font-size: var(--hd-font-size-26);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  small {
+    font-size: var(--hd-font-size-13);
+  }
+}
+.mobile-menu-account-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 38px;
+    color: var(--hd-color-accent);
+    font-size: var(--hd-font-size-12);
+    text-decoration: none;
+  }
+  .mobile-menu-signout.ui-button.rt-Button {
+    padding: 7px 8px;
+    min-height: 38px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--hd-color-text-muted);
+    font-size: var(--hd-font-size-11);
+    gap: 5px;
+  }
+  .mobile-menu-signout.ui-button.rt-Button:hover {
+    background: var(--hd-color-surface);
+    color: var(--hd-color-input-text);
+  }
+}
 @media (max-width:#{t.breakpoint('mobile')}) {
   .mobile-brand-header {
     position: sticky;

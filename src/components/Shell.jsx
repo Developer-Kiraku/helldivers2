@@ -62,7 +62,7 @@ function NotificationBell({ mobile = false }) {
 }
 
 function MobileBrandHeader({ signedIn, logout, role }) {
-  const { unreadMessages } = useCommunity();
+  const { unreadMessages, user } = useCommunity();
   const [busy, setBusy] = useState(false),
     [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -113,6 +113,47 @@ function MobileBrandHeader({ signedIn, logout, role }) {
       {open && (
         <Modal className="full-menu-modal" title="전체 메뉴" onClose={() => setOpen(false)}>
           <nav className="full-menu" aria-label="전체 메뉴">
+            {signedIn && (
+              <section className="mobile-menu-account" aria-label="내 계정">
+                <Link
+                  href="/profile"
+                  className="mobile-menu-profile"
+                  onClick={() => setOpen(false)}
+                >
+                  <Avatar own />
+                  <span className="mobile-menu-identity">
+                    <Nickname own />
+                    <small>{roleLabels[role]}</small>
+                  </span>
+                  <span className="mobile-menu-profile-action">
+                    내 정보 <Icon name="arrow" size={14} />
+                  </span>
+                </Link>
+                <div className="mobile-menu-wallet">
+                  <span>현재 포인트</span>
+                  <strong>
+                    {(user?.points?.current || 0).toLocaleString('ko-KR')}
+                    <small> P</small>
+                  </strong>
+                </div>
+                <div className="mobile-menu-account-actions">
+                  <Link href="/points/guide" onClick={() => setOpen(false)}>
+                    <Icon name="target" size={16} />
+                    포인트 가이드
+                    <Icon name="external" size={13} />
+                  </Link>
+                  <Button
+                    type="button"
+                    onClick={signOut}
+                    disabled={busy}
+                    className="mobile-menu-signout"
+                  >
+                    <LogOut size={15} />
+                    {busy ? '로그아웃 중' : '로그아웃'}
+                  </Button>
+                </div>
+              </section>
+            )}
             <NavigationGroups
               role={signedIn ? role : null}
               mobile
@@ -125,20 +166,7 @@ function MobileBrandHeader({ signedIn, logout, role }) {
             </div>
             <div className="full-menu-divider" />
             {signedIn && role === 'operator' && <TestUserToggle />}
-            {signedIn ? (
-              <>
-                <Link href="/profile" onClick={() => setOpen(false)}>
-                  <Avatar own />
-                  <span>
-                    <Nickname own /> · 내 정보
-                  </span>
-                </Link>
-                <Button type="button" onClick={signOut} disabled={busy}>
-                  <LogOut size={18} />
-                  {busy ? '로그아웃 중' : '로그아웃'}
-                </Button>
-              </>
-            ) : (
+            {!signedIn && (
               <>
                 <Link href="/login" onClick={() => setOpen(false)}>
                   <LogIn size={18} />
@@ -256,6 +284,9 @@ export default function Shell({ children, previewSkeleton = false }) {
                 <Link href="/profile" className="sidebar-points">
                   <span>현재 포인트</span>
                   <strong>{(user?.points?.current || 0).toLocaleString()} P</strong>
+                </Link>
+                <Link href="/points/guide" className="points-guide-link">
+                  포인트 얻는 방법 <Icon name="external" size={12} />
                 </Link>
                 <div className="account-actions">
                   <Link href="/profile">

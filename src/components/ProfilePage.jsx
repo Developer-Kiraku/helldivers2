@@ -118,7 +118,12 @@ export default function ProfilePage() {
             <span className="badge">{roleLabels[user?.role]}</span>
             <dl className="member-info">
               <dt>현재 포인트</dt>
-              <dd>{(user?.points?.current || 0).toLocaleString()} P</dd>
+              <dd>
+                {(user?.points?.current || 0).toLocaleString()} P{' '}
+                <Link href="/points/guide" className="points-guide-link">
+                  포인트 얻는 방법 ↗
+                </Link>
+              </dd>
               <dt>누적 포인트</dt>
               <dd>{(user?.points?.total || 0).toLocaleString()} P</dd>
               <dt>로그인 방식</dt>

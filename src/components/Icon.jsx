@@ -47,13 +47,15 @@ import {
   KeyRound,
   MapPin,
   PencilLine,
-  Puzzle,
+  Grid3X3,
+  Hand,
   Dices,
 } from 'lucide-react';
 import { SiDiscord, SiKakaotalk, SiYoutube } from '@icons-pack/react-simple-icons';
 const icons = {
   dice: Dices,
-  puzzle: Puzzle,
+  puzzle: Grid3X3,
+  rps: Hand,
   crosshair: Crosshair,
   undo: Undo2,
   redo: Redo2,

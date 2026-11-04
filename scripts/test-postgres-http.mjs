@@ -269,6 +269,33 @@ try {
       (grant) => grant.id === grantPayload.requestId,
     ),
   );
+  const rpsBefore = (await member.call('/api/games/rps')).data;
+  const rpsPacket = { requestId: randomUUID(), stake: 50, choice: 'paper' };
+  const rpsReplies = await Promise.all([
+    member.call('/api/games/rps/play', 'POST', rpsPacket),
+    member.call('/api/games/rps/play', 'POST', rpsPacket),
+  ]);
+  const rpsResult = rpsReplies[0].data;
+  assert.deepEqual(rpsReplies[1].data.round, rpsResult.round);
+  assert.equal(rpsResult.points.current, rpsBefore.points.current + rpsResult.round.profit);
+  assert.equal(rpsResult.points.total, rpsBefore.points.total);
+  await harness.stop();
+  await harness.start('work/postgres-http-unused.json', { databaseUrl: url.href });
+  const recovered = (await member.call('/api/games/rps?requestId=' + rpsPacket.requestId)).data;
+  assert.deepEqual(recovered.round, rpsResult.round);
+  assert.deepEqual(recovered.points, rpsResult.points);
+  assert.deepEqual(recovered.attempts, rpsResult.attempts);
+  assert.deepEqual(
+    (await member.call('/api/games/rps/play', 'POST', rpsPacket)).data.round,
+    rpsResult.round,
+  );
+  assert.deepEqual(
+    (await member.call('/api/points/guide')).data.settings,
+    (await admin.call('/api/admin/settings/points')).data.settings,
+  );
+  console.log(
+    'PASS: PostgreSQL RPS concurrent settlement, private result recovery and attempts/points persistence after restart',
+  );
   await member.call('/api/auth/logout', 'POST', {});
   await member.call('/api/bootstrap', 'GET', undefined, 401);
   console.log(

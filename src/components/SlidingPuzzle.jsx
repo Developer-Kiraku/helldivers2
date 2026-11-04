@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Puzzle, Trophy, Timer, Move, Play, Square, Check, Medal } from 'lucide-react';
+import { Grid3X3, Trophy, Timer, Move, Play, Square, Check, Medal } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import { Button, Select } from './ui';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
@@ -351,7 +351,7 @@ export default function SlidingPuzzle() {
       <header className="puzzle-heading">
         <span className="eyebrow">SUPER EARTH · TRAINING</span>
         <h1>
-          <Puzzle size={28} />
+          <Grid3X3 size={28} />
           슬라이딩 퍼즐
         </h1>
         <p>빈칸 옆 숫자를 움직여 1부터 15까지 순서대로 맞춰보세요.</p>
@@ -438,7 +438,7 @@ export default function SlidingPuzzle() {
                     '--tile-row': Math.floor(board.indexOf(0) / 4),
                   }}
                 >
-                  <Puzzle size={30} />
+                  <Grid3X3 size={30} />
                 </span>
               ),
             )}

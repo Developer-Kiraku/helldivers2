@@ -144,6 +144,8 @@ async function run() {
   await import('./test-sliding-puzzle.mjs');
   await import('./test-puzzle-rewards.mjs');
   await import('./test-dice-game.mjs');
+  await import('./test-rps-game.mjs');
+  await import('./test-rps-ui.mjs');
   await import('./test-dice-ui.mjs');
   await import('./test-puzzle-result-ui.mjs');
   await import('./test-puzzle-requests.mjs');
@@ -204,6 +206,7 @@ async function run() {
     await require('./test-puzzle-http.cjs')({ guest, admin, member, file });
     await require('./test-points-http.cjs')({ guest, admin, deputy, member, apprentice, file });
     await require('./test-dice-http.cjs')({ guest, admin, member, apprentice, file });
+    await require('./test-rps-http.cjs')({ guest, admin, member, apprentice, file });
     await require('./test-dashboard-rankings-http.cjs')({ guest, member, file });
     await require('./test-test-player-http.cjs')({ guest, admin, deputy, member, client, file });
     await require('./test-point-grants-http.cjs')({

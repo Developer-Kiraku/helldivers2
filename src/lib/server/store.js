@@ -13,6 +13,7 @@ import { syncPointActivity, awardExistingMemberPoints } from './points.mjs';
 import { settleDiceGames } from './dice-game';
 import { settleTestPlayerSessions } from './test-player';
 import { settlePuzzleRewards } from './puzzle-rewards.mjs';
+import { awardRpsPostAttempt } from './rps-attempts.mjs';
 
 const shared = globalThis;
 shared.__hdJsonQueue ||= Promise.resolve();
@@ -180,6 +181,7 @@ export function transaction(callback, write = true, options = {}) {
 export const readStore = (callback, options) => transaction(callback, false, options);
 export function audit(db, actorId, action, targetId, details = {}) {
   syncPointActivity(db, actorId, action, targetId);
+  if (action === 'post.create') awardRpsPostAttempt(db, targetId);
   db.audit.push({
     id: randomUUID(),
     actorId,

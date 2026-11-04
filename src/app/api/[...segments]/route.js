@@ -3,6 +3,7 @@ import { bulkPosts } from '@/lib/server/bulk-posts';
 import { handlePuzzle } from '@/lib/server/sliding-puzzle';
 import { dashboardRanking } from '@/lib/server/rankings';
 import { handleDiceGame } from '@/lib/server/dice-game';
+import { handleRpsGame } from '@/lib/server/rps-game';
 import { handlePointGrants } from '@/lib/server/point-grants';
 import {
   testPlayerOwner,
@@ -152,7 +153,8 @@ async function handler(request, context) {
     const { segments } = await context.params;
     const path = segments.join('/');
     const method = request.method;
-    const gameRequest = segments[0] === 'games' && ['dice', 'sliding-puzzle'].includes(segments[1]);
+    const gameRequest =
+      segments[0] === 'games' && ['dice', 'sliding-puzzle', 'rps'].includes(segments[1]);
     const operationalOptions =
       gameRequest ||
       segments[0] === 'rankings' ||
@@ -163,8 +165,14 @@ async function handler(request, context) {
         'admin/settings/points',
         'admin/settings/point-grants',
         'integrations/maps',
+        'points/guide',
       ].includes(path)
-        ? { collections: operationalCollections }
+        ? {
+            collections:
+              segments[0] === 'games' && segments[1] === 'rps'
+                ? [...operationalCollections, 'rpsRounds']
+                : operationalCollections,
+          }
         : {};
     const transact = (callback, write = true) => transaction(callback, write, operationalOptions);
     if (!['GET', 'HEAD'].includes(method)) verifyOrigin(request);
@@ -316,6 +324,7 @@ async function handler(request, context) {
     const write = method !== 'GET' || path === 'bootstrap' || path === 'games/sliding-puzzle/state';
     const result = await transact((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
+      if (path === 'points/guide' && method === 'GET') return { settings: pointSettings(db) };
       if (segments[0] === 'rankings' && segments.length === 2 && method === 'GET')
         return dashboardRanking(db, actor, segments[1], new URL(request.url).searchParams);
       if (path === 'admin/settings/point-grants') {
@@ -339,6 +348,8 @@ async function handler(request, context) {
       }
       if (segments[0] === 'games' && segments[1] === 'dice')
         return handleDiceGame(db, actor, segments, method, input);
+      if (segments[0] === 'games' && segments[1] === 'rps')
+        return handleRpsGame(db, actor, segments, method, input, new URL(request.url).searchParams);
       if (segments[0] === 'games' && segments[1] === 'sliding-puzzle')
         return handlePuzzle(db, actor, segments, method, input, new URL(request.url).searchParams);
       if (path === 'mentions' && method === 'GET')

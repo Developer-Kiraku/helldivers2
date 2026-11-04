@@ -1,0 +1,187 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { randomUUID } from 'node:crypto';
+import { createRequire } from 'node:module';
+import { build } from 'esbuild';
+import { rpsChoices, rpsOutcome, rpsMultiplier, rpsRewards } from '../src/lib/rps-rules.mjs';
+import {
+  rpsAttempts,
+  awardRpsPostAttempt,
+  consumeRpsAttempt,
+} from '../src/lib/server/rps-attempts.mjs';
+
+const counts = Array(10).fill(0);
+for (let ticket = 0; ticket < 1000; ticket++) counts[rpsMultiplier(ticket) - 1]++;
+assert.deepEqual(
+  counts,
+  rpsRewards.map((item) => item.weight),
+);
+assert.equal(counts[0], 300);
+assert.equal(counts[9], 10);
+assert.ok(counts.every((count, i) => !i || count < counts[i - 1]));
+for (const mine of rpsChoices) {
+  assert.deepEqual(rpsChoices.map((opponent) => rpsOutcome(mine.id, opponent.id)).sort(), [
+    'draw',
+    'lose',
+    'win',
+  ]);
+}
+const directory = await fs.mkdtemp(path.resolve('work/rps-domain-'));
+try {
+  const outfile = path.join(directory, 'rps.cjs');
+  await build({
+    entryPoints: ['src/lib/server/rps-game.js'],
+    outfile,
+    bundle: true,
+    platform: 'node',
+    format: 'cjs',
+    packages: 'external',
+    plugins: [
+      {
+        name: 'auth-errors',
+        setup(builder) {
+          builder.onResolve({ filter: /\/auth$/ }, () => ({ path: 'auth', namespace: 'test' }));
+          builder.onLoad({ filter: /.*/, namespace: 'test' }, () => ({
+            contents:
+              'export function fail(status,message){throw Object.assign(new Error(message),{status});}',
+          }));
+        },
+      },
+    ],
+  });
+  const { handleRpsGame } = createRequire(import.meta.url)(outfile);
+  let now = Date.parse('2026-11-04T14:30:00Z');
+  const db = {
+    users: ['a', 'b'].map((id) => ({
+      id,
+      status: 'active',
+      points: { current: 10000, total: 10000 },
+    })),
+    posts: [],
+  };
+  const actor = db.users[0];
+  const read = (user = actor, requestId) =>
+    handleRpsGame(
+      db,
+      user,
+      ['games', 'rps'],
+      'GET',
+      {},
+      new URLSearchParams(requestId ? { requestId } : {}),
+      { now },
+    );
+  const play = (opponent = 0, ticket = 999, extra = {}, user = actor) => {
+    const randoms = [opponent, ticket];
+    return handleRpsGame(
+      db,
+      user,
+      ['games', 'rps', 'play'],
+      'POST',
+      { requestId: randomUUID(), stake: 100, choice: 'rock', ...extra },
+      undefined,
+      { now, randomInt: () => randoms.shift() },
+    );
+  };
+  assert.equal(read().attempts.total, 5);
+  assert.equal(actor.rps, undefined, 'Reading the daily allowance does not write user state');
+  let result = play();
+  assert.equal(result.round.outcome, 'win');
+  assert.equal(result.round.multiplier, 10);
+  assert.equal(result.points.current, 10900);
+  assert.equal(result.points.total, 10000);
+  assert.equal(result.attempts.daily, 4);
+  const retry = { requestId: result.round.requestId };
+  assert.deepEqual(
+    play(2, 0, retry),
+    result,
+    'Identical retry returns the committed result without charging',
+  );
+  assert.equal(db.pointLedger.length, 2);
+  assert.throws(() => play(0, 0, { ...retry, stake: 500 }), { status: 409 });
+  assert.throws(() => play(), { status: 429 });
+  assert.equal(
+    read(db.users[1], retry.requestId).round,
+    null,
+    'Another user cannot retrieve a round',
+  );
+  assert.ok(!('userId' in result.round));
+  now += 2000;
+  result = play(1);
+  assert.equal(result.round.outcome, 'draw');
+  assert.equal(result.round.profit, 0);
+  assert.equal(result.points.current, 10900);
+  assert.equal(result.attempts.daily, 4);
+  now += 2000;
+  result = play(0, 0);
+  assert.equal(result.round.multiplier, 1);
+  assert.equal(result.round.profit, 0, 'One times includes the original stake');
+  assert.equal(result.attempts.daily, 3);
+  now += 2000;
+  result = play(2, 999, { multiplier: 10, outcome: 'win', payout: 1000000 });
+  assert.equal(result.round.outcome, 'lose');
+  assert.equal(
+    result.points.current,
+    10800,
+    'Client result and payout fields do not control settlement',
+  );
+  assert.equal(result.attempts.daily, 2);
+  now += 2000;
+  for (const stake of [0, -100, 10, 101, 100.5, '100', Number.MAX_SAFE_INTEGER])
+    assert.throws(() => play(0, 0, { stake }), { status: 400 });
+  assert.throws(() => play(0, 0, { choice: 'lizard' }), { status: 400 });
+  assert.throws(() => play(0, 0, { requestId: 'bad' }), { status: 400 });
+  assert.throws(() => play(0, 0, {}, { ...actor, actualRole: 'operator' }), { status: 403 });
+  actor.points.current = 49;
+  const ledgerCount = db.pointLedger.length;
+  assert.throws(() => play(0, 0, { stake: 50 }), { status: 400 });
+  assert.equal(db.pointLedger.length, ledgerCount);
+  actor.points.current = 10000;
+  db.posts.push(
+    { id: 'draft', authorId: actor.id, status: 'draft' },
+    { id: 'published', authorId: actor.id },
+  );
+  awardRpsPostAttempt(db, 'draft');
+  assert.equal(read().attempts.bonus, 0);
+  awardRpsPostAttempt(db, 'published');
+  awardRpsPostAttempt(db, 'published');
+  assert.equal(read().attempts.bonus, 1, 'A post can grant only once');
+  db.posts[0].status = 'published';
+  awardRpsPostAttempt(db, 'draft');
+  assert.equal(read().attempts.bonus, 2);
+  for (let i = 0; i < 2; i++) {
+    now += 2000;
+    result = play(2);
+  }
+  assert.equal(result.attempts.daily, 0);
+  assert.equal(result.attempts.bonus, 2, 'Daily attempts are used before saved attempts');
+  now += 2000;
+  result = play(1);
+  assert.equal(result.attempts.bonus, 2, 'A draw preserves a saved attempt too');
+  now += 2000;
+  result = play(2);
+  assert.equal(result.round.attemptSource, 'bonus');
+  assert.equal(result.attempts.bonus, 1);
+  now = Date.parse('2026-11-04T15:00:00Z');
+  assert.equal(read().attempts.daily, 5, 'KST midnight refills to five');
+  assert.equal(read().attempts.bonus, 1);
+  consumeRpsAttempt(actor, now);
+  now += 86400000 * 3;
+  assert.equal(read().attempts.daily, 5, 'Daily attempts never accumulate across days');
+  assert.equal(read().attempts.bonus, 1);
+  actor.rps = { day: rpsAttempts(actor, now).day, dailyUsed: 5, bonus: 0 };
+  assert.throws(() => play(), { status: 409 });
+  assert.equal(
+    play(0, 0, retry).round.requestId,
+    retry.requestId,
+    'Retries work even after attempts are exhausted',
+  );
+  assert.equal(read().history.length, 5);
+  assert.equal(actor.points.total, 10000);
+  console.log(
+    'PASS: RPS exact 1,000-ticket probabilities, outcomes, wallet settlement, attempt rollover, post rewards, isolation, retries and forged requests',
+  );
+} finally {
+  // The only removed path is the temporary directory created inside this workspace above.
+  await fs.rm(directory, { recursive: true, force: true });
+}

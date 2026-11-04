@@ -29,6 +29,7 @@ export const navigationGroups = [
     items: [
       { href: '/games/sliding-puzzle', label: '슬라이딩 퍼즐', icon: 'puzzle' },
       { href: '/games/dice', label: '민주주의 주사위', icon: 'dice' },
+      { href: '/games/rps', label: '가위바위보', icon: 'rps' },
     ],
   },
 ];
