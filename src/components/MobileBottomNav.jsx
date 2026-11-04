@@ -6,16 +6,17 @@ import { Popover } from '@radix-ui/themes';
 import { Button } from './ui';
 import Icon from './Icon';
 import Avatar from './Avatar';
-import NavigationGroups from './NavigationGroups';
+import { navigationGroups } from '@/lib/navigation.mjs';
 
-export default function MobileBottomNav({
-  boards,
-  groups = [{ id: 'boards', label: '', items: boards }],
-}) {
+const communityBoards = navigationGroups
+  .find((group) => group.id === 'community')
+  .items.filter((item) => item.href !== '/boards/notice');
+
+export default function MobileBottomNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const active = (href) => pathname === href || pathname.startsWith(`${href}/`);
-  const communityActive = boards.some((item) => active(item.href));
+  const communityActive = communityBoards.some((item) => active(item.href));
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
     const query = window.matchMedia('(max-width: 760px)');
@@ -71,11 +72,17 @@ export default function MobileBottomNav({
             </Popover.Close>
           </header>
           <nav aria-label="커뮤니티 게시판">
-            <NavigationGroups
-              mobile
-              groups={groups.filter((group) => group.items.length)}
-              onNavigate={() => setOpen(false)}
-            />
+            {communityBoards.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active(item.href) ? 'page' : undefined}
+                onClick={() => setOpen(false)}
+              >
+                <Icon name={item.icon} size={18} />
+                <span>{item.label}</span>
+              </Link>
+            ))}
           </nav>
         </Popover.Content>
       </Popover.Root>

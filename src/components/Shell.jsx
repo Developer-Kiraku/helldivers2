@@ -16,7 +16,6 @@ import NotificationInbox from './NotificationInbox';
 import Modal from './Modal';
 import MobileBottomNav from './MobileBottomNav';
 import NavigationGroups from './NavigationGroups';
-import { navigationGroups } from '@/lib/navigation.mjs';
 import DiceGameProvider from './DiceGameProvider';
 import TestUserToggle from './TestUserToggle';
 
@@ -184,7 +183,6 @@ function MobileBrandHeader({ signedIn, logout, role }) {
     </>
   );
 }
-const menu = navigationGroups.flatMap((group) => group.items);
 export default function Shell({ children, previewSkeleton = false }) {
   const pathname = usePathname(),
     router = useRouter();
@@ -399,21 +397,7 @@ export default function Shell({ children, previewSkeleton = false }) {
             </main>
           )}
         </div>
-        <MobileBottomNav
-          groups={navigationGroups.map((group) => ({
-            ...group,
-            items: group.items.filter(
-              (item) =>
-                (item.href.startsWith('/boards/') && item.href !== '/boards/notice') ||
-                item.href.startsWith('/games/'),
-            ),
-          }))}
-          boards={menu.filter(
-            (item) =>
-              (item.href.startsWith('/boards/') && item.href !== '/boards/notice') ||
-              item.href.startsWith('/games/'),
-          )}
-        />
+        <MobileBottomNav />
       </div>
     </DiceGameProvider>
   );
