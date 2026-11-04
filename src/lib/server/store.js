@@ -11,6 +11,7 @@ import { createPool, migrate, postgresTransaction } from './postgres.mjs';
 import { auditLogDetails } from './audit-logs.mjs';
 import { syncPointActivity, awardExistingMemberPoints } from './points.mjs';
 import { settleDiceGames } from './dice-game';
+import { settleTestPlayerSessions } from './test-player';
 
 const shared = globalThis;
 shared.__hdJsonQueue ||= Promise.resolve();
@@ -128,7 +129,8 @@ function settleStore(db) {
   const probationChanged = settleProbation(db);
   const pointsChanged = awardExistingMemberPoints(db);
   const gamesChanged = settleDiceGames(db);
-  return probationChanged || pointsChanged || gamesChanged;
+  const testSessionsChanged = settleTestPlayerSessions(db);
+  return probationChanged || pointsChanged || gamesChanged || testSessionsChanged;
 }
 export function transaction(callback, write = true) {
   if (process.env.DATABASE_URL) {

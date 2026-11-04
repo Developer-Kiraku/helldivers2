@@ -2,6 +2,13 @@ import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/ap
 import { bulkPosts } from '@/lib/server/bulk-posts';
 import { handlePuzzle } from '@/lib/server/sliding-puzzle';
 import { handleDiceGame } from '@/lib/server/dice-game';
+import {
+  testPlayerOwner,
+  testPlayerStatus,
+  startTestPlayer,
+  requireTestPlayer,
+  stopTestPlayer,
+} from '@/lib/server/test-player';
 import { awardDailyPoints, pointSettings } from '@/lib/server/points.mjs';
 import {
   handleNotifications,
@@ -116,6 +123,42 @@ async function handler(request, context) {
     if (!['GET', 'HEAD'].includes(method)) verifyOrigin(request);
     const token = request.cookies.get(config.cookie)?.value;
     const viewRole = request.cookies.get(viewRoleCookie)?.value;
+    if (segments[0] === 'test-player' || path.startsWith('admin/test-player/')) {
+      const input = method === 'GET' ? {} : await readJsonRequest(request, 4096);
+      const result = await transaction((db) => {
+        const owner = testPlayerOwner(db, token);
+        if (path === 'admin/test-player/status' && method === 'GET')
+          return testPlayerStatus(db, owner, token);
+        if (path === 'admin/test-player/start' && method === 'POST') {
+          const count = db.users.length;
+          const result = startTestPlayer(db, owner, token);
+          if (db.users.length > count)
+            audit(db, owner.id, 'user.register', result.user.id, {
+              targetNickname: result.user.nickname,
+              targetCreatedAt: result.user.createdAt,
+            });
+          return result;
+        }
+        if (path === 'admin/test-player/stop' && method === 'POST')
+          return stopTestPlayer(db, owner, token);
+        const player = requireTestPlayer(db, owner, token);
+        const target = segments.slice(1).join('/');
+        if (target === 'bootstrap' && method === 'GET')
+          return {
+            user: publicUser(player),
+            unreadNotifications: 0,
+            unreadMessages: 0,
+            posts: Object.fromEntries(Object.keys(boards).map((board) => [board, []])),
+            stats: { totalMembers: 0, onlineMembers: 0 },
+          };
+        if (target === 'activity/unread' && method === 'GET')
+          return { messages: 0, notifications: 0 };
+        if (segments[1] === 'games' && segments[2] === 'dice')
+          return handleDiceGame(db, player, segments.slice(1), method, input);
+        fail(403, '테스트 창에서는 민주주의 주사위만 이용할 수 있습니다.');
+      });
+      return json(result);
+    }
     if (path === 'profile/view-role' && method === 'POST') {
       const input = await readJsonRequest(request, 1024);
       if (!viewRoles.includes(input.role)) fail(400, '화면 등급을 확인해주세요.');

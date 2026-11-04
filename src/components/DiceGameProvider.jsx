@@ -12,7 +12,7 @@ export default function DiceGameProvider({ children, enabled = true }) {
   const { user, role, actualRole, api, syncPoints } = useCommunity();
   const pathname = usePathname(),
     router = useRouter();
-  const onGame = pathname === '/games/dice';
+  const onGame = pathname === '/games/dice' || pathname === '/test-user';
   const [data, setData] = useState(null),
     [error, setError] = useState(''),
     [connectionError, setConnectionError] = useState(''),

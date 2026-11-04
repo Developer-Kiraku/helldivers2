@@ -28,7 +28,10 @@ export const cookieOptions = {
 export function userForToken(db, token) {
   if (typeof token !== 'string' || !/^[a-f0-9]{64}$/.test(token)) return null;
   const session = db.sessions.find(
-    (item) => item.tokenHash === tokenHash(token) && Date.parse(item.expiresAt) > Date.now(),
+    (item) =>
+      !item.testOwnerId &&
+      item.tokenHash === tokenHash(token) &&
+      Date.parse(item.expiresAt) > Date.now(),
   );
   if (!session) return null;
   return db.users.find((user) => user.id === session.userId && user.status === 'active') || null;

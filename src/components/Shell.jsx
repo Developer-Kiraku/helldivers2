@@ -18,6 +18,7 @@ import MobileBottomNav from './MobileBottomNav';
 import NavigationGroups from './NavigationGroups';
 import { navigationGroups } from '@/lib/navigation.mjs';
 import DiceGameProvider from './DiceGameProvider';
+import TestUserToggle from './TestUserToggle';
 
 function NotificationBell({ mobile = false }) {
   const { unreadNotifications = 0 } = useCommunity();
@@ -123,6 +124,7 @@ function MobileBrandHeader({ signedIn, logout, role }) {
               <DiscordLink />
             </div>
             <div className="full-menu-divider" />
+            {signedIn && role === 'operator' && <TestUserToggle />}
             {signedIn ? (
               <>
                 <Link href="/profile" onClick={() => setOpen(false)}>
@@ -214,6 +216,7 @@ export default function Shell({ children, previewSkeleton = false }) {
     window.addEventListener('message', listener);
     return () => window.removeEventListener('message', listener);
   }, []);
+  if (pathname === '/test-user') return children;
   if (!signedIn)
     return (
       <>
@@ -276,6 +279,7 @@ export default function Shell({ children, previewSkeleton = false }) {
                 {actualRole === 'operator' && role !== actualRole ? ' · 화면 확인 중' : ''}
               </span>
               <div className="preview-control-groups">
+                {actualRole === 'operator' && role === 'operator' && <TestUserToggle />}
                 <NotificationBell key={pathname + role} />
                 <Link
                   href="/messages"

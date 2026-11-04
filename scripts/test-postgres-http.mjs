@@ -233,6 +233,15 @@ try {
   assert.equal(persistedMessage.readAt, messageReadAt);
   await member.call(`/api/messages/${message.id}`, 'DELETE', {});
   assert.equal((await admin.call(`/api/messages/${message.id}`)).data.message.body, message.body);
+  const testPlayer = (await admin.call('/api/admin/test-player/start', 'POST', {})).data.user;
+  assert.equal(testPlayer.role, 'member');
+  await harness.stop();
+  await harness.start('work/postgres-http-unused.json', { databaseUrl: url.href });
+  assert.equal((await admin.call('/api/test-player/bootstrap')).data.user.id, testPlayer.id);
+  assert.equal((await admin.call('/api/bootstrap')).data.user.id, 'u-admin');
+  await admin.call('/api/admin/test-player/stop', 'POST', {});
+  await admin.call('/api/test-player/bootstrap', 'GET', undefined, 401);
+  assert.equal((await admin.call('/api/bootstrap')).data.user.role, 'operator');
   await member.call('/api/auth/logout', 'POST', {});
   await member.call('/api/bootstrap', 'GET', undefined, 401);
   console.log(

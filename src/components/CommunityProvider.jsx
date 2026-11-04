@@ -17,7 +17,7 @@ const emptyPosts = {
   helstagram: [],
 };
 
-export function CommunityProvider({ children, initialUser = null }) {
+export function CommunityProvider({ children, initialUser = null, apiPrefix = '' }) {
   const [user, setUser] = useState(initialUser),
     [posts, setPosts] = useState(emptyPosts),
     [stats, setStats] = useState({ totalMembers: 0, onlineMembers: 0 }),
@@ -78,7 +78,7 @@ export function CommunityProvider({ children, initialUser = null }) {
   }, []);
   const api = useCallback(
     async (path, options = {}) => {
-      const response = await fetch(`/api/${path}`, {
+      const response = await fetch(`/api/${apiPrefix}${path}`, {
         ...options,
         cache: 'no-store',
         headers: { 'Content-Type': 'application/json', ...options.headers },
@@ -95,12 +95,12 @@ export function CommunityProvider({ children, initialUser = null }) {
       }
       return data;
     },
-    [router, clearSession],
+    [router, clearSession, apiPrefix],
   );
   const refresh = useCallback(async () => {
     const sequence = ++refreshSequence.current;
     try {
-      const response = await fetch('/api/bootstrap', { cache: 'no-store' });
+      const response = await fetch('/api/' + apiPrefix + 'bootstrap', { cache: 'no-store' });
       if (sequence !== refreshSequence.current) return;
       if (response.status === 401) {
         clearSession();
@@ -125,7 +125,7 @@ export function CommunityProvider({ children, initialUser = null }) {
         setLoadedPath(pathname);
       }
     }
-  }, [notify, pathname, clearSession]);
+  }, [notify, pathname, clearSession, apiPrefix]);
   useEffect(() => {
     refresh();
   }, [refresh, pathname]);
@@ -140,7 +140,9 @@ export function CommunityProvider({ children, initialUser = null }) {
     const update = async () => {
       if (document.visibilityState === 'hidden') return;
       try {
-        const response = await fetch('/api/activity/unread', { cache: 'no-store' });
+        const response = await fetch('/api/' + apiPrefix + 'activity/unread', {
+          cache: 'no-store',
+        });
         if (response.status === 401 && alive) {
           await refresh();
           return;
@@ -161,7 +163,7 @@ export function CommunityProvider({ children, initialUser = null }) {
       alive = false;
       clearInterval(timer);
     };
-  }, [user?.id, refresh]);
+  }, [user?.id, refresh, apiPrefix]);
   useEffect(() => {
     if (!user?.mutedUntil) return;
     let timeout;
