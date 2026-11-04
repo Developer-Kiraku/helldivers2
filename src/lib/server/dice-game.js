@@ -9,7 +9,8 @@ const active = (game) =>
   (game.status === 'finished' && game.autoContinue && !game.nextGameId);
 const member = (db, id) => db.users.find((user) => user.id === id);
 const balance = (db, id) => member(db, id)?.points?.current || 0;
-const rounds = (game) => (game.rulesVersion === 2 ? 4 : 3);
+const rounds = (game) => (game.rulesVersion >= 2 ? 4 : 3);
+const publicDieIndex = (game) => (game.rulesVersion >= 3 ? 1 : game.rulesVersion === 2 ? 0 : null);
 const currentBet = (game, id) => {
   const action = game.actions[game.round]?.[id];
   return action?.choice === 'call' ? game.stake * action.multiplier : 0;
@@ -173,6 +174,7 @@ function publicGame(db, game, actor) {
     roundCount: rounds(game),
     matchNumber: game.matchNumber || 1,
     firstDiePublic: game.rulesVersion === 2,
+    publicDieIndex: publicDieIndex(game),
     hostId: game.players[0],
     expiresAt: game.expiresAt,
     receivedAt: game.receivedAt || null,
@@ -205,9 +207,7 @@ function publicGame(db, game, actor) {
       dice:
         revealed || id === actor.id
           ? game.dice[id]
-          : game.rulesVersion === 2
-            ? game.dice[id].slice(0, 1)
-            : [],
+          : game.dice[id].map((value, index) => (index === publicDieIndex(game) ? value : null)),
       sum:
         revealed || id === actor.id ? game.dice[id].reduce((sum, value) => sum + value, 0) : null,
       decision: game.actions[game.round]?.[id]
@@ -248,7 +248,7 @@ function snapshot(db, actor, now, page = '') {
 function createGame(db, players, stake, now, invited = true, matchNumber = 1) {
   const game = {
     id: randomUUID(),
-    rulesVersion: 2,
+    rulesVersion: 3,
     matchNumber,
     players,
     stake,
@@ -412,10 +412,10 @@ export function handleDiceGame(db, actor, segments, method, input) {
     } else {
       if (
         !Number.isInteger(multiplier) ||
-        multiplier < (input.round === 1 ? 1 : 2) ||
+        multiplier < 1 ||
         multiplier > diceMaxMultiplier(input.round)
       )
-        fail(400, `2~${diceMaxMultiplier(input.round)}배 중 선택해주세요.`);
+        fail(400, '선택 가능한 베팅 금액을 확인해주세요.');
       const amount = game.stake * multiplier;
       if (balance(db, actor.id) < amount) fail(400, '베팅할 포인트가 부족합니다.');
       transferGamePoints(db, actor.id, 'dice:' + game.id + ':bet:' + input.round, -amount, game.id);

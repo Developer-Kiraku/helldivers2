@@ -117,10 +117,11 @@ try {
     stake: 100,
     round: status === 'finished' ? 4 : status === 'playing' ? 1 : 0,
     roundCount: 4,
-    firstDiePublic: true,
+    firstDiePublic: false,
+    publicDieIndex: 1,
     players: [
       { id: 'me', nickname: '나', dice: [1], sum: 1, bet: 0 },
-      { id: peer, nickname, dice: [2], sum: 2, bet: 0 },
+      { id: peer, nickname, dice: [null], sum: null, bet: 0 },
     ],
     expiresAt: Date.now() + 60000,
     receivedAt: Date.now(),
@@ -181,8 +182,8 @@ try {
   assert.equal(document.querySelectorAll('.dice-history > span').length, 8);
   assert.equal(
     document.querySelectorAll('.dice-face b').length,
-    0,
-    'Both first dice have visible numbered faces',
+    6,
+    'The opponent first die is hidden',
   );
   await focus();
   await reply(calls.at(-1), snapshot(game('new-game', 'new', '새대원', 'invited', 1), 4000));
@@ -232,7 +233,27 @@ try {
     await reply(
       calls.at(-1),
       snapshot(
-        { ...game('rematch', 'new', '새대원', 'playing', round), round, readyAt: 0 },
+        {
+          ...game('rematch', 'new', '새대원', 'playing', round),
+          round,
+          readyAt: 0,
+          players: [
+            {
+              id: 'me',
+              nickname: '나',
+              dice: [1, 3, 5].slice(0, round),
+              sum: round === 2 ? 4 : 9,
+              bet: 0,
+            },
+            {
+              id: 'new',
+              nickname: '새대원',
+              dice: [null, 4, null].slice(0, round),
+              sum: null,
+              bet: 0,
+            },
+          ],
+        },
         5000 + round * 100,
       ),
     );
@@ -240,8 +261,14 @@ try {
       [...document.querySelectorAll('.dice-multipliers button')].map(
         (button) => button.textContent,
       ),
-      Array.from({ length: max - 1 }, (_, index) => `${index + 2}배`),
+      Array.from({ length: max }, (_, index) => `${((index + 1) * 100).toLocaleString('ko-KR')} P`),
     );
+    const peerHistory = document.querySelectorAll(
+      '.dice-player:not(.is-mine) .dice-history > span',
+    );
+    assert.ok(peerHistory[0].querySelector('svg'), 'First die remains hidden');
+    assert.equal(peerHistory[1].textContent, '4', 'Second die remains public after later rolls');
+    assert.equal(document.querySelectorAll('.dice-face b').length, round === 2 ? 0 : 6);
     assert.ok(
       document
         .querySelector('.dice-continuation')

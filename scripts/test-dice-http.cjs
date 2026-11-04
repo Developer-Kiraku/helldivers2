@@ -56,7 +56,8 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   await apprentice.call(base + 'accept', 'POST', { gameId: game.id });
   let state = (await heartbeat(member, tabs.member)).data;
   assert.equal(state.game.players.find((player) => player.id === 'u-user2').sum, null);
-  assert.equal(state.game.players.find((player) => player.id === 'u-user2').dice.length, 1);
+  assert.deepEqual(state.game.players.find((player) => player.id === 'u-user2').dice, [null]);
+  assert.equal(state.game.publicDieIndex, 1);
   assert.equal((await heartbeat(admin, tabs.admin)).data.game, null);
   await member.call(base + 'decision', 'POST', { gameId: game.id, round: 1, choice: 'call' }, 409);
   await fixture((db) => {
@@ -79,12 +80,12 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   });
   await member.call(base + 'decision', 'POST', { ...first, round: 2, multiplier: 11 }, 400);
   await member.call(base + 'decision', 'POST', { ...first, round: 2, multiplier: 6 }, 400);
-  await member.call(base + 'decision', 'POST', { ...first, round: 2, multiplier: 2 });
+  await member.call(base + 'decision', 'POST', { ...first, round: 2, multiplier: 1 });
   await apprentice.call(base + 'decision', 'POST', { ...first, round: 2, multiplier: 3 });
   await fixture((db) => {
     db.diceGames.find((item) => item.id === game.id).readyAt = Date.now() - 1;
   });
-  await member.call(base + 'decision', 'POST', { ...first, round: 3, multiplier: 2 });
+  await member.call(base + 'decision', 'POST', { ...first, round: 3, multiplier: 1 });
   await apprentice.call(base + 'decision', 'POST', { ...first, round: 3, multiplier: 2 });
   assert.equal(
     (await heartbeat(member, tabs.member)).data.game.players.find(
@@ -100,13 +101,13 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   });
   state = (await heartbeat(member, tabs.member)).data;
   assert.equal(state.game.winnerId, 'u-user1');
-  assert.equal(state.game.pot, 110);
+  assert.equal(state.game.pot, 90);
   assert.equal(state.points.current, before.current + 60);
   assert.equal(state.points.total, before.total);
   const peer = (await heartbeat(apprentice, tabs.apprentice)).data;
   assert.equal(peer.points.current, peerBefore.current - 60);
   assert.equal(peer.points.total, peerBefore.total);
-  await member.call(base + 'decision', 'POST', { ...first, round: 2, multiplier: 2 });
+  await member.call(base + 'decision', 'POST', { ...first, round: 2, multiplier: 1 });
   assert.deepEqual((await heartbeat(member, tabs.member)).data.points, state.points);
   await admin.call(base + 'stop', 'POST', { gameId: game.id }, 404);
   await fixture((db) => {

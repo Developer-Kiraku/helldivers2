@@ -139,7 +139,8 @@ try {
   db = originalDb;
   let game = accept(invite());
   const own = presence('a').game;
-  assert.deepEqual(own.players.find((p) => p.id === 'b').dice, [game.dice.b[0]]);
+  assert.deepEqual(own.players.find((p) => p.id === 'b').dice, [null]);
+  assert.equal(own.publicDieIndex, 1);
   assert.equal(own.roundCount, 4);
   assert.equal(own.players.find((p) => p.id === 'b').sum, null);
   assert.equal(own.players.find((p) => p.id === 'a').dice.length, 1);
@@ -161,6 +162,10 @@ try {
   assert.deepEqual(resumed.players.find((player) => player.id === 'a').dice, savedGame.dice.a);
   decide('b', game);
   assert.equal(game.round, 2);
+  assert.deepEqual(presence('a').game.players.find((p) => p.id === 'b').dice, [
+    null,
+    game.dice.b[1],
+  ]);
   assert.throws(() => decide('a', game), { status: 409 }); // Still rolling.
   now += 1800;
   decide('a', game, 'call', 1, 1); // Previous round retry cannot apply to round two.
@@ -171,7 +176,11 @@ try {
   decide('b', game, 'call', 5);
   assert.equal(game.round, 3);
   assert.equal(game.status, 'playing');
-  assert.deepEqual(presence('a').game.players.find((p) => p.id === 'b').dice, [game.dice.b[0]]);
+  assert.deepEqual(presence('a').game.players.find((p) => p.id === 'b').dice, [
+    null,
+    game.dice.b[1],
+    null,
+  ]);
   now += 1800;
   decide('a', game, 'call', 2);
   decide('b', game, 'call', 2);
@@ -312,6 +321,22 @@ try {
   db.users[0].points.current = 1000;
   assert.throws(() => decide('a', poor, 'call', 5), { status: 400 });
   assert.equal(db.users[0].points.current, 1000);
+  db = make();
+  const minimum = accept(invite());
+  for (const round of [1, 2, 3]) {
+    assert.throws(() => decide('a', minimum, 'call', 0, round === 1 ? 2 : round), {
+      status: round === 1 ? 409 : 400,
+    });
+    decide('a', minimum, 'call', 1);
+    decide('b', minimum, 'call', 1);
+    now += 1800;
+  }
+  assert.equal(minimum.status, 'revealing');
+  assert.deepEqual(
+    minimum.bets,
+    { a: 300, b: 300 },
+    'Every betting turn accepts the minimum stake',
+  );
   for (const turn of [1, 2, 3]) {
     for (const choices of [
       ['die', 'die'],

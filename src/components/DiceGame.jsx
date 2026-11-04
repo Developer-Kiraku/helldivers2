@@ -23,7 +23,7 @@ export default function DiceGame() {
   const { user, role, actualRole } = useCommunity();
   const context = useDiceGame();
   const [stake, setStake] = useState(100),
-    [multiplier, setMultiplier] = useState(2);
+    [multiplier, setMultiplier] = useState(1);
   const { data, pendingInvite, now = 0, error, busy, act } = context || {};
   const game = data?.game,
     mine = game?.players.find((player) => player.id === user.id),
@@ -35,10 +35,11 @@ export default function DiceGame() {
     ['invited', 'playing', 'revealing'].includes(game?.status) || Boolean(game?.autoContinue);
   const inProgress = playing || revealing;
   const roundCount = game?.roundCount || 4;
+  const publicDieIndex = game ? (game.publicDieIndex ?? (game.firstDiePublic ? 0 : null)) : 1;
   const matchNumber = game?.matchNumber || 1;
   const maxMultiplier = diceMaxMultiplier(game?.round || 1);
   const selectedMultiplier = Math.min(multiplier, maxMultiplier);
-  useEffect(() => setMultiplier(2), [game?.id, game?.round]);
+  useEffect(() => setMultiplier(1), [game?.id, game?.round]);
   const arenaRef = useRef(null);
   useEffect(() => {
     if (!inProgress) return;
@@ -95,7 +96,7 @@ export default function DiceGame() {
             <Dices size={29} />
             민주주의 주사위
           </h1>
-          <p>첫 주사위는 공개, 다음 두 번은 비공개. 네 번째 주사위까지의 합으로 승부합니다.</p>
+          <p>두 번째 주사위는 서로 공개합니다. 네 번째 주사위까지의 합으로 승부합니다.</p>
         </div>
         <div className="dice-wallet">
           <Coins size={20} />
@@ -140,7 +141,7 @@ export default function DiceGame() {
               <Dices size={28} />
               <span>{matchNumber > 1 ? '다음 게임 시작' : '게임 시작'}</span>
               <strong>{matchNumber}번째 게임</strong>
-              <small>첫 주사위를 공개합니다</small>
+              <small>첫 주사위를 굴립니다</small>
             </div>
           )}
           {!pendingInvite && (inProgress || finished) && (
@@ -184,8 +185,8 @@ export default function DiceGame() {
             {Array.from({ length: roundCount }, (_, index) =>
               index === roundCount - 1
                 ? '최종 공개'
-                : index === 0
-                  ? '첫 공개 · 선택'
+                : index === publicDieIndex
+                  ? '공개 · 선택'
                   : `${index + 1}번째 선택`,
             ).map((label, index) => (
               <span
@@ -245,8 +246,8 @@ export default function DiceGame() {
                 {[mine, opponent].map((player) => {
                   const self = player.id === user.id;
                   const hidden = !self && !finished;
-                  const firstVisible = game.firstDiePublic && game.round === 1;
-                  const value = hidden && !firstVisible ? null : player.dice.at(-1);
+                  const visibleRoll = publicDieIndex === game.round - 1;
+                  const value = hidden && !visibleRoll ? null : player.dice.at(-1);
                   return (
                     <div
                       key={player.id}
@@ -263,23 +264,23 @@ export default function DiceGame() {
                       </div>
                       <div className="dice-player-score">
                         <small>
-                          {hidden && !firstVisible ? (
+                          {hidden && !visibleRoll ? (
                             <>
                               <LockKeyhole size={12} /> 비공개 합계
                             </>
                           ) : self ? (
                             '나의 합계'
-                          ) : firstVisible && !finished ? (
-                            '공개된 첫 주사위'
+                          ) : visibleRoll && !finished ? (
+                            `공개된 ${publicDieIndex + 1}번째 주사위`
                           ) : (
                             '상대 합계'
                           )}
                         </small>
                         <strong>
-                          {rolling || (hidden && !firstVisible)
+                          {rolling || (hidden && !visibleRoll)
                             ? '—'
                             : hidden
-                              ? player.dice[0]
+                              ? player.dice[publicDieIndex]
                               : player.sum}
                         </strong>
                       </div>
@@ -295,7 +296,7 @@ export default function DiceGame() {
                           <span key={index}>
                             {index >= game.round ? (
                               '·'
-                            ) : hidden && !(game.firstDiePublic && index === 0) ? (
+                            ) : hidden && index !== publicDieIndex ? (
                               <LockKeyhole size={13} />
                             ) : player.dice[index] != null ? (
                               rolling && index === game.round - 1 ? (
@@ -351,9 +352,9 @@ export default function DiceGame() {
                     <div
                       className="dice-multipliers"
                       data-round={game.round}
-                      aria-label={`${game.round}번째 턴 베팅 배수`}
+                      aria-label={`${game.round}번째 턴 베팅 금액`}
                     >
-                      {Array.from({ length: maxMultiplier - 1 }, (_, index) => index + 2).map(
+                      {Array.from({ length: maxMultiplier }, (_, index) => index + 1).map(
                         (value) => (
                           <button
                             key={value}
@@ -362,7 +363,7 @@ export default function DiceGame() {
                             disabled={!canChoose || wallet < game.stake * value}
                             onClick={() => setMultiplier(value)}
                           >
-                            {value}배
+                            {number(game.stake * value)} P
                           </button>
                         ),
                       )}
@@ -513,12 +514,14 @@ export default function DiceGame() {
         <ol>
           <li>10·100·1,000P 중 최소 베팅액을 골라 현재 로그인 중인 대원을 초대합니다.</li>
           <li>
-            1턴에는 서로의 첫 주사위를 보고 CALL 또는 DIE를 선택합니다. CALL은 최소 금액만큼
+            1턴에는 본인의 첫 주사위를 보고 CALL 또는 DIE를 선택합니다. CALL은 최소 금액만큼
             베팅합니다.
           </li>
           <li>
-            2·3턴에는 본인의 주사위를 하나씩 더 보고 추가로 베팅합니다. 2턴은 최소 금액의 2~5배,
-            3턴은 2~10배 중 선택하며 서로 다른 배수도 가능합니다.
+            2턴의 주사위는 서로 공개하며, 3턴의 주사위는 본인만 확인합니다. 베팅 버튼에는 실제로
+            차감되는 포인트가 표시됩니다. 2턴은 {number(game?.stake || stake)}~
+            {number((game?.stake || stake) * 5)} P, 3턴은 {number(game?.stake || stake)}~
+            {number((game?.stake || stake) * 10)} P 중 선택합니다.
           </li>
           <li>
             3턴까지 두 대원 모두 CALL하면 네 번째 주사위를 굴려 전부 공개합니다. 합이 높은 대원이
