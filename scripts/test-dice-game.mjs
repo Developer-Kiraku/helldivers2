@@ -56,7 +56,7 @@ try {
     );
   };
   const presence = (id, page = 'dice', visible = true) =>
-    call(id, 'presence', { tabId: id.repeat(20), page, visible });
+    call(id, 'presence', { tabId: id.repeat(20), page, visible, focused: visible });
   const invite = (stake = 100) => {
     now += 6000;
     presence('a');
@@ -414,8 +414,55 @@ try {
   assert.throws(() => call('a', 'cancel', { gameId: accepted.id }), { status: 409 });
   assert.equal(accepted.status, 'playing', 'Accept winning the race keeps the game running');
   assert.equal(accepted.autoContinue, true);
+  for (const round of [1, 2, 3]) {
+    db = make();
+    const limited = accept(invite());
+    while (limited.round < round) {
+      decide('a', limited, 'call', 1);
+      decide('b', limited, 'call', 1);
+      now += 1800;
+    }
+    const multiplier = round === 1 ? 1 : round === 2 ? 5 : 10;
+    const amount = limited.stake * multiplier;
+    db.users[0].points.current = amount - 1;
+    const entries = db.pointLedger.length;
+    const previousBet = limited.bets.a;
+    assert.throws(() => decide('a', limited, 'call', multiplier), { status: 400 });
+    assert.equal(db.users[0].points.current, amount - 1);
+    assert.equal(db.pointLedger.length, entries);
+    assert.equal(limited.bets.a, previousBet, 'Insufficient funds cannot enter the pot');
+    db.users[0].points.current = amount;
+    decide('a', limited, 'call', multiplier);
+    decide('a', limited, 'call', multiplier);
+    assert.equal(db.users[0].points.current, 0, 'Exact-balance CALL succeeds only once');
+  }
+  db = make();
+  const peer = () => presence('a').online.find((user) => user.id === 'b');
+  assert.equal(peer().focused, false, 'A login session alone is not foreground presence');
+  presence('b', 'site');
+  assert.equal(peer().focused, true, 'Any focused site page counts, not just the game');
+  now += 15000;
+  assert.equal(peer().focused, false, 'Closed or disconnected tabs expire');
+  const presenceBody = { tabId: 'b'.repeat(20), page: 'site', visible: true };
+  call('b', 'presence', { ...presenceBody, focused: true, sequence: 1 });
+  assert.equal(peer().focused, true);
+  call('b', 'presence', { ...presenceBody, focused: false, sequence: 3 });
+  call('b', 'presence', { ...presenceBody, focused: true, sequence: 2 });
+  assert.equal(peer().focused, false, 'A late focus request cannot undo a newer blur');
+  call('b', 'presence', { ...presenceBody, visible: false, focused: true, sequence: 4 });
+  assert.equal(peer().focused, false, 'A hidden tab never counts as focused');
+  call('b', 'presence', { ...presenceBody, tabId: 'second-b-tab-12345678', focused: true });
+  assert.equal(peer().focused, true, 'Another focused tab keeps the member available');
+  call('b', 'presence', {
+    ...presenceBody,
+    tabId: 'second-b-tab-12345678',
+    page: 'away',
+    focused: false,
+  });
+  assert.equal(peer().focused, false, 'Leaving a non-game page releases presence');
+  assert.throws(() => call('b', 'presence', { ...presenceBody, sequence: -1 }), { status: 400 });
   console.log(
-    'PASS: dice invitations/cancellation, private rolls, atomic bets/settlement, automatic rounds, stop/navigation/deadline races, refresh recovery, disconnect/timeout/low-balance termination',
+    'PASS: dice invitations/cancellation, foreground presence and stale-event ordering, exact/insufficient balances, private rolls, atomic bets/settlement, automatic rounds, stop/navigation/deadline races, refresh recovery, disconnect/timeout/low-balance termination',
   );
 } finally {
   Date.now = originalNow;

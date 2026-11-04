@@ -7,8 +7,8 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
     apprentice: 'apprentice-tab-1234567890',
     admin: 'admin-tab-1234567890',
   };
-  const heartbeat = (actor, tabId, page = 'dice') =>
-    actor.call(base + 'presence', 'POST', { tabId, page, visible: true });
+  const heartbeat = (actor, tabId, page = 'dice', focused = true) =>
+    actor.call(base + 'presence', 'POST', { tabId, page, visible: true, focused });
   const fixture = async (change) => {
     const db = JSON.parse(await fs.readFile(file, 'utf8'));
     change(db);
@@ -34,6 +34,18 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
     'Logged-in member can be invited without visiting the game page',
   );
   const peerBefore = (await apprentice.call('/api/bootstrap')).data.user.points;
+  await heartbeat(apprentice, tabs.apprentice, 'site');
+  assert.equal(
+    (await heartbeat(member, tabs.member)).data.online.find((user) => user.id === 'u-user2')
+      .focused,
+    true,
+  );
+  await heartbeat(apprentice, tabs.apprentice, 'site', false);
+  assert.equal(
+    (await heartbeat(member, tabs.member)).data.online.find((user) => user.id === 'u-user2')
+      .focused,
+    false,
+  );
   const game = (
     await member.call(base + 'invite', 'POST', {
       tabId: tabs.member,
@@ -62,8 +74,17 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   await member.call(base + 'decision', 'POST', { gameId: game.id, round: 1, choice: 'call' }, 409);
   await fixture((db) => {
     db.diceGames.find((item) => item.id === game.id).readyAt = Date.now() - 1;
+    db.users.find((user) => user.id === 'u-user1').points.current = 9;
   });
   const first = { gameId: game.id, round: 1, choice: 'call' };
+  await member.call(base + 'decision', 'POST', first, 400);
+  const rejected = (await heartbeat(member, tabs.member)).data;
+  assert.equal(rejected.points.current, 9);
+  assert.equal(rejected.game.pot, 0);
+  assert.equal(rejected.game.players.find((user) => user.id === 'u-user1').decision, null);
+  await fixture((db) => {
+    db.users.find((user) => user.id === 'u-user1').points.current = before.current;
+  });
   await Promise.all([
     member.call(base + 'decision', 'POST', first),
     member.call(base + 'decision', 'POST', first),

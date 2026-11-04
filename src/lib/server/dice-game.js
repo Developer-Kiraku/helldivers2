@@ -19,6 +19,15 @@ const isLoggedIn = (db, id, now) =>
   (db.sessions || []).some(
     (session) => session.userId === id && Date.parse(session.expiresAt) > now,
   );
+const isFocused = (db, id, now) =>
+  (db.dicePresence || []).some(
+    (row) =>
+      row.userId === id &&
+      row.page !== 'away' &&
+      row.visible &&
+      row.focused === true &&
+      now - row.seenAt < 15000,
+  );
 function beginRound(game, now) {
   game.round++;
   for (const id of game.players) game.dice[id].push(randomInt(1, 7));
@@ -238,6 +247,7 @@ function snapshot(db, actor, now, page = '') {
               id: user.id,
               nickname: user.nickname,
               photo: user.photo || '',
+              focused: isFocused(db, user.id, now),
               busy: (db.diceGames || []).some(
                 (item) => active(item) && item.players.includes(user.id),
               ),
@@ -283,12 +293,17 @@ export function handleDiceGame(db, actor, segments, method, input) {
       !/^[a-zA-Z0-9-]{16,64}$/.test(input.tabId) ||
       !['site', 'dice', 'away'].includes(input.page) ||
       typeof input.visible !== 'boolean' ||
-      (input.focused !== undefined && typeof input.focused !== 'boolean')
+      (input.focused !== undefined && typeof input.focused !== 'boolean') ||
+      (input.sequence !== undefined &&
+        (!Number.isSafeInteger(input.sequence) || input.sequence < 1))
     )
       fail(400, '접속 정보를 확인해주세요.');
     const previous = (db.dicePresence || []).find(
       (row) => row.userId === actor.id && row.tabId === input.tabId,
     );
+    // A delayed heartbeat must not undo a newer blur, tab switch or page close.
+    if (previous?.sequence && (input.sequence || 0) <= previous.sequence)
+      return snapshot(db, actor, now, input.page);
     const own = (db.diceGames || []).findLast(
       (game) => active(game) && game.players.includes(actor.id),
     );
@@ -314,6 +329,8 @@ export function handleDiceGame(db, actor, segments, method, input) {
       seenAt: now,
       page: input.page,
       visible: input.visible,
+      focused: input.focused === true,
+      sequence: input.sequence || 0,
     });
     if (input.visible && input.focused !== false) {
       const invitation = (db.diceGames || []).findLast(

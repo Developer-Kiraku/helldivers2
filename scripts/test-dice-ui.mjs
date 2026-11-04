@@ -43,6 +43,12 @@ globalThis.requestAnimationFrame = (fn) => {
 };
 globalThis.cancelAnimationFrame = () => {};
 window.matchMedia = () => ({ matches: false });
+let pageFocused = true,
+  pageVisible = true;
+document.hasFocus = () => pageFocused;
+Object.defineProperty(document, 'visibilityState', {
+  get: () => (pageVisible ? 'visible' : 'hidden'),
+});
 const scrolls = [];
 HTMLElement.prototype.scrollIntoView = function (options) {
   scrolls.push({ node: this, options });
@@ -138,14 +144,18 @@ try {
     points: { current: 10000, total: 10000 },
     inviteAvailableAt: 0,
     online: [
-      { id: 'new', nickname: '새대원', busy: false },
-      { id: 'old', nickname: '이전대원', busy: false },
+      { id: 'new', nickname: '새대원', busy: false, focused: true },
+      { id: 'old', nickname: '이전대원', busy: false, focused: false },
     ],
   });
   const reply = (call, data) => React.act(async () => call.resolve(data));
   const focus = () => React.act(async () => window.dispatchEvent(new Event('focus')));
   await React.act(async () => render());
   await reply(calls[0], snapshot(game('old-game', 'old', '이전대원', 'finished'), 1000));
+  assert.equal(calls[0].options.body.focused, true);
+  const memberRows = document.querySelectorAll('.dice-member');
+  assert.match(memberRows[0].textContent, /새대원초대 가능/);
+  assert.match(memberRows[1].textContent, /이전대원자리 비움/);
   await React.act(async () => {
     const invite = document.querySelector('[aria-label="새대원님 초대"]');
     invite.click();
@@ -277,6 +287,42 @@ try {
       'Stop control precedes the dice on PC and mobile',
     );
   }
+  const wagerGame = { ...probe.data.game, revision: 4 };
+  const funds = async (current, time) => {
+    await focus();
+    await reply(calls.at(-1), { ...snapshot(wagerGame, time), points: { current, total: 10000 } });
+  };
+  await funds(350, 5500);
+  const amounts = [...document.querySelectorAll('.dice-multipliers button')];
+  assert.deepEqual(
+    amounts.map((button) => button.disabled),
+    [false, false, false, true, true, true, true, true, true, true],
+  );
+  await React.act(async () => amounts[2].click());
+  assert.equal(document.querySelector('.dice-call').disabled, false);
+  await funds(299, 5501);
+  assert.equal(
+    document.querySelector('.dice-call').disabled,
+    true,
+    'A balance decrease disables the already-selected CALL',
+  );
+  assert.match(document.querySelector('.dice-call').textContent, /CALL 불가/);
+  assert.match(document.querySelector('.dice-betting [role="status"]').textContent, /299 P.*300 P/);
+  const beforeBlockedCall = calls.length;
+  await React.act(async () => document.querySelector('.dice-call').click());
+  assert.equal(calls.length, beforeBlockedCall, 'Unaffordable CALL sends no request');
+  await funds(300, 5502);
+  assert.equal(document.querySelector('.dice-call').disabled, false, 'Exact balance can CALL');
+  await funds(0, 5503);
+  assert.ok(
+    [...document.querySelectorAll('.dice-multipliers button')].every((button) => button.disabled),
+  );
+  assert.equal(document.querySelector('.dice-call').disabled, true);
+  assert.equal(
+    document.querySelector('.dice-die').disabled,
+    false,
+    'DIE remains available at zero balance',
+  );
   // A pending poll from before the next invite must not replace its response.
   await focus();
   await reply(calls.at(-1), snapshot(game('rematch', 'new', '새대원', 'finished', 4), 6000));
@@ -327,6 +373,30 @@ try {
     /상대가 초대를 취소했습니다/,
   );
   await focus();
+  const inFlightFocus = calls.at(-1);
+  const beforeBlur = calls.length;
+  pageFocused = false;
+  await React.act(async () => window.dispatchEvent(new Event('blur')));
+  assert.equal(calls.length, beforeBlur, 'Focus changes coalesce behind an in-flight heartbeat');
+  await reply(inFlightFocus, snapshot(null, 8800));
+  const immediate = [...timers.values()].filter((timer) => timer.ms === 0).at(-1);
+  assert.ok(immediate, 'The latest focus state is sent without waiting for the next poll');
+  await React.act(async () => {
+    void immediate.fn();
+  });
+  assert.equal(calls.at(-1).options.body.focused, false);
+  assert.ok(calls.at(-1).options.body.sequence > inFlightFocus.options.body.sequence);
+  await reply(calls.at(-1), snapshot(null, 8810));
+  pageVisible = false;
+  await React.act(async () => document.dispatchEvent(new Event('visibilitychange')));
+  assert.equal(calls.at(-1).options.body.visible, false);
+  assert.equal(calls.at(-1).options.keepalive, true);
+  await reply(calls.at(-1), snapshot(null, 8820));
+  pageVisible = pageFocused = true;
+  await focus();
+  assert.equal(calls.at(-1).options.body.focused, true);
+  await reply(calls.at(-1), snapshot(null, 8830));
+  await focus();
   const oldIdentity = calls.at(-1);
   window.diceCommunity = {
     ...window.diceCommunity,
@@ -349,8 +419,12 @@ try {
     render();
   });
   assert.equal(calls.at(-1).options.body.page, 'site', 'SPA departure announces the page change');
+  await reply(calls.at(-1), snapshot(null, 11000, 'another'));
+  await React.act(async () => window.dispatchEvent(new Event('pagehide')));
+  assert.equal(calls.at(-1).options.body.page, 'away', 'Closing any site page releases presence');
+  assert.equal(calls.at(-1).options.body.focused, false);
   console.log(
-    'PASS: invite target identity, cancellation and recipient dialog dismissal, rapid-click lock, mutation/poll ordering, stale revisions, account isolation, start banner and desktop/mobile scroll once per match',
+    'PASS: foreground/away presence, insufficient/exact-balance CALL controls, invite target identity, cancellation and recipient dialog dismissal, rapid-click lock, mutation/poll ordering, stale revisions, account isolation, start banner and desktop/mobile scroll once per match',
   );
 } finally {
   await React.act(async () => root.unmount());

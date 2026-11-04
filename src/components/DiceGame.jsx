@@ -388,6 +388,11 @@ export default function DiceGame() {
                       type="button"
                       className="dice-call"
                       disabled={!canChoose || wallet < bet}
+                      title={
+                        wallet < bet
+                          ? `보유 ${number(wallet)} P · 필요한 금액 ${number(bet)} P`
+                          : undefined
+                      }
                       onClick={() =>
                         act('decision', {
                           gameId: game.id,
@@ -398,7 +403,7 @@ export default function DiceGame() {
                       }
                     >
                       <ArrowRight size={17} />
-                      CALL <span>{number(bet)} P</span>
+                      {wallet < bet && !waiting ? 'CALL 불가' : 'CALL'} <span>{number(bet)} P</span>
                     </Button>
                     <Button
                       type="button"
@@ -412,8 +417,13 @@ export default function DiceGame() {
                       DIE
                     </Button>
                   </div>
+                  {wallet < bet && !waiting && (
+                    <p role="status">
+                      보유 포인트 {number(wallet)} P · 선택 금액 {number(bet)} P. 포인트가 부족하여
+                      CALL할 수 없습니다.
+                    </p>
+                  )}
                   <p>
-                    {wallet < bet && !waiting ? '선택한 금액을 베팅할 포인트가 부족합니다. ' : ''}
                     양쪽 선택 후 판정합니다. 둘 다 DIE면 무승부, 한쪽만 DIE면 이전 턴까지의 판돈으로
                     정산합니다.
                   </p>
@@ -476,7 +486,7 @@ export default function DiceGame() {
               <button
                 type="button"
                 key={value}
-                disabled={active || busy || preview}
+                disabled={active || busy || preview || wallet < value}
                 aria-pressed={stake === value}
                 onClick={() => setStake(value)}
               >
@@ -492,8 +502,12 @@ export default function DiceGame() {
                 <div>
                   <strong>{player.nickname}</strong>
                   <span>
-                    <i />
-                    {player.busy ? '게임 · 초대 진행 중' : '초대 가능'}
+                    {(player.busy || player.focused) && <i />}
+                    {player.busy
+                      ? '게임 · 초대 진행 중'
+                      : player.focused
+                        ? '초대 가능'
+                        : '자리 비움'}
                   </span>
                 </div>
                 <Button

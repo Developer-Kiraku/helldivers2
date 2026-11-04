@@ -21,6 +21,7 @@ export default function DiceGameProvider({ children, enabled = true }) {
     [busy, setBusy] = useState(false),
     [now, setNow] = useState(Date.now);
   const tabId = useRef(null),
+    presenceSequence = useRef(0),
     epoch = useRef(0),
     offset = useRef(0),
     alive = useRef(false),
@@ -65,20 +66,30 @@ export default function DiceGameProvider({ children, enabled = true }) {
     setBusy(false);
     let active = true,
       timer,
-      running = false;
+      running = false,
+      refreshPending = false,
+      away = false;
     const update = async () => {
-      if (!active || running) return;
+      if (!active || away) return;
+      clearTimeout(timer);
+      if (running) {
+        refreshPending = true;
+        return;
+      }
       if (command.current) {
         timer = setTimeout(update, 1000);
         return;
       }
+      refreshPending = false;
       running = true;
       const requestEpoch = epoch.current;
       try {
         const result = await api('games/dice/presence', {
           method: 'POST',
+          keepalive: document.visibilityState === 'hidden' || !document.hasFocus(),
           body: {
             tabId: tabId.current,
+            sequence: ++presenceSequence.current,
             page: onGame ? 'dice' : 'site',
             visible: document.visibilityState !== 'hidden',
             focused: document.hasFocus(),
@@ -92,34 +103,45 @@ export default function DiceGameProvider({ children, enabled = true }) {
         if (active && onGame) setConnectionError(err.message);
       } finally {
         running = false;
-        if (active)
+        if (active && !away)
           timer = setTimeout(
             update,
-            dicePollDelay({
-              onGame,
-              visible: document.visibilityState !== 'hidden',
-              activeGame: activeGame.current,
-            }),
+            refreshPending
+              ? 0
+              : dicePollDelay({
+                  onGame,
+                  visible: document.visibilityState !== 'hidden',
+                  activeGame: activeGame.current,
+                }),
           );
       }
     };
+    const refreshPresence = () => {
+      void update();
+    };
     const returnToPage = () => {
-      if (document.visibilityState !== 'hidden') {
-        clearTimeout(timer);
-        void update();
-      }
+      away = false;
+      refreshPresence();
     };
     const leaveDocument = () => {
-      if (!onGame) return;
+      away = true;
+      clearTimeout(timer);
       void api('games/dice/presence', {
         method: 'POST',
         keepalive: true,
-        body: { tabId: tabId.current, page: 'away', visible: false, focused: false },
+        body: {
+          tabId: tabId.current,
+          sequence: ++presenceSequence.current,
+          page: 'away',
+          visible: false,
+          focused: false,
+        },
       }).catch(() => {});
     };
     void update();
-    document.addEventListener('visibilitychange', returnToPage);
-    window.addEventListener('focus', returnToPage);
+    document.addEventListener('visibilitychange', refreshPresence);
+    window.addEventListener('focus', refreshPresence);
+    window.addEventListener('blur', refreshPresence);
     window.addEventListener('pageshow', returnToPage);
     window.addEventListener('pagehide', leaveDocument);
     return () => {
@@ -127,8 +149,9 @@ export default function DiceGameProvider({ children, enabled = true }) {
       alive.current = false;
       ++epoch.current;
       clearTimeout(timer);
-      document.removeEventListener('visibilitychange', returnToPage);
-      window.removeEventListener('focus', returnToPage);
+      document.removeEventListener('visibilitychange', refreshPresence);
+      window.removeEventListener('focus', refreshPresence);
+      window.removeEventListener('blur', refreshPresence);
       window.removeEventListener('pageshow', returnToPage);
       window.removeEventListener('pagehide', leaveDocument);
     };
@@ -210,7 +233,7 @@ export default function DiceGameProvider({ children, enabled = true }) {
               </Button>
               <Button
                 type="button"
-                disabled={busy}
+                disabled={busy || visibleData.points.current < invite.stake}
                 onClick={() => act('accept', { gameId: invite.id })}
               >
                 초대 수락
@@ -227,6 +250,11 @@ export default function DiceGameProvider({ children, enabled = true }) {
           <div className="dice-invite-stake">
             최소 베팅 <strong>{invite.stake.toLocaleString()} P</strong>
           </div>
+          {visibleData.points.current < invite.stake && (
+            <p className="form-error" role="status">
+              최소 베팅액보다 보유 포인트가 부족하여 참여할 수 없습니다.
+            </p>
+          )}
           <p className="dice-invite-count">
             <Timer size={15} /> {Math.max(0, (invite.expiresAt - now) / 1000).toFixed(1)}초 후
             자동으로 닫힙니다.
