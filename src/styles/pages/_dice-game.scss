@@ -408,7 +408,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.dice-member span {
+.dice-member > div > span {
   display: flex;
   align-items: center;
   gap: 5px;
