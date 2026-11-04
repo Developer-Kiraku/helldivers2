@@ -607,6 +607,7 @@
   .dice-arena {
     padding: 16px 12px;
     border-radius: 12px;
+    scroll-margin-top: calc(88px + env(safe-area-inset-top));
   }
   .dice-arena-top {
     font-size: var(--hd-font-size-10);

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Dices,
   Coins,
@@ -31,6 +31,17 @@ export default function DiceGame() {
     revealing = game?.status === 'revealing',
     finished = game?.status === 'finished';
   const active = ['invited', 'playing', 'revealing'].includes(game?.status);
+  const inProgress = playing || revealing;
+  const arenaRef = useRef(null);
+  useEffect(() => {
+    if (!inProgress || !window.matchMedia('(max-width: 760px)').matches) return;
+    arenaRef.current?.scrollIntoView({
+      block: 'start',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'instant'
+        : 'smooth',
+    });
+  }, [game?.id, inProgress]);
   const rolling = (playing || revealing) && now < game.readyAt;
   const preview = role !== actualRole;
   const bet = (game?.stake || stake) * (game?.round === 2 ? multiplier : 1);
@@ -76,7 +87,7 @@ export default function DiceGame() {
       )}
       {!data && !preview && <p role="status">로그인 중인 대원을 확인하고 있습니다…</p>}
       <div className="dice-layout">
-        <section className="dice-arena" aria-label="민주주의 주사위 게임판">
+        <section ref={arenaRef} className="dice-arena" aria-label="민주주의 주사위 게임판">
           <div className="dice-arena-top">
             <span className="dice-live-label">
               <i />
