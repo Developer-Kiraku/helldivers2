@@ -1,4 +1,5 @@
 export const auditLogTypes = {
+  point_grant: '포인트 지급',
   post_create: '게시글 작성',
   post_update: '게시글 수정',
   post_delete: '게시글 삭제',
@@ -25,6 +26,7 @@ export const auditLogTypes = {
   member_unmute: '벙어리 해제',
 };
 export const auditActionTypes = {
+  'points.grant': 'point_grant',
   'post.create': 'post_create',
   'post.update': 'post_update',
   'post.move': 'post_move',

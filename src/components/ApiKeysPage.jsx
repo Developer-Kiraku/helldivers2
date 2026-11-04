@@ -4,6 +4,7 @@ import { useCommunity } from './CommunityProvider';
 import { Button, Input, Label } from './ui';
 import MapKeysSettings from './MapKeysSettings';
 import PointSettings from './PointSettings';
+import PointGrants from './PointGrants';
 export default function ApiKeysPage() {
   const { api, role, notify } = useCommunity();
   const [data, setData] = useState(null),
@@ -61,6 +62,7 @@ export default function ApiKeysPage() {
         <p role="status">{error ? '설정을 불러오지 못했습니다.' : '설정 확인 중…'}</p>
       ) : (
         <>
+          <PointGrants />
           <PointSettings />
           <form className="panel api-key-panel" onSubmit={save}>
             <header>

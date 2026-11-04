@@ -242,6 +242,35 @@ try {
   await admin.call('/api/admin/test-player/stop', 'POST', {});
   await admin.call('/api/test-player/bootstrap', 'GET', undefined, 401);
   assert.equal((await admin.call('/api/bootstrap')).data.user.role, 'operator');
+  const grantPayload = {
+    requestId: randomUUID(),
+    scope: 'selected',
+    userIds: ['u-user1'],
+    amount: 17,
+    reason: '재시작 지급 이력 검증',
+    expectedCount: 1,
+  };
+  const grantBefore = (await member.call('/api/bootstrap')).data.user.points;
+  const grants = await Promise.all([
+    admin.call('/api/admin/settings/point-grants', 'POST', grantPayload),
+    admin.call('/api/admin/settings/point-grants', 'POST', grantPayload),
+  ]);
+  assert.deepEqual(grants.map(({ data }) => data.created).sort(), [false, true]);
+  const grantAfter = (await member.call('/api/bootstrap')).data.user.points;
+  assert.equal(grantAfter.current, grantBefore.current + 17);
+  assert.equal(grantAfter.total, grantBefore.total + 17);
+  await harness.stop();
+  await harness.start('work/postgres-http-unused.json', { databaseUrl: url.href });
+  assert.equal(
+    (await admin.call('/api/admin/settings/point-grants', 'POST', grantPayload)).data.created,
+    false,
+  );
+  assert.deepEqual((await member.call('/api/bootstrap')).data.user.points, grantAfter);
+  assert.ok(
+    (await admin.call('/api/admin/settings/point-grants')).data.history.some(
+      (grant) => grant.id === grantPayload.requestId,
+    ),
+  );
   await member.call('/api/auth/logout', 'POST', {});
   await member.call('/api/bootstrap', 'GET', undefined, 401);
   console.log(

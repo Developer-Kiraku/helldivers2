@@ -35,7 +35,9 @@ export function auditLogEntry(db, entry) {
     : null;
   const target = member
     ? db.users.find((user) => user.id === entry.targetId)
-    : db.posts.find((post) => post.id === (details.postId || comment?.postId || entry.targetId));
+    : type === 'point_grant'
+      ? null
+      : db.posts.find((post) => post.id === (details.postId || comment?.postId || entry.targetId));
   const snapshot = details.after || details.before;
   const request = details.requestId
     ? (db.requests || []).find((item) => item.id === details.requestId)
@@ -45,6 +47,7 @@ export function auditLogEntry(db, entry) {
   return {
     id: entry.id,
     type,
+    ...(type === 'point_grant' ? { amount: details.amount } : {}),
     automatic: entry.action === 'user.withdraw.probation_expired',
     executedAt: entry.createdAt,
     actorNickname:

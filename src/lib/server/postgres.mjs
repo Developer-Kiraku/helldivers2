@@ -12,6 +12,7 @@ export const collections = {
   diceGames: ['hd_dice_games', (row) => row.id],
   dicePresence: ['hd_dice_presence', (row) => row.id],
   pointLedger: ['hd_point_ledger', (row) => row.id],
+  pointGrants: ['hd_point_grants', (row) => row.id],
   messages: ['hd_messages', (row) => row.id],
   votes: ['hd_votes', (row) => JSON.stringify([row.userId, row.postId])],
   requests: ['hd_requests', (row) => row.id],

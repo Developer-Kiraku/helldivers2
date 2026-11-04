@@ -201,6 +201,14 @@ async function run() {
     await require('./test-points-http.cjs')({ guest, admin, deputy, member, apprentice, file });
     await require('./test-dice-http.cjs')({ guest, admin, member, apprentice, file });
     await require('./test-test-player-http.cjs')({ guest, admin, deputy, member, client, file });
+    await require('./test-point-grants-http.cjs')({
+      guest,
+      admin,
+      deputy,
+      member,
+      apprentice,
+      file,
+    });
     await require('./test-messages-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-member-mute-http.cjs')({ guest, admin, deputy, member, apprentice });
     await require('./test-loadout-http.cjs')({ guest, member, deputy });

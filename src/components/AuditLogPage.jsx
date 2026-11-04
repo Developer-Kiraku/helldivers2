@@ -89,7 +89,8 @@ export default function AuditLogPage() {
           value={type}
           onChange={(event) => {
             setType(event.target.value);
-            if (event.target.value.startsWith('member_')) setBoard('all');
+            if (event.target.value.startsWith('member_') || event.target.value === 'point_grant')
+              setBoard('all');
             setPage(1);
           }}
         >
@@ -103,7 +104,7 @@ export default function AuditLogPage() {
         <Select
           aria-label="로그 게시판"
           value={board}
-          disabled={members}
+          disabled={members || type === 'point_grant'}
           onChange={(event) => {
             setBoard(event.target.value);
             setPage(1);
@@ -148,22 +149,26 @@ export default function AuditLogPage() {
               <th scope="col">실행 일시</th>
               <th scope="col">실행한 유저</th>
               <th scope="col">
-                {members
-                  ? '회원 닉네임'
-                  : comments
-                    ? '댓글이 달린 글'
-                    : posts
-                      ? '글 제목'
-                      : '글 제목 / 회원 닉네임'}
+                {type === 'point_grant'
+                  ? '지급 대상'
+                  : members
+                    ? '회원 닉네임'
+                    : comments
+                      ? '댓글이 달린 글'
+                      : posts
+                        ? '글 제목'
+                        : '글 제목 / 회원 닉네임'}
               </th>
               <th scope="col">
-                {members
-                  ? '가입일'
-                  : comments
-                    ? '댓글 작성일'
-                    : posts
-                      ? '작성일'
-                      : '작성일 / 가입일'}
+                {type === 'point_grant'
+                  ? '1인당 지급액'
+                  : members
+                    ? '가입일'
+                    : comments
+                      ? '댓글 작성일'
+                      : posts
+                        ? '작성일'
+                        : '작성일 / 가입일 / 지급액'}
               </th>
             </tr>
           </thead>
@@ -222,7 +227,9 @@ export default function AuditLogPage() {
                       )}
                     </td>
                     <td>
-                      {entry.targetCreatedAt ? (
+                      {entry.type === 'point_grant' ? (
+                        Number(entry.amount).toLocaleString('ko-KR') + ' P'
+                      ) : entry.targetCreatedAt ? (
                         <time dateTime={entry.targetCreatedAt}>{date(entry.targetCreatedAt)}</time>
                       ) : (
                         '정보 없음'

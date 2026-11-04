@@ -64,6 +64,10 @@ function reverse(db, matches) {
     if (user) adjust(user, -row.amount);
   }
 }
+export function awardManualPoints(db, userIds, requestId, amount, actorId, reason) {
+  for (const userId of userIds)
+    grant(db, userId, 'manual:' + requestId, amount, { grantId: requestId, actorId, reason });
+}
 export function awardSignupPoints(db, user) {
   grant(db, user.id, 'signup:' + user.id, pointSettings(db).signup);
 }

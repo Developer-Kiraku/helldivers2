@@ -2,6 +2,7 @@ import { apiKeySettings, kakaoShareSettings, mapSettings } from '@/lib/server/ap
 import { bulkPosts } from '@/lib/server/bulk-posts';
 import { handlePuzzle } from '@/lib/server/sliding-puzzle';
 import { handleDiceGame } from '@/lib/server/dice-game';
+import { handlePointGrants } from '@/lib/server/point-grants';
 import {
   testPlayerOwner,
   testPlayerStatus,
@@ -226,11 +227,13 @@ async function handler(request, context) {
             request,
             segments[0] === 'games'
               ? 4096
-              : segments[0] === 'messages'
-                ? 16000
-                : path === 'profile'
-                  ? 1300000
-                  : 13000000,
+              : path === 'admin/settings/point-grants'
+                ? 64000
+                : segments[0] === 'messages'
+                  ? 16000
+                  : path === 'profile'
+                    ? 1300000
+                    : 13000000,
           );
     if (method !== 'GET')
       await readStore((db) => {
@@ -264,6 +267,25 @@ async function handler(request, context) {
     const write = method !== 'GET' || path === 'bootstrap';
     const result = await transaction((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
+      if (path === 'admin/settings/point-grants') {
+        const result = handlePointGrants(db, actor, method, input);
+        if (method === 'POST' && result.created)
+          audit(db, actor.id, 'points.grant', result.grant.id, {
+            targetTitle:
+              (result.grant.scope === 'all'
+                ? '전체 회원'
+                : result.grant.recipients
+                    .slice(0, 3)
+                    .map((user) => user.nickname)
+                    .join(', ')) +
+              ' · ' +
+              result.grant.count +
+              '명',
+            amount: result.grant.amount,
+            reason: result.grant.reason,
+          });
+        return result;
+      }
       if (segments[0] === 'games' && segments[1] === 'dice')
         return handleDiceGame(db, actor, segments, method, input);
       if (segments[0] === 'games' && segments[1] === 'sliding-puzzle')
