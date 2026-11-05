@@ -43,13 +43,15 @@ export default function DiceGame() {
   const selectedMultiplier = Math.min(multiplier, maxMultiplier);
   useEffect(() => setMultiplier(1), [game?.id, game?.round]);
   const arenaRef = useRef(null);
+  const duelRef = useRef(null);
   useEffect(() => {
     if (!inProgress) return;
     // Let the invitation dialog close and restore focus before moving to the arena.
     const frame = requestAnimationFrame(() => {
       arenaRef.current?.focus({ preventScroll: true });
-      arenaRef.current?.scrollIntoView({
-        block: 'start',
+      duelRef.current?.scrollIntoView({
+        block: 'center',
+        inline: 'nearest',
         behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
           ? 'instant'
           : 'smooth',
@@ -260,7 +262,7 @@ export default function DiceGame() {
             </div>
           ) : (
             <>
-              <div className="dice-duel">
+              <div className="dice-duel" ref={duelRef}>
                 {[mine, opponent].map((player) => {
                   const self = player.id === user.id;
                   const hidden = !self && !finished;
@@ -353,11 +355,13 @@ export default function DiceGame() {
                 <div className="dice-betting">
                   <div className="dice-betting-heading">
                     <strong>
-                      {rolling
-                        ? '주사위가 멈추면 선택하세요'
-                        : waiting
-                          ? '상대의 선택을 기다립니다'
-                          : '계속할까요, 여기서 멈출까요?'}
+                      {mine?.decisionReason === 'points'
+                        ? '포인트 부족으로 자동 DIE · 상대 선택 대기'
+                        : rolling
+                          ? '주사위가 멈추면 선택하세요'
+                          : waiting
+                            ? '상대의 선택을 기다립니다'
+                            : '계속할까요, 여기서 멈출까요?'}
                     </strong>
                     <span>
                       <Timer size={15} />
@@ -447,15 +451,19 @@ export default function DiceGame() {
                   <Trophy size={28} />
                   <h2>{resultTitle}</h2>
                   <p>
-                    {game.reason === 'showdown'
-                      ? `주사위 ${roundCount}개의 합으로 결정된 결과입니다.`
-                      : game.reason === 'timeout'
-                        ? '선택 시간이 초과되어 승부가 종료됐습니다.'
-                        : game.reason === 'left'
-                          ? '상대 회원이 탈퇴하여 승부가 종료됐습니다.'
-                          : !game.winnerId
-                            ? '두 대원 모두 DIE를 선택하여 베팅액을 돌려받습니다.'
-                            : '이번 턴의 베팅액은 반환하고 이전 턴까지의 배팅액만 정산했습니다.'}
+                    {game.reason === 'points'
+                      ? !game.winnerId
+                        ? '포인트 부족으로 자동 DIE 처리되었습니다. 양쪽 모두 DIE이므로 베팅액을 반환합니다.'
+                        : '포인트 부족으로 자동 DIE 처리되었습니다. 이번 턴의 베팅액은 반환하고 이전 턴까지의 배팅액만 정산했습니다.'
+                      : game.reason === 'showdown'
+                        ? `주사위 ${roundCount}개의 합으로 결정된 결과입니다.`
+                        : game.reason === 'timeout'
+                          ? '선택 시간이 초과되어 승부가 종료됐습니다.'
+                          : game.reason === 'left'
+                            ? '상대 회원이 탈퇴하여 승부가 종료됐습니다.'
+                            : !game.winnerId
+                              ? '두 대원 모두 DIE를 선택하여 베팅액을 돌려받습니다.'
+                              : '이번 턴의 베팅액은 반환하고 이전 턴까지의 배팅액만 정산했습니다.'}
                   </p>
                 </div>
               )}
@@ -564,6 +572,10 @@ export default function DiceGame() {
             두 대원의 선택은 모두 결정할 때까지 비공개입니다. 둘 다 DIE면 무승부로 베팅액을
             반환합니다. 한쪽만 DIE면 해당 턴의 CALL 베팅액을 돌려준 뒤 이전 턴까지의 배팅액만 상대가
             가져갑니다. 30초 동안 선택하지 않으면 DIE로 처리합니다.
+          </li>
+          <li>
+            선택 전 보유 포인트가 최소 베팅액보다 적으면 자동으로 DIE 처리하며, 다음 판은 시작하지
+            않습니다. 상대의 선택까지 확인한 뒤 같은 정산 규칙을 적용합니다.
           </li>
           <li>
             결과를 5초 동안 확인한 뒤 같은 최소 금액으로 다음 판이 자동 시작됩니다. 한 명이 ‘이번

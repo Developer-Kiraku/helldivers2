@@ -218,7 +218,9 @@ try {
     document.querySelector('.dice-match-status').textContent,
     /승부가 시작되었습니다.*새대원/,
   );
-  assert.equal(scrolls.length, 1, 'Desktop players scroll to the arena at game start');
+  assert.equal(scrolls.length, 1, 'Desktop players scroll to the dice at game start');
+  assert.equal(scrolls[0].node, document.querySelector('.dice-duel'));
+  assert.equal(scrolls[0].options.block, 'center', 'Center the dice, not the arena header');
   assert.equal(document.activeElement, document.querySelector('.dice-arena'));
   assert.equal(document.querySelectorAll('.dice-turns > span').length, 4);
   assert.equal(document.querySelectorAll('.dice-history > span').length, 8);
@@ -262,6 +264,8 @@ try {
   );
   assert.match(document.querySelector('.dice-game-start').textContent, /다음 게임 시작2번째 게임/);
   assert.equal(scrolls.length, 2, 'A new match scrolls on mobile as well');
+  assert.equal(scrolls.at(-1).node, document.querySelector('.dice-duel'));
+  assert.equal(scrolls.at(-1).options.block, 'center');
   assert.equal(
     scrolls.at(-1).options.behavior,
     'instant',
@@ -355,6 +359,31 @@ try {
     false,
     'DIE remains available at zero balance',
   );
+  await focus();
+  await reply(calls.at(-1), {
+    ...snapshot(
+      {
+        ...wagerGame,
+        autoContinue: false,
+        stopReason: 'points',
+        players: wagerGame.players.map((player) =>
+          player.id === 'me' ? { ...player, decision: 'die', decisionReason: 'points' } : player,
+        ),
+      },
+      5504,
+    ),
+    points: { current: 0, total: 10000 },
+  });
+  assert.match(
+    document.querySelector('.dice-betting-heading').textContent,
+    /포인트 부족으로 자동 DIE/,
+  );
+  assert.equal(
+    document.querySelector('.dice-die').disabled,
+    true,
+    'Server auto-DIE needs no extra click',
+  );
+  assert.equal(document.querySelector('.dice-call').disabled, true);
   // A pending poll from before the next invite must not replace its response.
   await focus();
   await reply(calls.at(-1), snapshot(game('rematch', 'new', '새대원', 'finished', 4), 6000));

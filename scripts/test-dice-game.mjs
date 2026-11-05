@@ -424,18 +424,108 @@ try {
     }
     const multiplier = round === 1 ? 1 : round === 2 ? 5 : 10;
     const amount = limited.stake * multiplier;
-    db.users[0].points.current = amount - 1;
-    const entries = db.pointLedger.length;
-    const previousBet = limited.bets.a;
-    assert.throws(() => decide('a', limited, 'call', multiplier), { status: 400 });
-    assert.equal(db.users[0].points.current, amount - 1);
-    assert.equal(db.pointLedger.length, entries);
-    assert.equal(limited.bets.a, previousBet, 'Insufficient funds cannot enter the pot');
+    if (round > 1) {
+      db.users[0].points.current = amount - 1;
+      const entries = db.pointLedger.length;
+      const previousBet = limited.bets.a;
+      assert.throws(() => decide('a', limited, 'call', multiplier), { status: 400 });
+      assert.equal(db.users[0].points.current, amount - 1);
+      assert.equal(db.pointLedger.length, entries);
+      assert.equal(limited.bets.a, previousBet, 'An unaffordable multiple cannot enter the pot');
+      assert.equal(limited.actions[round].a, undefined, 'An affordable minimum does not auto-DIE');
+    }
     db.users[0].points.current = amount;
     decide('a', limited, 'call', multiplier);
     decide('a', limited, 'call', multiplier);
     assert.equal(db.users[0].points.current, 0, 'Exact-balance CALL succeeds only once');
+    assert.equal(limited.actions[round].a.choice, 'call', 'A paid CALL survives an empty wallet');
   }
+  for (const round of [1, 2, 3]) {
+    for (const peerChoice of ['call', 'die', 'poor']) {
+      db = make();
+      const limited = accept(invite());
+      while (limited.round < round) {
+        decide('a', limited, 'call', 1);
+        decide('b', limited, 'call', 1);
+        now += 1800;
+      }
+      const prior = { ...limited.bets };
+      db.users[0].points.current = 99;
+      if (peerChoice === 'poor') db.users[1].points.current = 0;
+      const total =
+        db.users.reduce((sum, user) => sum + user.points.current, 0) + prior.a + prior.b;
+      assert.equal(
+        settleDiceGames(db, now),
+        true,
+        'A heartbeat can automatically fold poor players',
+      );
+      assert.deepEqual(limited.actions[round].a, { choice: 'die', reason: 'points' });
+      assert.equal(limited.autoContinue, false);
+      assert.equal(limited.stopReason, 'points');
+      if (peerChoice !== 'poor') {
+        assert.equal(limited.status, 'playing', 'Keep the peer choice to preserve both-DIE draws');
+        const ownView = presence('a').game.players.find((p) => p.id === 'a');
+        assert.equal(ownView.decisionReason, 'points');
+        const hiddenView = presence('b').game.players.find((p) => p.id === 'a');
+        assert.equal(hiddenView.decision, 'locked');
+        assert.equal(hiddenView.decisionReason, null);
+        decide('b', limited, peerChoice, 2);
+      }
+      assert.equal(limited.status, 'finished', 'Auto-DIE does not wait for the selection timeout');
+      assert.equal(limited.reason, 'points');
+      assert.equal(limited.winnerId, peerChoice === 'call' ? 'b' : null);
+      assert.deepEqual(limited.bets, prior, 'The current CALL is refunded before settlement');
+      assert.equal(db.users[0].points.current, 99 + (peerChoice === 'call' ? 0 : prior.a));
+      assert.equal(
+        db.users.reduce((sum, user) => sum + user.points.current, 0),
+        total,
+      );
+      const entries = db.pointLedger.length;
+      decide('a', limited, 'die');
+      assert.equal(settleDiceGames(db, now), false);
+      assert.equal(db.pointLedger.length, entries, 'Auto-DIE settlement cannot pay twice');
+      db = JSON.parse(JSON.stringify(db));
+      assert.equal(presence('a').game.reason, 'points', 'Auto-DIE survives a reload');
+      now += 5000;
+      assert.equal(presence('a').game, null, 'The ended series returns to the lobby');
+      assert.equal(db.diceGames.length, 1, 'Refunded funds do not restart a stopped series');
+      unchangedTotals();
+    }
+  }
+  for (const both of [false, true]) {
+    db = make();
+    const depleted = accept(invite());
+    db.users[0].points.current = 100;
+    if (both) db.users[1].points.current = 100;
+    decide('a', depleted, 'call', 1);
+    assert.equal(presence('a').game.players[0].decision, 'call');
+    decide('b', depleted, 'call', 1);
+    assert.equal(depleted.round, 2);
+    assert.equal(
+      depleted.actions[2].a.choice,
+      'die',
+      'A new betting turn checks remaining funds immediately',
+    );
+    if (!both) {
+      now = depleted.readyAt;
+      decide('b', depleted, 'call', 1);
+    }
+    assert.equal(depleted.status, 'finished');
+    assert.equal(depleted.winnerId, both ? null : 'b');
+  }
+  db = make();
+  const lastCall = accept(invite());
+  db.users[0].points.current = db.users[1].points.current = 300;
+  for (const round of [1, 2, 3]) {
+    decide('a', lastCall, 'call', 1);
+    decide('b', lastCall, 'call', 1);
+    now += 1800;
+  }
+  assert.equal(lastCall.status, 'revealing', 'No further bet is needed for the fourth die');
+  assert.ok(db.users.slice(0, 2).every((user) => user.points.current === 0));
+  now = lastCall.revealAt;
+  settleDiceGames(db, now);
+  assert.equal(lastCall.reason, 'showdown', 'Fully paid games still finish by dice totals');
   db = make();
   const peer = () => presence('a').online.find((user) => user.id === 'b');
   assert.equal(peer().focused, false, 'A login session alone is not foreground presence');

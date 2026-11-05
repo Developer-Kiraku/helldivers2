@@ -113,7 +113,40 @@ function finish(db, game, winnerId, reason, now) {
     nextRoundAt: now + 5000,
     revision: game.revision + 1,
   });
-  if (reason === 'timeout' || reason === 'left') stopSeries(game, reason);
+  if (['timeout', 'left', 'points'].includes(reason)) stopSeries(game, reason);
+}
+function resolveDecisions(db, game, now) {
+  const actions = game.actions[game.round] || {};
+  if (!game.players.every((id) => actions[id])) return;
+  const callers = game.players.filter((id) => actions[id].choice === 'call');
+  if (callers.length < 2) {
+    const reason = game.players.some((id) => actions[id].reason === 'points') ? 'points' : 'die';
+    finish(db, game, callers.length === 1 ? callers[0] : null, reason, now);
+  } else {
+    beginRound(game, now);
+    if (game.round === rounds(game)) {
+      game.status = 'revealing';
+      game.revealAt = now + 2200;
+    } else {
+      foldUnaffordablePlayers(db, game, now);
+    }
+  }
+}
+function foldUnaffordablePlayers(db, game, now) {
+  if (game.status !== 'playing') return false;
+  // A paid CALL remains valid even if it exhausted the wallet. Check only
+  // undecided players, against the minimum stake rather than a selected multiple.
+  const unable = game.players.filter(
+    (id) => !game.actions[game.round]?.[id] && balance(db, id) < game.stake,
+  );
+  if (!unable.length) return false;
+  game.actions[game.round] ||= {};
+  for (const id of unable) game.actions[game.round][id] = { choice: 'die', reason: 'points' };
+  game.revision++;
+  stopSeries(game, 'points');
+  // Keep simultaneous-choice rules: two DIEs draw, a CALL faces a DIE.
+  resolveDecisions(db, game, now);
+  return true;
 }
 export function settleDiceGames(db, now = Date.now()) {
   let changed = false;
@@ -155,6 +188,8 @@ export function settleDiceGames(db, now = Date.now()) {
           unavailable.length ? 'left' : 'timeout',
           now,
         );
+        changed = true;
+      } else if (foldUnaffordablePlayers(db, game, now)) {
         changed = true;
       }
     }
@@ -226,6 +261,8 @@ function publicGame(db, game, actor) {
           ? game.actions[game.round][id].choice
           : 'locked'
         : null,
+      decisionReason:
+        revealed || id === actor.id ? game.actions[game.round]?.[id]?.reason || null : null,
     })),
   };
 }
@@ -458,18 +495,7 @@ export function handleDiceGame(db, actor, segments, method, input) {
       game.actions[input.round][actor.id] = { choice: 'call', multiplier };
     }
     game.revision++;
-    if (game.players.every((id) => game.actions[input.round][id])) {
-      const callers = game.players.filter((id) => game.actions[input.round][id].choice === 'call');
-      if (callers.length < 2) {
-        finish(db, game, callers.length === 1 ? callers[0] : null, 'die', now);
-      } else {
-        beginRound(game, now);
-        if (game.round === rounds(game)) {
-          game.status = 'revealing';
-          game.revealAt = now + 2200;
-        }
-      }
-    }
+    resolveDecisions(db, game, now);
   } else if (action === 'stop' || (action === 'rematch' && input.accept === false)) {
     let current = game;
     while (current.nextGameId) {

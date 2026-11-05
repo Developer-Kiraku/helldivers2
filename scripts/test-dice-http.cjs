@@ -90,17 +90,8 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   await member.call(base + 'decision', 'POST', { gameId: game.id, round: 1, choice: 'call' }, 409);
   await fixture((db) => {
     db.diceGames.find((item) => item.id === game.id).readyAt = Date.now() - 1;
-    db.users.find((user) => user.id === 'u-user1').points.current = 9;
   });
   const first = { gameId: game.id, round: 1, choice: 'call' };
-  await member.call(base + 'decision', 'POST', first, 400);
-  const rejected = (await heartbeat(member, tabs.member)).data;
-  assert.equal(rejected.points.current, 9);
-  assert.equal(rejected.game.pot, 0);
-  assert.equal(rejected.game.players.find((user) => user.id === 'u-user1').decision, null);
-  await fixture((db) => {
-    db.users.find((user) => user.id === 'u-user1').points.current = before.current;
-  });
   await Promise.all([
     member.call(base + 'decision', 'POST', first),
     member.call(base + 'decision', 'POST', first),
@@ -191,6 +182,65 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   assert.equal(cancellationNotice.game.status, 'cancelled');
   assert.deepEqual(cancellationNotice.points, peer.points);
   await apprentice.call(base + 'accept', 'POST', { gameId: pending.id }, 409);
+  await fixture((db) => {
+    db.users.find((user) => user.id === 'u-user1').lastDiceInviteAt = Date.now() - 5001;
+  });
+  const limited = (
+    await member.call(base + 'invite', 'POST', {
+      tabId: tabs.member,
+      targetId: 'u-user2',
+      stake: 10,
+    })
+  ).data.game;
+  await apprentice.call(base + 'accept', 'POST', { gameId: limited.id });
+  await fixture((db) => {
+    db.diceGames.find((item) => item.id === limited.id).readyAt = Date.now() - 1;
+    db.users.find((user) => user.id === 'u-user1').points.current = 10;
+  });
+  await member.call(base + 'decision', 'POST', { gameId: limited.id, round: 1, choice: 'call' });
+  const secondTurn = (
+    await apprentice.call(base + 'decision', 'POST', {
+      gameId: limited.id,
+      round: 1,
+      choice: 'call',
+    })
+  ).data.game;
+  assert.equal(secondTurn.round, 2);
+  assert.equal(secondTurn.autoContinue, false);
+  assert.equal(secondTurn.players.find((p) => p.id === 'u-user1').decision, 'locked');
+  const automatic = (await heartbeat(member, 'reload-auto-die-1234567890')).data;
+  assert.equal(automatic.points.current, 0);
+  assert.equal(automatic.game.players.find((p) => p.id === 'u-user1').decision, 'die');
+  assert.equal(automatic.game.players.find((p) => p.id === 'u-user1').decisionReason, 'points');
+  await fixture((db) => {
+    db.diceGames.find((item) => item.id === limited.id).readyAt = Date.now() - 1;
+  });
+  const completed = await Promise.all(
+    [1, 2].map(() =>
+      apprentice.call(base + 'decision', 'POST', {
+        gameId: limited.id,
+        round: 2,
+        choice: 'call',
+        multiplier: 2,
+      }),
+    ),
+  );
+  assert.equal(completed[0].data.game.status, 'finished');
+  assert.equal(completed[0].data.game.reason, 'points');
+  assert.equal(completed[0].data.game.winnerId, 'u-user2');
+  assert.equal(completed[0].data.game.pot, 20);
+  assert.equal(completed[0].data.points.current, peer.points.current + 10);
+  assert.deepEqual(
+    completed[1].data.points,
+    completed[0].data.points,
+    'Concurrent retries settle only once',
+  );
+  await fixture((db) => {
+    db.diceGames.find((item) => item.id === limited.id).finishedAt = Date.now() - 5001;
+    db.users.find((user) => user.id === 'u-user1').points.current = state.points.current;
+    db.users.find((user) => user.id === 'u-user2').points.current = peer.points.current;
+  });
+  assert.equal((await heartbeat(member, tabs.member)).data.game, null);
   console.log(
     'PASS: dice HTTP auth, private rolls, concurrent CALL/cancel deduplication, invitation cancellation authorization, unequal bets, current-only settlement, automatic rounds and stop authorization',
   );
