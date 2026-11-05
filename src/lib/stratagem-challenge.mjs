@@ -9,7 +9,7 @@ export const challengeStages = [
   { payout: 900, commands: 11, seconds: 25, minLength: 6, maxLength: 7 },
   { payout: 1200, commands: 12, seconds: 25, minLength: 6, maxLength: 7 },
   { payout: 1500, commands: 13, seconds: 25, minLength: 6, maxLength: 7 },
-  { payout: 2000, commands: 14, seconds: 25, minLength: 6, maxLength: 7 },
+  { payout: 2000, commands: 15, seconds: 25, minLength: 6, maxLength: 7 },
 ];
 // Runs created before the rebalance have no saved stages; honor their original rules.
 const originalStages = [

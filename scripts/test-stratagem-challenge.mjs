@@ -19,7 +19,7 @@ try {
   assert.ok(challengeStages.every((stage) => stage.commands >= 5));
   assert.deepEqual(
     challengeStages.map((stage) => stage.commands),
-    [5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    [5, 6, 7, 8, 9, 10, 11, 12, 13, 15],
   );
   for (const [index, stage] of challengeStages.entries()) {
     const candidates = stratagemCommands.filter(
@@ -154,7 +154,7 @@ try {
   assert.equal(run.status, 'completed');
   assert.equal(run.stage, 10);
   assert.equal(run.payout, 2000);
-  assert.equal(db.stratagemRuns[0].receipts.length, 95);
+  assert.equal(db.stratagemRuns[0].receipts.length, 96);
   assert.equal(call().points.current, 2900);
   assert.equal(call().points.total, 2000);
   assert.equal(db.pointLedger.length, 2);

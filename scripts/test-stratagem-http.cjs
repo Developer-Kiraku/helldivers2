@@ -16,7 +16,7 @@ module.exports = async ({ guest, member, admin }) => {
   assert.equal(run.stage, 1);
   assert.equal(run.stages.length, 10);
   assert.equal(run.stages.at(-1).payout, 2000);
-  assert.equal(run.stages.at(-1).commands, 14);
+  assert.equal(run.stages.at(-1).commands, 15);
   assert.ok(run.nextCommand);
   assert.equal(run.deadlineAt - run.readyAt, 24000);
   assert.equal(starts[1].data.points.current, before.current - 100);

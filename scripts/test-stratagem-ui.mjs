@@ -92,7 +92,7 @@ try {
   const rewards = [...document.querySelectorAll('.stratagem-rewards li')];
   assert.equal(rewards.length, 10);
   assert.match(rewards[6].textContent, /목표/);
-  assert.match(rewards[9].textContent, /2,000.*명령 14개.*25초.*최종/);
+  assert.match(rewards[9].textContent, /2,000.*명령 15개.*25초.*최종/);
   await React.act(async () => {
     button('100P로 도전 시작').click();
     button('100P로 도전 시작').click();
