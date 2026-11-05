@@ -14,8 +14,9 @@ try {
   }
   assert.deepEqual(
     challengeStages.map((stage) => stage.payout),
-    [100, 120, 150, 200, 250, 320, 400],
+    [100, 150, 220, 320, 450, 650, 900],
   );
+  assert.ok(challengeStages.every((stage) => stage.commands >= 5));
   const outfile = path.join(directory, 'game.cjs');
   await build({
     entryPoints: ['src/lib/server/stratagem-challenge.js'],
@@ -53,7 +54,13 @@ try {
       input,
       { now, randomInt: () => 0 },
     );
-  const start = () => call('start', { requestId: randomUUID(), payout: 99999, stage: 7 });
+  const start = () =>
+    call('start', {
+      requestId: randomUUID(),
+      payout: 99999,
+      stage: 7,
+      stages: [{ commands: 1, payout: 99999 }],
+    });
   const answer = (run) => {
     now = Math.max(now + 500, run.readyAt + 500);
     const packet = { runId: run.id, token: run.command.token, answer: run.command.code };
@@ -94,7 +101,13 @@ try {
     () => call('answer', { runId: state.run.id, token: state.run.command.token, answer: 'UUU' }),
     { status: 400 },
   );
-  state.run = checkpoint(state.run);
+  for (let count = 1; count < 5; count++) {
+    state.run = answer(state.run);
+    assert.equal(state.run.completed, count);
+    assert.equal(state.run.status, 'playing', 'A stage cannot finish before the fifth command');
+    assert.throws(() => call('cashout', { runId: state.run.id }), { status: 409 });
+  }
+  state.run = answer(state.run);
   assert.equal(state.run.status, 'checkpoint');
   now += 86400000;
   assert.equal(call().run.status, 'checkpoint', 'Choosing a reward has no time limit');
@@ -122,11 +135,25 @@ try {
     }
   }
   assert.equal(run.status, 'completed');
-  assert.equal(run.payout, 400);
-  assert.equal(call().points.current, 1300);
+  assert.equal(run.payout, 900);
+  assert.equal(db.stratagemRuns[0].receipts.length, 50);
+  assert.equal(call().points.current, 1800);
   assert.equal(call().points.total, 2000);
   assert.equal(db.pointLedger.length, 2);
-  assert.equal(call('cashout', { runId: run.id }).points.current, 1300);
+  assert.equal(call('cashout', { runId: run.id }).points.current, 1800);
+  // Stored runs from before the balance change keep their original counts and rewards.
+  db = make();
+  start();
+  delete db.stratagemRuns[0].stages;
+  run = call().run;
+  assert.equal(run.stages[0].commands, 1);
+  assert.equal(answer(run).status, 'checkpoint');
+  run = call('continue', { runId: run.id, stage: 1 }).run;
+  assert.equal(run.deadlineAt - run.readyAt, 11000);
+  run = checkpoint(run);
+  assert.equal(run.completed, 2);
+  assert.equal(call('cashout', { runId: run.id }).run.payout, 120);
+  assert.equal(call().points.current, 1020);
   for (const status of ['playing', 'checkpoint', 'cashed', 'completed', 'failed']) {
     db = make();
     run = start().run;

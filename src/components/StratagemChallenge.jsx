@@ -52,7 +52,8 @@ function Game() {
     initialized = useRef(false),
     storageKey = 'hd-stratagem-pending:' + user.id;
   const run = data?.run,
-    stage = challengeStages[(run?.stage || 1) - 1];
+    stages = run?.stages || challengeStages,
+    stage = stages[(run?.stage || 1) - 1];
   const preview = role !== actualRole,
     playing = run?.status === 'playing',
     checkpoint = run?.status === 'checkpoint';
@@ -275,7 +276,7 @@ function Game() {
               <RadioTower size={16} />{' '}
               {playing ? '신호 전송 중' : checkpoint ? '전송 완료' : '통신 대기'}
             </span>
-            <span>{run && !ended ? `${run.stage} / 7 단계` : 'SOLO CHALLENGE'}</span>
+            <span>{run && !ended ? `${run.stage} / ${stages.length} 단계` : 'SOLO CHALLENGE'}</span>
           </div>
           {!data ? (
             <div className="stratagem-message" role="status">
@@ -401,7 +402,7 @@ function Game() {
                     : run.status === 'abandoned'
                       ? '도전이 종료되었습니다'
                       : run.status === 'completed'
-                        ? '7단계 완주! 임무 성공'
+                        ? `${stages.length}단계 완주! 임무 성공`
                         : '보상을 확보했습니다'
                   : '손끝으로 완성하는 민주주의'}
               </h2>
@@ -418,7 +419,8 @@ function Game() {
                 </>
               ) : (
                 <p>
-                  7단계의 신호를 완성하고 최대 <strong>400P</strong>를 획득하세요.
+                  {challengeStages.length}단계의 신호를 완성하고 최대{' '}
+                  <strong>{number(challengeStages.at(-1).payout)}P</strong>를 획득하세요.
                   <br />각 단계 성공 후 보상을 받고 종료할 수 있습니다.
                 </p>
               )}
@@ -432,11 +434,13 @@ function Game() {
                 {busy
                   ? '확인 중…'
                   : wallet < challengeEntry
-                    ? '100P가 필요합니다'
-                    : '100P로 도전 시작'}
+                    ? `${number(challengeEntry)}P가 필요합니다`
+                    : `${number(challengeEntry)}P로 도전 시작`}
               </Button>
               <p className="stratagem-key-help">
-                첫 성공 100P · 3단계 150P · 5단계 250P · 완주 400P
+                첫 성공 {number(challengeStages[0].payout)}P · 3단계{' '}
+                {number(challengeStages[2].payout)}P · 5단계 {number(challengeStages[4].payout)}P ·
+                완주 {number(challengeStages.at(-1).payout)}P
               </p>
             </div>
           )}
@@ -448,7 +452,7 @@ function Game() {
             <span>총 지급액</span>
           </header>
           <ol>
-            {challengeStages.map((item, index) => (
+            {stages.map((item, index) => (
               <li
                 key={index}
                 className={run && !ended && run.stage === index + 1 ? 'is-current' : ''}
@@ -479,8 +483,9 @@ function Game() {
         <h2>플레이 방법</h2>
         <ol>
           <li>
-            100P로 시작합니다. 명령이 나타나면 바로 방향키·WASD 또는 터치 버튼으로 입력하세요. 한글
-            입력 상태에서도 WASD를 사용할 수 있습니다.
+            {number(challengeEntry)}P로 시작하며, 첫 단계는 명령 {challengeStages[0].commands}
+            개입니다. 명령이 나타나면 바로 방향키·WASD 또는 터치 버튼으로 입력하세요. 한글 입력
+            상태에서도 WASD를 사용할 수 있습니다.
           </li>
           <li>틀린 입력은 해당 명령의 처음으로 돌아갑니다. 단계의 제한 시간은 계속 흐릅니다.</li>
           <li>
@@ -488,8 +493,9 @@ function Game() {
             있습니다. 선택 중에는 시간이 흐르지 않습니다.
           </li>
           <li>
-            시간이 끝나면 보상 없이 종료됩니다. 7단계 완료 시 400P가 자동 지급됩니다. 참가비와
-            보상은 현재 포인트에만 반영됩니다.
+            시간이 끝나면 보상 없이 종료됩니다. {challengeStages.length}단계 완료 시{' '}
+            {number(challengeStages.at(-1).payout)}P가 자동 지급됩니다. 참가비와 보상은 현재
+            포인트에만 반영됩니다.
           </li>
           <li>
             새로고침하거나 이 페이지에 다시 들어오면 시작 화면으로 초기화됩니다. 진행 중이던 도전은

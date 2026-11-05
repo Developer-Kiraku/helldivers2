@@ -4,6 +4,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { build } from 'esbuild';
 import { JSDOM } from 'jsdom';
+import { challengeStages } from '../src/lib/stratagem-challenge.mjs';
 const dom = new JSDOM('<div id="root"></div>', { url: 'http://localhost/games/stratagem' });
 const saved = new Map();
 for (const key of [
@@ -98,9 +99,10 @@ try {
     requestId: started,
     status: 'playing',
     stage: 1,
+    stages: challengeStages,
     completed: 0,
     readyAt: 10000,
-    deadlineAt: 22000,
+    deadlineAt: 35000,
     command: {
       token: 'token',
       code: 'RRU',
@@ -178,7 +180,20 @@ try {
   await press('ArrowUp');
   assert.equal(calls.at(-1).options.body.answer, 'RRU');
   assert.ok([...document.querySelectorAll('.stratagem-dpad button')].every((el) => el.disabled));
-  await reply(state({ ...run, status: 'checkpoint', command: null, completed: 1 }));
+  for (let completed = 1; completed < 5; completed++) {
+    await reply(
+      state({ ...run, completed, command: { ...run.command, token: 'token-' + completed } }),
+    );
+    assert.match(
+      document.querySelector('.stratagem-progress').textContent,
+      new RegExp(`명령 ${completed + 1}.*5`),
+    );
+    assert.equal(button('100P 받고 종료'), undefined);
+    await press('ArrowRight');
+    await press('ArrowRight');
+    await press('ArrowUp');
+  }
+  await reply(state({ ...run, status: 'checkpoint', command: null, completed: 5 }));
   assert.ok(button('100P 받고 종료'));
   await React.act(async () => button('100P 받고 종료').click());
   const payoutPacket = calls.at(-1).options.body;

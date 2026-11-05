@@ -1,7 +1,7 @@
 import { randomInt, randomUUID } from 'node:crypto';
 import { fail } from './auth';
 import { transferGamePoints } from './points.mjs';
-import { challengeEntry, challengeStages } from '../stratagem-challenge.mjs';
+import { challengeEntry, challengeStages, challengeStagesFor } from '../stratagem-challenge.mjs';
 import { stratagemCommands } from '../stratagem-codes.mjs';
 
 const active = (run) => ['playing', 'checkpoint'].includes(run.status);
@@ -9,7 +9,7 @@ const validId = (value) =>
   typeof value === 'string' &&
   /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(value);
 function nextCommand(run, now, rng) {
-  const stage = challengeStages[run.stage - 1];
+  const stage = challengeStagesFor(run)[run.stage - 1];
   const candidates = stratagemCommands.filter(
     (item) =>
       item.code.length >= stage.minLength &&
@@ -23,7 +23,7 @@ function beginStage(run, now, rng) {
   run.stage++;
   run.completed = 0;
   run.readyAt = now;
-  run.deadlineAt = run.readyAt + challengeStages[run.stage - 1].seconds * 1000;
+  run.deadlineAt = run.readyAt + challengeStagesFor(run)[run.stage - 1].seconds * 1000;
   run.status = 'playing';
   nextCommand(run, run.readyAt, rng);
 }
@@ -31,7 +31,9 @@ function finish(db, run, status, now) {
   if (!active(run)) return;
   run.status = status;
   run.finishedAt = now;
-  run.payout = ['failed', 'abandoned'].includes(status) ? 0 : challengeStages[run.stage - 1].payout;
+  run.payout = ['failed', 'abandoned'].includes(status)
+    ? 0
+    : challengeStagesFor(run)[run.stage - 1].payout;
   if (run.payout)
     transferGamePoints(db, run.userId, `stratagem:${run.id}:payout`, run.payout, run.id);
 }
@@ -62,6 +64,7 @@ function publicRun(run) {
     finishedAt,
     createdAt,
     requestId,
+    stages: challengeStagesFor(run),
     command: status === 'playing' ? run.command : null,
   };
 }
@@ -94,6 +97,7 @@ export function handleStratagemChallenge(db, actor, segments, method, input = {}
       userId: actor.id,
       requestId: input.requestId,
       stage: 0,
+      stages: challengeStages.map((stage) => ({ ...stage })),
       status: 'playing',
       receipts: [],
       createdAt: now,
@@ -129,12 +133,16 @@ export function handleStratagemChallenge(db, actor, segments, method, input = {}
       fail(400, '명령이 다릅니다. 처음부터 다시 입력해주세요.');
     run.receipts.push({ token: input.token, answer: input.answer });
     run.completed++;
-    if (run.completed === challengeStages[run.stage - 1].commands) {
+    if (run.completed === challengeStagesFor(run)[run.stage - 1].commands) {
       run.status = 'checkpoint';
-      if (run.stage === challengeStages.length) finish(db, run, 'completed', now);
+      if (run.stage === challengeStagesFor(run).length) finish(db, run, 'completed', now);
     } else nextCommand(run, now, rng);
   } else if (action === 'continue') {
-    if (!Number.isInteger(input.stage) || input.stage < 1 || input.stage >= challengeStages.length)
+    if (
+      !Number.isInteger(input.stage) ||
+      input.stage < 1 ||
+      input.stage >= challengeStagesFor(run).length
+    )
       fail(400, '단계를 확인해주세요.');
     if (run.stage > input.stage) return snapshot(run);
     if (run.status !== 'checkpoint' || run.stage !== input.stage)

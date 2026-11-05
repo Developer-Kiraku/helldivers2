@@ -47,8 +47,8 @@ module.exports = async ({ guest, member, admin }) => {
     member.call(base + '/cashout', 'POST', { runId: run.id, payout: 90000 }),
     member.call(base + '/cashout', 'POST', { runId: run.id }),
   ]);
-  assert.equal(paid[0].data.run.payout, 150);
-  assert.equal(paid[1].data.points.current, before.current + 50);
+  assert.equal(paid[0].data.run.payout, 220);
+  assert.equal(paid[1].data.points.current, before.current + 120);
   assert.equal(paid[1].data.points.total, before.total);
   assert.equal((await member.call(base)).data.run.status, 'cashed');
   let fresh = (await member.call(base + '/start', 'POST', { requestId: randomUUID() })).data.run;
@@ -61,7 +61,7 @@ module.exports = async ({ guest, member, admin }) => {
     member.call(base + '/reset', 'POST', { runId: fresh.id }),
   ]);
   assert.equal(reset[0].data.run, null);
-  assert.equal(reset[1].data.points.current, before.current - 50);
+  assert.equal(reset[1].data.points.current, before.current + 20);
   const previous = fresh.id;
   fresh = (
     await member.call(base + '/start', 'POST', { requestId: randomUUID(), replacePrevious: true })
@@ -69,20 +69,24 @@ module.exports = async ({ guest, member, admin }) => {
   await member.call(base + '/reset', 'POST', { runId: previous });
   assert.equal((await member.call(base)).data.run.id, fresh.id);
   await wait(fresh.readyAt - Date.now() + 300);
-  fresh = (
-    await member.call(base + '/answer', 'POST', {
-      runId: fresh.id,
-      token: fresh.command.token,
-      answer: fresh.command.code,
-    })
-  ).data.run;
+  while (fresh.status === 'playing') {
+    fresh = (
+      await member.call(base + '/answer', 'POST', {
+        runId: fresh.id,
+        token: fresh.command.token,
+        answer: fresh.command.code,
+      })
+    ).data.run;
+    if (fresh.status === 'playing') await wait(300);
+  }
+  assert.equal(fresh.completed, 5);
   assert.equal(fresh.status, 'checkpoint');
   const settled = await Promise.all([
     member.call(base + '/reset', 'POST', { runId: fresh.id }),
     member.call(base + '/cashout', 'POST', { runId: fresh.id }),
   ]);
-  assert.equal(settled[0].data.points.current, before.current - 50);
-  assert.equal(settled[1].data.points.current, before.current - 50);
+  assert.equal(settled[0].data.points.current, before.current + 20);
+  assert.equal(settled[1].data.points.current, before.current + 20);
   console.log(
     'PASS: stratagem HTTP auth/CSRF, concurrent entry/payout/reset, stale reset isolation, checkpoint settlement and server-priced reward',
   );
