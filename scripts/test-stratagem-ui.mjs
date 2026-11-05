@@ -33,6 +33,7 @@ for (const key of [
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 window.matchMedia = () => ({ matches: true });
+Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'visible' });
 HTMLElement.prototype.scrollIntoView = () => {};
 const require = createRequire(import.meta.url),
   React = require('react');
@@ -141,8 +142,59 @@ try {
   });
   assert.match(document.querySelector('.stratagem-message').textContent, /100 P 지급/);
   assert.equal(sessionStorage.length, 0);
+  for (const status of ['playing', 'checkpoint', 'cashed', 'completed', 'failed']) {
+    await React.act(async () => root.render(null));
+    sessionStorage.setItem(
+      'hd-stratagem-pending:me',
+      JSON.stringify({
+        action: 'start',
+        body: { requestId: 'old-request' },
+      }),
+    );
+    const before = calls.length;
+    await React.act(async () =>
+      root.render(React.createElement(React.StrictMode, null, React.createElement(Game))),
+    );
+    assert.equal(calls.at(-1).name, 'games/stratagem', 'Entry never replays saved mutations');
+    await reply(state({ ...run, status }));
+    if (['playing', 'checkpoint'].includes(status)) {
+      assert.equal(calls.at(-1).name, 'games/stratagem/reset');
+      assert.equal(calls.at(-1).options.body.runId, run.id);
+      assert.equal(
+        button('100P로 도전 시작'),
+        undefined,
+        'Wait for old-game settlement before starting',
+      );
+      if (status === 'checkpoint') {
+        await React.act(async () => calls.at(-1).reject(new Error('reset connection lost')));
+        await React.act(async () => button('다시 확인').click());
+        await reply(state({ ...run, status: 'cashed' }));
+      } else await reply(state(null));
+    }
+    assert.equal(calls.slice(before).filter((c) => c.name.endsWith('/start')).length, 0);
+    assert.match(
+      document.querySelector('.stratagem-message').textContent,
+      /손끝으로 완성하는 민주주의/,
+    );
+    assert.ok(!button('100P로 도전 시작').disabled);
+    assert.equal(sessionStorage.length, 0);
+  }
+  await React.act(async () => button('100P로 도전 시작').click());
+  assert.equal(calls.at(-1).options.body.replacePrevious, true);
+  await reply(state(run));
+  const resets = calls.filter((c) => c.name.endsWith('/reset')).length;
+  const beforeFocus = calls.length;
+  await React.act(async () => {
+    window.dispatchEvent(new window.Event('focus'));
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  });
+  assert.equal(calls.length, beforeFocus + 1);
+  assert.equal(calls.at(-1).name, 'games/stratagem');
+  await reply(state(run));
+  assert.equal(calls.filter((c) => c.name.endsWith('/reset')).length, resets);
+  assert.ok(document.querySelector('.stratagem-code'), 'Returning focus keeps this visit’s game');
   console.log(
-    'PASS: stratagem keyboard/touch controls, wrong-input reset, rapid-start lock, stage choices, payout recovery and current-game result',
+    'PASS: stratagem keyboard/touch, fresh entry/reload, stale-request removal, reset recovery, same-visit focus, payout recovery and current-game result',
   );
 } finally {
   await React.act(async () => root.unmount());

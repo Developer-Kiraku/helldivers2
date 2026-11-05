@@ -51,7 +51,39 @@ module.exports = async ({ guest, member, admin }) => {
   assert.equal(paid[1].data.points.current, before.current + 50);
   assert.equal(paid[1].data.points.total, before.total);
   assert.equal((await member.call(base)).data.run.status, 'cashed');
+  let fresh = (await member.call(base + '/start', 'POST', { requestId: randomUUID() })).data.run;
+  await admin.call(base + '/reset', 'POST', { runId: fresh.id }, 404);
+  await member.call(base + '/reset', 'POST', { runId: fresh.id }, 403, {
+    Origin: 'https://example.invalid',
+  });
+  const reset = await Promise.all([
+    member.call(base + '/reset', 'POST', { runId: fresh.id }),
+    member.call(base + '/reset', 'POST', { runId: fresh.id }),
+  ]);
+  assert.equal(reset[0].data.run, null);
+  assert.equal(reset[1].data.points.current, before.current - 50);
+  const previous = fresh.id;
+  fresh = (
+    await member.call(base + '/start', 'POST', { requestId: randomUUID(), replacePrevious: true })
+  ).data.run;
+  await member.call(base + '/reset', 'POST', { runId: previous });
+  assert.equal((await member.call(base)).data.run.id, fresh.id);
+  await wait(fresh.readyAt - Date.now() + 300);
+  fresh = (
+    await member.call(base + '/answer', 'POST', {
+      runId: fresh.id,
+      token: fresh.command.token,
+      answer: fresh.command.code,
+    })
+  ).data.run;
+  assert.equal(fresh.status, 'checkpoint');
+  const settled = await Promise.all([
+    member.call(base + '/reset', 'POST', { runId: fresh.id }),
+    member.call(base + '/cashout', 'POST', { runId: fresh.id }),
+  ]);
+  assert.equal(settled[0].data.points.current, before.current - 50);
+  assert.equal(settled[1].data.points.current, before.current - 50);
   console.log(
-    'PASS: stratagem HTTP login/CSRF, owner isolation, concurrent entry/answer/continue/payout deduplication, refresh and server-priced reward',
+    'PASS: stratagem HTTP auth/CSRF, concurrent entry/payout/reset, stale reset isolation, checkpoint settlement and server-priced reward',
   );
 };

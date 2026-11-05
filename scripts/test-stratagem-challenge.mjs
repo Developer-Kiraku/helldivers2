@@ -125,6 +125,37 @@ try {
   assert.equal(call().points.total, 2000);
   assert.equal(db.pointLedger.length, 2);
   assert.equal(call('cashout', { runId: run.id }).points.current, 1300);
+  for (const status of ['playing', 'checkpoint', 'cashed', 'completed', 'failed']) {
+    db = make();
+    run = start().run;
+    if (status === 'checkpoint' || status === 'cashed') run = checkpoint(run);
+    if (status === 'cashed') run = call('cashout', { runId: run.id }).run;
+    if (status === 'completed' || status === 'failed') {
+      Object.assign(db.stratagemRuns[0], { status, payout: status === 'completed' ? 400 : 0 });
+    }
+    assert.throws(() => call('reset', { runId: run.id }, 'b'), { status: 404 });
+    const reset = call('reset', { runId: run.id });
+    assert.equal(reset.run, null);
+    assert.equal(reset.points.current, ['checkpoint', 'cashed'].includes(status) ? 1000 : 900);
+    assert.equal(reset.points.total, 2000);
+    assert.deepEqual(call('reset', { runId: run.id }), reset);
+    const newer = start().run;
+    call('reset', { runId: run.id });
+    assert.equal(call().run.id, newer.id, 'Delayed reset must not cancel a newer challenge');
+    assert.equal(call().run.status, 'playing');
+  }
+  db = make();
+  run = checkpoint(start().run);
+  const replacementId = randomUUID();
+  const replacement = call('start', { requestId: replacementId, replacePrevious: true });
+  assert.equal(
+    replacement.points.current,
+    900,
+    'An unseen old checkpoint settles before a fresh entry',
+  );
+  assert.equal(db.stratagemRuns[0].status, 'cashed');
+  assert.deepEqual(call('start', { requestId: replacementId, replacePrevious: true }), replacement);
+  assert.equal(db.pointLedger.length, 3, 'Replacement retries charge only once');
   for (const stageTarget of [1, 3, 5]) {
     db = make();
     run = start().run;

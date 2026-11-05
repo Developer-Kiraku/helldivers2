@@ -31,10 +31,12 @@ function finish(db, run, status, now) {
   if (!active(run)) return;
   run.status = status;
   run.finishedAt = now;
-  run.payout = status === 'failed' ? 0 : challengeStages[run.stage - 1].payout;
+  run.payout = ['failed', 'abandoned'].includes(status) ? 0 : challengeStages[run.stage - 1].payout;
   if (run.payout)
     transferGamePoints(db, run.userId, `stratagem:${run.id}:payout`, run.payout, run.id);
 }
+const closePrevious = (db, run, now) =>
+  finish(db, run, run.status === 'checkpoint' ? 'cashed' : 'abandoned', now);
 function publicRun(run) {
   if (!run) return null;
   const {
@@ -83,6 +85,8 @@ export function handleStratagemChallenge(db, actor, segments, method, input = {}
     if (!validId(input.requestId)) fail(400, '도전 요청을 확인해주세요.');
     const previous = own.find((run) => run.requestId === input.requestId);
     if (previous) return snapshot(previous);
+    if (input.replacePrevious === true)
+      for (const run of own.filter(active)) closePrevious(db, run, now);
     if (own.some(active)) fail(409, '진행 중인 도전을 먼저 완료해주세요.');
     if ((actor.points?.current || 0) < challengeEntry) fail(400, '도전하려면 100P가 필요합니다.');
     const run = {
@@ -101,7 +105,11 @@ export function handleStratagemChallenge(db, actor, segments, method, input = {}
   }
   const run = own.find((run) => run.id === input.runId);
   if (!run) fail(404, '도전을 찾을 수 없습니다.');
-  if (action === 'answer') {
+  if (action === 'reset') {
+    // Target the observed run, so a delayed reset cannot cancel a newer challenge.
+    closePrevious(db, run, now);
+    return snapshot(null);
+  } else if (action === 'answer') {
     if (
       !validId(input.token) ||
       typeof input.answer !== 'string' ||

@@ -47,6 +47,8 @@ function Game() {
     synced = useRef({ at: 0, serverTime: 0 }),
     mistakeTimer = useRef(null);
   const pendingRef = useRef(null),
+    currentRunId = useRef(null),
+    initialized = useRef(false),
     storageKey = 'hd-stratagem-pending:' + user.id;
   const run = data?.run,
     stage = challengeStages[(run?.stage || 1) - 1];
@@ -57,24 +59,15 @@ function Game() {
   const wallet = data?.points.current ?? user.points.current;
   const remaining = Math.max(0, (run?.deadlineAt || now) - now);
   const ready = playing && now >= run.readyAt && remaining > 0;
-  const remember = useCallback(
-    (packet) => {
-      pendingRef.current = packet;
-      setPending(packet);
-      try {
-        if (packet) sessionStorage.setItem(storageKey, JSON.stringify(packet));
-        else sessionStorage.removeItem(storageKey);
-      } catch {
-        /* In-memory retry remains available. */
-      }
-    },
-    [storageKey],
-  );
+  const remember = useCallback((packet) => {
+    pendingRef.current = packet;
+    setPending(packet);
+  }, []);
   const apply = useCallback(
     (result) => {
       synced.current = { at: performance.now(), serverTime: result.serverTime };
       setNow(result.serverTime);
-      setData(result);
+      setData({ ...result, run: result.run?.id === currentRunId.current ? result.run : null });
       syncPoints(user.id, result.points);
     },
     [syncPoints, user.id],
@@ -83,15 +76,24 @@ function Game() {
     if (lock.current) return;
     const version = ++generation.current;
     try {
-      const result = await api(path);
+      let result = await api(path);
+      if (!alive.current || version !== generation.current) return;
+      if (
+        !initialized.current &&
+        !preview &&
+        ['playing', 'checkpoint'].includes(result.run?.status)
+      ) {
+        result = await api(path + '/reset', { method: 'POST', body: { runId: result.run.id } });
+      }
       if (alive.current && version === generation.current) {
+        initialized.current = true;
         apply(result);
         setError('');
       }
     } catch (err) {
       if (alive.current && version === generation.current) setError(err.message);
     }
-  }, [api, apply]);
+  }, [api, apply, preview]);
   const act = useCallback(
     async (packet) => {
       if (lock.current || preview) return;
@@ -103,6 +105,7 @@ function Game() {
       try {
         const result = await api(path + '/' + packet.action, { method: 'POST', body: packet.body });
         if (alive.current) {
+          if (packet.action === 'start') currentRunId.current = result.run.id;
           apply(result);
           remember(null);
         }
@@ -129,27 +132,21 @@ function Game() {
   );
   useEffect(() => {
     alive.current = true;
-    let saved;
+    initialized.current = false;
+    currentRunId.current = null;
+    remember(null);
     try {
-      saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
+      sessionStorage.removeItem(storageKey);
     } catch {
-      /* Start from the server snapshot. */
+      /* Old saved requests must not replay on a new visit. */
     }
-    if (
-      !preview &&
-      saved &&
-      ['start', 'answer', 'continue', 'cashout'].includes(saved.action) &&
-      saved.body
-    ) {
-      remember(saved);
-      act(saved);
-    } else refresh();
+    refresh();
     return () => {
       alive.current = false;
       ++generation.current;
       clearTimeout(mistakeTimer.current);
     };
-  }, [storageKey, act, refresh, remember, preview]);
+  }, [storageKey, refresh, remember]);
   useRefreshOnReturn(refresh);
   useEffect(() => {
     inputRef.current = '';
@@ -199,7 +196,8 @@ function Game() {
     if (next === run.command.code)
       act({ action: 'answer', body: { runId: run.id, token: run.command.token, answer: next } });
   };
-  const start = () => act({ action: 'start', body: { requestId: crypto.randomUUID() } });
+  const start = () =>
+    act({ action: 'start', body: { requestId: crypto.randomUUID(), replacePrevious: true } });
   return (
     <section className="stratagem-page">
       <header className="stratagem-heading">
@@ -262,7 +260,7 @@ function Game() {
           </div>
           {!data ? (
             <div className="stratagem-message" role="status">
-              진행 중인 도전을 확인하고 있습니다…
+              새 도전을 준비하고 있습니다…
             </div>
           ) : playing ? (
             <>
@@ -381,9 +379,11 @@ function Game() {
                 {ended
                   ? run.status === 'failed'
                     ? '시간이 종료되었습니다'
-                    : run.status === 'completed'
-                      ? '7단계 완주! 임무 성공'
-                      : '보상을 확보했습니다'
+                    : run.status === 'abandoned'
+                      ? '도전이 종료되었습니다'
+                      : run.status === 'completed'
+                        ? '7단계 완주! 임무 성공'
+                        : '보상을 확보했습니다'
                   : '손끝으로 완성하는 민주주의'}
               </h2>
               {ended ? (
@@ -473,8 +473,8 @@ function Game() {
             보상은 현재 포인트에만 반영됩니다.
           </li>
           <li>
-            새로고침하거나 페이지를 나가도 진행 중인 제한 시간은 멈추지 않습니다. 완료한 단계의 보상
-            선택은 다시 접속해 이어갈 수 있습니다.
+            새로고침하거나 이 페이지에 다시 들어오면 시작 화면으로 초기화됩니다. 진행 중이던 도전은
+            참가비 환불 없이 종료되며, 단계 성공 후 미수령 보상은 자동 지급됩니다.
           </li>
         </ol>
       </section>
