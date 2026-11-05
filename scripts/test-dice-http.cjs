@@ -235,6 +235,38 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
     completed[0].data.points,
     'Concurrent retries settle only once',
   );
+  const compensated = (await heartbeat(member, 'reload-auto-die-1234567890')).data;
+  assert.equal(compensated.game.consolation, 5000);
+  assert.equal(compensated.points.current, 5000);
+  assert.equal(compensated.points.total, before.total);
+  assert.equal(compensated.game.autoContinue, false);
+  const notices = (await member.call('/api/notifications')).data.notifications.filter(
+    (item) => item.kind === 'dice_consolation',
+  );
+  assert.equal(notices.length, 1);
+  assert.equal(notices[0].amount, 5000);
+  assert.equal(notices[0].href, '/games/dice');
+  assert.equal(notices[0].readAt, null);
+  assert.ok(
+    !(await admin.call('/api/notifications')).data.notifications.some(
+      (item) => item.id === notices[0].id,
+    ),
+  );
+  await admin.call('/api/notifications/' + notices[0].id + '/read', 'POST', {}, 404);
+  await admin.call('/api/notifications/' + notices[0].id, 'DELETE', undefined, 404);
+  await member.call('/api/notifications/' + notices[0].id + '/read', 'POST', {});
+  const stored = JSON.parse(await fs.readFile(file, 'utf8'));
+  assert.equal(
+    stored.pointLedger.filter(
+      (row) => row.gameId === limited.id && row.sourceKey.endsWith(':consolation'),
+    ).length,
+    1,
+  );
+  assert.equal(
+    stored.audit.filter((row) => row.targetId === limited.id && row.action === 'points.grant')
+      .length,
+    1,
+  );
   await fixture((db) => {
     db.diceGames.find((item) => item.id === limited.id).finishedAt = Date.now() - 5001;
     db.users.find((user) => user.id === 'u-user1').points.current = state.points.current;
@@ -242,6 +274,6 @@ module.exports = async function ({ guest, member, apprentice, admin, file }) {
   });
   assert.equal((await heartbeat(member, tabs.member)).data.game, null);
   console.log(
-    'PASS: dice HTTP auth, private rolls, concurrent CALL/cancel deduplication, invitation cancellation authorization, unequal bets, current-only settlement, automatic rounds and stop authorization',
+    'PASS: dice HTTP auth, private rolls, concurrent CALL/cancel deduplication, unequal bets, automatic rounds, consolation payment/notification/audit deduplication and recipient authorization',
   );
 };

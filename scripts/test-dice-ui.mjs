@@ -151,7 +151,11 @@ try {
   const reply = (call, data) => React.act(async () => call.resolve(data));
   const focus = () => React.act(async () => window.dispatchEvent(new Event('focus')));
   await React.act(async () => render());
-  await reply(calls[0], snapshot(game('old-game', 'old', '이전대원', 'finished'), 1000));
+  await reply(
+    calls[0],
+    snapshot({ ...game('old-game', 'old', '이전대원', 'finished'), consolation: 5000 }, 1000),
+  );
+  assert.match(document.querySelector('.dice-result').textContent, /위로 포인트 \+5,000 P 지급/);
   assert.equal(calls[0].options.body.focused, true);
   const memberRows = document.querySelectorAll('.dice-member');
   assert.match(memberRows[0].textContent, /새대원초대 가능/);

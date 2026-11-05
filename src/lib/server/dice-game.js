@@ -1,7 +1,7 @@
 import { randomInt, randomUUID } from 'node:crypto';
 import { fail } from './auth';
 import { transferGamePoints } from './points.mjs';
-import { diceInviteMs, diceMaxMultiplier } from '../dice-rules.mjs';
+import { diceInviteMs, diceMaxMultiplier, diceConsolation } from '../dice-rules.mjs';
 import { diceSkin, isDiceSkin } from '../dice-skins.mjs';
 
 export const diceStakeOptions = [10, 100, 1000];
@@ -78,15 +78,58 @@ function continueSeries(db, game, now) {
     stopSeries(game, 'left');
     return;
   }
-  game.nextGameId = createGame(
-    db,
-    game.players,
-    game.stake,
-    now,
-    false,
-    (game.matchNumber || 1) + 1,
-  ).id;
+  const next = createGame(db, game.players, game.stake, now, false, (game.matchNumber || 1) + 1);
+  next.seriesId = game.seriesId;
+  next.startingPoints = game.startingPoints;
+  game.nextGameId = next.id;
   game.revision++;
+}
+function awardConsolation(db, game, now) {
+  // Older in-progress games have no reliable starting balance; never invent one.
+  if (!game.seriesId || !game.startingPoints) return;
+  const sourceKey = `dice:${game.seriesId}:consolation`;
+  for (const id of game.players) {
+    const user = member(db, id);
+    const starting = game.startingPoints[id];
+    const remaining = balance(db, id);
+    if (
+      user?.status !== 'active' ||
+      !Number.isSafeInteger(starting) ||
+      starting <= 0 ||
+      remaining > Math.floor((starting * (100 - diceConsolation.lossPercent)) / 100) ||
+      (db.pointLedger || []).some((row) => row.userId === id && row.sourceKey === sourceKey)
+    )
+      continue;
+    transferGamePoints(db, id, sourceKey, diceConsolation.amount, game.id);
+    game.consolation ||= {};
+    game.consolation[id] = diceConsolation.amount;
+    const createdAt = new Date(now).toISOString();
+    db.notifications ||= [];
+    db.notifications.push({
+      id: randomUUID(),
+      recipientId: id,
+      family: 'dice',
+      kind: 'dice_consolation',
+      gameId: game.id,
+      amount: diceConsolation.amount,
+      createdAt,
+      readAt: null,
+    });
+    db.audit ||= [];
+    db.audit.push({
+      id: randomUUID(),
+      actorId: null,
+      action: 'points.grant',
+      targetId: game.id,
+      details: {
+        actorNickname: '시스템',
+        targetTitle: `${user.nickname} · 주사위 위로 포인트`,
+        amount: diceConsolation.amount,
+        reason: `게임 시작 ${starting.toLocaleString('ko-KR')}P → 정산 후 ${remaining.toLocaleString('ko-KR')}P · ${diceConsolation.lossPercent}% 이상 감소`,
+      },
+      createdAt,
+    });
+  }
 }
 function finish(db, game, winnerId, reason, now) {
   if (game.status === 'finished') return;
@@ -114,6 +157,9 @@ function finish(db, game, winnerId, reason, now) {
     revision: game.revision + 1,
   });
   if (['timeout', 'left', 'points'].includes(reason)) stopSeries(game, reason);
+  // A consolation payment must not restart a series that already ran out of funds.
+  if (game.players.some((id) => balance(db, id) < game.stake)) stopSeries(game, 'points');
+  awardConsolation(db, game, now);
 }
 function resolveDecisions(db, game, now) {
   const actions = game.actions[game.round] || {};
@@ -232,6 +278,7 @@ function publicGame(db, game, actor) {
     nextRoundAt: game.autoContinue ? game.nextRoundAt || null : null,
     stopReason: game.stopReason || null,
     stopBy: game.stopBy || null,
+    consolation: game.consolation?.[actor.id] || 0,
     // Keep already-open clients from crashing while the new UI rolls out.
     rematch: [],
     rematchDeclined: true,
@@ -455,6 +502,8 @@ export function handleDiceGame(db, actor, segments, method, input) {
         fail(400, '참여 가능한 회원과 포인트를 확인해주세요.');
       game.status = 'playing';
       game.autoContinue = true;
+      game.seriesId = game.id;
+      game.startingPoints = Object.fromEntries(game.players.map((id) => [id, balance(db, id)]));
       beginRound(game, now);
     }
   } else if (action === 'decision') {

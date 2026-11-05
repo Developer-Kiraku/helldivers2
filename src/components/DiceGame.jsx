@@ -18,7 +18,7 @@ import Dice3D from './Dice3D';
 import DiceSkinPicker from './DiceSkinPicker';
 import Avatar from './Avatar';
 import { Button } from './ui';
-import { diceMaxMultiplier } from '@/lib/dice-rules.mjs';
+import { diceMaxMultiplier, diceConsolation } from '@/lib/dice-rules.mjs';
 
 const number = (value) => (value || 0).toLocaleString('ko-KR');
 export default function DiceGame() {
@@ -450,6 +450,11 @@ export default function DiceGame() {
                 >
                   <Trophy size={28} />
                   <h2>{resultTitle}</h2>
+                  {game.consolation > 0 && (
+                    <p className="dice-final-message">
+                      <strong>위로 포인트 +{number(game.consolation)} P 지급</strong>
+                    </p>
+                  )}
                   <p>
                     {game.reason === 'points'
                       ? !game.winnerId
@@ -576,6 +581,11 @@ export default function DiceGame() {
           <li>
             선택 전 보유 포인트가 최소 베팅액보다 적으면 자동으로 DIE 처리하며, 다음 판은 시작하지
             않습니다. 상대의 선택까지 확인한 뒤 같은 정산 규칙을 적용합니다.
+          </li>
+          <li>
+            첫 게임 시작 시 보유 포인트보다 정산 후 잔액이 {diceConsolation.lossPercent}% 이상 줄면
+            위로 포인트 {number(diceConsolation.amount)}P를 지급합니다. 같은 상대와 이어지는 연속
+            게임 전체에서 대원별 1회이며, 새로고침해도 기준과 지급 여부는 유지됩니다.
           </li>
           <li>
             결과를 5초 동안 확인한 뒤 같은 최소 금액으로 다음 판이 자동 시작됩니다. 한 명이 ‘이번

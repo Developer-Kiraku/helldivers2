@@ -475,10 +475,13 @@ try {
       assert.equal(limited.reason, 'points');
       assert.equal(limited.winnerId, peerChoice === 'call' ? 'b' : null);
       assert.deepEqual(limited.bets, prior, 'The current CALL is refunded before settlement');
-      assert.equal(db.users[0].points.current, 99 + (peerChoice === 'call' ? 0 : prior.a));
+      assert.equal(
+        db.users[0].points.current,
+        99 + (peerChoice === 'call' ? 0 : prior.a) + (limited.consolation?.a || 0),
+      );
       assert.equal(
         db.users.reduce((sum, user) => sum + user.points.current, 0),
-        total,
+        total + Object.values(limited.consolation || {}).reduce((sum, amount) => sum + amount, 0),
       );
       const entries = db.pointLedger.length;
       decide('a', limited, 'die');
@@ -526,6 +529,128 @@ try {
   now = lastCall.revealAt;
   settleDiceGames(db, now);
   assert.equal(lastCall.reason, 'showdown', 'Fully paid games still finish by dice totals');
+  const consolationEntries = () =>
+    db.pointLedger.filter((row) => row.sourceKey.endsWith(':consolation'));
+  const playToReveal = (test, multipliers) => {
+    for (const multiplier of multipliers) {
+      now = test.readyAt;
+      decide('a', test, 'call', multiplier);
+      decide('b', test, 'call', multiplier);
+    }
+    assert.equal(test.status, 'revealing');
+  };
+  const lose = (test) => {
+    test.dice.a = [1, 1, 1, 1];
+    test.dice.b = [6, 6, 6, 6];
+    now = test.revealAt;
+    settleDiceGames(db, now);
+  };
+  for (const starting of [9999, 10000, 10001]) {
+    db = make();
+    db.users[0].points.current = 12000;
+    const pending = invite(1000);
+    assert.equal(
+      db.diceGames.at(-1).startingPoints,
+      undefined,
+      'Invites do not freeze starting funds',
+    );
+    db.users[0].points.current = starting;
+    const test = accept(pending);
+    assert.equal(test.startingPoints.a, starting, 'Freeze the wallet on acceptance');
+    playToReveal(test, [1, 3, 5]);
+    assert.equal(consolationEntries().length, 0, 'Pending bets cannot trigger a reward');
+    lose(test);
+    const expected = starting <= 10000 ? 5000 : 0;
+    assert.equal(db.users[0].points.current, starting - 9000 + expected);
+    assert.equal(consolationEntries().length, expected ? 1 : 0);
+    assert.equal(presence('a').game.consolation, expected);
+    assert.equal(presence('b').game.consolation, 0, 'Only show the viewer their own payment');
+    assert.equal(db.notifications?.length || 0, expected ? 1 : 0);
+    assert.equal(db.audit?.length || 0, expected ? 1 : 0);
+    const saved = JSON.stringify(db);
+    db = JSON.parse(saved);
+    settleDiceGames(db, now);
+    assert.equal(JSON.stringify(db), saved, 'Reloaded settlement cannot repeat rewards or notices');
+    unchangedTotals();
+  }
+  db = make();
+  const tied = accept(invite(1000));
+  playToReveal(tied, [1, 4, 5]);
+  tied.dice.a = tied.dice.b = [2, 2, 2, 2];
+  now = tied.revealAt;
+  settleDiceGames(db, now);
+  assert.equal(consolationEntries().length, 0, 'A tie refunds the bet before testing losses');
+  assert.equal(db.users[0].points.current, 10000);
+  db = make();
+  const folded = accept(invite(1000));
+  decide('a', folded, 'call', 1);
+  decide('b', folded, 'call', 1);
+  now = folded.readyAt;
+  decide('a', folded, 'call', 5);
+  decide('b', folded, 'call', 5);
+  now = folded.readyAt;
+  decide('a', folded, 'call', 4);
+  assert.equal(db.users[0].points.current, 0);
+  decide('b', folded, 'die');
+  assert.equal(db.users[0].points.current, 16000);
+  assert.equal(
+    consolationEntries().length,
+    0,
+    'Current-turn refunds and winnings come before the loss check',
+  );
+  db = make();
+  const seriesFirst = accept(invite(1000));
+  playToReveal(seriesFirst, [1, 1, 1]);
+  lose(seriesFirst);
+  assert.equal(db.users[0].points.current, 7000);
+  const nextMatch = () => {
+    presence('a');
+    presence('b');
+    now += 5000;
+    presence('a');
+    const next = db.diceGames.at(-1);
+    now = next.readyAt;
+    return next;
+  };
+  const seriesSecond = nextMatch();
+  assert.equal(seriesSecond.seriesId, seriesFirst.id);
+  assert.deepEqual(seriesSecond.startingPoints, { a: 10000, b: 10000 });
+  playToReveal(seriesSecond, [1, 2, 3]);
+  lose(seriesSecond);
+  assert.equal(
+    db.users[0].points.current,
+    6000,
+    'Cumulative series loss qualifies even across matches',
+  );
+  assert.equal(consolationEntries().length, 1);
+  db = JSON.parse(JSON.stringify(db));
+  const seriesThird = nextMatch();
+  playToReveal(seriesThird, [1, 2, 3]);
+  lose(seriesThird);
+  assert.equal(db.users[0].points.current, 0);
+  assert.equal(seriesThird.autoContinue, false);
+  assert.equal(consolationEntries().length, 1, 'A later loss in the same series never pays again');
+  assert.equal(db.notifications.length, 1);
+  assert.equal(db.audit.length, 1);
+  db = make();
+  db.users[0].points.current = 100;
+  const broke = accept(invite(100));
+  decide('a', broke, 'call', 1);
+  decide('b', broke, 'call', 1);
+  now = broke.readyAt;
+  decide('b', broke, 'call', 1);
+  assert.equal(broke.reason, 'points');
+  assert.equal(db.users[0].points.current, 5000);
+  assert.equal(broke.autoContinue, false, 'A consolation grant cannot undo an automatic DIE stop');
+  now += 5000;
+  assert.equal(presence('a').game, null);
+  assert.equal(db.diceGames.length, 1);
+  db = make();
+  const oldGame = accept(invite(1000));
+  delete oldGame.startingPoints;
+  playToReveal(oldGame, [1, 3, 5]);
+  lose(oldGame);
+  assert.equal(consolationEntries().length, 0, 'Do not infer a baseline for pre-deployment games');
   db = make();
   const peer = () => presence('a').online.find((user) => user.id === 'b');
   assert.equal(peer().focused, false, 'A login session alone is not foreground presence');

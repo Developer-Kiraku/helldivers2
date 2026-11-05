@@ -15,12 +15,14 @@ import {
   ArrowUpRight,
   Trophy,
   TrendingDown,
+  Coins,
   X,
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 
 const icons = {
+  dice_consolation: Coins,
   puzzle_monthly_reward: Trophy,
   puzzle_rank_enter: Trophy,
   puzzle_rank_drop: TrendingDown,
@@ -31,6 +33,8 @@ const icons = {
   dislike: ThumbsDown,
 };
 function description(item) {
+  if (item.kind === 'dice_consolation')
+    return `위로 포인트 ${item.amount.toLocaleString('ko-KR')}P가 지급되었습니다.`;
   if (item.kind === 'puzzle_monthly_reward')
     return `${item.month} 퍼즐 월간 ${item.rank}위 보상 ${item.amount.toLocaleString()}P가 지급되었습니다.`;
   if (item.kind === 'puzzle_rank_enter')

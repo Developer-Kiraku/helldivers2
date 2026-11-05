@@ -18,6 +18,7 @@ import useRefreshOnReturn from '@/hooks/useRefreshOnReturn';
 import { Button } from './ui';
 import { puzzleMonthlyPrizes } from '@/lib/sliding-puzzle.mjs';
 import { rpsDailyAttempts } from '@/lib/rps-rules.mjs';
+import { diceConsolation } from '@/lib/dice-rules.mjs';
 
 const number = (value = 0) => value.toLocaleString('ko-KR');
 export default function PointGuide() {
@@ -195,6 +196,11 @@ export default function PointGuide() {
               가져갑니다.
             </p>
             <strong className="point-guide-game-highlight">대원과 함께하는 주사위 승부</strong>
+            <p>
+              첫 게임 시작 시 보유 포인트보다 정산 후 잔액이 {diceConsolation.lossPercent}% 이상
+              줄면 위로 포인트 {number(diceConsolation.amount)}P를 받습니다. 연속 게임 전체에서
+              대원별 1회 지급됩니다.
+            </p>
             <p>
               패배하면 건 포인트를 잃을 수 있습니다. 가위바위보와 주사위의 배팅·보상은 현재
               포인트에만 반영되며 누적 포인트는 바뀌지 않습니다.
