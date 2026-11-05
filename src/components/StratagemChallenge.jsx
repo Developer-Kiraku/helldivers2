@@ -315,7 +315,7 @@ function Game() {
           <span className="eyebrow">SUPER EARTH · SIGNAL TRAINING</span>
           <h1>
             <RadioTower />
-            스트라타젬 입력 챌린지
+            스트라타젬 히어로
           </h1>
           <p>정확하게 입력하고, 보상을 지키거나 다음 단계에 도전하세요.</p>
         </div>
@@ -353,7 +353,7 @@ function Game() {
           className={'stratagem-console' + (mistake ? ' is-mistake' : '')}
           ref={arena}
           tabIndex={0}
-          aria-label="스트라타젬 입력 게임판"
+          aria-label="스트라타젬 히어로 게임판"
           onDragStart={(event) => event.preventDefault()}
         >
           <div className="stratagem-console-top">

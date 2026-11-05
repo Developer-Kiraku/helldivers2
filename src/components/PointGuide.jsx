@@ -214,7 +214,7 @@ export default function PointGuide() {
           </article>
           <article className="panel">
             <RadioTower size={27} />
-            <h3>스트라타젬 입력 챌린지</h3>
+            <h3>스트라타젬 히어로</h3>
             <p>
               {challengeEntry}P로 시작해 단계에 따라 {challengeStages[0].commands}~
               {challengeStages.at(-1).commands}개의 방향 명령을 제한 시간 안에 입력합니다. 각 단계
@@ -228,7 +228,7 @@ export default function PointGuide() {
               보상은 현재 포인트에만 반영됩니다.
             </p>
             <Link href="/games/stratagem">
-              입력 챌린지 도전하기
+              스트라타젬 히어로 도전하기
               <ArrowUpRight size={16} />
             </Link>
           </article>

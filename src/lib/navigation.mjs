@@ -30,7 +30,7 @@ export const navigationGroups = [
       { href: '/games/sliding-puzzle', label: '슬라이딩 퍼즐', icon: 'puzzle' },
       { href: '/games/dice', label: '민주주의 주사위', icon: 'dice' },
       { href: '/games/rps', label: '가위바위보', icon: 'rps' },
-      { href: '/games/stratagem', label: '스트라타젬 챌린지', icon: 'stratagem' },
+      { href: '/games/stratagem', label: '스트라타젬 히어로', icon: 'stratagem' },
     ],
   },
 ];
