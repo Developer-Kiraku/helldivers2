@@ -89,6 +89,8 @@ for (const warbond of warbonds) {
         assert.equal(item.label, equipment.label);
         assert.equal(item.details, equipment.details);
         assert.equal(item.detailsId, equipment.id);
+        if (['primary', 'secondary', 'throwable'].includes(equipment.group))
+          assert.ok(item.details.combat?.profiles.length, `${item.label}: missing combat data`);
         assert.ok(item.details, `${item.label} is missing its equipment details`);
         assert.ok(item.details.summary || item.details.stats.length || item.details.traits.length);
         assert.match(

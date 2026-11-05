@@ -11,7 +11,7 @@ export default function EquipmentDetails({ id, disabled = false, cardLabel }) {
   const details = item?.details;
   if (!details) return null;
   const group = equipmentGroupLabels[item.group];
-  const { checkedAt, source, summary } = details;
+  const { checkedAt, source, summary, combat } = details;
   return (
     <>
       <Button
@@ -48,6 +48,39 @@ export default function EquipmentDetails({ id, disabled = false, cardLabel }) {
               </dl>
             )}
             {details.note && <p className="equipment-detail-note">{details.note}</p>}
+            {combat && (
+              <section className="equipment-detail-combat" aria-label="관통력과 철거력">
+                <table>
+                  <caption>관통력 · 철거력</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">공격 유형</th>
+                      <th scope="col">관통력</th>
+                      <th scope="col">철거력</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {combat.profiles.map(({ label, penetration, demolition }) => (
+                      <tr key={label}>
+                        <th scope="row">{label}</th>
+                        <td>
+                          {(penetration ?? '미확인').split(' · ').map((part) => (
+                            <span key={part}>{part}</span>
+                          ))}
+                        </td>
+                        <td>{demolition ?? '미확인'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="equipment-detail-note">
+                  관통력은 정면 기준이며, 폭발은 범위별로 구분합니다. 철거력은 자료의 ‘철거 위력’
+                  수치입니다.
+                </p>
+                {combat.note && <p className="equipment-detail-note">{combat.note}</p>}
+                <small>{combat.checkedAt} 관통력·철거력 자료 확인</small>
+              </section>
+            )}
             <small>
               {checkedAt} 자료 확인 ·{' '}
               <a href={source} target="_blank" rel="noopener noreferrer">

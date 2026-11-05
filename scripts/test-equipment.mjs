@@ -25,7 +25,38 @@ for (const [id, details] of Object.entries(detailsCatalog)) {
   assert.ok(details.summary || details.stats.length || details.traits.length);
   assert.match(details.source, /^https:\/\//);
   assert.match(details.checkedAt, /^\d{4}-\d{2}-\d{2}$/);
+  if (details.combat) {
+    const { profiles, checkedAt } = details.combat;
+    assert.match(checkedAt, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(profiles.length > 0, `${id} must have combat profiles`);
+    assert.equal(new Set(profiles.map(({ label }) => label)).size, profiles.length);
+    for (const profile of profiles) {
+      assert.ok(profile.label.trim());
+      for (const field of ['penetration', 'demolition']) {
+        assert.ok(
+          profile[field] === null || (typeof profile[field] === 'string' && profile[field].trim()),
+          `${id} ${profile.label} ${field}: unknown values must be null`,
+        );
+        if (profile[field] !== null)
+          assert.doesNotMatch(profile[field], /undefined|NaN|\?\?\?|[{}<>]/);
+      }
+    }
+  }
+  if (['primary', 'secondary', 'throwable'].includes(item.group))
+    assert.ok(details.combat, `${id} needs its penetration/demolition information`);
 }
+assert.deepEqual(detailsCatalog['primary-r-36-eruptor'].combat.profiles, [
+  { label: '직격', penetration: '4', demolition: '30' },
+  { label: '폭발', penetration: '중심 3 · 외곽 2 · 충격파 3', demolition: '20' },
+  { label: '파편', penetration: '3', demolition: '10' },
+]);
+assert.equal(
+  detailsCatalog['stratagem-cqc-9-defoliation-tool'].combat.profiles[0].penetration,
+  '3~5',
+);
+assert.equal(detailsCatalog['throwable-g-3-smoke'].combat.profiles[0].demolition, null);
+assert.equal(detailsCatalog['stratagem-gl-52-de-escalator'].combat.profiles[0].penetration, '0');
+assert.equal(detailsCatalog['stratagem-gl-52-de-escalator'].combat.profiles[1].demolition, '0');
 for (const item of equipment.filter((entry) => entry.group === 'armor')) {
   assert.ok(item.details?.summary, `${item.id} must have its shared armor effect`);
   assert.ok(!('description' in item), 'Do not duplicate effects outside the details catalog');

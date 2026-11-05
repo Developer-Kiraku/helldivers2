@@ -11,6 +11,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-6-frag': {
     stats: [
@@ -24,6 +34,21 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '폭발과 함께 파편을 흩뿌리는 수류탄입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '20',
+        },
+        {
+          label: '파편',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-r-63-diligence': {
     stats: [
@@ -36,6 +61,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-p-19-redeemer': {
     stats: [
@@ -47,6 +82,16 @@ export default {
     traits: ['경장갑 관통', '한 손 파지'],
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-hellpod-space-optimization': {
     stats: [],
@@ -66,6 +111,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-vitality-enhancement': {
     stats: [],
@@ -85,6 +140,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-las-5-scythe': {
     stats: [
@@ -97,6 +162,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '연속 광선을 발사합니다. 과열 전에 식히면 방열판 교체 없이 계속 사용할 수 있습니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-16-impact': {
     stats: [
@@ -110,6 +185,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '표면에 부딪히면 즉시 폭발합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 4 · 외곽 3 · 충격파 4',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-uav-recon-booster': {
     stats: [],
@@ -129,6 +214,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-stamina-enhancement': {
     stats: [],
@@ -148,6 +243,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-sg-8s-slugger': {
     stats: [
@@ -160,6 +265,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-3-smoke': {
     stats: [
@@ -173,6 +288,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '연막으로 적의 시야를 차단합니다. 직접 피해는 없습니다.',
+    combat: {
+      profiles: [
+        {
+          label: '연막',
+          penetration: '없음',
+          demolition: null,
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-muscle-enhancement': {
     stats: [],
@@ -192,6 +317,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-increased-reinforcement-budget': {
     stats: [],
@@ -211,6 +346,21 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-ar-23c-liberator-concussive': {
     stats: [
@@ -224,6 +374,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '명중한 적을 밀쳐내는 충격탄을 사용합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-p-4-senator': {
     stats: [
@@ -235,6 +395,16 @@ export default {
     traits: ['중장갑 관통', '한 손 파지', '탄약 재장전'],
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-sg-225ie-breaker-incendiary': {
     stats: [
@@ -247,6 +417,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-10-incendiary': {
     stats: [
@@ -260,6 +440,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '폭발 지점의 적과 지형에 불을 붙입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-flexible-reinforcement-budget': {
     stats: [],
@@ -279,6 +469,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-localization-confusion': {
     stats: [],
@@ -300,6 +500,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '열을 관리하며 연사하는 레이저 소총입니다. 과열되면 방열판을 교체해야 합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-sg-8p-punisher-plasma': {
     stats: [
@@ -312,6 +522,21 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 미확인 · 충격파 3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-23-stun': {
     stats: [
@@ -325,6 +550,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '범위 안의 적을 기절시키는 수류탄입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 4 · 외곽 3 · 충격파 4',
+          demolition: '0',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-arc-12-blitzer': {
     stats: [
@@ -337,6 +572,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '근거리로 전기를 방출하는 무기입니다. 탄약을 소모하지 않습니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-las-7-dagger': {
     stats: [
@@ -348,6 +593,16 @@ export default {
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
     summary: '한 손으로 연속 광선을 발사합니다. 과열되면 방열판을 교체합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-br-14-adjudicator': {
     stats: [
@@ -360,6 +615,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-123-thermite': {
     stats: [
@@ -373,6 +638,21 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '표면에 부착한 뒤 고열로 장갑을 태우고 폭발합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '7',
+          demolition: null,
+        },
+        {
+          label: '폭발',
+          penetration: '중심 7 · 외곽 6 · 충격파 7',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-expert-extraction-pilot': {
     stats: [],
@@ -392,6 +672,26 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '30',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '20',
+        },
+        {
+          label: '파편',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-cb-9-exploding-crossbow': {
     stats: [
@@ -404,6 +704,21 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '30',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '20',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-gp-31-grenade-pistol': {
     stats: [
@@ -415,6 +730,21 @@ export default {
     traits: ['일반 장갑 관통', '한 손 파지', '폭발성'],
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '30',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-motivational-shocks': {
     stats: [],
@@ -435,6 +765,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-smg-72-pummeler': {
     stats: [
@@ -448,6 +788,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '충격탄으로 적의 움직임을 방해하는 기관단총입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-13-incendiary-impact': {
     stats: [
@@ -461,6 +811,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '충돌하면 즉시 터져 주변에 화염을 만듭니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-plas-101-purifier': {
     stats: [
@@ -474,6 +834,31 @@ export default {
     checkedAt: '2026-11-01',
     note: '대미지는 미충전부터 완전 충전까지의 범위입니다.',
     summary: '충전 시간에 따라 직격·폭발 피해가 달라지는 플라스마 소총입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '미충전 직격',
+          penetration: '3',
+          demolition: '10',
+        },
+        {
+          label: '미충전 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '10',
+        },
+        {
+          label: '충전 직격',
+          penetration: '3',
+          demolition: '10',
+        },
+        {
+          label: '충전 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-p-113-verdict': {
     stats: [
@@ -485,6 +870,16 @@ export default {
     traits: ['일반 장갑 관통', '한 손 파지'],
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-ar-23a-liberator-carbine': {
     stats: [
@@ -497,6 +892,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-sg-22-bushwhacker': {
     stats: [
@@ -508,6 +913,16 @@ export default {
     traits: ['경장갑 관통', '한 손 파지'],
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-experimental-infusion': {
     stats: [],
@@ -526,6 +941,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '소음이 적은 투척용 칼입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-sg-451-cookout': {
     stats: [
@@ -538,6 +963,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-flam-66-torcher': {
     stats: [
@@ -550,6 +985,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '화염을 연속 분사하는 주무기입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-firebomb-hellpods': {
     stats: [],
@@ -568,6 +1013,16 @@ export default {
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
     summary: '한 손으로 화염을 분사하는 보조무기입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-4-gas': {
     stats: [
@@ -581,6 +1036,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '가스 구름으로 적에게 피해를 주고 시야와 움직임을 방해합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 4 · 외곽 3 · 충격파 4',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-tx-41-sterilizer': {
     stats: [
@@ -593,6 +1058,16 @@ export default {
     checkedAt: '2026-11-01',
     summary: '가스를 분사해 피해를 주고 적의 시야와 움직임을 방해하는 지원 무기입니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '5',
+          demolition: '5',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-ax-tx-13-dog-breath': {
     stats: [
@@ -605,6 +1080,16 @@ export default {
     checkedAt: '2026-11-01',
     summary: '가스를 분사하는 자동 드론입니다. 가스를 보충할 때 배낭으로 복귀합니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '5',
+          demolition: '5',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-p-11-stim-pistol': {
     stats: [
@@ -617,6 +1102,16 @@ export default {
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
     summary: '아군에게 각성제를 발사해 회복을 돕는 보조무기입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '각성제',
+          penetration: '없음',
+          demolition: null,
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-dead-sprint': {
     stats: [],
@@ -637,6 +1132,21 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '관통용 플레세트탄과 기절탄을 서로 다른 탄창에 장전하며 전환해서 사용합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '플레세트탄',
+          penetration: '3',
+          demolition: '10',
+        },
+        {
+          label: '기절탄',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-smg-32-reprimand': {
     stats: [
@@ -649,6 +1159,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-plas-15-loyalist': {
     stats: [
@@ -661,6 +1181,31 @@ export default {
     checkedAt: '2026-11-01',
     note: '대미지는 미충전부터 완전 충전까지의 범위입니다.',
     summary: '충전 후 방아쇠를 놓으면 폭발성 플라스마 탄을 발사합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '미충전 직격',
+          penetration: '3',
+          demolition: '10',
+        },
+        {
+          label: '미충전 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '10',
+        },
+        {
+          label: '충전 직격',
+          penetration: '3',
+          demolition: '10',
+        },
+        {
+          label: '충전 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-sh-51-directional-shield': {
     stats: [
@@ -684,6 +1229,16 @@ export default {
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
     summary: '전기가 흐르는 창으로 찔러 적을 기절시킵니다. 한 손으로 사용할 수 있습니다.',
+    combat: {
+      profiles: [
+        {
+          label: '근접 타격',
+          penetration: '3',
+          demolition: null,
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-armed-resupply-pods': {
     stats: [],
@@ -703,6 +1258,21 @@ export default {
     checkedAt: '2026-11-01',
     summary: '화염을 분사하는 자동 포탑입니다. 파괴될 때 연료통이 폭발할 수 있습니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '화염방사',
+          penetration: '4',
+          demolition: '10',
+        },
+        {
+          label: '파괴 시 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-e-at-12-anti-tank-emplacement': {
     stats: [
@@ -715,6 +1285,21 @@ export default {
     checkedAt: '2026-11-01',
     summary: '탑승자가 직접 조준하고 발사하는 대전차 거치포입니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '6',
+          demolition: '30',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-las-17-double-edge-sickle': {
     stats: [
@@ -728,6 +1313,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '과열 시 피해가 증가하지만 사용자도 화상을 입는 레이저 소총입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-gp-20-ultimatum': {
     stats: [
@@ -739,6 +1334,21 @@ export default {
     traits: ['대전차', '한 손 파지', '폭발성'],
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '6',
+          demolition: '40',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 6 · 외곽 5 · 충격파 6',
+          demolition: '40',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-b-100-portable-hellbomb': {
     stats: [
@@ -752,6 +1362,16 @@ export default {
     summary:
       '착용자나 분대원이 기폭을 시작할 수 있는 배낭형 지옥폭탄입니다. 카운트다운이 끝나기 전에 벗어놓아야 합니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 10 · 외곽 9 · 충격파 10',
+          demolition: '60',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-50-seeker': {
     stats: [
@@ -765,6 +1385,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '사용자를 따라다니다가 적을 감지하면 돌진하여 폭발하는 드론입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 4 · 외곽 3 · 충격파 4',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-r-6-deadeye': {
     stats: [
@@ -777,6 +1407,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-las-58-talon': {
     stats: [
@@ -789,6 +1429,16 @@ export default {
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
     summary: '방열판을 교체할 수 있는 레이저 리볼버입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-sample-extricator': {
     stats: [],
@@ -822,6 +1472,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '기폭 시간을 5초·15초·60초로 선택할 수 있는 폭탄입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 4 · 외곽 3 · 충격파 4',
+          demolition: '40',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-r-2-amendment': {
     stats: [
@@ -834,6 +1494,21 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '탄환',
+          penetration: '2',
+          demolition: '10',
+        },
+        {
+          label: '총검',
+          penetration: null,
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-cqc-2-saber': {
     stats: [
@@ -844,6 +1519,16 @@ export default {
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
     summary: '한 손으로 사용하는 근접용 검입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '근접 타격',
+          penetration: '3',
+          demolition: null,
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-sample-scanner': {
     stats: [],
@@ -863,6 +1548,16 @@ export default {
     checkedAt: '2026-11-01',
     summary: '슈퍼지구 깃발을 장착한 근접 지원 무기입니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-142-pyrotech': {
     stats: [
@@ -876,6 +1571,21 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '주변에 불꽃을 흩뿌린 뒤 폭발합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+        {
+          label: '불꽃',
+          penetration: '5',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-ar-32-pacifier': {
     stats: [
@@ -889,6 +1599,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '기절 효과를 가진 탄을 발사하는 돌격소총입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-stun-pods': {
     stats: [],
@@ -908,6 +1628,21 @@ export default {
     checkedAt: '2026-11-01',
     summary: '전기 효과를 발생시키는 아크 유탄을 발사합니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '0',
+          demolition: '10',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 6 · 외곽 5 · 충격파 6',
+          demolition: '0',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-ax-arc-3-k-9': {
     stats: [
@@ -920,6 +1655,16 @@ export default {
     checkedAt: '2026-11-01',
     summary: '아크 발사기를 장착한 자동 드론입니다. 번개가 여러 표적을 이어서 공격합니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '7',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-109-urchin': {
     stats: [
@@ -932,6 +1677,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '표적에 달라붙어 전기 펄스를 반복 방출하며 기절시킵니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 4 · 외곽 3 · 충격파 4',
+          demolition: '0',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-plas-45-epoch': {
     stats: [
@@ -944,6 +1699,31 @@ export default {
     checkedAt: '2026-11-01',
     summary: '충전 후 폭발성 플라스마 탄을 발사합니다. 과충전 시 위험이 있습니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '미충전 직격',
+          penetration: '4',
+          demolition: '10',
+        },
+        {
+          label: '미충전 폭발',
+          penetration: '중심 4 · 외곽 3 · 충격파 4',
+          demolition: '10',
+        },
+        {
+          label: '충전 직격',
+          penetration: '5',
+          demolition: '10',
+        },
+        {
+          label: '충전 폭발',
+          penetration: '중심 5 · 외곽 4 · 충격파 5',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-vg-70-variable': {
     stats: [
@@ -958,6 +1738,16 @@ export default {
     checkedAt: '2026-11-01',
     note: '반동은 발사 모드에 따라 달라집니다.',
     summary: '자동·일제 사격·전탄 발사 모드와 세 단계의 발사 속도를 선택할 수 있습니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-a-las-98-laser-sentry': {
     stats: [
@@ -970,6 +1760,16 @@ export default {
     checkedAt: '2026-11-01',
     summary: '레이저 광선으로 공격하는 자동 포탑입니다. 사격 중 열이 누적됩니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '20',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-lift-182-warp-pack': {
     stats: [
@@ -995,6 +1795,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '튀어 오르며 지면에 부딪힐 때마다 전기 공격을 발생시킵니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 6 · 외곽 5 · 충격파 6',
+          demolition: '0',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-ar-2-coyote': {
     stats: [
@@ -1007,6 +1817,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-s-11-speargun': {
     stats: [
@@ -1019,6 +1839,21 @@ export default {
     checkedAt: '2026-11-01',
     summary: '명중 지점에 가스 구름을 만드는 작살을 발사합니다. 한 발씩 장전합니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '5',
+          demolition: '30',
+        },
+        {
+          label: '폭발',
+          penetration: '6',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-eat-700-expendable-napalm': {
     stats: [
@@ -1031,6 +1866,31 @@ export default {
     checkedAt: '2026-11-01',
     summary: '네이팜 집속탄을 발사하는 일회용 지원 무기입니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '고폭탄 직격',
+          penetration: '3',
+          demolition: '30',
+        },
+        {
+          label: '고폭탄 폭발',
+          penetration: '중심 6 · 외곽 5 · 충격파 6',
+          demolition: '30',
+        },
+        {
+          label: '대공포탄 직격',
+          penetration: '0',
+          demolition: '30',
+        },
+        {
+          label: '대공포탄 폭발',
+          penetration: '중심 6 · 외곽 5 · 충격파 6',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-ms-11-solo-silo': {
     stats: [
@@ -1043,6 +1903,26 @@ export default {
     checkedAt: '2026-11-01',
     summary: '휴대용 조준기로 목표를 지정하는 미사일 사일로입니다. 한 발을 발사합니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발 유형 1',
+          penetration: '중심 9 · 외곽 8 · 충격파 9',
+          demolition: '40',
+        },
+        {
+          label: '폭발 유형 2',
+          penetration: '중심 7 · 외곽 6 · 충격파 7',
+          demolition: '40',
+        },
+        {
+          label: '후폭풍',
+          penetration: '중심 0 · 외곽 2 · 충격파 0',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-7-pineapple': {
     stats: [
@@ -1056,6 +1936,31 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '파편형 자탄을 흩뿌리는 집속 수류탄입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '주 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+        {
+          label: '자탄 직격',
+          penetration: '3',
+          demolition: '20',
+        },
+        {
+          label: '자탄 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '20',
+        },
+        {
+          label: '파편',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-ar-gl-21-one-two': {
     stats: [
@@ -1069,6 +1974,26 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '돌격소총에 유탄 발사기를 결합한 무기입니다. 아래 수치는 소총 사격 기준입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '소총탄',
+          penetration: '2',
+          demolition: '10',
+        },
+        {
+          label: '유탄 직격',
+          penetration: '3',
+          demolition: '30',
+        },
+        {
+          label: '유탄 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-ax-flam-75-hot-dog': {
     stats: [
@@ -1081,6 +2006,16 @@ export default {
     checkedAt: '2026-11-01',
     summary: '화염방사기 드론입니다. 연료 보충이 필요하면 배낭으로 복귀합니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-cqc-9-defoliation-tool': {
     stats: [],
@@ -1089,6 +2024,17 @@ export default {
     checkedAt: '2026-11-01',
     summary:
       '회전하는 톱날로 적과 식생을 베는 근접 지원 무기입니다. 표적에 닿아 있는 동안 연속으로 피해를 줍니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3~5',
+          demolition: '10~30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+      note: '사용 후 0.5초가 지나면 관통력과 철거력이 증가합니다.',
+    },
   },
   'stratagem-m-1000-maxigun': {
     stats: [
@@ -1102,6 +2048,16 @@ export default {
     summary:
       '배낭에서 탄약을 공급받는 대용량 미니건입니다. 일반 탄약으로 직접 재장전할 수 없습니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-r-72-censor': {
     stats: [
@@ -1114,6 +2070,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-p-35-re-educator': {
     stats: [
@@ -1126,6 +2092,16 @@ export default {
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
     summary: '독성 물질을 담은 탄으로 적에게 가스 효과를 부여합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '1',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-ar-59-suppressor': {
     stats: [
@@ -1138,6 +2114,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-concealed-insertion': {
     stats: [],
@@ -1158,6 +2144,16 @@ export default {
     summary:
       '점착식 C4 여섯 개와 원격 기폭 장치를 담은 배낭입니다. 폭탄을 하나씩 또는 동시에 기폭할 수 있습니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 7 · 외곽 6 · 충격파 7',
+          demolition: '40',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-tm-1-lure-mine': {
     stats: [
@@ -1171,6 +2167,21 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '표면에 붙는 근접 기폭 지뢰입니다. 빛과 소리로 주변 적을 유인합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 5 · 외곽 4 · 충격파 5',
+          demolition: '30',
+        },
+        {
+          label: '파편',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-las-13-trident': {
     stats: [
@@ -1184,6 +2195,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '여섯 갈래의 광선을 발사하는 산탄총형 에너지 무기입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-cqc-20-breaching-hammer': {
     stats: [
@@ -1196,6 +2217,21 @@ export default {
     checkedAt: '2026-11-01',
     summary: '머리에 폭약을 장착할 수 있는 근접용 망치입니다. 폭약 없이도 휘두를 수 있습니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '30',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 5 · 외곽 5 · 충격파 5',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-eat-411-leveller': {
     stats: [
@@ -1208,6 +2244,21 @@ export default {
     checkedAt: '2026-11-01',
     summary: '고위력 미사일을 한 번 발사한 뒤 폐기하는 지원 무기입니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '6',
+          demolition: '40',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 6 · 외곽 5 · 충격파 6',
+          demolition: '40',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-gl-28-belt-fed-grenade-launcher': {
     stats: [
@@ -1220,6 +2271,21 @@ export default {
     checkedAt: '2026-11-01',
     summary: '벨트 급탄으로 유탄을 연속 발사하는 지원 무기입니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '10',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 4 · 외곽 4 · 충격파 4',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-sh-39-shield': {
     stats: [
@@ -1232,6 +2298,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '충돌한 위치에 투사체를 막는 구형 방어막을 잠시 펼칩니다.',
+    combat: {
+      profiles: [
+        {
+          label: '일반 정보',
+          penetration: '3',
+          demolition: null,
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-smg-flam-34-stoker': {
     stats: [
@@ -1244,6 +2320,21 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '탄환',
+          penetration: '2',
+          demolition: '10',
+        },
+        {
+          label: '화염방사',
+          penetration: '4',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-cqc-73-entrenchment-tool': {
     stats: [
@@ -1255,6 +2346,16 @@ export default {
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
     summary: '근접 공격과 지형 굴착에 사용하는 삽입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '근접 타격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-48-giga-grenade': {
     stats: [
@@ -1268,6 +2369,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '충격으로 기폭하는 고위력 수류탄입니다. 무거워 투척 거리가 짧습니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 5 · 외곽 4 · 충격파 5',
+          demolition: '40',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-a-gm-17-gas-mortar-sentry': {
     stats: [
@@ -1281,6 +2392,21 @@ export default {
     summary:
       '가스탄을 곡사로 발사하는 자동 박격포입니다. 아직 가스에 노출되지 않은 적을 우선 공격합니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '0',
+          demolition: '10',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 6 · 외곽 5 · 충격파 6',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-p-69-veto': {
     stats: [
@@ -1292,6 +2418,16 @@ export default {
     traits: ['일반 장갑 관통', '한 손 파지', '탄약 재장전'],
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-b-flam-80-cremator': {
     stats: [
@@ -1305,6 +2441,16 @@ export default {
     summary:
       '배낭형 연료 탱크를 연결한 중화기 화염방사기입니다. 긴 시간 화염을 분사할 수 있습니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-smg-203-gallant': {
     stats: [
@@ -1317,6 +2463,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-mgx-42-bullet-storm': {
     stats: [
@@ -1330,6 +2486,16 @@ export default {
     summary:
       '여러 총열에서 무탄피 탄약을 고속으로 발사하는 일회용 기관총입니다. 한 번 호출하면 두 정이 지급됩니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-exo-51-lumberer-exosuit': {
     stats: [
@@ -1342,6 +2508,36 @@ export default {
     checkedAt: '2026-11-01',
     summary: '대전차포와 화염방사기를 장착한 탑승형 엑소슈트입니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '화염방사',
+          penetration: '4',
+          demolition: '10',
+        },
+        {
+          label: '대전차포 직격',
+          penetration: '6',
+          demolition: '30',
+        },
+        {
+          label: '대전차포 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+        {
+          label: '파괴 시 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '50',
+        },
+        {
+          label: '밟기',
+          penetration: '4',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-p-33-missile-pistol': {
     stats: [
@@ -1354,6 +2550,21 @@ export default {
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
     summary: '표적을 조준 고정하여 유도 미사일을 발사하는 권총입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '5',
+          demolition: '30',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-exo-55-breakthrough-exosuit': {
     stats: [
@@ -1366,6 +2577,31 @@ export default {
     checkedAt: '2026-11-01',
     summary: '대공포와 방탄 방패를 장착한 탑승형 엑소슈트입니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '방패 타격',
+          penetration: '4',
+          demolition: '30~40',
+        },
+        {
+          label: '산탄',
+          penetration: '4',
+          demolition: '30',
+        },
+        {
+          label: '파괴 시 폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '50',
+        },
+        {
+          label: '밟기',
+          penetration: '4',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-ar-11-arbitrator': {
     stats: [
@@ -1380,6 +2616,21 @@ export default {
     checkedAt: '2026-11-01',
     summary:
       '무탄피 탄약을 연사하며 하부에 산탄총을 장착했습니다. 아래 수치는 소총 사격 기준입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '소총탄',
+          penetration: '2',
+          demolition: '10',
+        },
+        {
+          label: '하부 산탄총',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-8-immolation': {
     stats: [
@@ -1393,6 +2644,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '충돌 지점에 지속되는 화염 지대를 만듭니다. 폭발 피해 없이 발화합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 0 · 외곽 0 · 충격파 0',
+          demolition: '0',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-p-34-breacher': {
     stats: [
@@ -1405,6 +2666,21 @@ export default {
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
     summary: '표면에 붙은 뒤 연소하고 폭발하는 점착탄을 발사합니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '15',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 7 · 외곽 6 · 충격파 7',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-integrated-extinguishers': {
     stats: [],
@@ -1424,6 +2700,21 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-60-anti-tank-seeker': {
     stats: [
@@ -1437,6 +2728,16 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '사용자를 따라다니다가 적에게 돌진하여 폭발하는 대전차 드론입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 5 · 외곽 4 · 충격파 5',
+          demolition: '40',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'booster-surplus-eat-allocation': {
     stats: [],
@@ -1456,6 +2757,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-11-caltrops': {
     stats: [
@@ -1469,6 +2780,21 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '주변에 근접 기폭 자탄을 흩뿌립니다. 피해는 낮지만 적을 기절시키고 느리게 만듭니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '10',
+        },
+        {
+          label: '기절 효과',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-amw-20-apex': {
     stats: [
@@ -1482,6 +2808,16 @@ export default {
     summary:
       '배낭에서 20mm 탄약을 공급하는 대물 저격소총입니다. 반동 때문에 웅크리거나 엎드린 자세로 발사합니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '5',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-las-44-nova': {
     stats: [
@@ -1495,6 +2831,16 @@ export default {
     summary:
       '짧게 충전한 후 비폭발성 열 발사체를 쏩니다. 탄약을 소모하지 않으며 발사 후 열을 식힙니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '5',
+          demolition: '17',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-p-44-mist': {
     stats: [
@@ -1506,6 +2852,16 @@ export default {
     traits: ['경장갑 관통', '한 손 파지'],
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-ma5c-assault-rifle': {
     stats: [
@@ -1518,6 +2874,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-m7s-smg': {
     stats: [
@@ -1530,6 +2896,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-m90a-shotgun': {
     stats: [
@@ -1542,6 +2918,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-m6c-socom-pistol': {
     stats: [
@@ -1553,6 +2939,16 @@ export default {
     traits: ['경장갑 관통', '한 손 파지', '소음'],
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-sta-52-assault-rifle': {
     stats: [
@@ -1565,6 +2961,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-plas-39-accelerator-rifle': {
     stats: [
@@ -1578,6 +2984,21 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '충전 후 점사하는 플라스마 소총입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-sta-11-smg': {
     stats: [
@@ -1590,6 +3011,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '2',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'primary-r-40-k-hot-shot-marksman-rifle': {
     stats: [
@@ -1602,6 +3033,16 @@ export default {
     source:
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'throwable-g-40-k-melta-mine': {
     stats: [
@@ -1615,6 +3056,21 @@ export default {
       'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0',
     checkedAt: '2026-11-01',
     summary: '적이 접근하면 강력한 열에너지로 기폭하는 일회용 지뢰입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '폭발',
+          penetration: '중심 7 · 외곽 6 · 충격파 7',
+          demolition: '40',
+        },
+        {
+          label: '불기둥',
+          penetration: '7',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'secondary-p-40-k-bolt-pistol': {
     stats: [
@@ -1626,6 +3082,21 @@ export default {
     traits: ['중장갑 관통', '한 손 파지', '폭발성'],
     source: 'https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0',
     checkedAt: '2026-11-01',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '4',
+          demolition: '20',
+        },
+        {
+          label: '폭발',
+          penetration: '중심 3 · 외곽 2 · 충격파 3',
+          demolition: '10',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'stratagem-40-k-meltagun': {
     stats: [
@@ -1638,6 +3109,16 @@ export default {
     checkedAt: '2026-11-01',
     summary: '근거리에서 고열 에너지를 방출하는 대장갑 지원 무기입니다.',
     note: '함선 모듈 업그레이드를 적용하지 않은 기본 수치입니다.',
+    combat: {
+      profiles: [
+        {
+          label: '직격',
+          penetration: '7',
+          demolition: '30',
+        },
+      ],
+      checkedAt: '2026-11-06',
+    },
   },
   'armor-acclimated': {
     summary: '화염, 가스, 산성, 전기 대미지에 대한 저항력을 50% 제공합니다.',

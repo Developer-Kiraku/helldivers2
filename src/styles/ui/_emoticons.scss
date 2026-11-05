@@ -479,3 +479,57 @@
   color: var(--hd-color-feed-muted);
   font-size: var(--hd-font-size-12);
 }
+.equipment-detail-combat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hd-space-8);
+  width: 100%;
+  min-width: 0;
+}
+.equipment-detail-combat table {
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 0;
+  border: 1px solid var(--hd-color-input-border);
+  border-radius: var(--hd-radius-6);
+  overflow: hidden;
+  background: var(--hd-color-input);
+  font-size: var(--hd-font-size-13);
+  line-height: 1.6;
+}
+.equipment-detail-combat caption {
+  padding-bottom: var(--hd-space-8);
+  color: var(--hd-color-input-text);
+  font-size: var(--hd-font-size-14);
+  font-weight: 600;
+  text-align: left;
+}
+.equipment-detail-combat th,
+.equipment-detail-combat td {
+  padding: var(--hd-space-10) var(--hd-space-8);
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.equipment-detail-combat thead th {
+  color: var(--hd-color-accent);
+  font-size: var(--hd-font-size-12);
+  font-weight: 500;
+}
+.equipment-detail-combat th:first-child {
+  width: 34%;
+}
+.equipment-detail-combat th:last-child {
+  width: 24%;
+}
+.equipment-detail-combat tbody th,
+.equipment-detail-combat tbody td {
+  border-top: 1px solid var(--hd-color-input-border);
+}
+.equipment-detail-combat tbody th {
+  font-weight: 500;
+}
+.equipment-detail-combat td span {
+  display: block;
+}

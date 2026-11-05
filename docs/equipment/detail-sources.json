@@ -19,25 +19,53 @@
       "id": "primary-sg-8-punisher",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SG-8 퍼니셔",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SG-8 퍼니셔",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-6-frag",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-6 세열",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-6 세열",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발", "파편"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-r-63-diligence",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "R-63 딜리전스",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "R-63 딜리전스",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-p-19-redeemer",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P-19 리디머",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P-19 리디머",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-hellpod-space-optimization",
@@ -49,7 +77,14 @@
       "id": "primary-smg-37-defender",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SMG-37 디펜더",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SMG-37 디펜더",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-vitality-enhancement",
@@ -61,19 +96,40 @@
       "id": "primary-sg-225-breaker",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SG-225 브레이커",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SG-225 브레이커",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-las-5-scythe",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "LAS-5 사이스",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "LAS-5 사이스",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-16-impact",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-16 충격",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-16 충격",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-uav-recon-booster",
@@ -85,7 +141,14 @@
       "id": "primary-ar-23p-liberator-penetrator",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "AR-23P 리버레이터 페네트레이터",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AR-23P 리버레이터 페네트레이터",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-stamina-enhancement",
@@ -97,19 +160,40 @@
       "id": "primary-r-63cs-diligence-counter-sniper",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "R-63CS 딜리전스 카운터 저격소총",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "R-63CS 딜리전스 카운터 저격소총",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-sg-8s-slugger",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SG-8S 슬러거",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SG-8S 슬러거",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-3-smoke",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-3 연막",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-3 연막",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["연막"],
+        "unconfirmedFields": ["연막:demolition"]
+      }
     },
     {
       "id": "booster-muscle-enhancement",
@@ -121,7 +205,14 @@
       "id": "primary-sg-225sp-breaker-spray-and-pray",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SG-225SP 브레이커 스프레이 앤 프레이",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SG-225SP 브레이커 스프레이 앤 프레이",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-increased-reinforcement-budget",
@@ -133,31 +224,66 @@
       "id": "primary-plas-1-scorcher",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "PLAS-1 스코처",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "PLAS-1 스코처",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-ar-23c-liberator-concussive",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "AR-23C 리버레이터 컨커시브",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AR-23C 리버레이터 컨커시브",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-p-4-senator",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P-4 세너터",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P-4 세너터",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-sg-225ie-breaker-incendiary",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SG-225IE 브레이커 인센디어리",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SG-225IE 브레이커 인센디어리",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-10-incendiary",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-10 소이",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-10 소이",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-flexible-reinforcement-budget",
@@ -169,7 +295,14 @@
       "id": "primary-jar-5-dominator",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "JAR-5 도미네이터",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "JAR-5 도미네이터",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-localization-confusion",
@@ -181,43 +314,92 @@
       "id": "primary-las-16-sickle",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "LAS-16 시클",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "LAS-16 시클",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-sg-8p-punisher-plasma",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SG-8P 퍼니셔 플라즈마",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SG-8P 퍼니셔 플라즈마",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": ["폭발:penetration"]
+      }
     },
     {
       "id": "throwable-g-23-stun",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-23 기절",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-23 기절",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-arc-12-blitzer",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "ARC-12 블리처",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "ARC-12 블리처",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-las-7-dagger",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "LAS-7 대거",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "LAS-7 대거",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-br-14-adjudicator",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "BR-14 어드주디케이터",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "BR-14 어드주디케이터",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-123-thermite",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-123 테르밋",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-123 테르밋",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": ["직격:demolition"]
+      }
     },
     {
       "id": "booster-expert-extraction-pilot",
@@ -229,19 +411,40 @@
       "id": "primary-r-36-eruptor",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "R-36 이럽터",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "R-36 이럽터",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격", "폭발", "파편"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-cb-9-exploding-crossbow",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "CB-9 익스플로딩 크로스보우",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "CB-9 익스플로딩 크로스보우",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-gp-31-grenade-pistol",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "GP-31 유탄 권총",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "GP-31 유탄 권총",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-motivational-shocks",
@@ -253,44 +456,93 @@
       "id": "primary-ar-61-tenderizer",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "AR-61 텐더라이저",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AR-61 텐더라이저",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-smg-72-pummeler",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SMG-72 퍼멜러",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SMG-72 퍼멜러",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-13-incendiary-impact",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-13 소이 충격",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-13 소이 충격",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-plas-101-purifier",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "PLAS-101 퓨리파이어",
       "checkedAt": "2026-11-01",
-      "reviewedException": true
+      "reviewedException": true,
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "PLAS-101 퓨리파이어",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["미충전 직격", "미충전 폭발", "충전 직격", "충전 폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-p-113-verdict",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P-113 버딕트",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P-113 버딕트",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-ar-23a-liberator-carbine",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "AR-23A 리버레이터 카빈",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AR-23A 리버레이터 카빈",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-sg-22-bushwhacker",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "SG-22 부시웨커",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SG-22 부시웨커",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-experimental-infusion",
@@ -302,19 +554,40 @@
       "id": "throwable-k-2-throwing-knife",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "K-2 투척 나이프",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "K-2 투척 나이프",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-sg-451-cookout",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SG-451 쿡아웃",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SG-451 쿡아웃",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-flam-66-torcher",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "FLAM-66 토처",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "FLAM-66 토처",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-firebomb-hellpods",
@@ -326,31 +599,66 @@
       "id": "secondary-p-72-crisper",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P-72 크리스퍼",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P-72 크리스퍼",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-4-gas",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-4 가스",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-4 가스",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-tx-41-sterilizer",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "TX-41 스터릴라이저",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "TX-41 스터릴라이저",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-ax-tx-13-dog-breath",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "AX/TX-13 '가드 독' 독 브레스",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AX/TX-13 '가드 독' 독 브레스",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-p-11-stim-pistol",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P-11 각성제 권총",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P-11 각성제 권총",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["각성제"],
+        "unconfirmedFields": ["각성제:demolition"]
+      }
     },
     {
       "id": "booster-dead-sprint",
@@ -362,20 +670,41 @@
       "id": "primary-sg-20-halt",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SG-20 홀트",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SG-20 홀트",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["플레세트탄", "기절탄"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-smg-32-reprimand",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SMG-32 레프리맨드",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SMG-32 레프리맨드",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-plas-15-loyalist",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "PLAS-15 로열리스트",
       "checkedAt": "2026-11-01",
-      "reviewedException": true
+      "reviewedException": true,
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "PLAS-15 로열리스트",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["미충전 직격", "미충전 폭발", "충전 직격", "충전 폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-sh-51-directional-shield",
@@ -388,7 +717,14 @@
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "CQC-19 기절 창",
       "checkedAt": "2026-11-01",
-      "reviewedException": true
+      "reviewedException": true,
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "CQC-19 기절 창",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["근접 타격"],
+        "unconfirmedFields": ["근접 타격:demolition"]
+      }
     },
     {
       "id": "booster-armed-resupply-pods",
@@ -400,49 +736,105 @@
       "id": "stratagem-a-flam-40-flame-sentry",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B0%A9%EC%96%B4",
       "section": "A/FLAM-40 화염 센트리",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "A/FLAM-40 화염 센트리",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B0%A9%EC%96%B4",
+        "profileLabels": ["화염방사", "파괴 시 폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-e-at-12-anti-tank-emplacement",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B0%A9%EC%96%B4",
       "section": "E/AT-12 대전차 거치포",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "E/AT-12 대전차 거치포",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B0%A9%EC%96%B4",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-las-17-double-edge-sickle",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "LAS-17 더블 엣지 시클",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "LAS-17 더블 엣지 시클",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-gp-20-ultimatum",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "GP-20 얼티메이텀",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "GP-20 얼티메이텀",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-b-100-portable-hellbomb",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "B-100 휴대용 지옥폭탄",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "B-100 휴대용 지옥폭탄",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-50-seeker",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-50 시커",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-50 시커",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-r-6-deadeye",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "R-6 데드아이",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "R-6 데드아이",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-las-58-talon",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "LAS-58 탈론",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "LAS-58 탈론",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-sample-extricator",
@@ -460,20 +852,41 @@
       "id": "throwable-ted-63-dynamite",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "TED-63 다이너마이트",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "TED-63 다이너마이트",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-r-2-amendment",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "R-2 어멘드멘트",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "R-2 어멘드멘트",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["탄환", "총검"],
+        "unconfirmedFields": ["총검:penetration"]
+      }
     },
     {
       "id": "secondary-cqc-2-saber",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "CQC-2 세이버",
       "checkedAt": "2026-11-01",
-      "reviewedException": true
+      "reviewedException": true,
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "CQC-2 세이버",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["근접 타격"],
+        "unconfirmedFields": ["근접 타격:demolition"]
+      }
     },
     {
       "id": "booster-sample-scanner",
@@ -485,19 +898,40 @@
       "id": "stratagem-cqc-1-one-true-flag",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "CQC-1 원 트루 플래그",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "CQC-1 원 트루 플래그",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-142-pyrotech",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-142 파이로테크",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-142 파이로테크",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발", "불꽃"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-ar-32-pacifier",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "AR-32 퍼시파이어",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AR-32 퍼시파이어",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-stun-pods",
@@ -509,38 +943,80 @@
       "id": "stratagem-gl-52-de-escalator",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "GL-52 디에스컬레이터",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "GL-52 디에스컬레이터",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-ax-arc-3-k-9",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "AX/ARC-9 '가드 독' K-9",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AX/ARC-9 '가드 독' K-9",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-109-urchin",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-109 어친",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-109 어친",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-plas-45-epoch",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "PLAS-45 에포크",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "PLAS-45 에포크",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["미충전 직격", "미충전 폭발", "충전 직격", "충전 폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-vg-70-variable",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "VG-70 배리어블",
       "checkedAt": "2026-11-01",
-      "reviewedException": true
+      "reviewedException": true,
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "VG-70 배리어블",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-a-las-98-laser-sentry",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B0%A9%EC%96%B4",
       "section": "A/LAS-98 레이저 센트리",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "A/LAS-98 레이저 센트리",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B0%A9%EC%96%B4",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-lift-182-warp-pack",
@@ -552,80 +1028,171 @@
       "id": "throwable-g-31-arc",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-31 아크",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-31 아크",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-ar-2-coyote",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "AR-2 코요테",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AR-2 코요테",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-s-11-speargun",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "S-11 작살총",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "S-11 작살총",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-eat-700-expendable-napalm",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "EAT-700 일회성 네이팜",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "EAT-700 일회성 네이팜",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["고폭탄 직격", "고폭탄 폭발", "대공포탄 직격", "대공포탄 폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-ms-11-solo-silo",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "MS-11 솔로 사일로",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "MS-11 솔로 사일로",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["폭발 유형 1", "폭발 유형 2", "후폭풍"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-7-pineapple",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-7 파인애플",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-7 파인애플",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["주 폭발", "자탄 직격", "자탄 폭발", "파편"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-ar-gl-21-one-two",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "AR/GL-21원-투",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AR/GL-21원-투",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["소총탄", "유탄 직격", "유탄 폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-ax-flam-75-hot-dog",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "AX/FLAM-75 '가드 독' 핫 도그",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AX/FLAM-75 '가드 독' 핫 도그",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-cqc-9-defoliation-tool",
       "koreanReference": "https://blog.ko.playstation.com/2025/11/26/20251126-helldivers2/",
       "section": "CQC-9 고엽 도구",
       "checkedAt": "2026-11-01",
-      "reviewedException": true
+      "reviewedException": true,
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "CQC-9 고엽 도구",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-m-1000-maxigun",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "M-1000 맥시건",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "M-1000 맥시건",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-r-72-censor",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "R-72 센서",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "R-72 센서",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-p-35-re-educator",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P-35 리에듀케이터",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P-35 리에듀케이터",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-ar-59-suppressor",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "AR-59 서프레서",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AR-59 서프레서",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-concealed-insertion",
@@ -637,62 +1204,132 @@
       "id": "stratagem-b-md-c4-pack",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "B/MD C4 팩",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "B/MD C4 팩",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-tm-1-lure-mine",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "TM-1 유인 지뢰",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "TM-1 유인 지뢰",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발", "파편"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-las-13-trident",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "LAS-13 트라이던트",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "LAS-13 트라이던트",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-cqc-20-breaching-hammer",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "CQC-20 벽 폭파 망치",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "CQC-20 벽 폭파 망치",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-eat-411-leveller",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "EAT-411 평탄화기",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "EAT-411 평탄화기",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-gl-28-belt-fed-grenade-launcher",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "GL-28 벨트식 유탄 발사기",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "GL-28 벨트식 유탄 발사기",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-sh-39-shield",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G/SH-39 방어막",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G/SH-39 방어막",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["일반 정보"],
+        "unconfirmedFields": ["일반 정보:demolition"]
+      }
     },
     {
       "id": "primary-smg-flam-34-stoker",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SMG/FLAM-34 스토커",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SMG/FLAM-34 스토커",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["탄환", "화염방사"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-cqc-73-entrenchment-tool",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "CQC-72 참호 도구",
       "checkedAt": "2026-11-01",
-      "reviewedException": true
+      "reviewedException": true,
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "CQC-72 참호 도구",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["근접 타격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-48-giga-grenade",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-48 기가 수류탄",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-48 기가 수류탄",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-a-gm-17-gas-mortar-sentry",
@@ -700,67 +1337,144 @@
       "section": "A/GM-17 가스 박격포 센트리",
       "checkedAt": "2026-11-01",
       "additionalReference": "https://helldivers.wiki.gg/wiki/A/GM-17_Gas_Mortar_Sentry",
-      "reviewedException": true
+      "reviewedException": true,
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "A/GM-17 가스 박격포 센트리",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B0%A9%EC%96%B4",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-p-69-veto",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P-69 비토",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P-69 비토",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-b-flam-80-cremator",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "B/FLAM-80 크리메이터",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "B/FLAM-80 크리메이터",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-smg-203-gallant",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "SMG-203 갤런트",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "SMG-203 갤런트",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-mgx-42-bullet-storm",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "MGX-42 불릿 스톰",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "MGX-42 불릿 스톰",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-exo-51-lumberer-exosuit",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "EXO-51 벌목꾼 엑소슈트",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "EXO-51 벌목꾼 엑소슈트",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["화염방사", "대전차포 직격", "대전차포 폭발", "파괴 시 폭발", "밟기"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-p-33-missile-pistol",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P-33 미사일 권총",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P-33 미사일 권총",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-exo-55-breakthrough-exosuit",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "EXO-55 돌파구 엑소슈트",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "EXO-55 돌파구 엑소슈트",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["방패 타격", "산탄", "파괴 시 폭발", "밟기"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-ar-11-arbitrator",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "AR-11 아비트레이터",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AR-11 아비트레이터",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["소총탄", "하부 산탄총"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-8-immolation",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-8 번제",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-8 번제",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-p-34-breacher",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P-34 브리처",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P-34 브리처",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-integrated-extinguishers",
@@ -772,13 +1486,27 @@
       "id": "primary-gl-15-evictor",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "GL-15 이빅터",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "GL-15 이빅터",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-60-anti-tank-seeker",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-60 대전차 드론",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-60 대전차 드론",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "booster-surplus-eat-allocation",
@@ -790,97 +1518,216 @@
       "id": "primary-r-40-sightliner",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "R-40 사이트라이너",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "R-40 사이트라이너",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-11-caltrops",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G-11 마름쇠",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G-11 마름쇠",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발", "기절 효과"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-amw-20-apex",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "AMW-20 에이펙스",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "AMW-20 에이펙스",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-las-44-nova",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "LAS-44 노바",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "LAS-44 노바",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-p-44-mist",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P-44 미스트",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P-44 미스트",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-ma5c-assault-rifle",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "MA5C 어썰트 라이플",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "MA5C 어썰트 라이플",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-m7s-smg",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "M7S 기관단총",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "M7S 기관단총",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-m90a-shotgun",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "M90A 샷건",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "M90A 샷건",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-m6c-socom-pistol",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "M6C/SOCOM 권총",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "M6C/SOCOM 권총",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-sta-52-assault-rifle",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "StA-52 돌격소총",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "StA-52 돌격소총",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-plas-39-accelerator-rifle",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "PLAS-39 가속 소총",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "PLAS-39 가속 소총",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-sta-11-smg",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "StA-11 기관단총",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "StA-11 기관단총",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "primary-r-40-k-hot-shot-marksman-rifle",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
       "section": "R/40-K 핫샷 마크스맨 라이플",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "R/40-K 핫샷 마크스맨 라이플",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EC%A3%BC%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "throwable-g-40-k-melta-mine",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
       "section": "G/40-K 멜타마인",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "G/40-K 멜타마인",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%ED%88%AC%EC%B2%99%20%EB%AC%B4%EA%B8%B0",
+        "profileLabels": ["폭발", "불기둥"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "secondary-p-40-k-bolt-pistol",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
       "section": "P/40-K 볼트 피스톨",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "P/40-K 볼트 피스톨",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EB%AC%B4%EA%B8%B0/%EB%B3%B4%EC%A1%B0",
+        "profileLabels": ["직격", "폭발"],
+        "unconfirmedFields": []
+      }
     },
     {
       "id": "stratagem-40-k-meltagun",
       "koreanReference": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
       "section": "40-K 멜타건",
-      "checkedAt": "2026-11-01"
+      "checkedAt": "2026-11-01",
+      "combatVerification": {
+        "checkedAt": "2026-11-06",
+        "section": "40-K 멜타건",
+        "source": "https://www.namu.moe/w/HELLDIVERS%202/%EC%8A%A4%ED%8A%B8%EB%9D%BC%ED%83%80%EC%A0%AC/%EB%B3%B4%EA%B8%89",
+        "profileLabels": ["직격"],
+        "unconfirmedFields": []
+      }
     }
-  ]
+  ],
+  "combatReview": {
+    "checkedAt": "2026-11-06",
+    "items": 120,
+    "basis": "Namu Wiki mirrored projectile/damage tables; live HTML fetched with the system CA trust store.",
+    "display": "Frontal penetration; explosion center/outer/shockwave values are separate. Demolition uses the stated base force, not an assertion that every structure can be destroyed.",
+    "unknown": "Missing source values remain null and display as unconfirmed. Utility-only shields/flight packs have no combat table."
+  }
 }
