@@ -14,6 +14,9 @@ module.exports = async ({ guest, member, admin }) => {
   let run = starts[0].data.run;
   assert.equal(starts[1].data.run.id, run.id);
   assert.equal(run.stage, 1);
+  assert.equal(run.stages.length, 10);
+  assert.equal(run.stages.at(-1).payout, 2000);
+  assert.equal(run.deadlineAt - run.readyAt, 24000);
   assert.equal(starts[1].data.points.current, before.current - 100);
   await admin.call(base + '/cashout', 'POST', { runId: run.id }, 404);
   await member.call(base + '/cashout', 'POST', { runId: run.id }, 409);

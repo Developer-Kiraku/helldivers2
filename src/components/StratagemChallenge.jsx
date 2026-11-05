@@ -466,8 +466,10 @@ function Game() {
                     명령 {item.commands}개 · {item.seconds}초
                   </span>
                 </div>
-                {[2, 4, 6].includes(index) && (
-                  <span className="stratagem-milestone">{index === 6 ? '최종' : '목표'}</span>
+                {([2, 4, 6].includes(index) || index === stages.length - 1) && (
+                  <span className="stratagem-milestone">
+                    {index === stages.length - 1 ? '최종' : '목표'}
+                  </span>
                 )}
               </li>
             ))}

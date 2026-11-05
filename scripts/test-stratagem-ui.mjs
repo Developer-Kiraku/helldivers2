@@ -88,6 +88,11 @@ try {
     [...document.querySelectorAll('button')].find((el) => el.textContent.includes(text));
   await React.act(async () => root.render(React.createElement(Game)));
   await reply({ ...state(null), points: { current: 1000, total: 1000 } });
+  assert.match(document.body.textContent, /10단계의 신호/);
+  const rewards = [...document.querySelectorAll('.stratagem-rewards li')];
+  assert.equal(rewards.length, 10);
+  assert.match(rewards[6].textContent, /목표/);
+  assert.match(rewards[9].textContent, /2,000.*명령 13개.*23초.*최종/);
   await React.act(async () => {
     button('100P로 도전 시작').click();
     button('100P로 도전 시작').click();
@@ -102,7 +107,7 @@ try {
     stages: challengeStages,
     completed: 0,
     readyAt: 10000,
-    deadlineAt: 35000,
+    deadlineAt: 10000 + challengeStages[0].seconds * 1000,
     command: {
       token: 'token',
       code: 'RRU',

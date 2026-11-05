@@ -14,9 +14,22 @@ try {
   }
   assert.deepEqual(
     challengeStages.map((stage) => stage.payout),
-    [100, 150, 220, 320, 450, 650, 900],
+    [100, 150, 220, 320, 450, 650, 900, 1200, 1500, 2000],
   );
   assert.ok(challengeStages.every((stage) => stage.commands >= 5));
+  for (const [index, stage] of challengeStages.entries()) {
+    const candidates = stratagemCommands.filter(
+      ({ code }) => code.length >= stage.minLength && code.length <= stage.maxLength,
+    );
+    assert.ok(candidates.length >= 2, 'Every stage can avoid consecutive duplicate commands');
+    if (index > 0) {
+      const previous = challengeStages[index - 1];
+      assert.ok(
+        stage.seconds / stage.commands < previous.seconds / previous.commands,
+        'Time per command decreases at every stage',
+      );
+    }
+  }
   const outfile = path.join(directory, 'game.cjs');
   await build({
     entryPoints: ['src/lib/server/stratagem-challenge.js'],
@@ -120,10 +133,10 @@ try {
   assert.deepEqual(call('cashout', { runId: state.run.id }), claimed);
   db = make();
   let run = start().run;
-  for (let stage = 1; stage <= 7; stage++) {
+  for (let stage = 1; stage <= challengeStages.length; stage++) {
     run = checkpoint(run);
     assert.equal(run.stage, stage);
-    if (stage < 7) {
+    if (stage < challengeStages.length) {
       run = call('continue', { runId: run.id, stage }).run;
       const deadline = run.deadlineAt;
       assert.equal(
@@ -135,12 +148,35 @@ try {
     }
   }
   assert.equal(run.status, 'completed');
+  assert.equal(run.stage, 10);
+  assert.equal(run.payout, 2000);
+  assert.equal(db.stratagemRuns[0].receipts.length, 86);
+  assert.equal(call().points.current, 2900);
+  assert.equal(call().points.total, 2000);
+  assert.equal(db.pointLedger.length, 2);
+  assert.equal(call('cashout', { runId: run.id }).points.current, 2900);
+  // Seven-stage runs already in progress must still finish and pay out under their saved rules.
+  db = make();
+  start();
+  const savedStages = challengeStages.slice(0, 7).map((stage, index) => ({
+    ...stage,
+    seconds: [25, 24, 26, 28, 28, 27, 25][index],
+  }));
+  db.stratagemRuns[0].stages = savedStages;
+  db.stratagemRuns[0].deadlineAt = now + savedStages[0].seconds * 1000;
+  db = JSON.parse(JSON.stringify(db));
+  run = call().run;
+  assert.deepEqual(run.stages, savedStages);
+  for (let stage = 1; stage <= savedStages.length; stage++) {
+    assert.equal(run.deadlineAt - run.readyAt, savedStages[stage - 1].seconds * 1000);
+    run = checkpoint(run);
+    if (stage < savedStages.length) run = call('continue', { runId: run.id, stage }).run;
+  }
+  assert.equal(run.status, 'completed');
+  assert.equal(run.stage, 7);
   assert.equal(run.payout, 900);
   assert.equal(db.stratagemRuns[0].receipts.length, 50);
   assert.equal(call().points.current, 1800);
-  assert.equal(call().points.total, 2000);
-  assert.equal(db.pointLedger.length, 2);
-  assert.equal(call('cashout', { runId: run.id }).points.current, 1800);
   // Stored runs from before the balance change keep their original counts and rewards.
   db = make();
   start();
@@ -185,7 +221,7 @@ try {
   assert.equal(db.stratagemRuns[0].status, 'cashed');
   assert.deepEqual(call('start', { requestId: replacementId, replacePrevious: true }), replacement);
   assert.equal(db.pointLedger.length, 3, 'Replacement retries charge only once');
-  for (const stageTarget of [1, 3, 5]) {
+  for (const stageTarget of [1, 3, 5, 7, 10]) {
     db = make();
     run = start().run;
     while (run.stage < stageTarget) {
@@ -224,7 +260,7 @@ try {
     { status: 403 },
   );
   console.log(
-    'PASS: stratagem icons/codes, server timers, command order, ownership, exact/low funds, resume, cashout/continue retries, seven-stage rewards and unchanged cumulative points',
+    'PASS: stratagem codes, ten-stage progression/rewards, saved seven-stage runs, timers, ownership, funds, reset/retries and unchanged cumulative points',
   );
 } finally {
   await fs.rm(directory, { recursive: true, force: true });
