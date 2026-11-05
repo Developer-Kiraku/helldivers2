@@ -44,6 +44,13 @@ export function auditLogEntry(db, entry) {
     : null;
   const reason = typeof details.reason === 'string' ? details.reason.trim() : '';
   const nickname = (user) => (user?.status === 'withdrawn' ? '탈퇴한 회원' : user?.nickname);
+  const relatedToPost = /^(post|comment|poll)_/.test(type);
+  const postHref =
+    relatedToPost && target && !target.deletedAt && target.status !== 'draft'
+      ? `/boards/${encodeURIComponent(target.board)}/${encodeURIComponent(target.id)}${
+          comment && !comment.deletedAt ? '#comment-' + encodeURIComponent(comment.id) : ''
+        }`
+      : null;
   return {
     id: entry.id,
     type,
@@ -62,6 +69,7 @@ export function auditLogEntry(db, entry) {
       target?.createdAt ||
       null,
     ...(!member ? { board: details.board || snapshot?.board || target?.board || '' } : {}),
+    ...(relatedToPost ? { postHref, postDeleted: Boolean(target?.deletedAt) } : {}),
     ...(type === 'post_move'
       ? { sourceBoard: details.sourceBoard, targetBoard: details.targetBoard }
       : {}),

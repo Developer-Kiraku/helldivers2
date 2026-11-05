@@ -61,6 +61,15 @@ module.exports = async function ({ guest, member, deputy, admin, file }) {
     const commentUrl = `${url}/comments/${comment.id}`;
     await writer.call(commentUrl, 'PATCH', { body: '댓글 수정문' });
     await writer.call(commentUrl, 'PATCH', { body: '댓글 수정문' });
+    const visibleLogs = await records({ q: title }, deputy);
+    assert.equal(
+      visibleLogs.find((entry) => entry.type === 'comment_update').postHref,
+      `/boards/${board}/${post.id}#comment-${comment.id}`,
+    );
+    assert.equal(
+      visibleLogs.find((entry) => entry.type === 'post_create').postHref,
+      `/boards/${board}/${post.id}`,
+    );
     await deputy.call(commentUrl, 'DELETE', {}, 403);
     await writer.call(commentUrl, 'DELETE', {});
     await writer.call(commentUrl, 'DELETE', {}, 404);
@@ -83,9 +92,12 @@ module.exports = async function ({ guest, member, deputy, admin, file }) {
       targetBoard: destination,
       confirmVisibility: true,
     });
+    const movedLogs = await records({ q: title }, deputy);
+    assert.ok(movedLogs.every((entry) => entry.postHref === `/boards/${destination}/${post.id}`));
     await admin.call(url, 'DELETE', { reason: '로그 검증 삭제' });
     await admin.call(url, 'DELETE', {}, 404);
     const logs = await records({ q: title });
+    assert.ok(logs.every((entry) => entry.postHref === null && entry.postDeleted));
     const types = [
       'post_create',
       'post_update',

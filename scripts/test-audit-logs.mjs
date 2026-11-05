@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { auditLogDetails, auditLogList } from '../src/lib/server/audit-logs.mjs';
+import { auditLogDetails, auditLogEntry, auditLogList } from '../src/lib/server/audit-logs.mjs';
 
 const createdAt = '2026-10-29T01:00:00.000Z';
 const db = {
@@ -38,6 +38,7 @@ db.posts[0].board = 'talk';
 db.comments[0].deletedAt = createdAt;
 const logs = auditLogList(db, new URLSearchParams('board=tierlist')).logs;
 assert.equal(logs.length, 5);
+assert.ok(logs.every((entry) => entry.postHref === '/boards/talk/post'));
 assert.ok(
   logs.every(
     (entry) => entry.targetName === '작성 당시 제목' && entry.actorNickname === '작성 당시 닉네임',
@@ -72,8 +73,29 @@ db.audit.push({
 });
 for (const board of ['tierlist', 'talk'])
   assert.equal(auditLogList(db, new URLSearchParams({ type: 'post_move', board })).total, 1);
+const commentLog = db.audit.find((entry) => entry.action === 'comment.update');
+db.comments[0].deletedAt = null;
+assert.equal(auditLogEntry(db, commentLog).postHref, '/boards/talk/post#comment-comment');
+assert.equal(
+  auditLogEntry(db, { ...commentLog, action: 'comment.vote.like' }).postHref,
+  '/boards/talk/post#comment-comment',
+);
+db.comments[0].deletedAt = createdAt;
+assert.equal(auditLogEntry(db, commentLog).postHref, '/boards/talk/post');
+db.comments = [];
+assert.equal(auditLogEntry(db, commentLog).postHref, '/boards/talk/post');
+
+db.posts[0].deletedAt = createdAt;
+assert.equal(auditLogEntry(db, commentLog).postHref, null);
+assert.equal(auditLogEntry(db, commentLog).postDeleted, true);
+delete db.posts[0].deletedAt;
+assert.equal(auditLogEntry({ ...db, posts: [] }, commentLog).postHref, null);
+for (const action of ['user.register', 'points.grant'])
+  assert.equal(Object.hasOwn(auditLogEntry(db, { ...commentLog, action }), 'postHref'), false);
+
 db.posts[0].status = 'draft';
+assert.equal(auditLogEntry(db, commentLog).postHref, null);
 assert.equal(auditLogList(db, new URLSearchParams()).total, 0);
 console.log(
-  'PASS: audit snapshots, legacy creation visibility, comment dates, board filters and draft privacy',
+  'PASS: audit snapshots, current-board post links, comment anchors, deleted/missing targets, board filters and draft privacy',
 );

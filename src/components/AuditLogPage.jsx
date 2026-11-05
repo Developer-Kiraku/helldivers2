@@ -1,6 +1,7 @@
 'use client';
 import { Fragment, useEffect, useState } from 'react';
-import { RefreshCw } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowUpRight, RefreshCw } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 import { Button, Input, Select } from './ui';
@@ -186,8 +187,8 @@ export default function AuditLogPage() {
             ) : (
               data.logs.map((entry) => (
                 <Fragment key={entry.id}>
-                  <tr>
-                    <td>
+                  <tr className="audit-log-entry">
+                    <td className="audit-log-type">
                       {auditLogTypes[entry.type]}
                       {entry.selfTest ? ' (본인 테스트)' : ''}
                       {entry.type === 'member_mute' && (
@@ -212,12 +213,29 @@ export default function AuditLogPage() {
                         </Button>
                       )}
                     </td>
-                    <td>
+                    <td className="audit-log-executed">
                       <time dateTime={entry.executedAt}>{date(entry.executedAt, true)}</time>
                     </td>
-                    <td>{entry.actorNickname}</td>
+                    <td className="audit-log-actor">
+                      <span className="audit-log-mobile-label">실행한 유저</span>
+                      <span>{entry.actorNickname}</span>
+                    </td>
                     <td className="audit-log-target" title={entry.targetName}>
-                      {entry.targetName}
+                      {entry.postHref ? (
+                        <Link
+                          href={entry.postHref}
+                          className="audit-log-post-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="게시글 확인 (새 탭)"
+                          prefetch={false}
+                        >
+                          {entry.targetName}
+                          <ArrowUpRight size={14} aria-hidden="true" />
+                        </Link>
+                      ) : (
+                        <span>{entry.targetName}</span>
+                      )}
                       {entry.board && (
                         <small className="audit-log-board">
                           {entry.type === 'post_move'
@@ -225,8 +243,22 @@ export default function AuditLogPage() {
                             : boards[entry.board]?.label || entry.board}
                         </small>
                       )}
+                      {entry.postHref === null && (
+                        <small className="audit-log-unavailable">
+                          {entry.postDeleted ? '삭제된 글' : '게시글 확인 불가'}
+                        </small>
+                      )}
                     </td>
-                    <td>
+                    <td className="audit-log-created">
+                      <span className="audit-log-mobile-label">
+                        {entry.type === 'point_grant'
+                          ? '1인당 지급액'
+                          : entry.type.startsWith('member_')
+                            ? '가입일'
+                            : entry.type.startsWith('comment_')
+                              ? '댓글 작성일'
+                              : '작성일'}
+                      </span>
                       {entry.type === 'point_grant' ? (
                         Number(entry.amount).toLocaleString('ko-KR') + ' P'
                       ) : entry.targetCreatedAt ? (
