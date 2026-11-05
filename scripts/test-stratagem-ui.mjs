@@ -92,7 +92,7 @@ try {
   const rewards = [...document.querySelectorAll('.stratagem-rewards li')];
   assert.equal(rewards.length, 10);
   assert.match(rewards[6].textContent, /목표/);
-  assert.match(rewards[9].textContent, /2,000.*명령 13개.*23초.*최종/);
+  assert.match(rewards[9].textContent, /2,000.*명령 14개.*25초.*최종/);
   await React.act(async () => {
     button('100P로 도전 시작').click();
     button('100P로 도전 시작').click();
@@ -260,11 +260,88 @@ try {
   });
   assert.equal(calls.length, beforeFocus + 1);
   assert.equal(calls.at(-1).name, 'games/stratagem');
-  await reply(state(run));
+  const commandB = { ...run.command, token: 'buffer-b', code: 'RRR', label: '궤도 공중폭발 타격' };
+  const commandC = { ...run.command, token: 'buffer-c', code: 'URR', label: '이글 기총소사' };
+  const commandD = { ...run.command, token: 'buffer-d' };
+  const commandE = { ...commandB, token: 'buffer-e' };
+  await reply(state({ ...run, nextCommand: commandB }));
   assert.equal(calls.filter((c) => c.name.endsWith('/reset')).length, resets);
   assert.ok(document.querySelector('.stratagem-code'), 'Returning focus keeps this visit’s game');
+  const typeCode = async (code) => {
+    for (const key of code)
+      await press({ U: 'ArrowUp', D: 'ArrowDown', L: 'ArrowLeft', R: 'ArrowRight' }[key]);
+  };
+  const beforeBuffered = calls.length;
+  await typeCode('RRU');
+  assert.equal(calls.length, beforeBuffered + 1);
+  assert.match(document.querySelector('.stratagem-command h2').textContent, /공중폭발/);
+  assert.ok(
+    [...document.querySelectorAll('.stratagem-dpad button')].every((el) => !el.disabled),
+    'The next command accepts input before the preceding response arrives',
+  );
+  await typeCode('RR');
+  await reply(state({ ...run, completed: 1, command: commandB, nextCommand: commandC }));
+  assert.equal(
+    document.querySelectorAll('.stratagem-code .is-done').length,
+    2,
+    'An acknowledgement must preserve partially entered buffered input',
+  );
+  await typeCode('R');
+  assert.equal(calls.at(-1).options.body.token, commandB.token);
+  const bufferedPacket = calls.at(-1).options.body;
+  await typeCode('URR');
+  assert.equal(
+    calls.length,
+    beforeBuffered + 2,
+    'A completed second command queues behind the outstanding request',
+  );
+  assert.ok([...document.querySelectorAll('.stratagem-dpad button')].every((el) => el.disabled));
+  await React.act(async () => calls.at(-1).reject(new Error('느린 연결 테스트')));
+  await React.act(async () => button('다시 확인').click());
+  assert.deepEqual(calls.at(-1).options.body, bufferedPacket);
+  await reply(state({ ...run, completed: 2, command: commandC, nextCommand: commandD }));
+  assert.equal(
+    calls.at(-1).options.body.token,
+    commandC.token,
+    'Retrying a lost acknowledgement drains the queue in order',
+  );
+  await typeCode('R');
+  await reply(state({ ...run, completed: 3, command: commandD, nextCommand: commandE }));
+  assert.equal(document.querySelectorAll('.stratagem-code .is-done').length, 1);
+  await typeCode('RU');
+  await reply(state({ ...run, completed: 4, command: commandE, nextCommand: null }));
+  await typeCode('RRR');
+  assert.equal(button('100P 받고 종료'), undefined, 'A stage reward requires server confirmation');
+  await reply(
+    state({ ...run, completed: 5, status: 'checkpoint', command: null, nextCommand: null }),
+  );
+  assert.ok(button('100P 받고 종료'));
+  await React.act(async () => button('2단계 도전').click());
+  const nextStage = { ...run, stage: 2, nextCommand: commandB };
+  await reply(state(nextStage));
+  await typeCode('RRU');
+  await React.act(async () =>
+    calls.at(-1).reject(Object.assign(new Error('현재 명령 확인'), { status: 409 })),
+  );
+  assert.equal(calls.at(-1).name, 'games/stratagem');
+  await reply(state(nextStage));
+  assert.equal(document.querySelectorAll('.stratagem-code .is-done').length, 0);
+  assert.match(document.querySelector('.stratagem-command h2').textContent, /궤도 정밀 타격/);
+  assert.ok([...document.querySelectorAll('.stratagem-dpad button')].every((el) => el.disabled));
+  await React.act(async () => button('다시 확인').click());
+  await reply(state(nextStage));
+  assert.ok([...document.querySelectorAll('.stratagem-dpad button')].every((el) => !el.disabled));
+  await typeCode('RRU');
+  await typeCode('RRR');
+  const beforeExpiry = calls.length;
+  await reply(
+    state({ ...nextStage, status: 'failed', command: null, nextCommand: null, payout: 0 }),
+  );
+  assert.equal(calls.length, beforeExpiry, 'An expired stage drops remaining queued answers');
+  assert.match(document.querySelector('.stratagem-message').textContent, /시간이 종료/);
+  assert.equal(button('100P 받고 종료'), undefined);
   console.log(
-    'PASS: stratagem keyboard/touch, fresh entry/reload, stale-request removal, reset recovery, same-visit focus, payout recovery and current-game result',
+    'PASS: stratagem keyboard/touch, buffered input during delayed responses, serial retries/recovery, confirmed payouts, entry/reset and focus',
   );
 } finally {
   await React.act(async () => root.unmount());

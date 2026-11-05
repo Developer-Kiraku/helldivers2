@@ -16,6 +16,8 @@ module.exports = async ({ guest, member, admin }) => {
   assert.equal(run.stage, 1);
   assert.equal(run.stages.length, 10);
   assert.equal(run.stages.at(-1).payout, 2000);
+  assert.equal(run.stages.at(-1).commands, 14);
+  assert.ok(run.nextCommand);
   assert.equal(run.deadlineAt - run.readyAt, 24000);
   assert.equal(starts[1].data.points.current, before.current - 100);
   await admin.call(base + '/cashout', 'POST', { runId: run.id }, 404);
@@ -24,6 +26,7 @@ module.exports = async ({ guest, member, admin }) => {
   for (let stage = 1; stage <= 3; stage++) {
     await wait(run.readyAt - Date.now() + 300);
     while (run.status === 'playing') {
+      const upcoming = run.nextCommand;
       const body = { runId: run.id, token: run.command.token, answer: run.command.code };
       const answers = await Promise.all([
         member.call(base + '/answer', 'POST', body),
@@ -31,6 +34,7 @@ module.exports = async ({ guest, member, admin }) => {
       ]);
       run = answers[0].data.run;
       assert.equal(answers[1].data.run.completed, run.completed);
+      if (run.status === 'playing') assert.deepEqual(run.command, upcoming);
       if (run.status === 'playing') await wait(300);
     }
     assert.equal(run.status, 'checkpoint');

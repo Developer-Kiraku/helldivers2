@@ -17,6 +17,10 @@ try {
     [100, 150, 220, 320, 450, 650, 900, 1200, 1500, 2000],
   );
   assert.ok(challengeStages.every((stage) => stage.commands >= 5));
+  assert.deepEqual(
+    challengeStages.map((stage) => stage.commands),
+    [5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+  );
   for (const [index, stage] of challengeStages.entries()) {
     const candidates = stratagemCommands.filter(
       ({ code }) => code.length >= stage.minLength && code.length <= stage.maxLength,
@@ -150,7 +154,7 @@ try {
   assert.equal(run.status, 'completed');
   assert.equal(run.stage, 10);
   assert.equal(run.payout, 2000);
-  assert.equal(db.stratagemRuns[0].receipts.length, 86);
+  assert.equal(db.stratagemRuns[0].receipts.length, 95);
   assert.equal(call().points.current, 2900);
   assert.equal(call().points.total, 2000);
   assert.equal(db.pointLedger.length, 2);
@@ -160,6 +164,7 @@ try {
   start();
   const savedStages = challengeStages.slice(0, 7).map((stage, index) => ({
     ...stage,
+    commands: [5, 5, 6, 7, 8, 9, 10][index],
     seconds: [25, 24, 26, 28, 28, 27, 25][index],
   }));
   db.stratagemRuns[0].stages = savedStages;
@@ -177,6 +182,52 @@ try {
   assert.equal(run.payout, 900);
   assert.equal(db.stratagemRuns[0].receipts.length, 50);
   assert.equal(call().points.current, 1800);
+  db = make();
+  start();
+  db.stratagemRuns[0].stages = challengeStages.map((stage, index) => ({
+    ...stage,
+    commands: [5, 5, 6, 7, 8, 9, 10, 11, 12, 13][index],
+    seconds: [24, 22, 24, 25, 25, 24, 22, 23, 23, 23][index],
+  }));
+  run = call().run;
+  for (let stage = 1; stage <= 10; stage++) {
+    run = checkpoint(run);
+    if (stage < 10) run = call('continue', { runId: run.id, stage }).run;
+  }
+  assert.equal(run.status, 'completed');
+  assert.equal(run.completed, 13, 'Existing ten-stage games keep their old final target');
+  assert.equal(db.stratagemRuns[0].receipts.length, 86);
+  assert.equal(run.payout, 2000);
+  // One prefetched command removes network waits without accepting skipped or instant inputs.
+  db = make();
+  run = start().run;
+  assert.ok(run.nextCommand);
+  assert.notEqual(run.command.id, run.nextCommand.id);
+  const first = run.command,
+    second = run.nextCommand;
+  now += 500;
+  assert.throws(() => call('answer', { runId: run.id, token: second.token, answer: second.code }), {
+    status: 409,
+  });
+  run = call('answer', { runId: run.id, token: first.token, answer: first.code }).run;
+  assert.deepEqual(run.command, second);
+  const third = run.nextCommand;
+  // The player may have already typed the prefetched command before the first response arrived.
+  run = call('answer', { runId: run.id, token: second.token, answer: second.code }).run;
+  assert.equal(run.completed, 2);
+  assert.deepEqual(run.command, third);
+  assert.equal(
+    call('answer', { runId: run.id, token: first.token, answer: first.code }).run.completed,
+    2,
+  );
+  now = db.stratagemRuns[0].inputAfter;
+  assert.throws(
+    () => call('answer', { runId: run.id, token: run.command.token, answer: run.command.code }),
+    { status: 409 },
+  );
+  run = checkpoint(run);
+  assert.equal(run.nextCommand, null, 'No preview leaks into the next stage');
+  assert.equal(run.command, null);
   // Stored runs from before the balance change keep their original counts and rewards.
   db = make();
   start();

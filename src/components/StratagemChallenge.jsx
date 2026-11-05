@@ -26,6 +26,14 @@ import {
 const path = 'games/stratagem';
 const number = (value) => (value || 0).toLocaleString('ko-KR');
 const glyphs = { U: ArrowUp, L: ArrowLeft, D: ArrowDown, R: ArrowRight };
+function advanceBufferedCommand(run, answers) {
+  for (const { body } of answers) {
+    if (run?.status === 'playing' && run.command.token === body.token && run.nextCommand) {
+      run = { ...run, completed: run.completed + 1, command: run.nextCommand, nextCommand: null };
+    }
+  }
+  return run;
+}
 export default function StratagemChallenge() {
   const { user } = useCommunity();
   return <Game key={user.id} />;
@@ -49,6 +57,8 @@ function Game() {
   const pendingRef = useRef(null),
     inputHandler = useRef(null),
     currentRunId = useRef(null),
+    displayedRun = useRef(null),
+    answers = useRef([]),
     initialized = useRef(false),
     storageKey = 'hd-stratagem-pending:' + user.id;
   const run = data?.run,
@@ -61,21 +71,38 @@ function Game() {
   const wallet = data?.points.current ?? user.points.current;
   const remaining = Math.max(0, (run?.deadlineAt || now) - now);
   const ready = playing && now >= run.readyAt && remaining > 0;
+  const waitingForAnswer = playing && entered === run.command.code;
+  const inputBlocked =
+    !ready ||
+    preview ||
+    Boolean(error) ||
+    waitingForAnswer ||
+    (busy && pending?.action !== 'answer');
   const remember = useCallback((packet) => {
     pendingRef.current = packet;
     setPending(packet);
   }, []);
   const apply = useCallback(
     (result) => {
+      const nextRun =
+        result.run?.id === currentRunId.current
+          ? advanceBufferedCommand(result.run, answers.current)
+          : null;
+      if (displayedRun.current?.command?.token !== nextRun?.command?.token) {
+        inputRef.current = '';
+        setEntered('');
+        setMistake(false);
+      }
+      displayedRun.current = nextRun;
       synced.current = { at: performance.now(), serverTime: result.serverTime };
       setNow(result.serverTime);
-      setData({ ...result, run: result.run?.id === currentRunId.current ? result.run : null });
+      setData({ ...result, run: nextRun });
       syncPoints(user.id, result.points);
     },
     [syncPoints, user.id],
   );
   const refresh = useCallback(async () => {
-    if (lock.current) return;
+    if (lock.current || answers.current.length) return;
     const version = ++generation.current;
     try {
       let result = await api(path);
@@ -132,10 +159,49 @@ function Game() {
     },
     [api, apply, preview, remember],
   );
+  const sendAnswers = useCallback(async () => {
+    if (lock.current || preview || !answers.current.length) return;
+    lock.current = true;
+    ++generation.current;
+    setBusy(true);
+    setError('');
+    try {
+      while (alive.current && answers.current.length) {
+        const packet = answers.current[0];
+        remember(packet);
+        const result = await api(path + '/answer', { method: 'POST', body: packet.body });
+        if (!alive.current) return;
+        answers.current.shift();
+        if (result.run?.status !== 'playing') answers.current = [];
+        apply(result);
+      }
+      remember(null);
+    } catch (err) {
+      if (!alive.current) return;
+      setError(err.message);
+      if (err.status && err.status < 500) {
+        answers.current = [];
+        remember(null);
+        inputRef.current = '';
+        setEntered('');
+        try {
+          const result = await api(path);
+          if (alive.current) apply(result);
+        } catch {
+          /* Keep the original error and let the player refresh the authoritative state. */
+        }
+      }
+    } finally {
+      lock.current = false;
+      if (alive.current) setBusy(false);
+    }
+  }, [api, apply, preview, remember]);
   useEffect(() => {
     alive.current = true;
     initialized.current = false;
     currentRunId.current = null;
+    displayedRun.current = null;
+    answers.current = [];
     remember(null);
     try {
       sessionStorage.removeItem(storageKey);
@@ -150,11 +216,6 @@ function Game() {
     };
   }, [storageKey, refresh, remember]);
   useRefreshOnReturn(refresh);
-  useEffect(() => {
-    inputRef.current = '';
-    setEntered('');
-    setMistake(false);
-  }, [run?.command?.token]);
   useEffect(() => {
     if (!playing) return;
     let checking = false;
@@ -182,10 +243,19 @@ function Game() {
     return () => cancelAnimationFrame(frame);
   }, [run?.id, run?.stage, playing]);
   const input = (direction) => {
-    if (!ready || lock.current || preview || pendingRef.current) return;
+    const current = displayedRun.current;
+    if (
+      !ready ||
+      preview ||
+      error ||
+      !current?.command ||
+      inputRef.current === current.command.code ||
+      (lock.current && pendingRef.current?.action !== 'answer')
+    )
+      return;
     const next = inputRef.current + direction;
     clearTimeout(mistakeTimer.current);
-    if (!run.command.code.startsWith(next)) {
+    if (!current.command.code.startsWith(next)) {
       inputRef.current = '';
       setEntered('');
       setMistake(true);
@@ -195,8 +265,21 @@ function Game() {
     setMistake(false);
     inputRef.current = next;
     setEntered(next);
-    if (next === run.command.code)
-      act({ action: 'answer', body: { runId: run.id, token: run.command.token, answer: next } });
+    if (next === current.command.code) {
+      const packet = {
+        action: 'answer',
+        body: { runId: current.id, token: current.command.token, answer: next },
+      };
+      answers.current.push(packet);
+      const advanced = advanceBufferedCommand(current, [packet]);
+      if (advanced !== current) {
+        displayedRun.current = advanced;
+        inputRef.current = '';
+        setEntered('');
+        setData((previous) => ({ ...previous, run: advanced }));
+      }
+      sendAnswers();
+    }
   };
   inputHandler.current = input;
   useEffect(() => {
@@ -257,7 +340,9 @@ function Game() {
           <Button
             type="button"
             disabled={busy}
-            onClick={() => (pending ? act(pending) : refresh())}
+            onClick={() =>
+              pending?.action === 'answer' ? sendAnswers() : pending ? act(pending) : refresh()
+            }
           >
             다시 확인
           </Button>
@@ -333,7 +418,7 @@ function Game() {
                     ? '시간 종료 · 결과 확인 중'
                     : now < run.readyAt
                       ? '잠시 후 시작합니다'
-                      : busy
+                      : waitingForAnswer
                         ? '명령 확인 중…'
                         : mistake
                           ? '입력이 달라요. 이 명령을 처음부터!'
@@ -347,7 +432,7 @@ function Game() {
                     key={key}
                     className={'direction-' + key}
                     aria-label={directionLabels[key]}
-                    disabled={!ready || busy || preview || Boolean(pending)}
+                    disabled={inputBlocked}
                     onClick={() => input(key)}
                   >
                     <Glyph size={29} />

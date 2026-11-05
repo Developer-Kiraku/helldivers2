@@ -216,9 +216,9 @@ export default function PointGuide() {
             <RadioTower size={27} />
             <h3>스트라타젬 입력 챌린지</h3>
             <p>
-              {challengeEntry}P로 시작해 첫 단계 {challengeStages[0].commands}개부터 제한 시간 안에
-              방향 명령을 입력합니다. 각 단계 성공 후 보상을 받고 종료하거나 계속 도전할 수
-              있습니다.
+              {challengeEntry}P로 시작해 단계에 따라 {challengeStages[0].commands}~
+              {challengeStages.at(-1).commands}개의 방향 명령을 제한 시간 안에 입력합니다. 각 단계
+              성공 후 보상을 받고 종료하거나 계속 도전할 수 있습니다.
             </p>
             <strong className="point-guide-game-highlight">
               {challengeStages.length}단계 완주 · {challengeStages.at(-1).payout}P

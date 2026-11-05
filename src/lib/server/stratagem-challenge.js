@@ -8,21 +8,30 @@ const active = (run) => ['playing', 'checkpoint'].includes(run.status);
 const validId = (value) =>
   typeof value === 'string' &&
   /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(value);
-function nextCommand(run, now, rng) {
+function createCommand(run, previousId, rng) {
   const stage = challengeStagesFor(run)[run.stage - 1];
   const candidates = stratagemCommands.filter(
     (item) =>
       item.code.length >= stage.minLength &&
       item.code.length <= stage.maxLength &&
-      item.id !== run.command?.id,
+      item.id !== previousId,
   );
-  run.command = { ...candidates[rng(candidates.length)], token: randomUUID() };
+  return { ...candidates[rng(candidates.length)], token: randomUUID() };
+}
+function nextCommand(run, now, rng) {
+  run.command = run.nextCommand || createCommand(run, run.command?.id, rng);
+  run.nextCommand =
+    run.completed + 1 < challengeStagesFor(run)[run.stage - 1].commands
+      ? createCommand(run, run.command.id, rng)
+      : null;
   run.commandAt = now;
 }
 function beginStage(run, now, rng) {
   run.stage++;
   run.completed = 0;
   run.readyAt = now;
+  run.inputAfter = now;
+  run.nextCommand = null;
   run.deadlineAt = run.readyAt + challengeStagesFor(run)[run.stage - 1].seconds * 1000;
   run.status = 'playing';
   nextCommand(run, run.readyAt, rng);
@@ -30,6 +39,7 @@ function beginStage(run, now, rng) {
 function finish(db, run, status, now) {
   if (!active(run)) return;
   run.status = status;
+  run.nextCommand = null;
   run.finishedAt = now;
   run.payout = ['failed', 'abandoned'].includes(status)
     ? 0
@@ -66,6 +76,7 @@ function publicRun(run) {
     requestId,
     stages: challengeStagesFor(run),
     command: status === 'playing' ? run.command : null,
+    nextCommand: status === 'playing' ? run.nextCommand || null : null,
   };
 }
 export function handleStratagemChallenge(db, actor, segments, method, input = {}, options = {}) {
@@ -127,14 +138,18 @@ export function handleStratagemChallenge(db, actor, segments, method, input = {}
     }
     if (run.status !== 'playing') return snapshot(run);
     if (run.command.token !== input.token) fail(409, '현재 표시된 명령을 입력해주세요.');
-    if (now < run.commandAt + run.command.code.length * 35)
-      fail(409, '명령을 차례대로 입력해주세요.');
+    // Validate cumulative input time: a prefetched command may be typed while its predecessor
+    // is being acknowledged. Network response time must not impose an extra per-command delay.
+    const inputAfter = (run.inputAfter ?? run.commandAt) + run.command.code.length * 35;
+    if (now < inputAfter) fail(409, '명령을 차례대로 입력해주세요.');
     if (input.answer !== run.command.code)
       fail(400, '명령이 다릅니다. 처음부터 다시 입력해주세요.');
     run.receipts.push({ token: input.token, answer: input.answer });
+    run.inputAfter = inputAfter;
     run.completed++;
     if (run.completed === challengeStagesFor(run)[run.stage - 1].commands) {
       run.status = 'checkpoint';
+      run.nextCommand = null;
       if (run.stage === challengeStagesFor(run).length) finish(db, run, 'completed', now);
     } else nextCommand(run, now, rng);
   } else if (action === 'continue') {
