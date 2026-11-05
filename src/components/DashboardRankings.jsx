@@ -99,6 +99,23 @@ function RankingPanel({ kind }) {
           </p>
         )
       )}
+      {Boolean(data?.unranked?.length) && (
+        <div className="ranking-separate" aria-label={`${title} 순위 제외 기록`}>
+          <h3>순위 제외 기록</h3>
+          {data.unranked.map((row) => (
+            <div key={row.id}>
+              <span>
+                {row.nickname}
+                {row.own && <small>나</small>}
+              </span>
+              <strong>
+                {puzzle ? puzzleTime(row.elapsedMs) : row.points.toLocaleString('ko-KR')}
+                <small>{puzzle ? `${row.moves}회 이동` : 'P'}</small>
+              </strong>
+            </div>
+          ))}
+        </div>
+      )}
       {error && (
         <p className="form-error" role="alert">
           {error}

@@ -4,6 +4,7 @@ import { handlePuzzle } from '@/lib/server/sliding-puzzle';
 import { dashboardRanking } from '@/lib/server/rankings';
 import { handleDiceGame } from '@/lib/server/dice-game';
 import { handleRpsGame } from '@/lib/server/rps-game';
+import { handleStratagemChallenge } from '@/lib/server/stratagem-challenge';
 import { handlePointGrants } from '@/lib/server/point-grants';
 import {
   testPlayerOwner,
@@ -154,7 +155,8 @@ async function handler(request, context) {
     const path = segments.join('/');
     const method = request.method;
     const gameRequest =
-      segments[0] === 'games' && ['dice', 'sliding-puzzle', 'rps'].includes(segments[1]);
+      segments[0] === 'games' &&
+      ['dice', 'sliding-puzzle', 'rps', 'stratagem'].includes(segments[1]);
     const operationalOptions =
       gameRequest ||
       segments[0] === 'rankings' ||
@@ -171,7 +173,9 @@ async function handler(request, context) {
             collections:
               segments[0] === 'games' && segments[1] === 'rps'
                 ? [...operationalCollections, 'rpsRounds']
-                : operationalCollections,
+                : segments[0] === 'games' && segments[1] === 'stratagem'
+                  ? [...operationalCollections, 'stratagemRuns']
+                  : operationalCollections,
           }
         : {};
     const transact = (callback, write = true) => transaction(callback, write, operationalOptions);
@@ -350,6 +354,8 @@ async function handler(request, context) {
         return handleDiceGame(db, actor, segments, method, input);
       if (segments[0] === 'games' && segments[1] === 'rps')
         return handleRpsGame(db, actor, segments, method, input, new URL(request.url).searchParams);
+      if (segments[0] === 'games' && segments[1] === 'stratagem')
+        return handleStratagemChallenge(db, actor, segments, method, input);
       if (segments[0] === 'games' && segments[1] === 'sliding-puzzle')
         return handlePuzzle(db, actor, segments, method, input, new URL(request.url).searchParams);
       if (path === 'mentions' && method === 'GET')

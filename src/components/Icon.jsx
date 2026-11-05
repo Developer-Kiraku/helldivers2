@@ -50,12 +50,14 @@ import {
   Grid3X3,
   Hand,
   Dices,
+  RadioTower,
 } from 'lucide-react';
 import { SiDiscord, SiKakaotalk, SiYoutube } from '@icons-pack/react-simple-icons';
 const icons = {
   dice: Dices,
   puzzle: Grid3X3,
   rps: Hand,
+  stratagem: RadioTower,
   crosshair: Crosshair,
   undo: Undo2,
   redo: Redo2,

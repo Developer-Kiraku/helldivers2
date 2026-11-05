@@ -479,7 +479,11 @@ export default function SlidingPuzzle() {
                     이동 횟수 <b>{result.record.moves}회</b>
                   </span>
                 </p>
-                {result.improved && <p>월간 최고 기록 갱신 · {result.rank}위</p>}
+                {result.improved && (
+                  <p>
+                    월간 최고 기록 갱신 · {result.excluded ? '순위 제외 기록' : `${result.rank}위`}
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -582,7 +586,8 @@ export default function SlidingPuzzle() {
                 <div className="puzzle-my-record">
                   <Medal size={19} />
                   <span>
-                    내 최고 기록 <strong>{ranks.mine.rank}위</strong>
+                    내 최고 기록{' '}
+                    <strong>{ranks.mine.excluded ? '순위 제외' : `${ranks.mine.rank}위`}</strong>
                   </span>
                   <b>
                     {puzzleTime(ranks.mine.elapsedMs)}
@@ -628,6 +633,23 @@ export default function SlidingPuzzle() {
                   </tbody>
                 </table>
               </div>
+              {Boolean(ranks.unranked?.length) && (
+                <div className="ranking-separate" aria-label="퍼즐 순위 제외 기록">
+                  <h3>순위 제외 기록</h3>
+                  {ranks.unranked.map((row) => (
+                    <div key={row.id}>
+                      <span>
+                        {row.nickname}
+                        {row.own && <small>나</small>}
+                      </span>
+                      <strong>
+                        {puzzleTime(row.elapsedMs)}
+                        <small>{row.moves}회 이동</small>
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+              )}
               {!ranks.total && (
                 <div className="puzzle-empty">
                   <Trophy size={32} />

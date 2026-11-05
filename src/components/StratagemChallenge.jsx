@@ -1,0 +1,483 @@
+'use client';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  RadioTower,
+  Coins,
+  Check,
+  Trophy,
+  Timer,
+  RotateCcw,
+} from 'lucide-react';
+import { useCommunity } from './CommunityProvider';
+import { Button } from './ui';
+import useRefreshOnReturn from '@/hooks/useRefreshOnReturn';
+import {
+  challengeEntry,
+  challengeStages,
+  directionArrows,
+  directionLabels,
+  directionKeys,
+} from '@/lib/stratagem-challenge.mjs';
+
+const path = 'games/stratagem';
+const number = (value) => (value || 0).toLocaleString('ko-KR');
+const glyphs = { U: ArrowUp, L: ArrowLeft, D: ArrowDown, R: ArrowRight };
+export default function StratagemChallenge() {
+  const { user } = useCommunity();
+  return <Game key={user.id} />;
+}
+function Game() {
+  const { api, user, role, actualRole, syncPoints } = useCommunity();
+  const [data, setData] = useState(null),
+    [busy, setBusy] = useState(false),
+    [error, setError] = useState('');
+  const [entered, setEntered] = useState(''),
+    [mistake, setMistake] = useState(false),
+    [now, setNow] = useState(0);
+  const [pending, setPending] = useState(null);
+  const lock = useRef(false),
+    alive = useRef(true),
+    generation = useRef(0),
+    inputRef = useRef('');
+  const arena = useRef(null),
+    synced = useRef({ at: 0, serverTime: 0 }),
+    mistakeTimer = useRef(null);
+  const pendingRef = useRef(null),
+    storageKey = 'hd-stratagem-pending:' + user.id;
+  const run = data?.run,
+    stage = challengeStages[(run?.stage || 1) - 1];
+  const preview = role !== actualRole,
+    playing = run?.status === 'playing',
+    checkpoint = run?.status === 'checkpoint';
+  const ended = run && !playing && !checkpoint;
+  const wallet = data?.points.current ?? user.points.current;
+  const remaining = Math.max(0, (run?.deadlineAt || now) - now);
+  const ready = playing && now >= run.readyAt && remaining > 0;
+  const remember = useCallback(
+    (packet) => {
+      pendingRef.current = packet;
+      setPending(packet);
+      try {
+        if (packet) sessionStorage.setItem(storageKey, JSON.stringify(packet));
+        else sessionStorage.removeItem(storageKey);
+      } catch {
+        /* In-memory retry remains available. */
+      }
+    },
+    [storageKey],
+  );
+  const apply = useCallback(
+    (result) => {
+      synced.current = { at: performance.now(), serverTime: result.serverTime };
+      setNow(result.serverTime);
+      setData(result);
+      syncPoints(user.id, result.points);
+    },
+    [syncPoints, user.id],
+  );
+  const refresh = useCallback(async () => {
+    if (lock.current) return;
+    const version = ++generation.current;
+    try {
+      const result = await api(path);
+      if (alive.current && version === generation.current) {
+        apply(result);
+        setError('');
+      }
+    } catch (err) {
+      if (alive.current && version === generation.current) setError(err.message);
+    }
+  }, [api, apply]);
+  const act = useCallback(
+    async (packet) => {
+      if (lock.current || preview) return;
+      lock.current = true;
+      ++generation.current;
+      setBusy(true);
+      setError('');
+      remember(packet);
+      try {
+        const result = await api(path + '/' + packet.action, { method: 'POST', body: packet.body });
+        if (alive.current) {
+          apply(result);
+          remember(null);
+        }
+      } catch (err) {
+        if (!alive.current) return;
+        setError(err.message);
+        if (err.status && err.status < 500) {
+          remember(null);
+          inputRef.current = '';
+          setEntered('');
+          try {
+            const result = await api(path);
+            if (alive.current) apply(result);
+          } catch {
+            /* Keep the original error. */
+          }
+        }
+      } finally {
+        lock.current = false;
+        if (alive.current) setBusy(false);
+      }
+    },
+    [api, apply, preview, remember],
+  );
+  useEffect(() => {
+    alive.current = true;
+    let saved;
+    try {
+      saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
+    } catch {
+      /* Start from the server snapshot. */
+    }
+    if (
+      !preview &&
+      saved &&
+      ['start', 'answer', 'continue', 'cashout'].includes(saved.action) &&
+      saved.body
+    ) {
+      remember(saved);
+      act(saved);
+    } else refresh();
+    return () => {
+      alive.current = false;
+      ++generation.current;
+      clearTimeout(mistakeTimer.current);
+    };
+  }, [storageKey, act, refresh, remember, preview]);
+  useRefreshOnReturn(refresh);
+  useEffect(() => {
+    inputRef.current = '';
+    setEntered('');
+    setMistake(false);
+  }, [run?.command?.token]);
+  useEffect(() => {
+    if (!playing) return;
+    let checking = false;
+    const timer = setInterval(() => {
+      const time = synced.current.serverTime + performance.now() - synced.current.at;
+      setNow(time);
+      if (time >= run.deadlineAt && !checking && !lock.current) {
+        checking = true;
+        refresh();
+      }
+    }, 100);
+    return () => clearInterval(timer);
+  }, [playing, run?.deadlineAt, refresh]);
+  useEffect(() => {
+    if (!playing) return;
+    const frame = requestAnimationFrame(() => {
+      arena.current?.focus({ preventScroll: true });
+      arena.current?.scrollIntoView({
+        block: 'center',
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'instant'
+          : 'smooth',
+      });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [run?.id, run?.stage, playing]);
+  const input = (direction) => {
+    if (!ready || lock.current || preview || pendingRef.current) return;
+    const next = inputRef.current + direction;
+    clearTimeout(mistakeTimer.current);
+    if (!run.command.code.startsWith(next)) {
+      inputRef.current = '';
+      setEntered('');
+      setMistake(true);
+      mistakeTimer.current = setTimeout(() => setMistake(false), 500);
+      return;
+    }
+    setMistake(false);
+    inputRef.current = next;
+    setEntered(next);
+    if (next === run.command.code)
+      act({ action: 'answer', body: { runId: run.id, token: run.command.token, answer: next } });
+  };
+  const start = () => act({ action: 'start', body: { requestId: crypto.randomUUID() } });
+  return (
+    <section className="stratagem-page">
+      <header className="stratagem-heading">
+        <div>
+          <span className="eyebrow">SUPER EARTH · SIGNAL TRAINING</span>
+          <h1>
+            <RadioTower />
+            스트라타젬 입력 챌린지
+          </h1>
+          <p>정확하게 입력하고, 보상을 지키거나 다음 단계에 도전하세요.</p>
+        </div>
+        <div className="stratagem-wallet">
+          <Coins size={23} />
+          <span>
+            현재 포인트
+            <strong>
+              {number(wallet)} <small>P</small>
+            </strong>
+          </span>
+        </div>
+      </header>
+      {preview && (
+        <p className="form-error" role="status">
+          화면 확인 모드입니다. 실제 등급으로 돌아오면 도전할 수 있습니다.
+        </p>
+      )}
+      {error && (
+        <div className="stratagem-error" role="alert">
+          <p>{error}</p>
+          <Button
+            type="button"
+            disabled={busy}
+            onClick={() => (pending ? act(pending) : refresh())}
+          >
+            다시 확인
+          </Button>
+        </div>
+      )}
+      <div className="stratagem-layout">
+        <section
+          className={'stratagem-console' + (mistake ? ' is-mistake' : '')}
+          ref={arena}
+          tabIndex={0}
+          aria-label="스트라타젬 입력 게임판"
+          onDragStart={(event) => event.preventDefault()}
+          onKeyDown={(event) => {
+            const direction = directionKeys[event.key] || directionKeys[event.key.toLowerCase()];
+            if (direction && playing) {
+              event.preventDefault();
+              if (!event.repeat) input(direction);
+            }
+          }}
+        >
+          <div className="stratagem-console-top">
+            <span>
+              <RadioTower size={16} />{' '}
+              {playing ? '신호 전송 중' : checkpoint ? '전송 완료' : '통신 대기'}
+            </span>
+            <span>{run && !ended ? `${run.stage} / 7 단계` : 'SOLO CHALLENGE'}</span>
+          </div>
+          {!data ? (
+            <div className="stratagem-message" role="status">
+              진행 중인 도전을 확인하고 있습니다…
+            </div>
+          ) : playing ? (
+            <>
+              <div className="stratagem-progress">
+                <strong>
+                  명령 {run.completed + 1} <small>/ {stage.commands}</small>
+                </strong>
+                <span>
+                  <Timer size={16} />
+                  {now < run.readyAt ? '준비' : (remaining / 1000).toFixed(1) + '초'}
+                </span>
+              </div>
+              <div
+                className="stratagem-timer"
+                role="progressbar"
+                aria-label="남은 시간"
+                aria-valuemin={0}
+                aria-valuemax={stage.seconds}
+                aria-valuenow={Math.min(stage.seconds, Math.ceil(remaining / 1000))}
+              >
+                <i style={{ width: Math.min(100, remaining / (stage.seconds * 10)) + '%' }} />
+              </div>
+              <div className="stratagem-command" key={run.command.token}>
+                <img src={run.command.src} alt="" draggable={false} />
+                <h2>{run.command.label}</h2>
+                <div
+                  className="stratagem-code"
+                  aria-label={
+                    '입력 순서: ' +
+                    [...run.command.code].map((key) => directionLabels[key]).join(', ')
+                  }
+                >
+                  {[...run.command.code].map((key, index) => (
+                    <span
+                      key={index}
+                      className={
+                        index < entered.length
+                          ? 'is-done'
+                          : index === entered.length
+                            ? 'is-next'
+                            : ''
+                      }
+                    >
+                      {directionArrows[key]}
+                    </span>
+                  ))}
+                </div>
+                <p className="stratagem-feedback" role="status">
+                  {remaining === 0
+                    ? '시간 종료 · 결과 확인 중'
+                    : now < run.readyAt
+                      ? '잠시 후 시작합니다'
+                      : busy
+                        ? '명령 확인 중…'
+                        : mistake
+                          ? '입력이 달라요. 이 명령을 처음부터!'
+                          : '표시된 방향을 순서대로 입력하세요'}
+                </p>
+              </div>
+              <div className="stratagem-dpad" aria-label="방향 입력">
+                {Object.entries(glyphs).map(([key, Glyph]) => (
+                  <button
+                    type="button"
+                    key={key}
+                    className={'direction-' + key}
+                    aria-label={directionLabels[key]}
+                    disabled={!ready || busy || preview || Boolean(pending)}
+                    onClick={() => input(key)}
+                  >
+                    <Glyph size={29} />
+                  </button>
+                ))}
+              </div>
+              <p className="stratagem-key-help">PC 방향키 / WASD · 모바일 방향 버튼</p>
+            </>
+          ) : checkpoint ? (
+            <div className="stratagem-message" role="status">
+              <div className="stratagem-emblem">
+                <Check size={40} />
+              </div>
+              <span className="eyebrow">STAGE CLEAR</span>
+              <h2>{run.stage}단계 성공!</h2>
+              <p>
+                지금 받으면 <strong>{number(stage.payout)} P</strong>
+              </p>
+              <p>다음 단계에서 실패하면 보상을 받을 수 없습니다.</p>
+              <div className="stratagem-actions">
+                <Button
+                  type="button"
+                  primary
+                  disabled={busy || preview || Boolean(pending)}
+                  onClick={() => act({ action: 'cashout', body: { runId: run.id } })}
+                >
+                  <Coins size={18} />
+                  {number(stage.payout)}P 받고 종료
+                </Button>
+                <Button
+                  type="button"
+                  disabled={busy || preview || Boolean(pending)}
+                  onClick={() =>
+                    act({ action: 'continue', body: { runId: run.id, stage: run.stage } })
+                  }
+                >
+                  {run.stage + 1}단계 도전
+                  <ArrowRight size={17} />
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="stratagem-message" role="status">
+              <div className="stratagem-emblem">
+                {ended && run.payout > 0 ? <Trophy size={40} /> : <RadioTower size={40} />}
+              </div>
+              <span className="eyebrow">{ended ? 'MISSION REPORT' : 'READY TO TRANSMIT'}</span>
+              <h2>
+                {ended
+                  ? run.status === 'failed'
+                    ? '시간이 종료되었습니다'
+                    : run.status === 'completed'
+                      ? '7단계 완주! 임무 성공'
+                      : '보상을 확보했습니다'
+                  : '손끝으로 완성하는 민주주의'}
+              </h2>
+              {ended ? (
+                <>
+                  <strong className="stratagem-payout">
+                    {number(run.payout)} <small>P {run.payout ? '지급' : '보상'}</small>
+                  </strong>
+                  <p>
+                    {run.payout
+                      ? `참가비 ${challengeEntry}P 포함 · 순이익 ${run.payout - challengeEntry}P`
+                      : `도전이 종료되어 참가비 ${challengeEntry}P를 잃었습니다.`}
+                  </p>
+                </>
+              ) : (
+                <p>
+                  7단계의 신호를 완성하고 최대 <strong>400P</strong>를 획득하세요.
+                  <br />각 단계 성공 후 보상을 받고 종료할 수 있습니다.
+                </p>
+              )}
+              <Button
+                type="button"
+                primary
+                disabled={!data || busy || preview || Boolean(pending) || wallet < challengeEntry}
+                onClick={start}
+              >
+                {ended ? <RotateCcw size={18} /> : <RadioTower size={18} />}
+                {busy
+                  ? '확인 중…'
+                  : wallet < challengeEntry
+                    ? '100P가 필요합니다'
+                    : '100P로 도전 시작'}
+              </Button>
+              <p className="stratagem-key-help">
+                첫 성공 100P · 3단계 150P · 5단계 250P · 완주 400P
+              </p>
+            </div>
+          )}
+        </section>
+        <aside className="stratagem-rewards">
+          <header>
+            <Trophy size={21} />
+            <h2>단계별 보상</h2>
+            <span>총 지급액</span>
+          </header>
+          <ol>
+            {challengeStages.map((item, index) => (
+              <li
+                key={index}
+                className={run && !ended && run.stage === index + 1 ? 'is-current' : ''}
+              >
+                <b>{index + 1}</b>
+                <div>
+                  <strong>
+                    {number(item.payout)} <small>P</small>
+                  </strong>
+                  <span>
+                    명령 {item.commands}개 · {item.seconds}초
+                  </span>
+                </div>
+                {[2, 4, 6].includes(index) && (
+                  <span className="stratagem-milestone">{index === 6 ? '최종' : '목표'}</span>
+                )}
+              </li>
+            ))}
+          </ol>
+          <p>
+            보상은 단계별로 더해지지 않습니다.
+            <br />
+            100P를 받고 종료하면 본전입니다.
+          </p>
+        </aside>
+      </div>
+      <section className="stratagem-rules">
+        <h2>플레이 방법</h2>
+        <ol>
+          <li>
+            100P로 시작합니다. 준비 시간이 끝나면 표시된 명령을 방향키·WASD 또는 터치 버튼으로
+            입력하세요.
+          </li>
+          <li>틀린 입력은 해당 명령의 처음으로 돌아갑니다. 단계의 제한 시간은 계속 흐릅니다.</li>
+          <li>
+            단계마다 정해진 명령을 모두 완료하면 보상을 받고 종료하거나 다음 단계에 도전할 수
+            있습니다. 선택 중에는 시간이 흐르지 않습니다.
+          </li>
+          <li>
+            시간이 끝나면 보상 없이 종료됩니다. 7단계 완료 시 400P가 자동 지급됩니다. 참가비와
+            보상은 현재 포인트에만 반영됩니다.
+          </li>
+          <li>
+            새로고침하거나 페이지를 나가도 진행 중인 제한 시간은 멈추지 않습니다. 완료한 단계의 보상
+            선택은 다시 접속해 이어갈 수 있습니다.
+          </li>
+        </ol>
+      </section>
+    </section>
+  );
+}

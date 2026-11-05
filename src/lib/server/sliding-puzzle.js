@@ -1,5 +1,6 @@
 import { randomUUID, randomInt } from 'node:crypto';
 import { fail } from './auth';
+import { isRankingExcluded, separateRankingUsers } from './ranking-policy.mjs';
 import {
   shufflePuzzle,
   slidePuzzle,
@@ -9,13 +10,16 @@ import {
 } from '../sliding-puzzle.mjs';
 
 export const puzzleRanking = (db, month) =>
-  (db.puzzleRecords || []).filter((r) => r.month === month).sort(comparePuzzleRecords);
+  (db.puzzleRecords || [])
+    .filter((r) => r.month === month && !isRankingExcluded(db, r.userId))
+    .sort(comparePuzzleRecords);
 export function serializePuzzleRank(db, actor, row, index) {
   const user = db.users.find((u) => u.id === row.userId);
   const active = user?.status === 'active';
   return {
     id: row.id,
-    rank: index + 1,
+    rank: index < 0 ? null : index + 1,
+    excluded: isRankingExcluded(db, row.userId),
     elapsedMs: row.elapsedMs,
     moves: row.moves,
     finishedAt: row.finishedAt,
@@ -25,7 +29,11 @@ export function serializePuzzleRank(db, actor, row, index) {
     role: active ? user.role : 'member',
   };
 }
-const session = (run, now) => ({
+const resultFor = (db, run) =>
+  run.result && isRankingExcluded(db, run.userId)
+    ? { ...run.result, rank: null, excluded: true }
+    : run.result || null;
+const session = (db, run, now) => ({
   id: run.id,
   board: run.board,
   step: run.step,
@@ -33,7 +41,7 @@ const session = (run, now) => ({
   startedAt: run.startedAt,
   completedAt: run.completedAt || null,
   stopped: Boolean(run.stoppedAt),
-  result: run.result || null,
+  result: resultFor(db, run),
   elapsedMs: run.startedAt
     ? (run.completedAt ? Date.parse(run.completedAt) : now) - Date.parse(run.startedAt)
     : 0,
@@ -55,7 +63,7 @@ function notifyRank(db, userId, kind, month, rank, previousRank, runId) {
   });
 }
 function savePuzzleResult(db, run, now) {
-  if (run.result) return run.result;
+  if (run.result) return resultFor(db, run);
   if (run.verification !== 2) fail(409, '게임 검증 방식이 변경됐습니다. 새 게임을 시작해주세요.');
   if (run.stoppedAt) fail(409, '정지한 게임은 기록을 등록할 수 없습니다.');
   if (!run.startedAt) fail(400, '숫자를 처음 움직인 뒤 기록을 등록해주세요.');
@@ -75,7 +83,9 @@ function savePuzzleResult(db, run, now) {
   };
   db.puzzleRecords ||= [];
   const before = puzzleRanking(db, record.month);
-  const previous = before.find((r) => r.userId === run.userId);
+  const previous = db.puzzleRecords.find(
+    (r) => r.month === record.month && r.userId === run.userId,
+  );
   const improved = !previous || comparePuzzleRecords(record, previous) < 0;
   if (improved) {
     db.puzzleRecords = db.puzzleRecords.filter(
@@ -85,7 +95,7 @@ function savePuzzleResult(db, run, now) {
     const after = puzzleRanking(db, record.month);
     const rank = after.findIndex((r) => r.userId === run.userId) + 1;
     const oldRank = before.findIndex((r) => r.userId === run.userId) + 1;
-    if (rank <= 3)
+    if (rank > 0 && rank <= 3)
       notifyRank(db, run.userId, 'puzzle_rank_enter', record.month, rank, oldRank || null, run.id);
     for (const [index, old] of before.slice(0, 3).entries()) {
       const newRank = after.findIndex((r) => r.userId === old.userId) + 1;
@@ -94,7 +104,12 @@ function savePuzzleResult(db, run, now) {
     }
   }
   const rank = puzzleRanking(db, record.month).findIndex((r) => r.userId === run.userId) + 1;
-  run.result = { record, improved, rank };
+  run.result = {
+    record,
+    improved,
+    rank: rank || null,
+    excluded: isRankingExcluded(db, run.userId),
+  };
   return run.result;
 }
 export function handlePuzzle(db, actor, segments, method, input, query) {
@@ -107,6 +122,10 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
     const rows = puzzleRanking(db, month);
     const serialize = (row, index) => serializePuzzleRank(db, actor, row, index);
     const own = rows.findIndex((r) => r.userId === actor.id);
+    const separateIds = new Set(separateRankingUsers(db).map((user) => user.id));
+    const unranked = (db.puzzleRecords || [])
+      .filter((row) => row.month === month && separateIds.has(row.userId))
+      .map((row) => serialize(row, -1));
     return {
       month,
       currentMonth: puzzleMonth(now),
@@ -115,7 +134,8 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
         .reverse(),
       total: rows.length,
       rankings: rows.slice(0, 50).map(serialize),
-      mine: own < 0 ? null : serialize(rows[own], own),
+      mine: own < 0 ? unranked.find((row) => row.own) || null : serialize(rows[own], own),
+      unranked,
     };
   }
   if (segments[2] === 'start' && segments.length === 3 && method === 'POST') {
@@ -142,7 +162,7 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
       moves: [],
     };
     db.puzzleRuns.push(run);
-    return { run: session(run, now), serverTime: now };
+    return { run: session(db, run, now), serverTime: now };
   }
   if (
     segments.length === 3 &&
@@ -160,10 +180,10 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
       now - Date.parse(run.completedAt) <= 3600000
     )
       savePuzzleResult(db, run, now);
-    if (segments[2] === 'state') return { run: session(run, now) };
+    if (segments[2] === 'state') return { run: session(db, run, now) };
     if (segments[2] === 'stop') {
       if (!run.result) run.stoppedAt ||= new Date(now).toISOString();
-      return { run: session(run, now) };
+      return { run: session(db, run, now) };
     }
     if (run.stoppedAt) fail(409, '정지한 게임입니다. 새 게임을 시작해주세요.');
     if (!Number.isInteger(input.step)) fail(409, '이동 순서가 일치하지 않습니다.');
@@ -182,7 +202,7 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
       run.lastMove.step === input.step &&
       JSON.stringify(run.lastMove.tiles || [run.lastMove.tile]) === JSON.stringify(tiles)
     )
-      return { run: session(run, now) };
+      return { run: session(db, run, now) };
     if (run.result || run.completedAt) fail(409, '이미 완료된 게임입니다.');
     if (now - Date.parse(run.startedAt || run.issuedAt) > 3600000)
       fail(400, '게임 시간이 만료됐습니다. 다시 시작해주세요.');
@@ -208,7 +228,7 @@ export function handlePuzzle(db, actor, segments, method, input, query) {
       run.completedAt = new Date(now).toISOString();
       savePuzzleResult(db, run, now);
     }
-    return { run: session(run, now) };
+    return { run: session(db, run, now) };
   }
   if (segments[2] === 'finish' && segments.length === 3 && method === 'POST') {
     const run = (db.puzzleRuns || []).find((r) => r.id === input.runId && r.userId === actor.id);

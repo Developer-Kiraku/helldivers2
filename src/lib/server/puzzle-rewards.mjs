@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { puzzleMonth, comparePuzzleRecords, puzzleMonthlyPrizes } from '../sliding-puzzle.mjs';
 import { awardPuzzlePrize } from './points.mjs';
+import { isRankingExcluded } from './ranking-policy.mjs';
 
 // Launch month's records qualify. Older records predate this reward policy.
 export const puzzleRewardStartMonth = '2026-11';
@@ -20,7 +21,7 @@ export function settlePuzzleRewards(db, now = Date.now()) {
       continue;
     const seen = new Set();
     const winners = (db.puzzleRecords || [])
-      .filter((record) => record.month === month)
+      .filter((record) => record.month === month && !isRankingExcluded(db, record.userId))
       .sort(comparePuzzleRecords)
       .filter((record) => {
         if (seen.has(record.userId)) return false;

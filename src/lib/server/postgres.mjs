@@ -13,6 +13,7 @@ export const collections = {
   diceGames: ['hd_dice_games', (row) => row.id],
   dicePresence: ['hd_dice_presence', (row) => row.id],
   rpsRounds: ['hd_rps_rounds', (row) => row.id],
+  stratagemRuns: ['hd_stratagem_runs', (row) => row.id],
   pointLedger: ['hd_point_ledger', (row) => row.id],
   pointGrants: ['hd_point_grants', (row) => row.id],
   messages: ['hd_messages', (row) => row.id],

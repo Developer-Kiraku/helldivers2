@@ -11,6 +11,7 @@ import {
   Grid3X3,
   Dices,
   Hand,
+  RadioTower,
   ArrowUpRight,
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
@@ -19,6 +20,7 @@ import { Button } from './ui';
 import { puzzleMonthlyPrizes } from '@/lib/sliding-puzzle.mjs';
 import { rpsDailyAttempts } from '@/lib/rps-rules.mjs';
 import { diceConsolation } from '@/lib/dice-rules.mjs';
+import { challengeEntry, challengeStages } from '@/lib/stratagem-challenge.mjs';
 
 const number = (value = 0) => value.toLocaleString('ko-KR');
 export default function PointGuide() {
@@ -207,6 +209,25 @@ export default function PointGuide() {
             </p>
             <Link href="/games/dice">
               주사위 게임으로
+              <ArrowUpRight size={16} />
+            </Link>
+          </article>
+          <article className="panel">
+            <RadioTower size={27} />
+            <h3>스트라타젬 입력 챌린지</h3>
+            <p>
+              {challengeEntry}P로 시작해 제한 시간 안에 방향 명령을 입력합니다. 각 단계 성공 후
+              보상을 받고 종료하거나 계속 도전할 수 있습니다.
+            </p>
+            <strong className="point-guide-game-highlight">
+              7단계 완주 · {challengeStages.at(-1).payout}P
+            </strong>
+            <p>
+              보상은 참가비를 포함한 총 지급액입니다. 시간 초과 시 보상 없이 종료되며, 참가비와
+              보상은 현재 포인트에만 반영됩니다.
+            </p>
+            <Link href="/games/stratagem">
+              입력 챌린지 도전하기
               <ArrowUpRight size={16} />
             </Link>
           </article>
