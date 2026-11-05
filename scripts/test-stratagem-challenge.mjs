@@ -71,6 +71,8 @@ try {
   let state = call('start', { requestId: firstId });
   assert.equal(state.points.current, 900);
   assert.equal(state.run.stage, 1);
+  assert.equal(state.run.readyAt, now, 'Input opens immediately when a stage starts');
+  assert.equal(state.run.deadlineAt, now + challengeStages[0].seconds * 1000);
   assert.equal(state.run.receipts, undefined);
   assert.equal(state.run.userId, undefined);
   assert.deepEqual(call('start', { requestId: firstId }), state);

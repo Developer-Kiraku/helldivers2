@@ -1,8 +1,8 @@
 import catalog from './equipment-catalog.mjs';
 
-// Checked 2026-11-05 against in-game command listings:
+// All 19 command sequences rechecked 2026-11-05 against both listings:
 // https://divershub.app/database/stratagems
-// https://helldivers.wiki.gg/wiki/Stratagems
+// https://www.corsair.com/us/en/explorer/gamer/keyboards/helldivers-2-stratagem-macro-guide/
 const codes = {
   'orbital-precision-strike': 'RRU',
   'orbital-airburst-strike': 'RRR',

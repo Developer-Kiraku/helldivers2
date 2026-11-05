@@ -47,6 +47,7 @@ function Game() {
     synced = useRef({ at: 0, serverTime: 0 }),
     mistakeTimer = useRef(null);
   const pendingRef = useRef(null),
+    inputHandler = useRef(null),
     currentRunId = useRef(null),
     initialized = useRef(false),
     storageKey = 'hd-stratagem-pending:' + user.id;
@@ -196,6 +197,31 @@ function Game() {
     if (next === run.command.code)
       act({ action: 'answer', body: { runId: run.id, token: run.command.token, answer: next } });
   };
+  inputHandler.current = input;
+  useEffect(() => {
+    if (!playing) return;
+    const handleKey = (event) => {
+      if (event.ctrlKey || event.metaKey || event.altKey || event.defaultPrevented) return;
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.closest(
+            'input, textarea, select, [role="textbox"], [role="combobox"], [role="dialog"], [role="menu"], [role="listbox"]',
+          ))
+      )
+        return;
+      const direction =
+        directionKeys[event.code] ||
+        directionKeys[event.key] ||
+        directionKeys[event.key?.toLowerCase()];
+      if (!direction) return;
+      event.preventDefault();
+      if (!event.repeat) inputHandler.current(direction);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [playing]);
   const start = () =>
     act({ action: 'start', body: { requestId: crypto.randomUUID(), replacePrevious: true } });
   return (
@@ -243,13 +269,6 @@ function Game() {
           tabIndex={0}
           aria-label="스트라타젬 입력 게임판"
           onDragStart={(event) => event.preventDefault()}
-          onKeyDown={(event) => {
-            const direction = directionKeys[event.key] || directionKeys[event.key.toLowerCase()];
-            if (direction && playing) {
-              event.preventDefault();
-              if (!event.repeat) input(direction);
-            }
-          }}
         >
           <div className="stratagem-console-top">
             <span>
@@ -460,8 +479,8 @@ function Game() {
         <h2>플레이 방법</h2>
         <ol>
           <li>
-            100P로 시작합니다. 준비 시간이 끝나면 표시된 명령을 방향키·WASD 또는 터치 버튼으로
-            입력하세요.
+            100P로 시작합니다. 명령이 나타나면 바로 방향키·WASD 또는 터치 버튼으로 입력하세요. 한글
+            입력 상태에서도 WASD를 사용할 수 있습니다.
           </li>
           <li>틀린 입력은 해당 명령의 처음으로 돌아갑니다. 단계의 제한 시간은 계속 흐릅니다.</li>
           <li>

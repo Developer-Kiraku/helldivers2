@@ -22,7 +22,7 @@ function nextCommand(run, now, rng) {
 function beginStage(run, now, rng) {
   run.stage++;
   run.completed = 0;
-  run.readyAt = now + 1000;
+  run.readyAt = now;
   run.deadlineAt = run.readyAt + challengeStages[run.stage - 1].seconds * 1000;
   run.status = 'playing';
   nextCommand(run, run.readyAt, rng);
@@ -124,7 +124,7 @@ export function handleStratagemChallenge(db, actor, segments, method, input = {}
     if (run.status !== 'playing') return snapshot(run);
     if (run.command.token !== input.token) fail(409, '현재 표시된 명령을 입력해주세요.');
     if (now < run.commandAt + run.command.code.length * 35)
-      fail(409, '준비 시간이 끝난 뒤 차례대로 입력해주세요.');
+      fail(409, '명령을 차례대로 입력해주세요.');
     if (input.answer !== run.command.code)
       fail(400, '명령이 다릅니다. 처음부터 다시 입력해주세요.');
     run.receipts.push({ token: input.token, answer: input.answer });

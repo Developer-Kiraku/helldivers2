@@ -99,7 +99,7 @@ try {
     status: 'playing',
     stage: 1,
     completed: 0,
-    readyAt: 0,
+    readyAt: 10000,
     deadlineAt: 22000,
     command: {
       token: 'token',
@@ -109,6 +109,10 @@ try {
     },
   };
   await reply(state(run));
+  assert.ok(
+    [...document.querySelectorAll('.stratagem-dpad button')].every((el) => !el.disabled),
+    'The first input is enabled as soon as the command appears',
+  );
   assert.equal(document.activeElement, document.querySelector('.stratagem-console'));
   const press = (key) =>
     React.act(async () =>
@@ -123,8 +127,54 @@ try {
   await press('ArrowLeft');
   assert.equal(document.querySelectorAll('.stratagem-code .is-done').length, 0);
   assert.match(document.querySelector('.stratagem-feedback').textContent, /처음부터/);
+  const field = document.createElement('input');
+  document.body.appendChild(field);
+  field.focus();
+  await React.act(async () =>
+    field.dispatchEvent(
+      new window.KeyboardEvent('keydown', { key: 'd', code: 'KeyD', bubbles: true }),
+    ),
+  );
+  assert.equal(
+    document.querySelectorAll('.stratagem-code .is-done').length,
+    0,
+    'Typing in an input must not control the game',
+  );
+  field.remove();
+  await React.act(async () =>
+    window.dispatchEvent(
+      new window.KeyboardEvent('keydown', {
+        key: 'd',
+        code: 'KeyD',
+        ctrlKey: true,
+        cancelable: true,
+      }),
+    ),
+  );
+  assert.equal(document.querySelectorAll('.stratagem-code .is-done').length, 0);
   await React.act(async () => document.querySelector('[aria-label="오른쪽"]').click());
-  await press('d');
+  await React.act(async () =>
+    document.body.dispatchEvent(
+      new window.KeyboardEvent('keydown', {
+        key: 'Process',
+        code: 'KeyD',
+        isComposing: true,
+        bubbles: true,
+        cancelable: true,
+      }),
+    ),
+  );
+  assert.equal(
+    document.querySelectorAll('.stratagem-code .is-done').length,
+    2,
+    'Korean IME and focus outside the game still use the physical WASD key',
+  );
+  await React.act(async () =>
+    window.dispatchEvent(
+      new window.KeyboardEvent('keydown', { key: 'ArrowRight', repeat: true, cancelable: true }),
+    ),
+  );
+  assert.equal(document.querySelectorAll('.stratagem-code .is-done').length, 2);
   await press('ArrowUp');
   assert.equal(calls.at(-1).options.body.answer, 'RRU');
   assert.ok([...document.querySelectorAll('.stratagem-dpad button')].every((el) => el.disabled));
