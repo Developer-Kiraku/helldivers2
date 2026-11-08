@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Grid3X3, Trophy, Timer, Move, Play, Square, Check, Medal } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import { Button, Select } from './ui';
+import GameResultShare from './GameResultShare';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 import { puzzleRequest } from '@/lib/puzzle-request.mjs';
 import {
@@ -471,6 +472,7 @@ export default function SlidingPuzzle() {
               <Check size={20} />
               <div>
                 <strong>이번 게임 클리어!</strong>
+                <GameResultShare game="sliding-puzzle" resultId={result.record.id} />
                 <p>
                   <span>
                     완료 시간 <b>{puzzleTime(result.record.elapsedMs)}</b>

@@ -14,12 +14,12 @@ try {
   }
   assert.deepEqual(
     challengeStages.map((stage) => stage.payout),
-    [100, 150, 220, 320, 450, 650, 900, 1200, 1500, 2000],
+    [100, 150, 220, 320, 450, 650, 900, 1200, 1500, 2000, 4000, 8000, 16000, 32000, 64000],
   );
   assert.ok(challengeStages.every((stage) => stage.commands >= 5));
   assert.deepEqual(
     challengeStages.map((stage) => stage.commands),
-    [5, 6, 7, 8, 9, 10, 11, 12, 13, 15],
+    [5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20],
   );
   for (const [index, stage] of challengeStages.entries()) {
     const candidates = stratagemCommands.filter(
@@ -152,13 +152,28 @@ try {
     }
   }
   assert.equal(run.status, 'completed');
-  assert.equal(run.stage, 10);
-  assert.equal(run.payout, 2000);
-  assert.equal(db.stratagemRuns[0].receipts.length, 96);
-  assert.equal(call().points.current, 2900);
+  assert.equal(run.stage, 15);
+  assert.equal(run.payout, 64000);
+  assert.equal(db.stratagemRuns[0].receipts.length, 186);
+  assert.equal(call().points.current, 64900);
   assert.equal(call().points.total, 2000);
   assert.equal(db.pointLedger.length, 2);
-  assert.equal(call('cashout', { runId: run.id }).points.current, 2900);
+  assert.equal(call('cashout', { runId: run.id }).points.current, 64900);
+  assert.equal(db.stratagemRecords[0].stage, 15);
+  assert.equal(db.stratagemRecords[0].elapsedMs, 93000);
+  // Ten remains an optional cash-out before the five challenge stages.
+  db = make();
+  run = start().run;
+  while (run.stage <= 10) {
+    run = checkpoint(run);
+    if (run.stage === 10) break;
+    now += 30000;
+    run = call('continue', { runId: run.id, stage: run.stage }).run;
+  }
+  assert.equal(run.status, 'checkpoint');
+  assert.equal(run.elapsedMs, 48000, 'Checkpoint choice time is excluded');
+  assert.equal(call('cashout', { runId: run.id }).run.payout, 2000);
+  assert.equal(call().points.current, 2900);
   // Seven-stage runs already in progress must still finish and pay out under their saved rules.
   db = make();
   start();
@@ -184,7 +199,7 @@ try {
   assert.equal(call().points.current, 1800);
   db = make();
   start();
-  db.stratagemRuns[0].stages = challengeStages.map((stage, index) => ({
+  db.stratagemRuns[0].stages = challengeStages.slice(0, 10).map((stage, index) => ({
     ...stage,
     commands: [5, 5, 6, 7, 8, 9, 10, 11, 12, 13][index],
     seconds: [24, 22, 24, 25, 25, 24, 22, 23, 23, 23][index],
@@ -272,7 +287,7 @@ try {
   assert.equal(db.stratagemRuns[0].status, 'cashed');
   assert.deepEqual(call('start', { requestId: replacementId, replacePrevious: true }), replacement);
   assert.equal(db.pointLedger.length, 3, 'Replacement retries charge only once');
-  for (const stageTarget of [1, 3, 5, 7, 10]) {
+  for (const stageTarget of [1, 3, 5, 7, 10, 11, 15]) {
     db = make();
     run = start().run;
     while (run.stage < stageTarget) {
@@ -291,6 +306,7 @@ try {
     assert.equal(failed.run.status, 'failed');
     assert.equal(failed.run.payout, 0);
     assert.equal(failed.points.current, 900);
+    if (stageTarget > 1) assert.equal(db.stratagemRecords[0].stage, stageTarget - 1);
     assert.throws(() => call('cashout', { runId: run.id }), { status: 409 });
   }
   db = make();
@@ -311,7 +327,7 @@ try {
     { status: 403 },
   );
   console.log(
-    'PASS: stratagem codes, ten-stage progression/rewards, saved seven-stage runs, timers, ownership, funds, reset/retries and unchanged cumulative points',
+    'PASS: stratagem fifteen-stage progression/rewards, ten-stage cashout, saved legacy runs, active clear times, failure record retention, ownership and idempotent payout',
   );
 } finally {
   await fs.rm(directory, { recursive: true, force: true });

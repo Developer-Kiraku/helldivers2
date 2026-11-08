@@ -1,4 +1,5 @@
 export const challengeEntry = 100;
+export const challengeFinalStage = 10;
 export const challengeStages = [
   { payout: 100, commands: 5, seconds: 24, minLength: 3, maxLength: 3 },
   { payout: 150, commands: 6, seconds: 25, minLength: 4, maxLength: 4 },
@@ -10,6 +11,13 @@ export const challengeStages = [
   { payout: 1200, commands: 12, seconds: 25, minLength: 6, maxLength: 7 },
   { payout: 1500, commands: 13, seconds: 25, minLength: 6, maxLength: 7 },
   { payout: 2000, commands: 15, seconds: 25, minLength: 6, maxLength: 7 },
+  ...Array.from({ length: 5 }, (_, index) => ({
+    payout: 2000 * 2 ** (index + 1),
+    commands: 16 + index,
+    seconds: 25,
+    minLength: 6,
+    maxLength: 7,
+  })),
 ];
 // Runs created before the rebalance have no saved stages; honor their original rules.
 const originalStages = [

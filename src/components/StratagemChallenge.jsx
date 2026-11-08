@@ -14,10 +14,13 @@ import {
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import { Button } from './ui';
+import StratagemRanking from './StratagemRanking';
+import GameResultShare from './GameResultShare';
 import useRefreshOnReturn from '@/hooks/useRefreshOnReturn';
 import {
   challengeEntry,
   challengeStages,
+  challengeFinalStage,
   directionArrows,
   directionLabels,
   directionKeys,
@@ -446,12 +449,21 @@ function Game() {
               <div className="stratagem-emblem">
                 <Check size={40} />
               </div>
-              <span className="eyebrow">STAGE CLEAR</span>
-              <h2>{run.stage}단계 성공!</h2>
+              <span className="eyebrow">
+                {run.stage >= challengeFinalStage ? 'CHALLENGE UNLOCKED' : 'STAGE CLEAR'}
+              </span>
+              <h2>
+                {run.stage}단계 {run.stage === challengeFinalStage ? '최종 클리어!' : '성공!'}
+              </h2>
               <p>
                 지금 받으면 <strong>{number(stage.payout)} P</strong>
               </p>
-              <p>다음 단계에서 실패하면 보상을 받을 수 없습니다.</p>
+              <p>
+                {run.stage >= challengeFinalStage
+                  ? '도전 단계 성공 시 보상이 두 배가 됩니다. '
+                  : ''}
+                다음 단계에서 실패하면 보상을 받을 수 없습니다.
+              </p>
               <div className="stratagem-actions">
                 <Button
                   type="button"
@@ -501,6 +513,7 @@ function Game() {
                       ? `참가비 ${challengeEntry}P 포함 · 순이익 ${run.payout - challengeEntry}P`
                       : `도전이 종료되어 참가비 ${challengeEntry}P를 잃었습니다.`}
                   </p>
+                  <GameResultShare game="stratagem" resultId={run.id} />
                 </>
               ) : (
                 <p>
@@ -525,7 +538,8 @@ function Game() {
               <p className="stratagem-key-help">
                 첫 성공 {number(challengeStages[0].payout)}P · 3단계{' '}
                 {number(challengeStages[2].payout)}P · 5단계 {number(challengeStages[4].payout)}P ·
-                완주 {number(challengeStages.at(-1).payout)}P
+                최종 {number(challengeStages[challengeFinalStage - 1].payout)}P · 도전 완주{' '}
+                {number(challengeStages.at(-1).payout)}P
               </p>
             </div>
           )}
@@ -551,9 +565,17 @@ function Game() {
                     명령 {item.commands}개 · {item.seconds}초
                   </span>
                 </div>
-                {([2, 4, 6].includes(index) || index === stages.length - 1) && (
+                {([2, 4, 6].includes(index) ||
+                  index >= challengeFinalStage - 1 ||
+                  index === stages.length - 1) && (
                   <span className="stratagem-milestone">
-                    {index === stages.length - 1 ? '최종' : '목표'}
+                    {index === challengeFinalStage - 1
+                      ? '최종'
+                      : index >= challengeFinalStage
+                        ? '도전'
+                        : index === stages.length - 1
+                          ? '최종'
+                          : '목표'}
                   </span>
                 )}
               </li>
@@ -580,7 +602,9 @@ function Game() {
             있습니다. 선택 중에는 시간이 흐르지 않습니다.
           </li>
           <li>
-            시간이 끝나면 보상 없이 종료됩니다. {challengeStages.length}단계 완료 시{' '}
+            10단계가 기본 최종 단계입니다. 2,000P를 받고 종료하거나 11~15단계에 추가 도전할 수
+            있습니다. 도전 단계는 매번 명령이 1개 늘고 보상은 두 배가 됩니다. 시간이 끝나면 보상
+            없이 종료됩니다. {challengeStages.length}단계 완료 시{' '}
             {number(challengeStages.at(-1).payout)}P가 자동 지급됩니다. 참가비와 보상은 현재
             포인트에만 반영됩니다.
           </li>
@@ -590,6 +614,7 @@ function Game() {
           </li>
         </ol>
       </section>
+      <StratagemRanking refreshKey={`${run?.id || ''}:${run?.clearedStage || 0}`} />
     </section>
   );
 }

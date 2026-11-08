@@ -56,6 +56,13 @@ try {
       {
         name: 'stubs',
         setup(builder) {
+          builder.onResolve({ filter: /^\.\/(GameResultShare|StratagemRanking)$/ }, (args) => ({
+            path: args.path,
+            namespace: 'shared-game-ui',
+          }));
+          builder.onLoad({ filter: /.*/, namespace: 'shared-game-ui' }, () => ({
+            contents: 'export default ()=>null;',
+          }));
           builder.onResolve({ filter: /^(\.\/CommunityProvider|\.\/ui)$/ }, (args) => ({
             path: args.path,
             namespace: 'stub',
@@ -88,9 +95,9 @@ try {
     [...document.querySelectorAll('button')].find((el) => el.textContent.includes(text));
   await React.act(async () => root.render(React.createElement(Game)));
   await reply({ ...state(null), points: { current: 1000, total: 1000 } });
-  assert.match(document.body.textContent, /10단계의 신호/);
+  assert.match(document.body.textContent, /15단계의 신호/);
   const rewards = [...document.querySelectorAll('.stratagem-rewards li')];
-  assert.equal(rewards.length, 10);
+  assert.equal(rewards.length, 15);
   assert.match(rewards[6].textContent, /목표/);
   assert.match(rewards[9].textContent, /2,000.*명령 15개.*25초.*최종/);
   await React.act(async () => {

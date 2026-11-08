@@ -326,6 +326,8 @@ function snapshot(db, actor, now, page = '') {
     skin: diceSkin(member(db, actor.id).diceSkin).id,
     inviteAvailableAt: (member(db, actor.id).lastDiceInviteAt || 0) + 5000,
     game: publicGame(db, game, actor),
+    lastFinished:
+      page === 'dice' ? own.findLast((item) => item.status === 'finished')?.id || null : null,
     online:
       page === 'dice'
         ? db.users

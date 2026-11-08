@@ -18,6 +18,7 @@ import Dice3D from './Dice3D';
 import DiceSkinPicker from './DiceSkinPicker';
 import Avatar from './Avatar';
 import { Button } from './ui';
+import GameResultShare from './GameResultShare';
 import { diceMaxMultiplier, diceConsolation } from '@/lib/dice-rules.mjs';
 
 const number = (value) => (value || 0).toLocaleString('ko-KR');
@@ -123,6 +124,12 @@ export default function DiceGame() {
         </p>
       )}
       {!data && !preview && <p role="status">로그인 중인 대원을 확인하고 있습니다…</p>}
+      <GameResultShare
+        key={user.id}
+        game="dice"
+        resultId={finished ? game.id : data?.lastFinished}
+        label="최근 게임 결과 공유"
+      />
       <div className="dice-layout">
         <section
           ref={arenaRef}

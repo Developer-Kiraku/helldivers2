@@ -16,6 +16,7 @@ import {
 import { useCommunity } from './CommunityProvider';
 import { Button } from './ui';
 import Modal from './Modal';
+import GameResultShare from './GameResultShare';
 import useRefreshOnReturn from '@/hooks/useRefreshOnReturn';
 import {
   rpsChoices,
@@ -389,6 +390,9 @@ function Game() {
               <span>가위·바위·보를 선택하고 도전하세요.</span>
             )}
           </div>
+          {round && !busy && (
+            <GameResultShare key={user.id} game="rps" resultId={round.requestId} />
+          )}
           <fieldset className="rps-choice-field" disabled={busy || Boolean(pending) || preview}>
             <legend>나의 선택</legend>
             <div className="rps-choices">

@@ -146,6 +146,9 @@ async function run() {
   await import('./test-dice-game.mjs');
   await import('./test-rps-game.mjs');
   await import('./test-stratagem-challenge.mjs');
+  await import('./test-stratagem-rankings.mjs');
+  await import('./test-game-shares.mjs');
+  await import('./test-game-share-ui.mjs');
   await import('./test-stratagem-ui.mjs');
   await import('./test-ranking-policy.mjs');
   await import('./test-rps-ui.mjs');
@@ -211,6 +214,7 @@ async function run() {
     await require('./test-dice-http.cjs')({ guest, admin, member, apprentice, file });
     await require('./test-rps-http.cjs')({ guest, admin, member, apprentice, file });
     await require('./test-stratagem-http.cjs')({ guest, admin, member });
+    await require('./test-game-shares-http.cjs')({ guest, admin, member, file });
     await require('./test-dashboard-rankings-http.cjs')({ guest, member, file });
     await require('./test-test-player-http.cjs')({ guest, admin, deputy, member, client, file });
     await require('./test-point-grants-http.cjs')({

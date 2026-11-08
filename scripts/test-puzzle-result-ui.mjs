@@ -40,6 +40,13 @@ try {
       {
         name: 'ui-boundaries',
         setup(builder) {
+          builder.onResolve({ filter: /^\.\/GameResultShare$/ }, (args) => ({
+            path: args.path,
+            namespace: 'shared-game-ui',
+          }));
+          builder.onLoad({ filter: /.*/, namespace: 'shared-game-ui' }, () => ({
+            contents: 'export default ()=>null;',
+          }));
           builder.onResolve(
             { filter: /^(next\/navigation|\.\/CommunityProvider|\.\/ui)$/ },
             (args) => ({ path: args.path, namespace: 'stub' }),

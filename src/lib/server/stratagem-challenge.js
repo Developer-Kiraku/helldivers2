@@ -3,6 +3,7 @@ import { fail } from './auth';
 import { transferGamePoints } from './points.mjs';
 import { challengeEntry, challengeStages, challengeStagesFor } from '../stratagem-challenge.mjs';
 import { stratagemCommands } from '../stratagem-codes.mjs';
+import { recordStratagemClear, stratagemRanking } from './stratagem-rankings.mjs';
 
 const active = (run) => ['playing', 'checkpoint'].includes(run.status);
 const validId = (value) =>
@@ -75,6 +76,10 @@ function publicRun(run) {
     createdAt,
     requestId,
     stages: challengeStagesFor(run),
+    clearedStage:
+      run.clearedStage ??
+      (['cashed', 'completed', 'checkpoint'].includes(status) ? stage : Math.max(0, stage - 1)),
+    elapsedMs: run.timingVersion === 1 ? run.elapsedMs : null,
     command: status === 'playing' ? run.command : null,
     nextCommand: status === 'playing' ? run.nextCommand || null : null,
   };
@@ -82,6 +87,8 @@ function publicRun(run) {
 export function handleStratagemChallenge(db, actor, segments, method, input = {}, options = {}) {
   const now = options.now ?? Date.now();
   const rng = options.randomInt || randomInt;
+  if (segments.length === 3 && segments[2] === 'rankings' && method === 'GET')
+    return stratagemRanking(db, actor);
   db.stratagemRuns ||= [];
   const own = db.stratagemRuns.filter((run) => run.userId === actor.id);
   for (const run of own)
@@ -111,6 +118,9 @@ export function handleStratagemChallenge(db, actor, segments, method, input = {}
       stages: challengeStages.map((stage) => ({ ...stage })),
       status: 'playing',
       receipts: [],
+      timingVersion: 1,
+      clearedStage: 0,
+      elapsedMs: 0,
       createdAt: now,
     };
     transferGamePoints(db, actor.id, `stratagem:${run.id}:entry`, -challengeEntry, run.id);
@@ -148,6 +158,7 @@ export function handleStratagemChallenge(db, actor, segments, method, input = {}
     run.inputAfter = inputAfter;
     run.completed++;
     if (run.completed === challengeStagesFor(run)[run.stage - 1].commands) {
+      recordStratagemClear(db, run, now);
       run.status = 'checkpoint';
       run.nextCommand = null;
       if (run.stage === challengeStagesFor(run).length) finish(db, run, 'completed', now);

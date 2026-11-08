@@ -14,9 +14,9 @@ module.exports = async ({ guest, member, admin }) => {
   let run = starts[0].data.run;
   assert.equal(starts[1].data.run.id, run.id);
   assert.equal(run.stage, 1);
-  assert.equal(run.stages.length, 10);
-  assert.equal(run.stages.at(-1).payout, 2000);
-  assert.equal(run.stages.at(-1).commands, 15);
+  assert.equal(run.stages.length, 15);
+  assert.equal(run.stages.at(-1).payout, 64000);
+  assert.equal(run.stages.at(-1).commands, 20);
   assert.ok(run.nextCommand);
   assert.equal(run.deadlineAt - run.readyAt, 24000);
   assert.equal(starts[1].data.points.current, before.current - 100);
@@ -58,6 +58,11 @@ module.exports = async ({ guest, member, admin }) => {
   assert.equal(paid[1].data.points.current, before.current + 120);
   assert.equal(paid[1].data.points.total, before.total);
   assert.equal((await member.call(base)).data.run.status, 'cashed');
+  await guest.call(base + '/rankings', 'GET', undefined, 401);
+  const ranking = (await member.call(base + '/rankings')).data;
+  assert.equal(ranking.mine.stage, 3);
+  assert.ok(ranking.mine.elapsedMs > 0);
+  assert.ok(!JSON.stringify(ranking).includes('token'));
   let fresh = (await member.call(base + '/start', 'POST', { requestId: randomUUID() })).data.run;
   await admin.call(base + '/reset', 'POST', { runId: fresh.id }, 404);
   await member.call(base + '/reset', 'POST', { runId: fresh.id }, 403, {

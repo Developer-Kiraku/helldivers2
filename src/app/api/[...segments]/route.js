@@ -5,6 +5,7 @@ import { dashboardRanking } from '@/lib/server/rankings';
 import { handleDiceGame } from '@/lib/server/dice-game';
 import { handleRpsGame } from '@/lib/server/rps-game';
 import { handleStratagemChallenge } from '@/lib/server/stratagem-challenge';
+import { createGameShare } from '@/lib/server/game-shares';
 import { handlePointGrants } from '@/lib/server/point-grants';
 import {
   testPlayerOwner,
@@ -156,7 +157,7 @@ async function handler(request, context) {
     const method = request.method;
     const gameRequest =
       segments[0] === 'games' &&
-      ['dice', 'sliding-puzzle', 'rps', 'stratagem'].includes(segments[1]);
+      ['dice', 'sliding-puzzle', 'rps', 'stratagem', 'share'].includes(segments[1]);
     const operationalOptions =
       gameRequest ||
       segments[0] === 'rankings' ||
@@ -171,11 +172,13 @@ async function handler(request, context) {
       ].includes(path)
         ? {
             collections:
-              segments[0] === 'games' && segments[1] === 'rps'
-                ? [...operationalCollections, 'rpsRounds']
-                : segments[0] === 'games' && segments[1] === 'stratagem'
-                  ? [...operationalCollections, 'stratagemRuns']
-                  : operationalCollections,
+              path === 'games/share'
+                ? [...operationalCollections, 'rpsRounds', 'stratagemRuns', 'gameShares']
+                : segments[0] === 'games' && segments[1] === 'rps'
+                  ? [...operationalCollections, 'rpsRounds']
+                  : segments[0] === 'games' && segments[1] === 'stratagem'
+                    ? [...operationalCollections, 'stratagemRuns', 'stratagemRecords']
+                    : operationalCollections,
           }
         : {};
     const transact = (callback, write = true) => transaction(callback, write, operationalOptions);
@@ -328,6 +331,7 @@ async function handler(request, context) {
     const write = method !== 'GET' || path === 'bootstrap' || path === 'games/sliding-puzzle/state';
     const result = await transact((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
+      if (path === 'games/share' && method === 'POST') return createGameShare(db, actor, input);
       if (path === 'points/guide' && method === 'GET') return { settings: pointSettings(db) };
       if (segments[0] === 'rankings' && segments.length === 2 && method === 'GET')
         return dashboardRanking(db, actor, segments[1], new URL(request.url).searchParams);
