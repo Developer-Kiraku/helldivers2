@@ -171,27 +171,74 @@
   font-size: var(--hd-font-size-13);
 }
 .puzzle-result {
-  display: flex;
-  gap: 10px;
   margin-top: 18px;
-  padding: 14px;
-  border: 1px solid var(--hd-color-accent);
-  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--hd-color-accent) 36%, var(--hd-color-border));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--hd-color-accent) 4%, var(--hd-color-surface));
   color: var(--hd-color-accent);
 }
-.puzzle-result p {
-  margin: 5px 0 0;
-  font-size: var(--hd-font-size-12);
-}
-.puzzle-result > div > p:first-of-type {
+.puzzle-result-heading {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px 20px;
-  color: var(--hd-color-input-text);
-  font-variant-numeric: tabular-nums;
+  align-items: center;
+  gap: 9px;
+  font-size: var(--hd-font-size-15);
 }
-.puzzle-result b {
-  margin-left: 4px;
+.puzzle-result-mark {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--hd-color-accent) 12%, transparent);
+}
+.puzzle-result-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0 0;
+  dt {
+    color: var(--hd-color-text-muted);
+    font-size: var(--hd-font-size-12);
+  }
+  dd {
+    margin: 5px 0 0;
+    font-size: var(--hd-font-size-18);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: var(--hd-color-input-text);
+  }
+  small {
+    margin-left: 4px;
+    font-size: var(--hd-font-size-12);
+    font-weight: 500;
+  }
+}
+.puzzle-result-best {
+  margin: 12px 0 0;
+  font-size: var(--hd-font-size-12);
+  line-height: 1.6;
+}
+.puzzle-result-actions {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hd-color-border);
+}
+.puzzle-result-actions .game-result-share-trigger {
+  width: 100%;
+  min-height: 40px;
+  margin: 0;
+  justify-content: center;
+  font-size: var(--hd-font-size-13);
+  color: var(--hd-color-input-text);
+  background: var(--hd-color-input);
+  border-color: var(--hd-color-border);
+  &:hover {
+    color: var(--hd-color-accent);
+    border-color: var(--hd-color-accent);
+  }
 }
 .puzzle-ranking > header {
   display: flex;

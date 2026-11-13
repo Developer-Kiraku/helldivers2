@@ -468,24 +468,39 @@ export default function SlidingPuzzle() {
             </p>
           )}
           {phase === 'done' && result && (
-            <div className="puzzle-result" role="status">
-              <Check size={20} />
-              <div>
-                <strong>이번 게임 클리어!</strong>
-                <GameResultShare game="sliding-puzzle" resultId={result.record.id} />
-                <p>
-                  <span>
-                    완료 시간 <b>{puzzleTime(result.record.elapsedMs)}</b>
+            <div className="puzzle-result">
+              <div role="status">
+                <div className="puzzle-result-heading">
+                  <span className="puzzle-result-mark">
+                    <Check size={18} />
                   </span>
-                  <span>
-                    이동 횟수 <b>{result.record.moves}회</b>
-                  </span>
-                </p>
+                  <strong>이번 게임 클리어!</strong>
+                </div>
+                <dl className="puzzle-result-stats">
+                  <div>
+                    <dt>완료 시간</dt>
+                    <dd>{puzzleTime(result.record.elapsedMs)}</dd>
+                  </div>
+                  <div>
+                    <dt>이동 횟수</dt>
+                    <dd>
+                      {result.record.moves}
+                      <small>회</small>
+                    </dd>
+                  </div>
+                </dl>
                 {result.improved && (
-                  <p>
+                  <p className="puzzle-result-best">
                     월간 최고 기록 갱신 · {result.excluded ? '순위 제외 기록' : `${result.rank}위`}
                   </p>
                 )}
+              </div>
+              <div className="puzzle-result-actions">
+                <GameResultShare
+                  game="sliding-puzzle"
+                  resultId={result.record.id}
+                  label="클리어 기록 공유"
+                />
               </div>
             </div>
           )}
