@@ -328,7 +328,11 @@ async function handler(request, context) {
           ? { ...input, photo: await normalizeUploadedImage(input.photo, { avatar: true }) }
           : await normalizePostImages(input, board);
     }
-    const write = method !== 'GET' || path === 'bootstrap' || path === 'games/sliding-puzzle/state';
+    const write =
+      method !== 'GET' ||
+      path === 'bootstrap' ||
+      path === 'games/sliding-puzzle/state' ||
+      path === 'games/stratagem';
     const result = await transact((db) => {
       const actor = presentationUser(requireUser(db, token), viewRole);
       if (path === 'games/share' && method === 'POST') return createGameShare(db, actor, input);

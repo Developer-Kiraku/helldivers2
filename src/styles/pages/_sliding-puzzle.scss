@@ -226,7 +226,8 @@
   padding-top: 12px;
   border-top: 1px solid var(--hd-color-border);
 }
-.puzzle-result-actions .game-result-share-trigger {
+.puzzle-result-actions .game-result-share-trigger,
+.puzzle-my-record-actions .game-result-share-trigger {
   width: 100%;
   min-height: 40px;
   margin: 0;
@@ -256,6 +257,7 @@
 }
 .puzzle-my-record {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: center;
   background: var(--hd-color-input);
@@ -265,6 +267,11 @@
   margin: 18px 0;
   color: var(--hd-color-accent);
   font-size: var(--hd-font-size-12);
+}
+.puzzle-my-record-actions {
+  flex-basis: 100%;
+  padding-top: 10px;
+  border-top: 1px solid var(--hd-color-border);
 }
 .puzzle-prizes {
   display: grid;

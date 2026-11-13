@@ -11,7 +11,7 @@ try {
   await build({
     stdin: {
       contents:
-        'export {dashboardRanking} from "./src/lib/server/rankings.js"; export {handlePuzzle} from "./src/lib/server/sliding-puzzle.js"; export {settlePuzzleRewards,puzzleRewardDueAt} from "./src/lib/server/puzzle-rewards.mjs";',
+        'export {dashboardRanking} from "./src/lib/server/rankings.js"; export {handlePuzzle} from "./src/lib/server/sliding-puzzle.js"; export {settlePuzzleRewards,puzzleRewardDueAt} from "./src/lib/server/puzzle-rewards.mjs"; export {createGameShare,findPublicGameShare} from "./src/lib/server/game-shares.js";',
       resolveDir: process.cwd(),
     },
     outfile,
@@ -32,9 +32,14 @@ try {
       },
     ],
   });
-  const { dashboardRanking, handlePuzzle, settlePuzzleRewards, puzzleRewardDueAt } = createRequire(
-    import.meta.url,
-  )(outfile);
+  const {
+    dashboardRanking,
+    handlePuzzle,
+    settlePuzzleRewards,
+    puzzleRewardDueAt,
+    createGameShare,
+    findPublicGameShare,
+  } = createRequire(import.meta.url)(outfile);
   let now = Date.parse('2026-11-20T00:00:00Z');
   Date.now = () => now;
   const db = {
@@ -101,8 +106,9 @@ try {
     call('move', { runId: run.id, tile: 15, step: 1 });
     return call('finish', { runId: run.id });
   };
+  const slowerResult = finish(2000);
   assert.equal(
-    finish(2000).improved,
+    slowerResult.improved,
     false,
     'An excluded personal best must not be overwritten by a slower run',
   );
@@ -124,6 +130,36 @@ try {
   );
   assert.equal(restored.run.result.excluded, true);
   assert.equal(restored.run.result.rank, null);
+  const rankingBeforeShare = JSON.stringify(call());
+  for (const result of [slowerResult, best]) {
+    const share = createGameShare(db, owner, {
+      game: 'sliding-puzzle',
+      resultId: result.record.id,
+    }).share;
+    assert.equal(share.result.nickname, owner.nickname);
+    assert.equal(
+      findPublicGameShare(db, share.path.split('/').pop()).result.headline,
+      '퍼즐 클리어!',
+    );
+    assert.throws(
+      () => createGameShare(db, viewer, { game: 'sliding-puzzle', resultId: result.record.id }),
+      { status: 404 },
+    );
+  }
+  // Returning visitors can share the persistent personal best even after short-lived runs expire.
+  db.puzzleRuns = [];
+  db.gameShares = [];
+  const savedShare = createGameShare(db, owner, {
+    game: 'sliding-puzzle',
+    resultId: call().mine.id,
+  }).share;
+  assert.equal(savedShare.result.nickname, owner.nickname);
+  assert.equal(savedShare.result.stats[0].value, '00:00.500');
+  assert.equal(
+    JSON.stringify(call()),
+    rankingBeforeShare,
+    'Sharing an excluded record never changes rankings',
+  );
   assert.equal(
     db.notifications?.length || 0,
     0,

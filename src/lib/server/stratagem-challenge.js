@@ -48,6 +48,9 @@ function finish(db, run, status, now) {
   if (run.payout)
     transferGamePoints(db, run.userId, `stratagem:${run.id}:payout`, run.payout, run.id);
 }
+export function expireStratagemRun(db, run, now = Date.now()) {
+  if (run?.status === 'playing' && now >= run.deadlineAt) finish(db, run, 'failed', now);
+}
 const closePrevious = (db, run, now) =>
   finish(db, run, run.status === 'checkpoint' ? 'cashed' : 'abandoned', now);
 function publicRun(run) {
@@ -91,8 +94,7 @@ export function handleStratagemChallenge(db, actor, segments, method, input = {}
     return stratagemRanking(db, actor);
   db.stratagemRuns ||= [];
   const own = db.stratagemRuns.filter((run) => run.userId === actor.id);
-  for (const run of own)
-    if (run.status === 'playing' && now >= run.deadlineAt) finish(db, run, 'failed', now);
+  for (const run of own) expireStratagemRun(db, run, now);
   const snapshot = (run) => ({
     serverTime: now,
     points: { ...(actor.points || { current: 0, total: 0 }) },

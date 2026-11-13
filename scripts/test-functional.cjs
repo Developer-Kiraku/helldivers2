@@ -215,6 +215,7 @@ async function run() {
     await require('./test-rps-http.cjs')({ guest, admin, member, apprentice, file });
     await require('./test-stratagem-http.cjs')({ guest, admin, member });
     await require('./test-game-shares-http.cjs')({ guest, admin, member, file });
+    await require('./test-stratagem-share-http.cjs')({ guest, admin, member, file });
     await require('./test-dashboard-rankings-http.cjs')({ guest, member, file });
     await require('./test-test-player-http.cjs')({ guest, admin, deputy, member, client, file });
     await require('./test-point-grants-http.cjs')({

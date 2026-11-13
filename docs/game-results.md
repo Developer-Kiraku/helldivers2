@@ -5,6 +5,8 @@
 슬라이딩 퍼즐, 민주주의 주사위, 가위바위보, 스트라타젬 히어로의 완료 화면에서 결과를 공유합니다. 주사위는 다음 판이 자동 시작되어도 최근 종료한 게임을 공유할 수 있으며, 이미 연 공유 레이어는 처음 선택한 판을 유지합니다.
 
 - `POST /api/games/share`는 로그인·Origin 검증 후 본인의 완료된 서버 기록만 조회합니다. 클라이언트에서 보낸 점수·이름·보상은 받지 않습니다. 같은 회원/게임/결과에 대해서는 같은 공유 ID를 반환합니다.
+- 총운영자처럼 랭킹에서 제외된 회원도 자신의 결과를 공유할 수 있습니다. 슬라이딩 퍼즐의 저장된 개인 최고 기록에도 공유 버튼을 제공합니다.
+- 스트라타젬 히어로의 상태 조회는 시간 초과로 끝난 결과를 저장합니다. 이전에 화면만 종료되고 서버에 진행 중으로 남은 기록도 본인이 공유하면 서버 제한 시간을 확인해 종료 처리합니다. 진행 중인 게임이나 다른 회원의 기록은 공유할 수 없습니다.
 - 공유 버튼을 누른 경우에만 `gameShares`에 최소 결과 스냅샷을 저장합니다. 원래 게임 기록이 정리되어도 링크는 유지됩니다. 닉네임, 게임 결과, 완료 시각만 공개하며 회원 ID, 보유 포인트, 세션, 상대 회원의 닉네임을 포함하지 않습니다.
 - `/game-results/{24자리 난수}`와 하위 `/image`는 공유를 위해 공개하는 유일한 새 페이지/이미지입니다. 다른 게임·게시판의 로그인 제한은 그대로입니다. 검색 노출을 막고, 탈퇴한 회원의 공유는 반환하지 않습니다.
 - 결과 PNG는 서버가 1200×630으로 만듭니다. 한국어 글꼴은 기존 Pretendard의 OFL 라이선스를 유지하고 예약 이름을 피한 정적 `HDGameResult.woff`를 사용합니다.
@@ -21,4 +23,4 @@
 
 PostgreSQL의 `hd_game_shares`, `hd_stratagem_records`는 기존 자동 마이그레이션을 사용합니다. 게임 요청은 필요한 컬렉션만 읽고, 공유 이미지에는 작은 메모리 캐시를 둡니다.
 
-검증: `test-game-shares.mjs`, `test-game-share-ui.mjs`, `test-game-shares-http.cjs`, `test-stratagem-challenge.mjs`, `test-stratagem-rankings.mjs`, 기존 게임 UI·HTTP 회귀 테스트. 전체 검증은 `npm run test:functional`에 포함됩니다.
+검증: `test-game-shares.mjs`, `test-game-share-ui.mjs`, `test-game-shares-http.cjs`, `test-stratagem-share-http.cjs`, `test-stratagem-challenge.mjs`, `test-stratagem-rankings.mjs`, 기존 게임 UI·HTTP 회귀 테스트. 전체 검증은 `npm run test:functional`에 포함됩니다.

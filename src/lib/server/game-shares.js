@@ -3,6 +3,7 @@ import { fail } from './auth';
 import { puzzleTime } from '../sliding-puzzle.mjs';
 import { challengeEntry } from '../stratagem-challenge.mjs';
 import { gameResultLabels, gameSharePath, validGameShareCode } from '../game-results.mjs';
+import { expireStratagemRun } from './stratagem-challenge';
 
 const number = (value) => value.toLocaleString('ko-KR');
 const points = (value) => `${number(value)} P`;
@@ -75,12 +76,13 @@ function snapshot(db, actor, game, resultId) {
     };
   }
   const run = (db.stratagemRuns || []).find(
-    (row) =>
-      row.id === resultId &&
-      row.userId === actor.id &&
-      ['cashed', 'completed', 'failed', 'abandoned'].includes(row.status),
+    (row) => row.id === resultId && row.userId === actor.id,
   );
-  if (!run?.finishedAt) fail(404, '종료된 스트라타젬 히어로 기록을 찾을 수 없습니다.');
+  // Older timeout responses displayed a finished run without persisting it. Settle only
+  // this owner's expired run so the already displayed result can still be shared.
+  expireStratagemRun(db, run);
+  if (!run?.finishedAt || !['cashed', 'completed', 'failed', 'abandoned'].includes(run.status))
+    fail(404, '종료된 스트라타젬 히어로 기록을 찾을 수 없습니다.');
   const cleared =
     run.clearedStage ??
     (['cashed', 'completed'].includes(run.status) ? run.stage : Math.max(0, run.stage - 1));

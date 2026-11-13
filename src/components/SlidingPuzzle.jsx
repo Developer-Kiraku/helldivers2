@@ -610,6 +610,15 @@ export default function SlidingPuzzle() {
                     {puzzleTime(ranks.mine.elapsedMs)}
                     <small>{ranks.mine.moves}회 이동</small>
                   </b>
+                  {ranks.mine.id && (
+                    <div className="puzzle-my-record-actions">
+                      <GameResultShare
+                        game="sliding-puzzle"
+                        resultId={ranks.mine.id}
+                        label="내 최고 기록 공유"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
               <div className="puzzle-rank-table">
