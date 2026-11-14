@@ -4,7 +4,14 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { build } from 'esbuild';
-import { rpsChoices, rpsOutcome, rpsMultiplier, rpsRewards } from '../src/lib/rps-rules.mjs';
+import {
+  rpsChoices,
+  rpsOutcome,
+  rpsMultiplier,
+  rpsRewards,
+  rpsOpponent,
+  rpsOutcomeTickets,
+} from '../src/lib/rps-rules.mjs';
 import {
   rpsAttempts,
   awardRpsPostAttempt,
@@ -72,8 +79,8 @@ try {
       new URLSearchParams(requestId ? { requestId } : {}),
       { now },
     );
-  const play = (opponent = 0, ticket = 999, extra = {}, user = actor) => {
-    const randoms = [opponent, ticket];
+  const play = (outcomeTicket = 0, ticket = 999, extra = {}, user = actor) => {
+    const randoms = [outcomeTicket, ticket];
     return handleRpsGame(
       db,
       user,
@@ -94,7 +101,7 @@ try {
   assert.equal(result.attempts.daily, 4);
   const retry = { requestId: result.round.requestId };
   assert.deepEqual(
-    play(2, 0, retry),
+    play(21, 0, retry),
     result,
     'Identical retry returns the committed result without charging',
   );
@@ -108,7 +115,7 @@ try {
   );
   assert.ok(!('userId' in result.round));
   now += 2000;
-  result = play(1);
+  result = play(11);
   assert.equal(result.round.outcome, 'draw');
   assert.equal(result.round.profit, 0);
   assert.equal(result.points.current, 10900);
@@ -119,7 +126,7 @@ try {
   assert.equal(result.round.profit, 0, 'One times includes the original stake');
   assert.equal(result.attempts.daily, 3);
   now += 2000;
-  result = play(2, 999, { multiplier: 10, outcome: 'win', payout: 1000000 });
+  result = play(21, 999, { multiplier: 10, outcome: 'win', payout: 1000000 });
   assert.equal(result.round.outcome, 'lose');
   assert.equal(
     result.points.current,
@@ -152,15 +159,15 @@ try {
   assert.equal(read().attempts.bonus, 2);
   for (let i = 0; i < 2; i++) {
     now += 2000;
-    result = play(2);
+    result = play(21);
   }
   assert.equal(result.attempts.daily, 0);
   assert.equal(result.attempts.bonus, 2, 'Daily attempts are used before saved attempts');
   now += 2000;
-  result = play(1);
+  result = play(11);
   assert.equal(result.attempts.bonus, 2, 'A draw preserves a saved attempt too');
   now += 2000;
-  result = play(2);
+  result = play(21);
   assert.equal(result.round.attemptSource, 'bonus');
   assert.equal(result.attempts.bonus, 1);
   now = Date.parse('2026-11-04T15:00:00Z');
@@ -179,8 +186,52 @@ try {
   );
   assert.equal(read().history.length, 5);
   assert.equal(actor.points.total, 10000);
+  // Exhaust the server's complete outcome sample space for each hand and stake.
+  // Expected counts are fixed by the requested 1/3 × 1.1 win rate, not the implementation weights.
+  assert.equal(rpsOutcomeTickets, 30);
+  for (const choice of rpsChoices) {
+    for (const stake of [50, 100, 500, 1000]) {
+      const outcomes = { win: 0, draw: 0, lose: 0 };
+      for (let ticket = 0; ticket < 30; ticket++) {
+        const player = {
+          id: 'probability-test',
+          status: 'active',
+          points: { current: 10000, total: 10000 },
+        };
+        const isolated = { users: [player] };
+        const limits = [];
+        const settled = handleRpsGame(
+          isolated,
+          player,
+          ['games', 'rps', 'play'],
+          'POST',
+          { requestId: randomUUID(), choice: choice.id, stake },
+          undefined,
+          {
+            now,
+            randomInt: (limit) => {
+              limits.push(limit);
+              return limits.length === 1 ? ticket : 999;
+            },
+          },
+        );
+        const round = settled.round;
+        outcomes[round.outcome]++;
+        assert.equal(rpsOutcome(choice.id, round.opponent), round.outcome);
+        assert.deepEqual(limits, round.outcome === 'win' ? [30, 1000] : [30]);
+        assert.equal(
+          settled.points.current,
+          10000 + (round.outcome === 'win' ? stake * 9 : round.outcome === 'lose' ? -stake : 0),
+        );
+        assert.equal(settled.attempts.daily, round.outcome === 'draw' ? 5 : 4);
+      }
+      assert.deepEqual(outcomes, { win: 11, draw: 10, lose: 9 });
+    }
+  }
+  for (const ticket of [-1, 30, 1.5, NaN])
+    assert.throws(() => rpsOpponent('rock', ticket), /Invalid outcome ticket/);
   console.log(
-    'PASS: RPS exact 1,000-ticket probabilities, outcomes, wallet settlement, attempt rollover, post rewards, isolation, retries and forged requests',
+    'PASS: RPS exact 11/30 win, 10/30 draw, 9/30 loss across all hands/stakes; unchanged 1,000-ticket rewards, wallet settlement, attempt rollover, post rewards, isolation, retries and forged requests',
   );
 } finally {
   // The only removed path is the temporary directory created inside this workspace above.

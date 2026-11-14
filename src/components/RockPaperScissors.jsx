@@ -24,6 +24,8 @@ import {
   rpsDefaultStake,
   rpsDailyAttempts,
   rpsRewards,
+  rpsOutcomeWeights,
+  rpsOutcomeTickets,
 } from '@/lib/rps-rules.mjs';
 
 const apiPath = 'games/rps';
@@ -539,7 +541,17 @@ function Game() {
           </h2>
           <small>전체 확률 공개 · 합계 100%</small>
         </header>
-        <p>승리한 경우에 적용되는 확률입니다. 상대의 가위·바위·보는 각각 같은 확률로 결정됩니다.</p>
+        <p className="rps-outcome-probabilities" aria-label="승패 확률">
+          한 판 기준:{' '}
+          {Object.entries(rpsOutcomeWeights)
+            .map(
+              ([outcome, weight]) =>
+                `${outcomeLabels[outcome]} ${(weight * 100) % rpsOutcomeTickets ? '약 ' : ''}${((weight / rpsOutcomeTickets) * 100).toLocaleString('ko-KR', { maximumFractionDigits: 2 })}%`,
+            )
+            .join(' · ')}
+          . 가위·바위·보 중 무엇을 선택해도 승률은 같습니다.
+        </p>
+        <p>아래 배율은 승리한 경우에 별도로 추첨하며, 지급액에는 배팅 원금이 포함됩니다.</p>
         <div>
           {rpsRewards.map((item) => (
             <div key={item.multiplier}>

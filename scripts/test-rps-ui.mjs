@@ -133,6 +133,11 @@ try {
   await render();
   assert.equal(document.querySelector('.rps-stakes [aria-pressed=true]').textContent, '100 P');
   assert.equal(document.querySelectorAll('.rps-stakes button').length, 4);
+  assert.match(
+    document.querySelector('[aria-label="승패 확률"]').textContent,
+    /승리 약 36\.67% · 무승부 약 33\.33% · 패배 30%/,
+  );
+  assert.ok(!document.body.textContent.includes('상대의 가위·바위·보는 각각 같은 확률'));
   const opponentHand = () => document.querySelector('.is-opponent .rps-hand').innerHTML;
   const waitingHand = opponentHand();
   await React.act(async () => new Promise((resolve) => setTimeout(resolve, 650)));

@@ -2,7 +2,14 @@ import { randomInt } from 'node:crypto';
 import { fail } from './auth';
 import { transferGamePoints } from './points.mjs';
 import { rpsAttempts, consumeRpsAttempt } from './rps-attempts.mjs';
-import { rpsChoices, rpsStakes, rpsOutcome, rpsMultiplier } from '../rps-rules.mjs';
+import {
+  rpsChoices,
+  rpsStakes,
+  rpsOutcome,
+  rpsMultiplier,
+  rpsOpponent,
+  rpsOutcomeTickets,
+} from '../rps-rules.mjs';
 
 const cooldownMs = 1800;
 const validRequestId = (value) =>
@@ -84,7 +91,7 @@ export function handleRpsGame(
   if (!current.attempts.total)
     fail(409, '남은 도전 횟수가 없습니다. 게시글을 작성하면 1회 추가됩니다.');
   if (current.points.current < input.stake) fail(400, '배팅할 포인트가 부족합니다.');
-  const opponent = rpsChoices[rng(rpsChoices.length)].id;
+  const opponent = rpsOpponent(input.choice, rng(rpsOutcomeTickets));
   const outcome = rpsOutcome(input.choice, opponent);
   const multiplier = outcome === 'win' ? rpsMultiplier(rng(1000)) : 0;
   const payout = outcome === 'draw' ? input.stake : input.stake * multiplier;
