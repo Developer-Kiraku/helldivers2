@@ -216,7 +216,7 @@ try {
   await render();
   await click('손 강화');
   assert.match(document.querySelector('[role=dialog]').textContent, /여행자의 손/);
-  assert.match(document.querySelector('.hand-forge-stats').textContent, /100%/);
+  assert.match(document.querySelector('.hand-forge-success').textContent, /강화 성공 확률 100%/);
   loseEnhancementReply = true;
   await click('+1 강화 · 100P');
   const enhancementRequest = enhancementPosts[0];
@@ -238,6 +238,14 @@ try {
     document.querySelector('[aria-label="승패 확률"]').textContent,
     /승리 약 33\.83%.*패배 약 32\.83%/,
   );
+  state = { ...initial(), hand: { level: 10, version: 10 } };
+  window.rpsContext.user = { id: 'hand-boundary', points: state.points };
+  await render();
+  await click('손 강화');
+  assert.match(document.querySelector('.hand-forge-success').textContent, /강화 성공 확률 40%/);
+  assert.match(document.querySelector('.hand-forge-next').textContent, /\+10 → \+11/);
+  assert.ok(!document.querySelector('.hand-forge-visual').textContent.includes('패배 확률'));
+  await click('닫기');
   state = { ...initial(), hand: { level: 20, version: 20 } };
   window.rpsContext.user = { id: 'max-hand', points: state.points };
   await render();

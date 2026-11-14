@@ -257,6 +257,11 @@
     color: var(--hd-color-accent);
   }
 }
+.hand-forge-visual .hand-forge-success strong {
+  margin-left: 6px;
+  color: var(--hd-color-accent);
+  font-size: var(--hd-font-size-20);
+}
 .hand-forge-next {
   display: flex;
   align-items: center;
@@ -275,7 +280,7 @@
 }
 .hand-forge-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin: 14px 0;
   > div {

@@ -521,7 +521,11 @@ function Game() {
             <div>
               <span className="eyebrow">MY ENCHANTED HAND</span>
               <h2>{hand.name}</h2>
-              <p>패배 확률 -{handLevel * 0.5}%p</p>
+              <p>
+                {rpsHandStages[handLevel + 1]
+                  ? `강화 성공 확률 ${rpsHandStages[handLevel + 1].successPercent}%`
+                  : '최고 강화 달성'}
+              </p>
             </div>
             <Button
               type="button"

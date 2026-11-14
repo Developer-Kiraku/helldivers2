@@ -197,8 +197,14 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
         <EnchantedHand level={level} effect={effect} />
         <span className="hand-level">+{level}</span>
         <h2>{stage.name}</h2>
-        <p>
-          패배 확률 <strong>-{level * 0.5}%p</strong> · 승리 확률 <strong>+{level * 0.5}%p</strong>
+        <p className="hand-forge-success">
+          {next ? (
+            <>
+              강화 성공 확률 <strong>{next.successPercent}%</strong>
+            </>
+          ) : (
+            '최고 강화 달성'
+          )}
         </p>
       </div>
       <div className={`hand-forge-result ${effect}`} role="status" aria-live="polite">
@@ -228,15 +234,11 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
           <div className="hand-forge-next">
             <span>다음 강화</span>
             <strong>
-              +{next.level} {next.name}
+              +{level} → +{next.level} · {next.name}
             </strong>
             <ArrowRight size={17} />
           </div>
           <dl className="hand-forge-stats">
-            <div>
-              <dt>성공 확률</dt>
-              <dd>{next.successPercent}%</dd>
-            </div>
             <div>
               <dt>강화 비용</dt>
               <dd>
@@ -285,9 +287,7 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
       )}
       <details className="hand-forge-guide">
         <summary>강화 확률과 규칙 보기</summary>
-        <p>
-          단계당 패배 확률이 0.5%p 줄고 승리 확률이 그만큼 오릅니다. 무승부 확률은 1/3로 유지됩니다.
-        </p>
+        <p>손을 강화하면 가위·바위·보에서 이길 확률이 높아집니다.</p>
         <p>
           도전하는 목표 단계 기준으로 +1~5 실패 시 유지, +6~10 실패 시 -1강, +11~20 실패 시
           -2강입니다. 성공·실패 모두 비용을 사용하며 도전 횟수는 소모하지 않습니다.
@@ -296,8 +296,8 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
           <table>
             <thead>
               <tr>
-                <th>목표</th>
-                <th>성공률</th>
+                <th>강화 단계</th>
+                <th>성공 확률</th>
                 <th>비용</th>
                 <th>실패</th>
               </tr>
@@ -305,7 +305,9 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
             <tbody>
               {rpsHandStages.slice(1).map((item) => (
                 <tr key={item.level} className={item.level === next?.level ? 'is-current' : ''}>
-                  <th>+{item.level}</th>
+                  <th>
+                    +{item.level - 1} → +{item.level}
+                  </th>
                   <td>{item.successPercent}%</td>
                   <td>{number(item.cost)}P</td>
                   <td>{item.failureDrop ? `-${item.failureDrop}강` : '유지'}</td>
