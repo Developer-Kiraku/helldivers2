@@ -7,10 +7,12 @@ export const rpsChoices = [
   { id: 'rock', label: '바위' },
   { id: 'paper', label: '보' },
 ];
-// 600 tickets represent both an exact 1/3 baseline and 0.5 percentage points per level.
+// 600 tickets represent exact thirds and the 0.5 / 1 / 1.5 percentage-point bonuses.
 export const rpsOutcomeTickets = 600;
 export function rpsOutcomeWeights(level = 0) {
-  const bonus = rpsHandLevel(level) * 3;
+  const hand = rpsHandLevel(level);
+  const bonus =
+    Math.min(hand, 5) * 3 + Math.min(Math.max(hand - 5, 0), 5) * 6 + Math.max(hand - 10, 0) * 9;
   return { win: 200 + bonus, draw: 200, lose: 200 - bonus };
 }
 // Integer weights out of 1,000 keep the displayed probabilities exact.

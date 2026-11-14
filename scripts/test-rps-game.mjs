@@ -187,9 +187,17 @@ try {
   assert.equal(read().history.length, 5);
   assert.equal(actor.points.total, 10000);
   // Exhaust the server's complete outcome sample space for each hand and stake.
-  // Exact baseline thirds; each enhancement transfers 0.5 percentage points from loss to win.
+  // Exhaust tier boundaries against independent expected weights (not the production formula).
   assert.equal(rpsOutcomeTickets, 600);
-  for (const level of [0, 1, 5, 10, 20]) {
+  for (const [level, win, lose] of [
+    [0, 200, 200],
+    [1, 203, 197],
+    [5, 215, 185],
+    [6, 221, 179],
+    [10, 245, 155],
+    [11, 254, 146],
+    [20, 335, 65],
+  ]) {
     for (const choice of rpsChoices) {
       for (const stake of [50, 100, 500, 1000]) {
         const outcomes = { win: 0, draw: 0, lose: 0 };
@@ -228,14 +236,14 @@ try {
           );
           assert.equal(settled.attempts.daily, round.outcome === 'draw' ? 5 : 4);
         }
-        assert.deepEqual(outcomes, { win: 200 + level * 3, draw: 200, lose: 200 - level * 3 });
+        assert.deepEqual(outcomes, { win, draw: 200, lose });
       }
     }
   }
   for (const ticket of [-1, 600, 1.5, NaN])
     assert.throws(() => rpsOpponent('rock', ticket), /Invalid outcome ticket/);
   console.log(
-    'PASS: RPS baseline thirds and level-based 0.5pp win/loss shifts across all hands/stakes; rewards, wallet settlement, attempts, retries and forged requests',
+    'PASS: RPS baseline thirds and cumulative 0.5/1/1.5pp tier boundaries across all hands/stakes; rewards, wallet settlement, attempts, retries and forged requests',
   );
 } finally {
   // The only removed path is the temporary directory created inside this workspace above.

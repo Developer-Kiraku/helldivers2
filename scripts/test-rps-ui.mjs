@@ -250,6 +250,10 @@ try {
   state = { ...initial(), hand: { level: 10, version: 10 } };
   window.rpsContext.user = { id: 'hand-boundary', points: state.points };
   await render();
+  assert.match(
+    document.querySelector('[aria-label="승패 확률"]').textContent,
+    /승리 약 40\.83%.*무승부 약 33\.33%.*패배 약 25\.83%/,
+  );
   await click('손 강화');
   assert.match(document.querySelector('.hand-forge-success').textContent, /강화 성공 확률 60%/);
   assert.match(document.querySelector('.hand-forge-next').textContent, /\+10 → \+11/);
@@ -258,6 +262,10 @@ try {
   state = { ...initial(), hand: { level: 20, version: 20 } };
   window.rpsContext.user = { id: 'max-hand', points: state.points };
   await render();
+  assert.match(
+    document.querySelector('[aria-label="승패 확률"]').textContent,
+    /승리 약 55\.83%.*무승부 약 33\.33%.*패배 약 10\.83%/,
+  );
   await click('손 강화');
   assert.ok(document.querySelector('.hand-forge-max'));
   assert.equal(document.querySelector('.hand-forge-button'), null);
