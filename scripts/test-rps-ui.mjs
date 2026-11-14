@@ -61,7 +61,7 @@ try {
               args.path === './CommunityProvider'
                 ? 'export const useCommunity=()=>window.rpsContext;'
                 : args.path === './Modal'
-                  ? 'import React from "react";export default ({title,children,footer,onClose,className})=>React.createElement("div",{role:"dialog",className},React.createElement("h1",{},title),children,footer);'
+                  ? 'import React from "react";export default ({title,children,footer,onClose,className})=>React.createElement("div",{role:"dialog",className},React.createElement("h1",{},title),React.createElement("button",{onClick:onClose},"닫기"),children,footer);'
                   : args.path === 'next/link'
                     ? 'import React from "react";export default props=>React.createElement("a",props);'
                     : 'import React from "react";export const Button=props=>React.createElement("button",props);',
@@ -78,9 +78,13 @@ try {
     nextPlayableAt: 0,
     round: null,
     history: [],
+    hand: { level: 0, version: 0 },
   });
   let state = initial(),
     failNext = false;
+  let enhancementReceipt = null,
+    loseEnhancementReply = false;
+  const enhancementPosts = [];
   const posts = [],
     reads = [],
     synced = [];
@@ -90,6 +94,34 @@ try {
     actualRole: 'member',
     syncPoints: (...args) => synced.push(args),
     api: async (url, options) => {
+      if (url.startsWith('games/rps/enhance')) {
+        if (options?.method === 'POST') {
+          enhancementPosts.push(options.body);
+          if (enhancementReceipt?.requestId !== options.body.requestId) {
+            enhancementReceipt = {
+              requestId: options.body.requestId,
+              from: 0,
+              to: 1,
+              success: true,
+              cost: 100,
+            };
+            state = {
+              ...state,
+              hand: { level: 1, version: 1 },
+              points: { ...state.points, current: state.points.current - 100 },
+            };
+          }
+          if (loseEnhancementReply) {
+            loseEnhancementReply = false;
+            throw new TypeError('연결이 끊겼습니다.');
+          }
+        }
+        return {
+          hand: state.hand,
+          points: state.points,
+          result: options?.method === 'POST' || url.includes('?') ? enhancementReceipt : null,
+        };
+      }
       if (options?.method === 'POST') {
         posts.push(options.body);
         if (failNext) {
@@ -135,7 +167,7 @@ try {
   assert.equal(document.querySelectorAll('.rps-stakes button').length, 4);
   assert.match(
     document.querySelector('[aria-label="승패 확률"]').textContent,
-    /승리 약 36\.67% · 무승부 약 33\.33% · 패배 30%/,
+    /승리 약 33\.33% · 무승부 약 33\.33% · 패배 약 33\.33%/,
   );
   assert.ok(!document.body.textContent.includes('상대의 가위·바위·보는 각각 같은 확률'));
   const opponentHand = () => document.querySelector('.is-opponent .rps-hand').innerHTML;
@@ -179,6 +211,40 @@ try {
   window.rpsContext.user = { id: 'another', points: state.points };
   await render();
   assert.equal(document.querySelector('.rps-play-button').disabled, true);
+  state = initial();
+  window.rpsContext.user = { id: 'enhancement-test', points: state.points };
+  await render();
+  await click('손 강화');
+  assert.match(document.querySelector('[role=dialog]').textContent, /여행자의 손/);
+  assert.match(document.querySelector('.hand-forge-stats').textContent, /100%/);
+  loseEnhancementReply = true;
+  await click('+1 강화 · 100P');
+  const enhancementRequest = enhancementPosts[0];
+  assert.equal(
+    JSON.parse(sessionStorage.getItem('hd-rps-enhance:enhancement-test')).requestId,
+    enhancementRequest.requestId,
+  );
+  await click('강화 결과 다시 확인');
+  assert.equal(document.querySelector('.hand-forge-button').disabled, true);
+  await React.act(async () => new Promise((resolve) => setTimeout(resolve, 1400)));
+  assert.deepEqual(enhancementPosts[1], enhancementRequest);
+  assert.equal(state.points.current, 900, 'Retry must preserve the single charge');
+  assert.equal(sessionStorage.getItem('hd-rps-enhance:enhancement-test'), null);
+  assert.match(document.querySelector('.hand-forge-visual').textContent, /불씨의 손/);
+  assert.match(document.querySelector('.hand-forge-result').textContent, /강화 성공!.*\+0 → \+1/);
+  await click('닫기');
+  assert.equal(document.querySelector('[role=dialog]'), null);
+  assert.match(
+    document.querySelector('[aria-label="승패 확률"]').textContent,
+    /승리 약 33\.83%.*패배 약 32\.83%/,
+  );
+  state = { ...initial(), hand: { level: 20, version: 20 } };
+  window.rpsContext.user = { id: 'max-hand', points: state.points };
+  await render();
+  await click('손 강화');
+  assert.ok(document.querySelector('.hand-forge-max'));
+  assert.equal(document.querySelector('.hand-forge-button'), null);
+  await click('닫기');
   assert.equal(
     document.querySelector('[role=dialog]'),
     null,

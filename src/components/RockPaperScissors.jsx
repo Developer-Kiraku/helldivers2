@@ -17,6 +17,8 @@ import { useCommunity } from './CommunityProvider';
 import { Button } from './ui';
 import Modal from './Modal';
 import GameResultShare from './GameResultShare';
+import RpsHandEnhancement, { EnchantedHand } from './RpsHandEnhancement';
+import { rpsHandStages } from '@/lib/rps-enhancement.mjs';
 import useRefreshOnReturn from '@/hooks/useRefreshOnReturn';
 import {
   rpsChoices,
@@ -162,6 +164,7 @@ function Game() {
     [error, setError] = useState(''),
     [pending, setPending] = useState(null),
     [reward, setReward] = useState(null),
+    [handOpen, setHandOpen] = useState(false),
     [clock, setClock] = useState(Date.now()),
     [cooldownUntil, setCooldownUntil] = useState(0),
     [opponentPreview, setOpponentPreview] = useState(rpsChoices[0].id);
@@ -314,6 +317,28 @@ function Game() {
     Boolean(cooldown) ||
     (!pending && (!attempts?.total || wallet < stake));
   const selectedChoice = pending?.choice || choice;
+  const handLevel = data?.hand?.level || 0;
+  const hand = rpsHandStages[handLevel];
+  const applyEnhancement = useCallback(
+    (result) => {
+      setData((current) =>
+        current ? { ...current, hand: result.hand, points: result.points } : current,
+      );
+      syncPoints(user.id, result.points);
+    },
+    [syncPoints, user.id],
+  );
+  function openEnhancement() {
+    if (busyRef.current || pendingRef.current || preview) return;
+    busyRef.current = true;
+    ++sequence.current;
+    setHandOpen(true);
+  }
+  function closeEnhancement() {
+    setHandOpen(false);
+    busyRef.current = false;
+    void refresh();
+  }
   return (
     <section className="rps-page">
       <header className="rps-heading">
@@ -488,6 +513,25 @@ function Game() {
           )}
         </section>
         <aside className="rps-sidebar">
+          <section className="rps-enhancement-card panel">
+            <div className="rps-enhancement-card-art">
+              <EnchantedHand level={handLevel} compact />
+              <span>+{handLevel}</span>
+            </div>
+            <div>
+              <span className="eyebrow">MY ENCHANTED HAND</span>
+              <h2>{hand.name}</h2>
+              <p>패배 확률 -{handLevel * 0.5}%p</p>
+            </div>
+            <Button
+              type="button"
+              onClick={openEnhancement}
+              disabled={!data || busy || Boolean(pending) || preview}
+            >
+              <Sparkles size={17} />손 강화
+              <ArrowRight size={16} />
+            </Button>
+          </section>
           <section className="rps-attempts panel">
             <h2>
               <Ticket size={19} />
@@ -542,8 +586,8 @@ function Game() {
           <small>전체 확률 공개 · 합계 100%</small>
         </header>
         <p className="rps-outcome-probabilities" aria-label="승패 확률">
-          한 판 기준:{' '}
-          {Object.entries(rpsOutcomeWeights)
+          현재 +{handLevel} 손 적용:{' '}
+          {Object.entries(rpsOutcomeWeights(handLevel))
             .map(
               ([outcome, weight]) =>
                 `${outcomeLabels[outcome]} ${(weight * 100) % rpsOutcomeTickets ? '약 ' : ''}${((weight / rpsOutcomeTickets) * 100).toLocaleString('ko-KR', { maximumFractionDigits: 2 })}%`,
@@ -568,6 +612,7 @@ function Game() {
       {reward && (
         <RewardReveal key={reward.requestId} round={reward} onClose={() => setReward(null)} />
       )}
+      {handOpen && <RpsHandEnhancement onClose={closeEnhancement} onUpdate={applyEnhancement} />}
     </section>
   );
 }

@@ -1,3 +1,4 @@
+import { rpsHandLevel } from './rps-enhancement.mjs';
 export const rpsStakes = [50, 100, 500, 1000];
 export const rpsDefaultStake = 100;
 export const rpsDailyAttempts = 5;
@@ -6,12 +7,12 @@ export const rpsChoices = [
   { id: 'rock', label: '바위' },
   { id: 'paper', label: '보' },
 ];
-// 11/30 is a relative 10% increase from 1/3; draws stay at 1/3.
-export const rpsOutcomeWeights = { win: 11, draw: 10, lose: 9 };
-export const rpsOutcomeTickets = Object.values(rpsOutcomeWeights).reduce(
-  (total, weight) => total + weight,
-  0,
-);
+// 600 tickets represent both an exact 1/3 baseline and 0.5 percentage points per level.
+export const rpsOutcomeTickets = 600;
+export function rpsOutcomeWeights(level = 0) {
+  const bonus = rpsHandLevel(level) * 3;
+  return { win: 200 + bonus, draw: 200, lose: 200 - bonus };
+}
 // Integer weights out of 1,000 keep the displayed probabilities exact.
 export const rpsRewards = [200, 300, 180, 110, 80, 50, 35, 20, 15, 10].map((weight, index) => ({
   multiplier: index + 1,
@@ -24,10 +25,10 @@ export function rpsOutcome(choice, opponent) {
     ? 'win'
     : 'lose';
 }
-export function rpsOpponent(choice, ticket) {
+export function rpsOpponent(choice, ticket, level = 0) {
   if (!Number.isInteger(ticket) || ticket < 0 || ticket >= rpsOutcomeTickets)
     throw Error('Invalid outcome ticket');
-  for (const [outcome, weight] of Object.entries(rpsOutcomeWeights)) {
+  for (const [outcome, weight] of Object.entries(rpsOutcomeWeights(level))) {
     if (ticket < weight)
       return rpsChoices.find((opponent) => rpsOutcome(choice, opponent.id) === outcome).id;
     ticket -= weight;

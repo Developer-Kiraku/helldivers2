@@ -2,6 +2,8 @@ import { randomInt } from 'node:crypto';
 import { fail } from './auth';
 import { transferGamePoints } from './points.mjs';
 import { rpsAttempts, consumeRpsAttempt } from './rps-attempts.mjs';
+import { rpsHandState } from '../rps-enhancement.mjs';
+import { handleRpsEnhancement } from './rps-enhancement';
 import {
   rpsChoices,
   rpsStakes,
@@ -29,6 +31,7 @@ const publicRound = (round) =>
       'profit',
       'attemptSource',
       'createdAt',
+      'handLevel',
     ].map((key) => [key, round[key]]),
   );
 function state(db, actor, now, round) {
@@ -39,6 +42,7 @@ function state(db, actor, now, round) {
   return {
     points: { ...(actor.points || { current: 0, total: 0 }) },
     attempts: rpsAttempts(actor, now),
+    hand: rpsHandState(actor),
     serverTime: now,
     nextPlayableAt: history.length ? history[0].createdAt + cooldownMs : 0,
     round: publicRound(round === undefined ? history[0] || null : round),
@@ -56,6 +60,8 @@ export function handleRpsGame(
 ) {
   const now = options.now ?? Date.now();
   const rng = options.randomInt || randomInt;
+  if (segments.length === 3 && segments[2] === 'enhance')
+    return handleRpsEnhancement(db, actor, method, input, query, options);
   if (segments.length === 2 && method === 'GET') {
     const id = query.get('requestId');
     if (id !== null && !validRequestId(id)) fail(400, '게임 요청을 확인해주세요.');
@@ -91,7 +97,8 @@ export function handleRpsGame(
   if (!current.attempts.total)
     fail(409, '남은 도전 횟수가 없습니다. 게시글을 작성하면 1회 추가됩니다.');
   if (current.points.current < input.stake) fail(400, '배팅할 포인트가 부족합니다.');
-  const opponent = rpsOpponent(input.choice, rng(rpsOutcomeTickets));
+  const handLevel = rpsHandState(actor).level;
+  const opponent = rpsOpponent(input.choice, rng(rpsOutcomeTickets), handLevel);
   const outcome = rpsOutcome(input.choice, opponent);
   const multiplier = outcome === 'win' ? rpsMultiplier(rng(1000)) : 0;
   const payout = outcome === 'draw' ? input.stake : input.stake * multiplier;
@@ -102,6 +109,7 @@ export function handleRpsGame(
     stake: input.stake,
     choice: input.choice,
     opponent,
+    handLevel,
     outcome,
     multiplier,
     payout,

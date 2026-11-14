@@ -175,7 +175,10 @@ async function handler(request, context) {
               path === 'games/share'
                 ? [...operationalCollections, 'rpsRounds', 'stratagemRuns', 'gameShares']
                 : segments[0] === 'games' && segments[1] === 'rps'
-                  ? [...operationalCollections, 'rpsRounds']
+                  ? [
+                      ...operationalCollections,
+                      segments[2] === 'enhance' ? 'rpsEnhancements' : 'rpsRounds',
+                    ]
                   : segments[0] === 'games' && segments[1] === 'stratagem'
                     ? [...operationalCollections, 'stratagemRuns', 'stratagemRecords']
                     : operationalCollections,

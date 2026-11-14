@@ -145,6 +145,7 @@ async function run() {
   await import('./test-puzzle-rewards.mjs');
   await import('./test-dice-game.mjs');
   await import('./test-rps-game.mjs');
+  await import('./test-rps-enhancement.mjs');
   await import('./test-stratagem-challenge.mjs');
   await import('./test-stratagem-rankings.mjs');
   await import('./test-game-shares.mjs');
@@ -213,6 +214,7 @@ async function run() {
     await require('./test-points-http.cjs')({ guest, admin, deputy, member, apprentice, file });
     await require('./test-dice-http.cjs')({ guest, admin, member, apprentice, file });
     await require('./test-rps-http.cjs')({ guest, admin, member, apprentice, file });
+    await require('./test-rps-enhancement-http.cjs')({ guest, admin, member, file });
     await require('./test-stratagem-http.cjs')({ guest, admin, member });
     await require('./test-game-shares-http.cjs')({ guest, admin, member, file });
     await require('./test-stratagem-share-http.cjs')({ guest, admin, member, file });

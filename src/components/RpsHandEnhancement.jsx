@@ -1,0 +1,320 @@
+'use client';
+
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { HandFist, Sparkles, ArrowRight, Shield, Flame, RotateCcw } from 'lucide-react';
+import { Button } from './ui';
+import Modal from './Modal';
+import { useCommunity } from './CommunityProvider';
+import { rpsHandStages, rpsMaxHandLevel } from '@/lib/rps-enhancement.mjs';
+
+const number = (value) => value.toLocaleString('ko-KR');
+export function EnchantedHand({ level = 0, compact = false, effect = '' }) {
+  const tier = Math.floor(level / 5);
+  return (
+    <div
+      className={`enchanted-hand tier-${tier} ${compact ? 'is-compact' : ''} ${effect}`}
+      style={{ '--hand-hue': [165, 190, 255, 35, 48][tier], '--hand-power': level / 20 }}
+      aria-hidden="true"
+    >
+      <div className="enchanted-hand-aura" />
+      <div className="enchanted-hand-ring" />
+      <div className="enchanted-hand-runes">
+        {Array.from({ length: 4 + Math.floor(level / 2) }, (_, index) => (
+          <i
+            key={index}
+            style={{ '--rune-angle': `${(index * 360) / (4 + Math.floor(level / 2))}deg` }}
+          />
+        ))}
+      </div>
+      <svg className="enchanted-hand-crest" viewBox="0 0 200 220" fill="none">
+        <path
+          d="M100 14 171 54 177 136 100 207 23 136 29 54Z"
+          fill="currentColor"
+          fillOpacity=".05"
+          stroke="currentColor"
+          strokeOpacity=".35"
+        />
+        <path
+          d="m62 151 10 43 28 14 28-14 10-43-38-10Z"
+          fill="currentColor"
+          fillOpacity=".2"
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+        <path
+          d="m72 163 28 10 28-10M76 179l24 10 24-10M100 174v31"
+          stroke="currentColor"
+          strokeOpacity=".6"
+        />
+        <path d="m100 146 10 12-10 12-10-12Z" fill="currentColor" />
+        {level >= 10 && (
+          <path
+            d="m44 135-16-12 7 27 33 15m88-30 16-12-7 27-33 15"
+            stroke="currentColor"
+            strokeWidth="3"
+          />
+        )}
+        {level >= 15 && (
+          <path
+            d="m64 40 10-18 26 12 26-12 10 18M100 12v12m-9-7 9-12 9 12"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+        )}
+      </svg>
+      <HandFist className="enchanted-hand-glyph" strokeWidth={1.15} />
+      {level >= 5 && <Sparkles className="enchanted-hand-spark" />}
+    </div>
+  );
+}
+
+export default function RpsHandEnhancement({ onClose, onUpdate }) {
+  const { api, user } = useCommunity();
+  const [data, setData] = useState(null),
+    [busy, setBusy] = useState(false),
+    [pending, setPending] = useState(null),
+    [error, setError] = useState('');
+  const alive = useRef(true),
+    locked = useRef(false),
+    pendingRef = useRef(null),
+    revision = useRef(0);
+  const storageKey = 'hd-rps-enhance:' + user.id;
+  const remember = useCallback(
+    (packet) => {
+      pendingRef.current = packet;
+      setPending(packet);
+      try {
+        packet
+          ? sessionStorage.setItem(storageKey, JSON.stringify(packet))
+          : sessionStorage.removeItem(storageKey);
+      } catch {
+        /* In-memory retry still works. */
+      }
+    },
+    [storageKey],
+  );
+  const apply = useCallback(
+    (result) => {
+      setData(result);
+      onUpdate(result);
+    },
+    [onUpdate],
+  );
+  const refresh = useCallback(async () => {
+    const version = ++revision.current;
+    const packet = pendingRef.current;
+    try {
+      const result = await api(
+        'games/rps/enhance' + (packet ? '?requestId=' + encodeURIComponent(packet.requestId) : ''),
+      );
+      if (!alive.current || version !== revision.current) return;
+      apply(result);
+      if (packet && result.result?.requestId === packet.requestId) {
+        remember(null);
+        setError('');
+      }
+    } catch (err) {
+      if (alive.current && version === revision.current) setError(err.message);
+    }
+  }, [api, apply, remember]);
+  useEffect(() => {
+    alive.current = true;
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
+      if (saved && typeof saved.requestId === 'string' && Number.isInteger(saved.expectedVersion))
+        remember(saved);
+    } catch {
+      /* Fall back to server state. */
+    }
+    void refresh();
+    return () => {
+      alive.current = false;
+      ++revision.current;
+    };
+  }, [storageKey, refresh, remember]);
+  async function enhance() {
+    if (locked.current || !data) return;
+    locked.current = true;
+    ++revision.current;
+    setBusy(true);
+    setError('');
+    const packet = pendingRef.current || {
+      requestId: crypto.randomUUID(),
+      expectedVersion: data.hand.version,
+    };
+    remember(packet);
+    const started = Date.now(),
+      controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    try {
+      const result = await api('games/rps/enhance', {
+        method: 'POST',
+        body: packet,
+        signal: controller.signal,
+      });
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.max(0, 1300 - (Date.now() - started))),
+      );
+      if (!alive.current) return;
+      apply(result);
+      remember(null);
+    } catch (err) {
+      if (!alive.current) return;
+      if (err.status >= 400 && err.status < 500) {
+        remember(null);
+        void refresh();
+      }
+      setError(
+        err.name === 'AbortError'
+          ? '응답이 늦어지고 있습니다. 같은 강화 요청을 다시 확인해주세요.'
+          : err.message,
+      );
+    } finally {
+      clearTimeout(timeout);
+      locked.current = false;
+      if (alive.current) setBusy(false);
+    }
+  }
+  const level = data?.hand.level || 0,
+    stage = rpsHandStages[level],
+    next = rpsHandStages[level + 1],
+    result = data?.result;
+  const wallet = data?.points.current ?? 0;
+  const effect = busy ? 'is-forging' : result ? (result.success ? 'is-success' : 'is-failure') : '';
+  return (
+    <Modal
+      title="손 강화"
+      onClose={() => {
+        if (!locked.current) onClose();
+      }}
+      className="rps-enhancement-modal"
+    >
+      <div className="hand-forge-heading">
+        <span>ARCANE FORGE</span>
+        <small>최대 +{rpsMaxHandLevel}</small>
+      </div>
+      <div className="hand-forge-visual" key={busy ? 'forging' : result?.requestId || 'idle'}>
+        <EnchantedHand level={level} effect={effect} />
+        <span className="hand-level">+{level}</span>
+        <h2>{stage.name}</h2>
+        <p>
+          패배 확률 <strong>-{level * 0.5}%p</strong> · 승리 확률 <strong>+{level * 0.5}%p</strong>
+        </p>
+      </div>
+      <div className={`hand-forge-result ${effect}`} role="status" aria-live="polite">
+        {busy ? (
+          <>
+            <Flame size={18} /> 손에 마력을 새기고 있습니다…
+          </>
+        ) : result ? (
+          <>
+            <Sparkles size={18} />
+            <span>
+              {result.success ? '강화 성공!' : '강화 실패'}{' '}
+              <strong>
+                +{result.from} → +{result.to}
+              </strong>
+              {!result.success && result.from === result.to && ' · 단계 유지'}
+            </span>
+          </>
+        ) : (
+          <>
+            <Shield size={17} /> 강화 효과는 가위·바위·보 모두에 적용됩니다.
+          </>
+        )}
+      </div>
+      {next ? (
+        <>
+          <div className="hand-forge-next">
+            <span>다음 강화</span>
+            <strong>
+              +{next.level} {next.name}
+            </strong>
+            <ArrowRight size={17} />
+          </div>
+          <dl className="hand-forge-stats">
+            <div>
+              <dt>성공 확률</dt>
+              <dd>{next.successPercent}%</dd>
+            </div>
+            <div>
+              <dt>강화 비용</dt>
+              <dd>
+                {number(next.cost)} <small>P</small>
+              </dd>
+            </div>
+            <div>
+              <dt>실패 시</dt>
+              <dd>{next.failureDrop ? `-${next.failureDrop}강` : '단계 유지'}</dd>
+            </div>
+          </dl>
+          <Button
+            type="button"
+            className="hand-forge-button"
+            disabled={!data || busy || (!pending && wallet < next.cost)}
+            onClick={enhance}
+          >
+            {pending && !busy ? <RotateCcw size={18} /> : <Sparkles size={18} />}
+            {busy
+              ? '강화 중…'
+              : pending
+                ? '강화 결과 다시 확인'
+                : `+${next.level} 강화 · ${number(next.cost)}P`}
+          </Button>
+          <p className="hand-forge-wallet">
+            보유 {number(wallet)}P
+            {data && wallet < next.cost && !pending ? ' · 포인트가 부족합니다.' : ''}
+          </p>
+        </>
+      ) : (
+        <div className="hand-forge-max">
+          <Sparkles size={22} />
+          <strong>최고 단계에 도달했습니다</strong>
+          <span>창세의 마력이 손에 깃들었습니다.</span>
+        </div>
+      )}
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
+      {!data && !busy && (
+        <Button type="button" onClick={refresh}>
+          강화 정보 다시 불러오기
+        </Button>
+      )}
+      <details className="hand-forge-guide">
+        <summary>강화 확률과 규칙 보기</summary>
+        <p>
+          단계당 패배 확률이 0.5%p 줄고 승리 확률이 그만큼 오릅니다. 무승부 확률은 1/3로 유지됩니다.
+        </p>
+        <p>
+          도전하는 목표 단계 기준으로 +1~5 실패 시 유지, +6~10 실패 시 -1강, +11~20 실패 시
+          -2강입니다. 성공·실패 모두 비용을 사용하며 도전 횟수는 소모하지 않습니다.
+        </p>
+        <div className="hand-forge-table">
+          <table>
+            <thead>
+              <tr>
+                <th>목표</th>
+                <th>성공률</th>
+                <th>비용</th>
+                <th>실패</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rpsHandStages.slice(1).map((item) => (
+                <tr key={item.level} className={item.level === next?.level ? 'is-current' : ''}>
+                  <th>+{item.level}</th>
+                  <td>{item.successPercent}%</td>
+                  <td>{number(item.cost)}P</td>
+                  <td>{item.failureDrop ? `-${item.failureDrop}강` : '유지'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </Modal>
+  );
+}
