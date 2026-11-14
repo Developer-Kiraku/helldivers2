@@ -165,6 +165,9 @@ try {
   await render();
   assert.equal(document.querySelector('.rps-stakes [aria-pressed=true]').textContent, '100 P');
   assert.equal(document.querySelectorAll('.rps-stakes button').length, 4);
+  const visibleWinChance = () =>
+    document.querySelector('[aria-label="현재 손 강화 적용 승률"]').textContent;
+  assert.match(visibleWinChance(), /손 강화 \+0 적용.*33\.33%/);
   assert.match(
     document.querySelector('[aria-label="승패 확률"]').textContent,
     /승리 약 33\.33% · 무승부 약 33\.33% · 패배 약 33\.33%/,
@@ -233,6 +236,11 @@ try {
   assert.match(document.querySelector('.hand-forge-visual').textContent, /불씨의 손/);
   assert.match(document.querySelector('.hand-forge-result').textContent, /강화 성공!.*\+0 → \+1/);
   assert.ok(document.querySelector('.hand-success-burst'));
+  assert.match(
+    visibleWinChance(),
+    /손 강화 \+1 적용.*34\.33%/,
+    'The arena win chance updates immediately after enhancement succeeds',
+  );
   loseEnhancementReply = true;
   await click('+2 강화 · 75P');
   assert.equal(
@@ -262,6 +270,7 @@ try {
   state = { ...initial(), hand: { level: 20, version: 20 } };
   window.rpsContext.user = { id: 'max-hand', points: state.points };
   await render();
+  assert.match(visibleWinChance(), /손 강화 \+20 적용.*70\.83%/);
   assert.match(
     document.querySelector('[aria-label="승패 확률"]').textContent,
     /승리 약 70\.83%.*무승부 20%.*패배 약 9\.17%/,

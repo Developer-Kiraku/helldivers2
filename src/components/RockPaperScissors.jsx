@@ -32,6 +32,8 @@ import {
 
 const apiPath = 'games/rps';
 const number = (value = 0) => value.toLocaleString('ko-KR');
+const percent = (weight) =>
+  ((weight / rpsOutcomeTickets) * 100).toLocaleString('ko-KR', { maximumFractionDigits: 2 });
 const labels = Object.fromEntries(rpsChoices.map((choice) => [choice.id, choice.label]));
 const outcomeLabels = { win: '승리', draw: '무승부', lose: '패배' };
 function ScissorsHand({ size = 60, strokeWidth = 1.6, ...props }) {
@@ -319,6 +321,7 @@ function Game() {
   const selectedChoice = pending?.choice || choice;
   const handLevel = data?.hand?.level || 0;
   const hand = rpsHandStages[handLevel];
+  const outcomeWeights = rpsOutcomeWeights(handLevel);
   const applyEnhancement = useCallback(
     (result) => {
       setData((current) =>
@@ -369,6 +372,25 @@ function Game() {
             <span className="rps-max">
               <Sparkles size={14} /> MAX ×10
             </span>
+          </div>
+          <div className="rps-win-chance" role="status" aria-label="현재 손 강화 적용 승률">
+            <div>
+              <HandFist size={23} aria-hidden="true" />
+              <span>
+                현재 승리 확률
+                <small>{data ? `손 강화 +${handLevel} 적용` : '손 강화 정보 불러오는 중'}</small>
+              </span>
+            </div>
+            <strong>
+              {data ? (
+                <>
+                  <small>약</small> {percent(outcomeWeights.win)}
+                  <small>%</small>
+                </>
+              ) : (
+                '—'
+              )}
+            </strong>
           </div>
           <div className={'rps-stage' + (busy ? ' is-playing' : '')}>
             <div className="rps-contender">
@@ -591,10 +613,10 @@ function Game() {
         </header>
         <p className="rps-outcome-probabilities" aria-label="승패 확률">
           현재 +{handLevel} 손 적용:{' '}
-          {Object.entries(rpsOutcomeWeights(handLevel))
+          {Object.entries(outcomeWeights)
             .map(
               ([outcome, weight]) =>
-                `${outcomeLabels[outcome]} ${(weight * 100) % rpsOutcomeTickets ? '약 ' : ''}${((weight / rpsOutcomeTickets) * 100).toLocaleString('ko-KR', { maximumFractionDigits: 2 })}%`,
+                `${outcomeLabels[outcome]} ${(weight * 100) % rpsOutcomeTickets ? '약 ' : ''}${percent(weight)}%`,
             )
             .join(' · ')}
           . 가위·바위·보 중 무엇을 선택해도 승률은 같습니다.
