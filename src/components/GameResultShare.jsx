@@ -11,7 +11,7 @@ import {
   isMobileShareDevice,
   supportsKakaoWebShare,
 } from '@/lib/kakao-share';
-import { gameResultMessage } from '@/lib/game-results.mjs';
+import { gameResultMessage, gameShareImagePath } from '@/lib/game-results.mjs';
 
 export default function GameResultShare({ game, resultId, label = '결과 공유' }) {
   const { api, notify } = useCommunity();
@@ -46,8 +46,13 @@ export default function GameResultShare({ game, resultId, label = '결과 공유
         });
         if (!active) return;
         const url = new URL(result.path, location.origin).href;
-        const imageUrl = `${url}/image`;
-        setShare({ ...result, url, imageUrl });
+        const imageUrl = new URL(gameShareImagePath(result.path, selection.game), location.origin)
+          .href;
+        const downloadUrl = new URL(
+          gameShareImagePath(result.path, selection.game, true),
+          location.origin,
+        ).href;
+        setShare({ ...result, url, imageUrl, downloadUrl });
         // Prepare the file before the click so native sharing retains the user gesture.
         void fetch(imageUrl, { signal: controller.signal })
           .then((response) => {
@@ -176,7 +181,7 @@ export default function GameResultShare({ game, resultId, label = '결과 공유
                 )}
                 <a
                   className="game-result-download"
-                  href={`${share.imageUrl}?download=1`}
+                  href={share.downloadUrl}
                   download="helldivers-game-result.png"
                 >
                   <Download size={18} />

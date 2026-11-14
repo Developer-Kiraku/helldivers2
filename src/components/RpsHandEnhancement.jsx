@@ -1,20 +1,15 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { HandFist, Sparkles, ArrowRight, Shield, Flame, RotateCcw } from 'lucide-react';
+import { Sparkles, ArrowRight, Shield, Flame, RotateCcw } from 'lucide-react';
 import { Button } from './ui';
 import Modal from './Modal';
-import HandCrest from './HandCrest';
 import GameResultShare from './GameResultShare';
 import { useCommunity } from './CommunityProvider';
 import { rpsHandStages, rpsMaxHandLevel } from '@/lib/rps-enhancement.mjs';
+import { handAppearance, handArtworkUrl } from '@/lib/hand-artwork.mjs';
 
 const number = (value) => value.toLocaleString('ko-KR');
-const handAppearance = (level) => ({
-  '--hand-hue': [165, 190, 255, 35, 48][Math.floor(level / 5)],
-  '--hand-power': level / 20,
-  '--forge-duration': `${1800 + level * 65}ms`,
-});
 
 function ForgeSuccessBurst({ level }) {
   const tier = Math.floor(level / 5);
@@ -50,23 +45,16 @@ export function EnchantedHand({ level = 0, compact = false, effect = '' }) {
   return (
     <div
       className={`enchanted-hand tier-${tier} ${compact ? 'is-compact' : ''} ${effect}`}
-      style={handAppearance(level)}
+      style={handAppearance(level).style}
       aria-hidden="true"
     >
-      <div className="enchanted-hand-aura" />
       {effect === 'is-success' && !compact && <ForgeSuccessBurst level={level} />}
-      <div className="enchanted-hand-ring" />
-      <div className="enchanted-hand-runes">
-        {Array.from({ length: 4 + Math.floor(level / 2) }, (_, index) => (
-          <i
-            key={index}
-            style={{ '--rune-angle': `${(index * 360) / (4 + Math.floor(level / 2))}deg` }}
-          />
-        ))}
-      </div>
-      <HandCrest level={level} className="enchanted-hand-crest" />
-      <HandFist className="enchanted-hand-glyph" strokeWidth={1.15} />
-      {level >= 5 && <Sparkles className="enchanted-hand-spark" />}
+      <img
+        className="enchanted-hand-art"
+        src={handArtworkUrl(level, { radiant: effect === 'is-success', compact })}
+        alt=""
+        draggable={false}
+      />
     </div>
   );
 }
@@ -199,7 +187,7 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
       </div>
       <div
         className={`hand-forge-stage ${effect}`}
-        style={handAppearance(level)}
+        style={handAppearance(level).style}
         key={busy ? 'forging' : result?.requestId || 'idle'}
       >
         <div className="hand-forge-visual">

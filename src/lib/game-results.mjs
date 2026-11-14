@@ -8,6 +8,12 @@ export const gameResultLabels = {
 export const validGameShareCode = (code) =>
   typeof code === 'string' && /^[A-Za-z0-9_-]{24}$/.test(code);
 export const gameSharePath = (code) => `/game-results/${code}`;
+export function gameShareImagePath(path, game, download = false) {
+  const query = new URLSearchParams();
+  if (game === 'rps-hand') query.set('v', 'hand-art-2');
+  if (download) query.set('download', '1');
+  return `${path}/image${query.size ? `?${query}` : ''}`;
+}
 export function gameResultMessage(result, url, imageUrl) {
   const link = { mobileWebUrl: url, webUrl: url };
   const title = `${result.nickname} · ${result.gameLabel}`;

@@ -1,19 +1,13 @@
 import { ImageResponse } from 'next/og';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { createElement } from 'react';
-import { __iconData as handIcon } from 'lucide-react/dist/esm/icons/hand-fist.mjs';
-import HandCrest from '../../components/HandCrest';
+import { handAppearance, handArtworkSvg } from '../hand-artwork.mjs';
 let font;
 export async function renderGameResultImage(result) {
   font ||= fs.readFile(path.join(process.cwd(), 'public/fonts/HDGameResult.woff'));
   const hand = result.game === 'rps-hand';
-  const handHue = [165, 190, 255, 35, 48][Math.floor((result.handLevel || 0) / 5)];
-  const accent = hand
-    ? `hsl(${handHue}, 72%, 72%)`
-    : result.tone === 'lose'
-      ? '#bcc9bb'
-      : '#f6d65a';
+  const appearance = handAppearance(result.handLevel);
+  const accent = hand ? appearance.light : result.tone === 'lose' ? '#bcc9bb' : '#f6d65a';
   const date = new Date(result.completedAt).toLocaleString('ko-KR', {
     timeZone: 'Asia/Seoul',
     year: 'numeric',
@@ -56,9 +50,20 @@ export async function renderGameResultImage(result) {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 28,
+          ...(hand
+            ? {
+                flexDirection: 'row-reverse',
+                border: `1px solid hsla(${appearance.hue},60%,70%,0.3)`,
+                borderRadius: 18,
+                background: `linear-gradient(115deg, hsla(${appearance.hue},40%,30%,0.25), #232c27)`,
+                padding: 24,
+                marginTop: 28,
+                marginBottom: 4,
+              }
+            : {}),
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', width: 735 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', width: hand ? 600 : 735 }}>
           <div style={{ display: 'flex', fontSize: 25, color: '#b5c1b5', marginBottom: 15 }}>
             {result.gameLabel}
           </div>
@@ -69,77 +74,83 @@ export async function renderGameResultImage(result) {
               color: accent,
               lineHeight: 1.2,
               marginBottom: 18,
+              ...(hand
+                ? {
+                    alignSelf: 'flex-start',
+                    fontSize: 30,
+                    padding: '6px 22px',
+                    borderRadius: 40,
+                    border: `1px solid ${accent}`,
+                    background: `hsl(${appearance.hue},40%,20%)`,
+                  }
+                : {}),
             }}
           >
             {result.headline}
           </div>
-          <div style={{ display: 'flex', fontSize: 28 }}>{result.nickname.slice(0, 24)} 대원</div>
-          <div style={{ display: 'flex', fontSize: 22, color: '#b5c1b5', marginTop: 12 }}>
-            {result.summary}
+          {hand && (
+            <div style={{ display: 'flex', fontSize: 44, marginBottom: 22, lineHeight: 1.3 }}>
+              {result.summary}
+            </div>
+          )}
+          <div style={{ display: 'flex', fontSize: 28, color: hand ? '#b5c1b5' : '#edf2ea' }}>
+            {result.nickname.slice(0, 24)} 대원
           </div>
+          {!hand && (
+            <div style={{ display: 'flex', fontSize: 22, color: '#b5c1b5', marginTop: 12 }}>
+              {result.summary}
+            </div>
+          )}
         </div>
         <div
           style={{
             display: 'flex',
-            width: 280,
-            height: hand ? 280 : 180,
+            width: hand ? 360 : 280,
+            height: hand ? 360 : 180,
+            flexShrink: 0,
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
-            border: `2px solid ${accent}`,
+            border: hand ? 'none' : `2px solid ${accent}`,
             borderRadius: 24,
             color: accent,
             fontSize: result.emblem.length > 8 ? 30 : 46,
-            background: '#25372a',
+            background: hand ? 'transparent' : '#25372a',
             position: 'relative',
           }}
         >
           {hand ? (
-            <>
-              <HandCrest
-                level={result.handLevel}
-                width={230}
-                height={253}
-                style={{ color: accent }}
-              />
-              <svg
-                viewBox="0 0 24 24"
-                width={140}
-                height={140}
-                strokeWidth={1.15}
-                stroke={accent}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill={`hsl(${handHue}, 28%, 20%)`}
-                style={{ position: 'absolute', top: 48, left: 68 }}
-              >
-                {handIcon.node.map(([tag, props]) => createElement(tag, props))}
-              </svg>
-            </>
+            <img
+              src={`data:image/svg+xml;base64,${Buffer.from(handArtworkSvg(result.handLevel, { radiant: true })).toString('base64')}`}
+              width={360}
+              height={360}
+            />
           ) : (
             result.emblem
           )}
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 14 }}>
-        {result.stats.map(({ label, value }) => (
-          <div
-            key={label}
-            style={{
-              display: 'flex',
-              flex: 1,
-              flexDirection: 'column',
-              padding: '18px 22px',
-              border: '1px solid #425146',
-              borderRadius: 12,
-              background: '#202e25',
-            }}
-          >
-            <span style={{ fontSize: 19, color: '#aabaaa', marginBottom: 8 }}>{label}</span>
-            <span style={{ fontSize: 32 }}>{value}</span>
-          </div>
-        ))}
-      </div>
+      {!hand && (
+        <div style={{ display: 'flex', gap: 14 }}>
+          {result.stats.map(({ label, value }) => (
+            <div
+              key={label}
+              style={{
+                display: 'flex',
+                flex: 1,
+                flexDirection: 'column',
+                padding: '18px 22px',
+                border: '1px solid #425146',
+                borderRadius: 12,
+                background: '#202e25',
+              }}
+            >
+              <span style={{ fontSize: 19, color: '#aabaaa', marginBottom: 8 }}>{label}</span>
+              <span style={{ fontSize: 32 }}>{value}</span>
+            </div>
+          ))}
+        </div>
+      )}
       <div
         style={{
           display: 'flex',

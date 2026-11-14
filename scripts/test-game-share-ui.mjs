@@ -151,6 +151,8 @@ try {
   assert.deepEqual(requests.at(-1), { game: 'rps-hand', resultId: '0' });
   assert.match(document.body.textContent, /현재 손 강화 수치가 이미지로 공유/);
   assert.ok(document.querySelector('a[download]'));
+  assert.match(document.querySelector('.game-result-share-preview').src, /\/image\?v=hand-art-2$/);
+  assert.match(document.querySelector('a[download]').href, /\/image\?v=hand-art-2&download=1$/);
   console.log(
     'PASS: opt-in creation, stable round identity, Kakao image/text fallback, native file, download and copy without SDK',
   );
