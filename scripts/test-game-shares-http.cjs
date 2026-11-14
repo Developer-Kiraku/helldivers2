@@ -37,6 +37,30 @@ module.exports = async ({ guest, member, admin, file }) => {
   await guest.call('/games/rps', 'GET', undefined, 307);
   const after = JSON.parse(await fs.readFile(file, 'utf8'));
   assert.equal(after.gameShares.filter((row) => row.resultId === round.requestId).length, 1);
+  const handBefore = (await member.call('/api/games/rps/enhance')).data;
+  const handRequest = {
+    game: 'rps-hand',
+    resultId: String(handBefore.hand.version),
+    handLevel: 20,
+  };
+  await guest.call('/api/games/share', 'POST', handRequest, 401);
+  await member.call('/api/games/share', 'POST', handRequest, 403, { Origin: null });
+  const handShare = (await member.call('/api/games/share', 'POST', handRequest)).data.share;
+  assert.equal(handShare.result.handLevel, handBefore.hand.level);
+  const handPage = await guest.call(handShare.path);
+  assert.match(handPage.data, /href="\/games\/rps"/);
+  const handImage = await fetch(new URL(handShare.path + '/image', handPage.response.url));
+  assert.equal(handImage.status, 200);
+  const handBytes = Buffer.from(await handImage.arrayBuffer());
+  const handMeta = await sharp(handBytes).metadata();
+  assert.equal(handMeta.width, 1200);
+  assert.equal(handMeta.height, 630);
+  await fs.writeFile('work/hand-result-http-proof.png', handBytes);
+  assert.deepEqual(
+    (await member.call('/api/games/rps/enhance')).data,
+    handBefore,
+    'Sharing never spends points or changes the hand',
+  );
   console.log(
     'PASS: share HTTP auth/CSRF/ownership, concurrency, public OG/PNG/download, invalid IDs and protected games',
   );

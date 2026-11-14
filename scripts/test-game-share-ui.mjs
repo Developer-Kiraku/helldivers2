@@ -141,6 +141,16 @@ try {
   assert.ok(document.querySelector('a[download]'));
   await click('링크 복사');
   assert.match(copied.at(-1), /second$/);
+  await click('닫기');
+  await React.act(async () =>
+    root.render(
+      React.createElement(Share, { game: 'rps-hand', resultId: '0', label: '내 손 강화 공유' }),
+    ),
+  );
+  await click('내 손 강화 공유');
+  assert.deepEqual(requests.at(-1), { game: 'rps-hand', resultId: '0' });
+  assert.match(document.body.textContent, /현재 손 강화 수치가 이미지로 공유/);
+  assert.ok(document.querySelector('a[download]'));
   console.log(
     'PASS: opt-in creation, stable round identity, Kakao image/text fallback, native file, download and copy without SDK',
   );

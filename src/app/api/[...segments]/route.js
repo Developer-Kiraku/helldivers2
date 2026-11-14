@@ -179,9 +179,11 @@ async function handler(request, context) {
                       ...operationalCollections,
                       segments[2] === 'enhance' ? 'rpsEnhancements' : 'rpsRounds',
                     ]
-                  : segments[0] === 'games' && segments[1] === 'stratagem'
-                    ? [...operationalCollections, 'stratagemRuns', 'stratagemRecords']
-                    : operationalCollections,
+                  : path === 'rankings/stratagem'
+                    ? [...operationalCollections, 'stratagemRecords']
+                    : segments[0] === 'games' && segments[1] === 'stratagem'
+                      ? [...operationalCollections, 'stratagemRuns', 'stratagemRecords']
+                      : operationalCollections,
           }
         : {};
     const transact = (callback, write = true) => transaction(callback, write, operationalOptions);

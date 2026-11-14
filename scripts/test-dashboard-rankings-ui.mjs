@@ -74,6 +74,8 @@ try {
       points: 10000 - i,
       elapsedMs: 20000 + i * 1000,
       moves: 50 + i,
+      level: 20 - i,
+      stage: 15 - i,
     })),
   });
   const panel = (name) => document.querySelector(`section[aria-label="${name} 랭킹"]`);
@@ -83,12 +85,37 @@ try {
   await React.act(async () => root.render(React.createElement(Rankings)));
   assert.deepEqual(
     calls.map((c) => c.url),
-    ['rankings/points?page=1', 'rankings/puzzle?page=1'],
+    [
+      'rankings/points?page=1',
+      'rankings/puzzle?page=1',
+      'rankings/hand?page=1',
+      'rankings/stratagem?page=1',
+    ],
   );
   await reply(calls[0], data(5));
   await reply(calls[1], data(5, '2026-11'));
+  await reply(calls[2], data(5));
+  await reply(calls[3], data(5));
   assert.equal(rows('포인트'), 5);
   assert.equal(rows('퍼즐'), 5);
+  assert.equal(rows('손 강화'), 5);
+  assert.equal(rows('스트라타젬 히어로'), 5);
+  assert.match(panel('손 강화').textContent, /\+20강.*창세신의 손/);
+  assert.match(panel('스트라타젬 히어로').textContent, /15단계.*00:20.000/);
+  assert.equal(panel('손 강화').querySelector('a').getAttribute('href'), '/games/rps');
+  assert.equal(
+    panel('스트라타젬 히어로').querySelector('a').getAttribute('href'),
+    '/games/stratagem',
+  );
+  for (const [name, kind] of [
+    ['손 강화', 'hand'],
+    ['스트라타젬 히어로', 'stratagem'],
+  ]) {
+    await clickMore(name);
+    assert.equal(calls.at(-1).url, `rankings/${kind}?page=2`);
+    await reply(calls.at(-1), data(10));
+    assert.equal(rows(name), 10);
+  }
   assert.match(panel('포인트').textContent, /현재 보유 포인트 기준/);
   assert.match(panel('퍼즐').textContent, /2026년 11월/);
   await clickMore('포인트');
@@ -113,7 +140,7 @@ try {
     window.dispatchEvent(new Event('focus'));
     await new Promise((resolve) => setTimeout(resolve, 150));
   });
-  assert.equal(calls.length, beforeRefresh + 2, 'Returning to the page refreshes both rankings');
+  assert.equal(calls.length, beforeRefresh + 4, 'Returning to the page refreshes all rankings');
   const refreshedPoints = data(12);
   refreshedPoints.rankings[0].nickname = '새로운 선두';
   refreshedPoints.rankings[0].own = false;
@@ -137,7 +164,7 @@ try {
     0,
     'An account change clears the prior member markers and expansion',
   );
-  assert.equal(calls.at(-1).url, 'rankings/puzzle?page=1');
+  assert.equal(calls.at(-1).url, 'rankings/stratagem?page=1');
   console.log(
     'PASS: independent 5/10/all ranking expansion, pending/retry controls, focus refresh, month rollover, empty state and identity reset',
   );

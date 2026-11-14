@@ -23,7 +23,7 @@ const names = [
   '창세신의 손',
 ];
 const chances = [100, 95, 90, 85, 80, 70, 60, 50, 45, 40, 40, 38, 36, 34, 32, 30, 28, 26, 24, 22];
-const costs = Array.from({ length: rpsMaxHandLevel }, (_, index) => 100 + index * 50);
+const costs = Array.from({ length: rpsMaxHandLevel }, (_, index) => 50 + index * 25);
 export const rpsHandStages = names.map((name, level) => ({
   level,
   name,

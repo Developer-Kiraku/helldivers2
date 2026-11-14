@@ -103,12 +103,12 @@ try {
               from: 0,
               to: 1,
               success: true,
-              cost: 100,
+              cost: 50,
             };
             state = {
               ...state,
               hand: { level: 1, version: 1 },
-              points: { ...state.points, current: state.points.current - 100 },
+              points: { ...state.points, current: state.points.current - 50 },
             };
           }
           if (loseEnhancementReply) {
@@ -218,7 +218,7 @@ try {
   assert.match(document.querySelector('[role=dialog]').textContent, /여행자의 손/);
   assert.match(document.querySelector('.hand-forge-success').textContent, /강화 성공 확률 100%/);
   loseEnhancementReply = true;
-  await click('+1 강화 · 100P');
+  await click('+1 강화 · 50P');
   const enhancementRequest = enhancementPosts[0];
   assert.equal(
     JSON.parse(sessionStorage.getItem('hd-rps-enhance:enhancement-test')).requestId,
@@ -228,7 +228,7 @@ try {
   assert.equal(document.querySelector('.hand-forge-button').disabled, true);
   await React.act(async () => new Promise((resolve) => setTimeout(resolve, 1400)));
   assert.deepEqual(enhancementPosts[1], enhancementRequest);
-  assert.equal(state.points.current, 900, 'Retry must preserve the single charge');
+  assert.equal(state.points.current, 950, 'Retry must preserve the single charge');
   assert.equal(sessionStorage.getItem('hd-rps-enhance:enhancement-test'), null);
   assert.match(document.querySelector('.hand-forge-visual').textContent, /불씨의 손/);
   assert.match(document.querySelector('.hand-forge-result').textContent, /강화 성공!.*\+0 → \+1/);

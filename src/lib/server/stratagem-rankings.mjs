@@ -26,9 +26,10 @@ export function recordStratagemClear(db, run, now) {
     db.stratagemRecords[index] = record;
 }
 
-export function stratagemRanking(db, actor) {
-  const records = (db.stratagemRecords || []).filter((row) =>
-    db.users.some((user) => user.id === row.userId && user.status === 'active'),
+export function stratagemRanking(db, actor, limit = 50) {
+  const users = new Map(db.users.map((user) => [user.id, user]));
+  const records = (db.stratagemRecords || []).filter(
+    (row) => users.get(row.userId)?.status === 'active',
   );
   const ranked = records
     .filter((row) => !isRankingExcluded(db, row.userId))
@@ -39,7 +40,9 @@ export function stratagemRanking(db, actor) {
     stage: row.stage,
     elapsedMs: row.elapsedMs,
     finishedAt: row.finishedAt,
-    nickname: db.users.find((user) => user.id === row.userId).nickname,
+    nickname: users.get(row.userId).nickname,
+    photo: users.get(row.userId).photo || '',
+    role: users.get(row.userId).role,
     own: row.userId === actor.id,
   });
   const separateIds = new Set(separateRankingUsers(db).map((user) => user.id));
@@ -48,7 +51,7 @@ export function stratagemRanking(db, actor) {
     .map((row) => serialize(row, -1));
   const mineIndex = ranked.findIndex((row) => row.userId === actor.id);
   return {
-    rankings: ranked.slice(0, 50).map(serialize),
+    rankings: ranked.slice(0, limit).map(serialize),
     total: ranked.length,
     unranked,
     mine:

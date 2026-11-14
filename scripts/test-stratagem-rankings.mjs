@@ -61,6 +61,17 @@ assert.equal(
   11,
   'Unmeasured historical runs are not ranked',
 );
+for (let i = 0; i < 55; i++) {
+  const id = `page-${i}`;
+  db.users.push({ id, nickname: id, status: 'active' });
+  clear(id, 1, 100000 + i);
+}
+assert.equal(stratagemRanking(db, db.users[0]).rankings.length, 50);
+assert.equal(
+  stratagemRanking(db, db.users[0], 60).rankings.length,
+  57,
+  'Dashboard expansion can include ranks beyond the game page limit',
+);
 console.log(
   'PASS: stage/time ranking, best retention, deterministic ties, owner/test exclusion and legacy timing',
 );

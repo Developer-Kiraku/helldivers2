@@ -89,10 +89,10 @@ try {
     assert.equal(play(make(level), packet(), 99).hand.level, after);
   assert.throws(() => play(make(20)), { status: 409 });
   const f = make();
-  f.user.points.current = 99;
+  f.user.points.current = 49;
   assert.throws(() => play(f), { status: 400 });
   assert.equal(f.db.pointLedger, undefined);
-  f.user.points.current = 100;
+  f.user.points.current = 50;
   const request = packet();
   const first = play(f, { ...request, cost: 0, level: 20, success: true });
   assert.equal(first.hand.level, 1);

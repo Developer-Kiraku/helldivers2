@@ -136,6 +136,24 @@ try {
     if (game !== 'dice') assert.throws(() => create(db, other, request), { status: 404 });
   }
   assert.equal(db.gameShares.length, 4);
+  actor.rpsHand = { level: 11, version: 42 };
+  const handRequest = { game: 'rps-hand', resultId: '42', handLevel: 20, nickname: '위조' };
+  const handShare = create(db, actor, handRequest).share;
+  assert.equal(handShare.result.handLevel, 11, 'Only the server hand level can be shared');
+  assert.equal(handShare.result.summary, '별빛 현자의 손');
+  assert.deepEqual(create(db, actor, handRequest).share, handShare);
+  assert.throws(() => create(db, other, handRequest), { status: 409 });
+  actor.rpsHand = { level: 9, version: 43 };
+  assert.throws(() => create(db, actor, handRequest), { status: 409 });
+  assert.equal(
+    find(db, handShare.path.split('/').pop()).result.handLevel,
+    11,
+    'Published snapshots do not change after enhancement',
+  );
+  assert.equal(create(db, actor, { game: 'rps-hand', resultId: '43' }).share.result.handLevel, 9);
+  for (const resultId of ['-1', '1.5', '042', '9007199254740992'])
+    assert.throws(() => create(db, actor, { game: 'rps-hand', resultId }), { status: 400 });
+  assert.equal(create(db, other, { game: 'rps-hand', resultId: '0' }).share.result.handLevel, 0);
   assert.equal(db.pointLedger.length, 0, 'Sharing never settles or charges a game');
   assert.equal(
     create(db, actor, { game: 'stratagem', resultId: hero }).share.result.headline,

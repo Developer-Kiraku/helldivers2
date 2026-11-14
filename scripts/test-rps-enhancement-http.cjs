@@ -18,7 +18,7 @@ module.exports = async ({ guest, admin, member, file }) => {
   for (const reply of replies) assert.deepEqual(reply.data, replies[0].data);
   const after = replies[0].data;
   assert.equal(after.hand.level, 1);
-  assert.equal(after.points.current, before.points.current - 100);
+  assert.equal(after.points.current, before.points.current - 50);
   assert.equal(after.points.total, before.points.total);
   assert.deepEqual((await member.call(base + '?requestId=' + input.requestId)).data, after);
   assert.equal((await admin.call(base + '?requestId=' + input.requestId)).data.result, null);

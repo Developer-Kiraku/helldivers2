@@ -1,10 +1,19 @@
 import { ImageResponse } from 'next/og';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { createElement } from 'react';
+import { __iconData as handIcon } from 'lucide-react/dist/esm/icons/hand-fist.mjs';
+import HandCrest from '../../components/HandCrest';
 let font;
 export async function renderGameResultImage(result) {
   font ||= fs.readFile(path.join(process.cwd(), 'public/fonts/HDGameResult.woff'));
-  const accent = result.tone === 'lose' ? '#bcc9bb' : '#f6d65a';
+  const hand = result.game === 'rps-hand';
+  const handHue = [165, 190, 255, 35, 48][Math.floor((result.handLevel || 0) / 5)];
+  const accent = hand
+    ? `hsl(${handHue}, 72%, 72%)`
+    : result.tone === 'lose'
+      ? '#bcc9bb'
+      : '#f6d65a';
   const date = new Date(result.completedAt).toLocaleString('ko-KR', {
     timeZone: 'Asia/Seoul',
     year: 'numeric',
@@ -38,7 +47,7 @@ export async function renderGameResultImage(result) {
         }}
       >
         <span>HELLDIVERS 2 COMMUNITY</span>
-        <span>MISSION REPORT</span>
+        <span>{hand ? 'HAND ENHANCEMENT' : 'MISSION REPORT'}</span>
       </div>
       <div
         style={{
@@ -73,7 +82,7 @@ export async function renderGameResultImage(result) {
           style={{
             display: 'flex',
             width: 280,
-            height: 180,
+            height: hand ? 280 : 180,
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
@@ -82,9 +91,34 @@ export async function renderGameResultImage(result) {
             color: accent,
             fontSize: result.emblem.length > 8 ? 30 : 46,
             background: '#25372a',
+            position: 'relative',
           }}
         >
-          {result.emblem}
+          {hand ? (
+            <>
+              <HandCrest
+                level={result.handLevel}
+                width={230}
+                height={253}
+                style={{ color: accent }}
+              />
+              <svg
+                viewBox="0 0 24 24"
+                width={140}
+                height={140}
+                strokeWidth={1.15}
+                stroke={accent}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill={`hsl(${handHue}, 28%, 20%)`}
+                style={{ position: 'absolute', top: 48, left: 68 }}
+              >
+                {handIcon.node.map(([tag, props]) => createElement(tag, props))}
+              </svg>
+            </>
+          ) : (
+            result.emblem
+          )}
         </div>
       </div>
       <div style={{ display: 'flex', gap: 14 }}>

@@ -4,6 +4,8 @@ const fs = require('node:fs/promises');
 module.exports = async function ({ guest, member, file }) {
   await guest.call('/api/rankings/points', 'GET', undefined, 401);
   await guest.call('/api/rankings/puzzle', 'GET', undefined, 401);
+  await guest.call('/api/rankings/hand', 'GET', undefined, 401);
+  await guest.call('/api/rankings/stratagem', 'GET', undefined, 401);
   for (const page of ['0', '-1', '1.5', 'no', 'Infinity'])
     await member.call('/api/rankings/points?page=' + page, 'GET', undefined, 400);
   await member.call('/api/rankings/unknown', 'GET', undefined, 404);
@@ -21,6 +23,7 @@ module.exports = async function ({ guest, member, file }) {
     points: { current: 1000000 - i * 100, total: 100 + i },
     passwordHash: 'must-not-leak',
     kakao: { id: 'private' },
+    rpsHand: { level: 20 - Math.floor(i / 2), version: 100 + i },
   }));
   db.users.push(
     ...users,
@@ -50,6 +53,26 @@ module.exports = async function ({ guest, member, file }) {
     id: 'other-month',
     month: '2020-01',
     elapsedMs: 1,
+  });
+  db.stratagemRecords = [
+    ...users,
+    ...db.users.filter((u) => ['ranking-withdrawn', 'ranking-test'].includes(u.id)),
+  ].map((user, i) => ({
+    id: user.id,
+    userId: user.id,
+    stage: 15 - Math.floor(i / 2),
+    elapsedMs: 20000 + i * 1000,
+    finishedAt: Date.now(),
+  }));
+  const owner = db.users.find((u) => u.id === (db.ownerSetup?.ownerId || 'u-admin'));
+  db.ownerSetup = { ...db.ownerSetup, ownerId: owner.id };
+  owner.rpsHand = { level: 20, version: 10 };
+  db.stratagemRecords.push({
+    id: owner.id,
+    userId: owner.id,
+    stage: 15,
+    elapsedMs: 1,
+    finishedAt: Date.now(),
   });
   try {
     await fs.writeFile(file, JSON.stringify(db));
@@ -90,11 +113,37 @@ module.exports = async function ({ guest, member, file }) {
     const twelve = (await member.call('/api/rankings/puzzle?page=3')).data;
     assert.equal(twelve.rankings.length, 12);
     assert.equal(twelve.hasMore, false);
+    for (const kind of ['hand', 'stratagem']) {
+      const first = (await member.call(`/api/rankings/${kind}`)).data;
+      assert.equal(first.rankings.length, 5);
+      assert.equal(first.rankings[0].id, users[0].id);
+      assert.equal(first.rankings[1].id, users[1].id);
+      assert.equal(first.unranked[0].nickname, owner.nickname);
+      assert.equal(first.unranked[0].rank, null);
+      assert.equal((await member.call(`/api/rankings/${kind}?page=2`)).data.rankings.length, 10);
+      const full = (await member.call(`/api/rankings/${kind}?page=100`)).data;
+      assert.equal(full.hasMore, false);
+      assert.ok(
+        !full.rankings.some((r) => ['ranking-withdrawn', 'ranking-test', owner.id].includes(r.id)),
+      );
+      assert.ok(!/passwordHash|kakao|version|must-not-leak/.test(JSON.stringify(full)));
+    }
+    assert.equal((await member.call('/api/rankings/hand')).data.rankings[0].level, 20);
+    const hero = (await member.call('/api/rankings/stratagem')).data;
+    assert.equal(hero.total, 12);
+    const heroGame = (await member.call('/api/games/stratagem/rankings')).data;
+    assert.deepEqual(hero.rankings, heroGame.rankings.slice(0, 5));
+    users[0].rpsHand.level = 1;
+    // The persisted user object supplies the current hand level after a failed enhancement.
+    db.users.find((u) => u.id === users[0].id).rpsHand.level = 1;
     db.users.find((u) => u.id === users[0].id).points.current = 0;
     db.puzzleRecords = [];
+    db.stratagemRecords = [];
     await fs.writeFile(file, JSON.stringify(db));
     assert.equal((await member.call('/api/rankings/points')).data.rankings[0].id, users[1].id);
     assert.deepEqual((await member.call('/api/rankings/puzzle')).data.rankings, []);
+    assert.equal((await member.call('/api/rankings/hand')).data.rankings[0].id, users[1].id);
+    assert.deepEqual((await member.call('/api/rankings/stratagem')).data.rankings, []);
     console.log(
       'PASS: dashboard rankings auth, current balances, safe member fields, test/withdrawn exclusion, five-at-a-time results, shared monthly puzzle tie-breaking and live updates',
     );

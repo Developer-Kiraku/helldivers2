@@ -1,13 +1,62 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, Coins, Trophy } from 'lucide-react';
+import { ChevronDown, Coins, Trophy, HandFist, Crosshair } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import Avatar from './Avatar';
 import Nickname from './Nickname';
 import { Button } from './ui';
 import useRefreshOnReturn from '@/hooks/useRefreshOnReturn';
 import { puzzleTime } from '@/lib/sliding-puzzle.mjs';
+import { rpsHandStages } from '@/lib/rps-enhancement.mjs';
+
+const rankingPanels = {
+  points: {
+    title: '포인트 랭킹',
+    icon: Coins,
+    description: '현재 보유 포인트 기준',
+    empty: '아직 등록된 대원이 없습니다.',
+  },
+  puzzle: {
+    title: '퍼즐 랭킹',
+    icon: Trophy,
+    href: '/games/sliding-puzzle',
+    empty: '이번 달 첫 기록을 남겨보세요.',
+  },
+  hand: {
+    title: '손 강화 랭킹',
+    icon: HandFist,
+    href: '/games/rps',
+    description: '현재 강화 단계순',
+    empty: '첫 번째 손 강화에 도전해보세요.',
+  },
+  stratagem: {
+    title: '스트라타젬 히어로 랭킹',
+    icon: Crosshair,
+    href: '/games/stratagem',
+    description: '클리어 단계순 · 같은 단계는 시간순',
+    empty: '첫 클리어 기록을 남겨보세요.',
+  },
+};
+
+function RankingValue({ kind, row }) {
+  const values = {
+    points: () => [row.points.toLocaleString('ko-KR'), ' P', null],
+    puzzle: () => [puzzleTime(row.elapsedMs), '', `${row.moves.toLocaleString('ko-KR')}회 이동`],
+    hand: () => [`+${row.level}강`, '', rpsHandStages[row.level]?.name],
+    stratagem: () => [`${row.stage}단계`, '', puzzleTime(row.elapsedMs)],
+  };
+  const [value, unit, detail] = values[kind]();
+  return (
+    <div className="home-ranking-value">
+      <strong>
+        {value}
+        {unit && <small>{unit}</small>}
+      </strong>
+      {detail && <small>{detail}</small>}
+    </div>
+  );
+}
 
 function RankingPanel({ kind }) {
   const { api } = useCommunity();
@@ -18,7 +67,7 @@ function RankingPanel({ kind }) {
   const [error, setError] = useState('');
   const month = useRef(null);
   const puzzle = kind === 'puzzle';
-  const title = puzzle ? '퍼즐 랭킹' : '포인트 랭킹';
+  const { title, icon: Icon, href, description, empty } = rankingPanels[kind];
   useRefreshOnReturn(() => reload((value) => value + 1));
   useEffect(() => {
     let active = true;
@@ -54,12 +103,12 @@ function RankingPanel({ kind }) {
       <header className="section-heading">
         <div>
           <h2>
-            {puzzle ? <Trophy size={20} /> : <Coins size={20} />}
+            <Icon size={20} />
             {title}
           </h2>
-          <p>{puzzle ? `${monthLabel} · 클리어 시간순` : '현재 보유 포인트 기준'}</p>
+          <p>{puzzle ? `${monthLabel} · 클리어 시간순` : description}</p>
         </div>
-        {puzzle && <Link href="/games/sliding-puzzle">게임하기 ↗</Link>}
+        {href && <Link href={href}>게임하기 ↗</Link>}
       </header>
       {!data && loading ? (
         <div className="home-ranking-loading" role="status" aria-label={`${title} 불러오는 중`}>
@@ -82,22 +131,12 @@ function RankingPanel({ kind }) {
                 <Nickname name={row.nickname} role={row.role} own={row.own} />
                 {row.own && <small className="home-ranking-me">나</small>}
               </div>
-              <div className="home-ranking-value">
-                <strong>
-                  {puzzle ? puzzleTime(row.elapsedMs) : row.points.toLocaleString('ko-KR')}
-                  {!puzzle && <small> P</small>}
-                </strong>
-                {puzzle && <small>{row.moves.toLocaleString('ko-KR')}회 이동</small>}
-              </div>
+              <RankingValue kind={kind} row={row} />
             </li>
           ))}
         </ol>
       ) : (
-        data && (
-          <p className="home-ranking-empty">
-            {puzzle ? '이번 달 첫 기록을 남겨보세요.' : '아직 등록된 대원이 없습니다.'}
-          </p>
-        )
+        data && <p className="home-ranking-empty">{empty}</p>
       )}
       {Boolean(data?.unranked?.length) && (
         <div className="ranking-separate" aria-label={`${title} 순위 제외 기록`}>
@@ -108,10 +147,7 @@ function RankingPanel({ kind }) {
                 {row.nickname}
                 {row.own && <small>나</small>}
               </span>
-              <strong>
-                {puzzle ? puzzleTime(row.elapsedMs) : row.points.toLocaleString('ko-KR')}
-                <small>{puzzle ? `${row.moves}회 이동` : 'P'}</small>
-              </strong>
+              <RankingValue kind={kind} row={row} />
             </div>
           ))}
         </div>
@@ -152,7 +188,7 @@ export default function DashboardRankings() {
   const { user } = useCommunity();
   return (
     <div className="home-rankings-grid">
-      {['points', 'puzzle'].map((kind) => (
+      {Object.keys(rankingPanels).map((kind) => (
         <RankingPanel key={`${user?.id}:${kind}`} kind={kind} />
       ))}
     </div>

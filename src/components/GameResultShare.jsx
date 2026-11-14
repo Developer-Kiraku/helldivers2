@@ -137,7 +137,7 @@ export default function GameResultShare({ game, resultId, label = '결과 공유
       )}
       {selection && (
         <Modal
-          title="게임 결과 공유"
+          title={game === 'rps-hand' ? '내 손 강화 공유' : '게임 결과 공유'}
           className="game-result-share-modal"
           onClose={() => setSelection(null)}
         >
@@ -151,7 +151,10 @@ export default function GameResultShare({ game, resultId, label = '결과 공유
                 alt={`${share.result.gameLabel} · ${share.result.headline}`}
               />
               <p className="game-result-share-notice">
-                닉네임과 이 게임 결과만 공유됩니다. 링크를 받은 사람은 로그인 없이 볼 수 있습니다.
+                {game === 'rps-hand'
+                  ? '닉네임과 현재 손 강화 수치가 이미지로 공유됩니다.'
+                  : '닉네임과 이 게임 결과만 공유됩니다.'}{' '}
+                링크를 받은 사람은 로그인 없이 볼 수 있습니다.
               </p>
               <div className="post-share-options game-result-share-options">
                 {(mobile || ready) && (
