@@ -232,6 +232,15 @@ try {
   assert.equal(sessionStorage.getItem('hd-rps-enhance:enhancement-test'), null);
   assert.match(document.querySelector('.hand-forge-visual').textContent, /불씨의 손/);
   assert.match(document.querySelector('.hand-forge-result').textContent, /강화 성공!.*\+0 → \+1/);
+  assert.ok(document.querySelector('.hand-success-burst'));
+  loseEnhancementReply = true;
+  await click('+2 강화 · 75P');
+  assert.equal(
+    document.querySelector('.hand-success-burst'),
+    null,
+    'A lost reply must not replay the previous success effect',
+  );
+  assert.ok(!document.querySelector('.hand-forge-result').textContent.includes('강화 성공!'));
   await click('닫기');
   assert.equal(document.querySelector('[role=dialog]'), null);
   assert.match(

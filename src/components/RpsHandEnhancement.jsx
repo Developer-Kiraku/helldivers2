@@ -141,6 +141,7 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
     ++revision.current;
     setBusy(true);
     setError('');
+    setData((current) => ({ ...current, result: null }));
     const packet = pendingRef.current || {
       requestId: crypto.randomUUID(),
       expectedVersion: data.hand.version,
