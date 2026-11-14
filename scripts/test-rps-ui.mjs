@@ -245,14 +245,14 @@ try {
   assert.equal(document.querySelector('[role=dialog]'), null);
   assert.match(
     document.querySelector('[aria-label="승패 확률"]').textContent,
-    /승리 약 33\.83%.*패배 약 32\.83%/,
+    /승리 약 34\.33%.*무승부 약 32\.98%.*패배 약 32\.69%/,
   );
   state = { ...initial(), hand: { level: 10, version: 10 } };
   window.rpsContext.user = { id: 'hand-boundary', points: state.points };
   await render();
   assert.match(
     document.querySelector('[aria-label="승패 확률"]').textContent,
-    /승리 약 40\.83%.*무승부 약 33\.33%.*패배 약 25\.83%/,
+    /승리 약 45\.83%.*무승부 약 28\.89%.*패배 약 25\.28%/,
   );
   await click('손 강화');
   assert.match(document.querySelector('.hand-forge-success').textContent, /강화 성공 확률 60%/);
@@ -264,7 +264,7 @@ try {
   await render();
   assert.match(
     document.querySelector('[aria-label="승패 확률"]').textContent,
-    /승리 약 55\.83%.*무승부 약 33\.33%.*패배 약 10\.83%/,
+    /승리 약 70\.83%.*무승부 20%.*패배 약 9\.17%/,
   );
   await click('손 강화');
   assert.ok(document.querySelector('.hand-forge-max'));

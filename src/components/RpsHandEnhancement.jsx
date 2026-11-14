@@ -7,6 +7,7 @@ import Modal from './Modal';
 import GameResultShare from './GameResultShare';
 import { useCommunity } from './CommunityProvider';
 import { rpsHandStages, rpsMaxHandLevel } from '@/lib/rps-enhancement.mjs';
+import { rpsHandWinBonusTiers } from '@/lib/rps-rules.mjs';
 import { handAppearance, handArtworkUrl } from '@/lib/hand-artwork.mjs';
 
 const number = (value) => value.toLocaleString('ko-KR');
@@ -297,8 +298,11 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
       <details className="hand-forge-guide">
         <summary>강화 확률과 규칙 보기</summary>
         <p>
-          손 강화 1~5강은 단계당 0.5%p, 6~10강은 1%p, 11~20강은 1.5%p씩 승리 확률이 누적 상승하고
-          패배 확률은 그만큼 감소합니다. 무승부 확률은 유지됩니다.
+          손 강화는{' '}
+          {rpsHandWinBonusTiers
+            .map((tier) => `${tier.from}~${tier.to}강 +${tier.percent}%p`)
+            .join(', ')}
+          씩 단계마다 승리 확률이 누적 상승합니다. 증가분만큼 무승부와 패배 확률이 함께 줄어듭니다.
         </p>
         <p>
           도전하는 목표 단계 기준으로 +1~5 실패 시 유지, +6~10 실패 시 -1강, +11~20 실패 시
