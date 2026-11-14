@@ -10,15 +10,51 @@ import { useCommunity } from './CommunityProvider';
 import { rpsHandStages, rpsMaxHandLevel } from '@/lib/rps-enhancement.mjs';
 
 const number = (value) => value.toLocaleString('ko-KR');
+const handAppearance = (level) => ({
+  '--hand-hue': [165, 190, 255, 35, 48][Math.floor(level / 5)],
+  '--hand-power': level / 20,
+  '--forge-duration': `${1800 + level * 65}ms`,
+});
+
+function ForgeSuccessBurst({ level }) {
+  const tier = Math.floor(level / 5);
+  const count = 12 + tier * 6;
+  return (
+    <div className="hand-success-burst" aria-hidden="true">
+      <span className="hand-success-flash" />
+      {tier >= 2 && <span className="hand-success-rays" />}
+      {Array.from({ length: 1 + tier }, (_, index) => (
+        <span
+          className="hand-success-wave"
+          key={`wave-${index}`}
+          style={{ '--burst-delay': `${index * 120}ms` }}
+        />
+      ))}
+      {Array.from({ length: count }, (_, index) => (
+        <i
+          key={index}
+          className="hand-success-particle"
+          style={{
+            '--spark-angle': `${(index * 360) / count}deg`,
+            '--spark-distance': `${65 + tier * 17 + (index % 3) * 15}px`,
+            '--spark-size': `${3 + tier + (index % 2)}px`,
+            '--burst-delay': `${(index % 4) * 55}ms`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 export function EnchantedHand({ level = 0, compact = false, effect = '' }) {
   const tier = Math.floor(level / 5);
   return (
     <div
       className={`enchanted-hand tier-${tier} ${compact ? 'is-compact' : ''} ${effect}`}
-      style={{ '--hand-hue': [165, 190, 255, 35, 48][tier], '--hand-power': level / 20 }}
+      style={handAppearance(level)}
       aria-hidden="true"
     >
       <div className="enchanted-hand-aura" />
+      {effect === 'is-success' && !compact && <ForgeSuccessBurst level={level} />}
       <div className="enchanted-hand-ring" />
       <div className="enchanted-hand-runes">
         {Array.from({ length: 4 + Math.floor(level / 2) }, (_, index) => (
@@ -160,41 +196,49 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
         <span>ARCANE FORGE</span>
         <small>최대 +{rpsMaxHandLevel}</small>
       </div>
-      <div className="hand-forge-visual" key={busy ? 'forging' : result?.requestId || 'idle'}>
-        <EnchantedHand level={level} effect={effect} />
-        <span className="hand-level">+{level}</span>
-        <h2>{stage.name}</h2>
-        <p className="hand-forge-success">
-          {next ? (
+      <div
+        className={`hand-forge-stage ${effect}`}
+        style={handAppearance(level)}
+        key={busy ? 'forging' : result?.requestId || 'idle'}
+      >
+        <div className="hand-forge-visual">
+          <EnchantedHand level={level} effect={effect} />
+          <span className="hand-level">+{level}</span>
+          <h2>{stage.name}</h2>
+          <p className="hand-forge-success">
+            {next ? (
+              <>
+                강화 성공 확률 <strong>{next.successPercent}%</strong>
+              </>
+            ) : (
+              '최고 강화 달성'
+            )}
+          </p>
+        </div>
+        <div className={`hand-forge-result ${effect}`} role="status" aria-live="polite">
+          {busy ? (
             <>
-              강화 성공 확률 <strong>{next.successPercent}%</strong>
+              <Flame size={18} /> 손에 마력을 새기고 있습니다…
+            </>
+          ) : result ? (
+            <>
+              <Sparkles size={18} />
+              <span>
+                <b className="hand-forge-result-title">
+                  {result.success ? '강화 성공!' : '강화 실패'}
+                </b>{' '}
+                <strong>
+                  +{result.from} → +{result.to}
+                </strong>
+                {!result.success && result.from === result.to && ' · 단계 유지'}
+              </span>
             </>
           ) : (
-            '최고 강화 달성'
+            <>
+              <Shield size={17} /> 강화 효과는 가위·바위·보 모두에 적용됩니다.
+            </>
           )}
-        </p>
-      </div>
-      <div className={`hand-forge-result ${effect}`} role="status" aria-live="polite">
-        {busy ? (
-          <>
-            <Flame size={18} /> 손에 마력을 새기고 있습니다…
-          </>
-        ) : result ? (
-          <>
-            <Sparkles size={18} />
-            <span>
-              {result.success ? '강화 성공!' : '강화 실패'}{' '}
-              <strong>
-                +{result.from} → +{result.to}
-              </strong>
-              {!result.success && result.from === result.to && ' · 단계 유지'}
-            </span>
-          </>
-        ) : (
-          <>
-            <Shield size={17} /> 강화 효과는 가위·바위·보 모두에 적용됩니다.
-          </>
-        )}
+        </div>
       </div>
       {next ? (
         <>

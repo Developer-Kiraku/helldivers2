@@ -242,7 +242,7 @@ try {
   window.rpsContext.user = { id: 'hand-boundary', points: state.points };
   await render();
   await click('손 강화');
-  assert.match(document.querySelector('.hand-forge-success').textContent, /강화 성공 확률 40%/);
+  assert.match(document.querySelector('.hand-forge-success').textContent, /강화 성공 확률 60%/);
   assert.match(document.querySelector('.hand-forge-next').textContent, /\+10 → \+11/);
   assert.ok(!document.querySelector('.hand-forge-visual').textContent.includes('패배 확률'));
   await click('닫기');

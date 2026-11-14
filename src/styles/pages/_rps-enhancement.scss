@@ -99,10 +99,138 @@
     }
   }
   &.is-success {
-    animation: hand-forge-reveal 0.85s ease-out;
+    animation: hand-forge-reveal var(--forge-duration) ease-out;
+    .enchanted-hand-crest {
+      filter: drop-shadow(0 0 calc(8px + var(--hand-power) * 16px) currentColor);
+    }
+    .enchanted-hand-ring {
+      border-color: currentColor;
+      box-shadow: 0 0 calc(12px + var(--hand-power) * 22px) currentColor;
+    }
   }
   &.is-failure {
     animation: hand-forge-failure 0.6s ease-out;
+  }
+}
+.hand-success-burst {
+  inset: 0;
+  pointer-events: none;
+  color: var(--hand-light);
+  z-index: -1;
+  > * {
+    position: absolute;
+    opacity: 0;
+  }
+}
+.hand-success-flash {
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    hsl(0 0% 100%) 0 8%,
+    hsl(var(--hand-hue) 100% 85% / 0.95) 18%,
+    hsl(var(--hand-hue) 100% 65% / 0.6) 38%,
+    transparent 70%
+  );
+  animation: hand-success-flash var(--forge-duration) ease-out both;
+}
+.hand-success-rays {
+  inset: -55%;
+  background: repeating-conic-gradient(
+    from 15deg,
+    hsl(var(--hand-hue) 100% 80% / 0.8) 0deg 5deg,
+    transparent 8deg 30deg
+  );
+  mask-image: radial-gradient(circle, transparent 10%, black 25%, transparent 68%);
+  animation: hand-success-rays var(--forge-duration) ease-out both;
+}
+.hand-success-wave {
+  inset: 18%;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  box-shadow:
+    0 0 15px currentColor,
+    inset 0 0 12px currentColor;
+  animation: hand-success-wave var(--forge-duration) cubic-bezier(0.12, 0.65, 0.25, 1)
+    var(--burst-delay) both;
+}
+.hand-success-particle {
+  left: 50%;
+  top: 50%;
+  width: var(--spark-size);
+  height: calc(var(--spark-size) * 1.8);
+  border-radius: 2px;
+  background: hsl(var(--hand-hue) 95% 85%);
+  box-shadow:
+    0 0 8px currentColor,
+    0 0 18px currentColor;
+  animation: hand-success-particle var(--forge-duration) cubic-bezier(0.1, 0.65, 0.25, 1)
+    var(--burst-delay) both;
+}
+.hand-forge-stage {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 -8px 8px;
+    z-index: -1;
+    border-radius: 16px;
+    pointer-events: none;
+    opacity: 0;
+  }
+  &.is-success {
+    &::before {
+      opacity: 1;
+      background: radial-gradient(
+        ellipse at 20% 40%,
+        hsl(var(--hand-hue) 80% 65% / 0.22),
+        transparent 75%
+      );
+      border: 1px solid hsl(var(--hand-hue) 85% 75% / 0.45);
+      box-shadow:
+        inset 0 0 24px hsl(var(--hand-hue) 90% 70% / 0.08),
+        0 0 20px hsl(var(--hand-hue) 90% 70% / 0.12);
+      animation: hand-success-stage var(--forge-duration) ease-out both;
+    }
+    .hand-level {
+      border-color: hsl(var(--hand-hue) 85% 78%);
+      color: hsl(var(--hand-hue) 95% 85%);
+      background: hsl(var(--hand-hue) 40% 20%);
+      box-shadow: 0 0 20px hsl(var(--hand-hue) 85% 70% / 0.5);
+      animation: hand-success-level var(--forge-duration) ease-out both;
+    }
+    .hand-forge-result {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid hsl(var(--hand-hue) 75% 70% / 0.5);
+      background: linear-gradient(
+        110deg,
+        hsl(var(--hand-hue) 45% 20%),
+        hsl(var(--hand-hue) 50% 30% / 0.6)
+      );
+      color: hsl(var(--hand-hue) 100% 85%);
+      strong {
+        color: inherit;
+        font-size: var(--hd-font-size-18);
+      }
+      .hand-forge-result-title {
+        font-size: var(--hd-font-size-15);
+      }
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          110deg,
+          transparent 30%,
+          hsl(0 0% 100% / 0.55),
+          transparent 70%
+        );
+        animation: hand-success-sweep 1.1s 0.15s ease-out both;
+        pointer-events: none;
+      }
+    }
   }
 }
 .rps-enhancement-card.panel {
@@ -390,16 +518,109 @@
 }
 @keyframes hand-forge-reveal {
   0% {
-    transform: scale(0.88);
-    filter: brightness(2.4);
+    transform: scale(0.82);
+    filter: brightness(1);
   }
-  35% {
-    transform: scale(1.07);
-    filter: brightness(1.6);
+  12% {
+    transform: scale(calc(1.1 + var(--hand-power) * 0.12));
+    filter: brightness(calc(2.5 + var(--hand-power) * 2));
+  }
+  40% {
+    transform: scale(1.04);
+    filter: brightness(1.3);
   }
   100% {
     transform: scale(1);
     filter: brightness(1);
+  }
+}
+@keyframes hand-success-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(calc(0.9 + var(--hand-power) * 0.6));
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+@keyframes hand-success-rays {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(-15deg);
+  }
+  15% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2) rotate(25deg);
+  }
+}
+@keyframes hand-success-wave {
+  0% {
+    opacity: 0;
+    transform: scale(0.25);
+  }
+  12% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(calc(2 + var(--hand-power) * 1.2));
+  }
+}
+@keyframes hand-success-particle {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--spark-angle)) translateY(-10px) scale(0.4);
+  }
+  14% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--spark-angle))
+      translateY(calc(-1 * var(--spark-distance))) scale(0.2);
+  }
+}
+@keyframes hand-success-stage {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+    background-color: hsl(var(--hand-hue) 85% 80% / calc(0.15 + var(--hand-power) * 0.2));
+  }
+  100% {
+    opacity: 1;
+    background-color: transparent;
+  }
+}
+@keyframes hand-success-level {
+  0% {
+    transform: scale(0.8);
+  }
+  15% {
+    transform: scale(1.25);
+    filter: brightness(1.7);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+@keyframes hand-success-sweep {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(110%);
   }
 }
 @keyframes hand-forge-failure {
@@ -443,7 +664,14 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .enchanted-hand,
-  .enchanted-hand * {
+  .enchanted-hand *,
+  .hand-forge-stage *,
+  .hand-forge-stage::before,
+  .hand-forge-stage *::after {
     animation: none !important;
+  }
+  .hand-success-burst,
+  .hand-forge-stage.is-success .hand-forge-result::after {
+    display: none;
   }
 }
