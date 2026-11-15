@@ -1,5 +1,6 @@
 export const auditLogTypes = {
   point_grant: '포인트 지급',
+  rps_grant: '가위바위보 도전 횟수 부여',
   post_create: '게시글 작성',
   post_update: '게시글 수정',
   post_delete: '게시글 삭제',
@@ -27,6 +28,7 @@ export const auditLogTypes = {
 };
 export const auditActionTypes = {
   'points.grant': 'point_grant',
+  'rps.grant': 'rps_grant',
   'post.create': 'post_create',
   'post.update': 'post_update',
   'post.move': 'post_move',
@@ -55,3 +57,5 @@ export const auditActionTypes = {
   'user.mute': 'member_mute',
   'user.unmute': 'member_unmute',
 };
+
+export const isGrantLog = (type) => type === 'point_grant' || type === 'rps_grant';

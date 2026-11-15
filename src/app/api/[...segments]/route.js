@@ -347,20 +347,26 @@ async function handler(request, context) {
       if (path === 'admin/settings/point-grants') {
         const result = handlePointGrants(db, actor, method, input);
         if (method === 'POST' && result.created)
-          audit(db, actor.id, 'points.grant', result.grant.id, {
-            targetTitle:
-              (result.grant.scope === 'all'
-                ? '전체 회원'
-                : result.grant.recipients
-                    .slice(0, 3)
-                    .map((user) => user.nickname)
-                    .join(', ')) +
-              ' · ' +
-              result.grant.count +
-              '명',
-            amount: result.grant.amount,
-            reason: result.grant.reason,
-          });
+          audit(
+            db,
+            actor.id,
+            result.grant.kind === 'rps' ? 'rps.grant' : 'points.grant',
+            result.grant.id,
+            {
+              targetTitle:
+                (result.grant.scope === 'all'
+                  ? '전체 회원'
+                  : result.grant.recipients
+                      .slice(0, 3)
+                      .map((user) => user.nickname)
+                      .join(', ')) +
+                ' · ' +
+                result.grant.count +
+                '명',
+              amount: result.grant.amount,
+              reason: result.grant.reason,
+            },
+          );
         return result;
       }
       if (segments[0] === 'games' && segments[1] === 'dice')

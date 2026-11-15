@@ -181,6 +181,10 @@ export default function MembersPage() {
               <dd>{user.loginId || '카카오 계정'}</dd>
               <dt>로그인 방식</dt>
               <dd>{user.provider === 'kakao' ? '카카오' : '임시 계정'}</dd>
+              <dt>현재 포인트</dt>
+              <dd>{(user.points?.current ?? 0).toLocaleString('ko-KR')} P</dd>
+              <dt>누적 포인트</dt>
+              <dd>{(user.points?.total ?? 0).toLocaleString('ko-KR')} P</dd>
               <dt>최근 로그인</dt>
               <dd>{date(user.lastLoginAt)}</dd>
               <dt>생성일</dt>

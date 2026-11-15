@@ -32,5 +32,9 @@ export function awardRpsPostAttempt(db, postId) {
   const user = db.users.find((item) => item.id === post.authorId && item.status === 'active');
   if (!user) return;
   post.rpsAttemptGrantedAt = new Date().toISOString();
-  user.rps = { ...user.rps, bonus: (user.rps?.bonus || 0) + 1 };
+  awardRpsAttempts(user, 1);
+}
+
+export function awardRpsAttempts(user, amount) {
+  user.rps = { ...user.rps, bonus: (user.rps?.bonus || 0) + amount };
 }

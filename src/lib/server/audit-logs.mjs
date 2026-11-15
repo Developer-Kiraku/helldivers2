@@ -1,4 +1,4 @@
-import { auditActionTypes } from '../audit-log-types.mjs';
+import { auditActionTypes, isGrantLog } from '../audit-log-types.mjs';
 
 // Store names and dates at the time of the action, before later edits or withdrawals.
 export function auditLogDetails(db, actorId, action, targetId, details = {}) {
@@ -35,7 +35,7 @@ export function auditLogEntry(db, entry) {
     : null;
   const target = member
     ? db.users.find((user) => user.id === entry.targetId)
-    : type === 'point_grant'
+    : isGrantLog(type)
       ? null
       : db.posts.find((post) => post.id === (details.postId || comment?.postId || entry.targetId));
   const snapshot = details.after || details.before;
@@ -54,7 +54,7 @@ export function auditLogEntry(db, entry) {
   return {
     id: entry.id,
     type,
-    ...(type === 'point_grant' ? { amount: details.amount } : {}),
+    ...(isGrantLog(type) ? { amount: details.amount } : {}),
     automatic: entry.action === 'user.withdraw.probation_expired',
     executedAt: entry.createdAt,
     actorNickname:

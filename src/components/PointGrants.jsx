@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Coins, Users, UserRound, History } from 'lucide-react';
+import { Coins, Users, UserRound, History, Ticket } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import { Button, Input, Label } from './ui';
 import Modal from './Modal';
@@ -10,6 +10,7 @@ const format = (number) => number.toLocaleString('ko-KR');
 export default function PointGrants() {
   const { api, notify, refresh } = useCommunity();
   const [data, setData] = useState(null),
+    [kind, setKind] = useState('points'),
     [scope, setScope] = useState('selected'),
     [ids, setIds] = useState([]),
     [query, setQuery] = useState(''),
@@ -32,6 +33,17 @@ export default function PointGrants() {
       active = false;
     };
   }, [api]);
+  const rps = kind === 'rps';
+  const title = rps ? '가위바위보 도전 횟수 부여' : '포인트 지급';
+  const unit = rps ? '회' : ' P';
+  const history = rps ? data?.rpsHistory : data?.history;
+  function changeKind(next) {
+    if (next === kind) return;
+    setKind(next);
+    setAmount(next === 'rps' ? '1' : '1000');
+    setError('');
+    setSuccess('');
+  }
   const filtered = (data?.users || []).filter((user) =>
     user.nickname.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()),
   );
@@ -44,7 +56,7 @@ export default function PointGrants() {
     setSuccess('');
     try {
       if (!Number.isInteger(value) || value < 1 || value > 1000000)
-        throw Error('1~1,000,000P 사이의 정수 금액을 입력해주세요.');
+        throw Error(`1~1,000,000${unit} 사이의 정수를 입력해주세요.`);
       const current = await api(apiPath);
       setData(current);
       const recipients = current.users.filter((user) => scope === 'all' || ids.includes(user.id));
@@ -55,6 +67,7 @@ export default function PointGrants() {
       }
       setOperation({
         requestId: crypto.randomUUID(),
+        kind,
         scope,
         userIds: scope === 'all' ? [] : recipients.map((user) => user.id),
         amount: value,
@@ -76,14 +89,13 @@ export default function PointGrants() {
     try {
       const { recipients, ...payload } = operation;
       const result = await api(apiPath, { method: 'POST', body: payload });
-      const message =
-        result.grant.count + '명에게 각각 ' + format(result.grant.amount) + 'P를 지급했습니다.';
+      const message = `${result.grant.count}명에게 ${rps ? '가위바위보 도전 횟수를' : '포인트를'} 각각 ${format(result.grant.amount)}${unit} 지급했습니다.`;
       setOperation(null);
       setIds([]);
       setReason('');
       setSuccess(message);
       notify(message);
-      await refresh();
+      if (!rps) await refresh();
       setData(await api(apiPath));
     } catch (err) {
       setError(err.message);
@@ -95,14 +107,32 @@ export default function PointGrants() {
     <section className="panel api-key-panel point-grants" id="point-grants">
       <header>
         <h2>
-          <Coins size={20} />
-          포인트 지급
+          {rps ? <Ticket size={20} /> : <Coins size={20} />}
+          {title}
         </h2>
-        <span className="eyebrow">POINT GRANT</span>
       </header>
+      <div className="point-grant-modes" role="group" aria-label="지급 항목">
+        <Button
+          type="button"
+          aria-pressed={!rps}
+          disabled={busy || !data}
+          onClick={() => changeKind('points')}
+        >
+          포인트
+        </Button>
+        <Button
+          type="button"
+          aria-pressed={rps}
+          disabled={busy || !data}
+          onClick={() => changeKind('rps')}
+        >
+          가위바위보 도전 횟수
+        </Button>
+      </div>
       <p>
-        회원별 또는 전체 회원에게 동일한 금액을 지급합니다. 누적 포인트와 현재 포인트에 모두
-        반영됩니다.
+        {rps
+          ? '선택한 회원 또는 전체 회원에게 추가 도전 횟수를 부여합니다. 남은 추가 횟수는 다음 날에도 보관됩니다.'
+          : '회원별 또는 전체 회원에게 동일한 금액을 지급합니다. 누적 포인트와 현재 포인트에 모두 반영됩니다.'}
       </p>
       {error && !operation && (
         <p role="alert" className="form-error">
@@ -117,7 +147,7 @@ export default function PointGrants() {
       {!data && !error && <p role="status">지급 대상과 이력을 불러오는 중…</p>}
       {data && (
         <form onSubmit={review} className="point-grant-form">
-          <div className="point-grant-modes" role="group" aria-label="포인트 지급 대상">
+          <div className="point-grant-modes" role="group" aria-label="지급 대상">
             <Button
               type="button"
               aria-pressed={scope === 'selected'}
@@ -166,7 +196,10 @@ export default function PointGrants() {
                       }
                     />
                     <span>{user.nickname}</span>
-                    <small>현재 {format(user.current)} P</small>
+                    <small>
+                      현재 {format(user.current)} P
+                      {rps && ` · 남은 도전 ${format(user.remainingAttempts)}회`}
+                    </small>
                   </label>
                 ))}
                 {!filtered.length && <p>조건에 맞는 회원이 없습니다.</p>}
@@ -198,7 +231,7 @@ export default function PointGrants() {
           )}
           <div className="point-grant-fields">
             <Label>
-              1인당 지급 포인트
+              {rps ? '1인당 추가 도전 횟수' : '1인당 지급 포인트'}
               <Input
                 type="number"
                 min={1}
@@ -216,14 +249,15 @@ export default function PointGrants() {
                 maxLength={200}
                 value={reason}
                 disabled={busy}
-                placeholder="예: 이벤트 보상, 테스트 포인트"
+                placeholder="예: 이벤트 보상"
                 onChange={(event) => setReason(event.target.value)}
               />
             </Label>
           </div>
           <div className="api-key-actions point-grant-submit">
             <span>
-              {count}명 × {Number.isInteger(value) && value > 0 ? format(value) : '0'}P
+              {count}명 × {Number.isInteger(value) && value > 0 ? format(value) : '0'}
+              {unit}
             </span>
             <Button
               type="submit"
@@ -234,19 +268,20 @@ export default function PointGrants() {
           </div>
         </form>
       )}
-      {data && (
+      {history && (
         <div className="point-grant-history">
           <h3>
             <History size={16} />
             최근 지급 이력
           </h3>
-          {!data.history.length && <p>아직 수동 지급 이력이 없습니다.</p>}
+          {!history.length && <p>아직 수동 지급 이력이 없습니다.</p>}
           <div>
-            {data.history.map((grant) => (
+            {history.map((grant) => (
               <details key={grant.id}>
                 <summary>
                   <strong>
-                    +{format(grant.amount)} P <small>× {grant.count}명</small>
+                    +{format(grant.amount)}
+                    {unit} <small>× {grant.count}명</small>
                   </strong>
                   <span>{grant.scope === 'all' ? '전체 회원' : '선택 회원'}</span>
                   <time>
@@ -255,7 +290,8 @@ export default function PointGrants() {
                 </summary>
                 <div>
                   <p>
-                    지급자: {grant.actorNickname} · 총 {format(grant.total)}P
+                    지급자: {grant.actorNickname} · 총 {format(grant.total)}
+                    {unit}
                   </p>
                   <p>{grant.recipients.map((user) => user.nickname).join(', ')}</p>
                   {grant.reason && <p>사유: {grant.reason}</p>}
@@ -267,7 +303,7 @@ export default function PointGrants() {
       )}
       {operation && (
         <Modal
-          title="포인트 지급 확인"
+          title={`${title} 확인`}
           onClose={() => {
             if (!busy) {
               setOperation(null);
@@ -301,19 +337,23 @@ export default function PointGrants() {
               </dd>
             </div>
             <div>
-              <dt>1인당 지급액</dt>
-              <dd>{format(operation.amount)} P</dd>
+              <dt>{rps ? '1인당 추가 횟수' : '1인당 지급액'}</dt>
+              <dd>{format(operation.amount) + unit}</dd>
             </div>
             <div>
-              <dt>총 지급액</dt>
-              <dd>{format(operation.amount * operation.expectedCount)} P</dd>
+              <dt>{rps ? '총 추가 횟수' : '총 지급액'}</dt>
+              <dd>{format(operation.amount * operation.expectedCount) + unit}</dd>
             </div>
           </dl>
           <p className="point-grant-confirm-members">
             {operation.recipients.map((user) => user.nickname).join(', ')}
           </p>
           {operation.reason && <p>사유: {operation.reason}</p>}
-          <p>확정하면 대상 회원의 누적·현재 포인트에 각각 반영됩니다.</p>
+          <p>
+            {rps
+              ? '확정하면 대상 회원의 가위바위보 추가 도전 횟수에 반영됩니다.'
+              : '확정하면 대상 회원의 누적·현재 포인트에 각각 반영됩니다.'}
+          </p>
           {error && (
             <p role="alert" className="form-error">
               {error}

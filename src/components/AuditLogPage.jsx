@@ -5,7 +5,7 @@ import { ArrowUpRight, RefreshCw } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import useRefreshOnReturn from '../hooks/useRefreshOnReturn';
 import { Button, Input, Select } from './ui';
-import { auditLogTypes } from '@/lib/audit-log-types.mjs';
+import { auditLogTypes, isGrantLog } from '@/lib/audit-log-types.mjs';
 import { boards } from '@/lib/data';
 import { isStaff } from '@/lib/roles';
 import { muteDurations } from '@/lib/member-mute.mjs';
@@ -90,7 +90,7 @@ export default function AuditLogPage() {
           value={type}
           onChange={(event) => {
             setType(event.target.value);
-            if (event.target.value.startsWith('member_') || event.target.value === 'point_grant')
+            if (event.target.value.startsWith('member_') || isGrantLog(event.target.value))
               setBoard('all');
             setPage(1);
           }}
@@ -105,7 +105,7 @@ export default function AuditLogPage() {
         <Select
           aria-label="로그 게시판"
           value={board}
-          disabled={members || type === 'point_grant'}
+          disabled={members || isGrantLog(type)}
           onChange={(event) => {
             setBoard(event.target.value);
             setPage(1);
@@ -150,7 +150,7 @@ export default function AuditLogPage() {
               <th scope="col">실행 일시</th>
               <th scope="col">실행한 유저</th>
               <th scope="col">
-                {type === 'point_grant'
+                {isGrantLog(type)
                   ? '지급 대상'
                   : members
                     ? '회원 닉네임'
@@ -161,8 +161,10 @@ export default function AuditLogPage() {
                         : '글 제목 / 회원 닉네임'}
               </th>
               <th scope="col">
-                {type === 'point_grant'
-                  ? '1인당 지급액'
+                {isGrantLog(type)
+                  ? type === 'rps_grant'
+                    ? '1인당 추가 횟수'
+                    : '1인당 지급액'
                   : members
                     ? '가입일'
                     : comments
@@ -251,16 +253,19 @@ export default function AuditLogPage() {
                     </td>
                     <td className="audit-log-created">
                       <span className="audit-log-mobile-label">
-                        {entry.type === 'point_grant'
-                          ? '1인당 지급액'
+                        {isGrantLog(entry.type)
+                          ? entry.type === 'rps_grant'
+                            ? '1인당 추가 횟수'
+                            : '1인당 지급액'
                           : entry.type.startsWith('member_')
                             ? '가입일'
                             : entry.type.startsWith('comment_')
                               ? '댓글 작성일'
                               : '작성일'}
                       </span>
-                      {entry.type === 'point_grant' ? (
-                        Number(entry.amount).toLocaleString('ko-KR') + ' P'
+                      {isGrantLog(entry.type) ? (
+                        Number(entry.amount).toLocaleString('ko-KR') +
+                        (entry.type === 'rps_grant' ? '회' : ' P')
                       ) : entry.targetCreatedAt ? (
                         <time dateTime={entry.targetCreatedAt}>{date(entry.targetCreatedAt)}</time>
                       ) : (

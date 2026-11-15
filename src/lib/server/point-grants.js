@@ -1,5 +1,7 @@
 import { fail } from './auth';
 import { awardManualPoints } from './points.mjs';
+import { awardRpsAttempts, rpsAttempts } from './rps-attempts.mjs';
+import { rpsDailyAttempts } from '../rps-rules.mjs';
 import { createHash } from 'node:crypto';
 const audienceVersion = (db) =>
   createHash('sha256')
@@ -17,6 +19,7 @@ const receipt = (row) => ({
   id: row.id,
   scope: row.scope,
   amount: row.amount,
+  ...(row.kind ? { kind: row.kind } : {}),
   count: row.recipients.length,
   total: row.amount * row.recipients.length,
   recipients: row.recipients,
@@ -26,7 +29,7 @@ const receipt = (row) => ({
 });
 export function handlePointGrants(db, actor, method, input = {}) {
   if (actor.role !== 'operator' || actor.actualRole)
-    fail(403, '총관리자만 포인트를 지급할 수 있습니다.');
+    fail(403, '총관리자만 지급을 관리할 수 있습니다.');
   if (method === 'GET')
     return {
       audienceVersion: audienceVersion(db),
@@ -36,18 +39,30 @@ export function handlePointGrants(db, actor, method, input = {}) {
           id: user.id,
           nickname: user.nickname,
           current: user.points?.current || 0,
+          remainingAttempts: rpsAttempts(user).total,
         }))
         .sort((a, b) => a.nickname.localeCompare(b.nickname, 'ko')),
-      history: (db.pointGrants || []).slice(-10).reverse().map(receipt),
+      history: (db.pointGrants || [])
+        .filter((row) => !row.kind)
+        .slice(-10)
+        .reverse()
+        .map(receipt),
+      rpsHistory: (db.pointGrants || [])
+        .filter((row) => row.kind === 'rps')
+        .slice(-10)
+        .reverse()
+        .map(receipt),
     };
   if (method !== 'POST') fail(404, '지급 요청을 찾을 수 없습니다.');
+  const { kind = 'points' } = input;
+  if (kind !== 'points' && kind !== 'rps') fail(400, '지급 항목을 확인해주세요.');
   if (
     !['all', 'selected'].includes(input.scope) ||
     !Number.isInteger(input.amount) ||
     input.amount < 1 ||
     input.amount > 1000000
   )
-    fail(400, '지급 대상과 1~1,000,000 사이의 정수 금액을 입력해주세요.');
+    fail(400, '지급 대상과 1~1,000,000 사이의 정수 수량을 입력해주세요.');
   if (
     typeof input.requestId !== 'string' ||
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input.requestId)
@@ -76,7 +91,11 @@ export function handlePointGrants(db, actor, method, input = {}) {
   db.pointGrants ||= [];
   const previous = db.pointGrants.find((row) => row.id === input.requestId);
   if (previous) {
-    if (previous.actorId !== actor.id || previous.intent !== intent)
+    if (
+      previous.actorId !== actor.id ||
+      previous.intent !== intent ||
+      (previous.kind || 'points') !== kind
+    )
       fail(409, '이미 사용한 지급 요청입니다. 대상을 다시 확인해주세요.');
     return { grant: receipt(previous), created: false };
   }
@@ -90,7 +109,14 @@ export function handlePointGrants(db, actor, method, input = {}) {
       (users.length !== input.expectedCount || input.audienceVersion !== audienceVersion(db)))
   )
     fail(409, '회원 목록이 변경됐습니다. 지급 대상을 다시 확인해주세요.');
-  if (
+  if (kind === 'rps') {
+    if (
+      users.some(
+        (user) => !Number.isSafeInteger(rpsDailyAttempts + (user.rps?.bonus || 0) + input.amount),
+      )
+    )
+      fail(400, '지급 후 도전 횟수 범위를 확인해주세요.');
+  } else if (
     users.some(
       (user) =>
         !Number.isSafeInteger((user.points?.current || 0) + input.amount) ||
@@ -104,19 +130,24 @@ export function handlePointGrants(db, actor, method, input = {}) {
     actorNickname: actor.nickname,
     scope: input.scope,
     amount: input.amount,
+    ...(kind === 'rps' ? { kind } : {}),
     reason,
     intent,
     recipients: users.map((user) => ({ id: user.id, nickname: user.nickname })),
     createdAt: new Date().toISOString(),
   };
-  awardManualPoints(
-    db,
-    users.map((user) => user.id),
-    row.id,
-    row.amount,
-    actor.id,
-    reason,
-  );
+  if (kind === 'rps') {
+    for (const user of users) awardRpsAttempts(user, row.amount);
+  } else {
+    awardManualPoints(
+      db,
+      users.map((user) => user.id),
+      row.id,
+      row.amount,
+      actor.id,
+      reason,
+    );
+  }
   db.pointGrants.push(row);
   return { grant: receipt(row), created: true };
 }

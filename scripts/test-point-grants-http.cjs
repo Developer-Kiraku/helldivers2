@@ -106,7 +106,51 @@ module.exports = async function ({ guest, admin, deputy, member, apprentice, fil
     1,
   );
   assert.equal(db.pointLedger.filter((entry) => entry.grantId === base.requestId).length, 2);
+  const rpsGrant = {
+    ...base,
+    kind: 'rps',
+    requestId: randomUUID(),
+    userIds: ['u-user1'],
+    amount: 3,
+    expectedCount: 1,
+  };
+  const rpsState = async (client) => (await client.call('/api/games/rps')).data;
+  const beforeRps = await rpsState(member);
+  const otherRps = await rpsState(apprentice);
+  await deputy.call(endpoint, 'POST', rpsGrant, 403);
+  await admin.call(endpoint, 'POST', { ...rpsGrant, amount: 0 }, 400);
+  await admin.call(endpoint, 'POST', { ...rpsGrant, userIds: ['u-user1', 'missing'] }, 409);
+  await admin.call(
+    endpoint,
+    'POST',
+    { ...all, kind: 'rps', requestId: randomUUID(), audienceVersion: 'stale' },
+    409,
+  );
+  assert.deepEqual((await rpsState(member)).attempts, beforeRps.attempts);
+  const rpsResults = await Promise.all([
+    admin.call(endpoint, 'POST', rpsGrant),
+    admin.call(endpoint, 'POST', rpsGrant),
+  ]);
+  assert.deepEqual(rpsResults.map(({ data }) => data.created).sort(), [false, true]);
+  await admin.call(endpoint, 'POST', { ...rpsGrant, kind: 'points' }, 409);
+  const afterRps = await rpsState(member);
+  assert.equal(afterRps.attempts.bonus, beforeRps.attempts.bonus + 3);
+  assert.equal(afterRps.attempts.daily, beforeRps.attempts.daily);
+  assert.deepEqual(afterRps.points, beforeRps.points);
+  assert.deepEqual((await rpsState(apprentice)).attempts, otherRps.attempts);
+  const grantLists = (await admin.call(endpoint)).data;
+  assert.equal(grantLists.history[0].id, all.requestId);
+  assert.equal(grantLists.rpsHistory[0].id, rpsGrant.requestId);
+  assert.equal(
+    grantLists.users.find((user) => user.id === 'u-user1').remainingAttempts,
+    afterRps.attempts.total,
+  );
+  const rpsLogs = (await admin.call('/api/admin/logs?type=rps_grant')).data.logs;
+  assert.equal(rpsLogs.length, 1);
+  assert.equal(rpsLogs[0].amount, 3);
+  const memberList = (await deputy.call('/api/admin/users')).data.users;
+  assert.deepEqual(memberList.find((user) => user.id === 'u-user1').points, afterRps.points);
   console.log(
-    'PASS: operator-only selected/all grants, bounded positive amounts, recipient validation, atomic refusal, simultaneous retry deduplication, dual balances, frozen audiences, immutable receipts and classified audit history',
+    'PASS: operator-only points and RPS grants, recipient validation, concurrent retries, balances, frozen audiences, member list points, receipts and audit history',
   );
 };
