@@ -18,7 +18,7 @@ function snapshot(db, actor, game, resultId) {
     const record = (db.trainingRecords || []).find(
       (row) => row.id === resultId && row.userId === actor.id,
     );
-    if (!record) fail(404, '종료한 소탕 훈련 기록을 찾을 수 없습니다.');
+    if (!record) fail(404, '종료한 슈퍼 지구 소탕 훈련 기록을 찾을 수 없습니다.');
     return {
       ...common,
       completedAt: record.finishedAt,

@@ -31,7 +31,7 @@ export const navigationGroups = [
       { href: '/games/dice', label: '민주주의 주사위', icon: 'dice' },
       { href: '/games/rps', label: '가위바위보', icon: 'rps' },
       { href: '/games/stratagem', label: '스트라타젬 히어로', icon: 'stratagem' },
-      { href: '/games/extermination', label: '소탕 훈련', icon: 'crosshair' },
+      { href: '/games/extermination', label: '슈퍼 지구 소탕 훈련', icon: 'crosshair' },
       { href: '/games/hand-enhancement', label: '손 강화', icon: 'rps' },
     ],
   },

@@ -297,7 +297,7 @@ function Training() {
       <header className="training-heading">
         <div>
           <h1>
-            <Crosshair size={28} /> 소탕 훈련
+            <Crosshair size={28} /> 슈퍼 지구 소탕 훈련
           </h1>
           <p>잠깐 나타나는 적을 조준하고, 처치한 만큼 포인트를 획득하세요.</p>
         </div>
@@ -311,7 +311,7 @@ function Training() {
         </p>
       )}
       <div className="training-layout">
-        <section className="training-console" aria-label="소탕 훈련 게임">
+        <section className="training-console" aria-label="슈퍼 지구 소탕 훈련 게임">
           <div className="training-hud">
             <strong>{view?.stage || 1} / 20 단계</strong>
             <span>HP {view?.hp ?? 50} / 50</span>
@@ -460,7 +460,7 @@ function Training() {
                               : view.reason === 'hp'
                                 ? '게임 오버'
                                 : '훈련 종료'
-                            : '소탕 훈련'}
+                            : '슈퍼 지구 소탕 훈련'}
                   </h2>
                   <p>
                     {result
@@ -600,7 +600,7 @@ function Training() {
           <GameResultShare
             game="extermination"
             resultId={result.record.id}
-            label="소탕 훈련 결과 공유"
+            label="슈퍼 지구 소탕 훈련 결과 공유"
           />
         </section>
       )}

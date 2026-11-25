@@ -53,9 +53,9 @@ module.exports = async function ({ guest, admin, member, file }) {
   const share = (
     await member.call('/api/games/share', 'POST', { game: 'extermination', resultId: run.id })
   ).data.share;
-  assert.equal(share.result.gameLabel, '소탕 훈련');
+  assert.equal(share.result.gameLabel, '슈퍼 지구 소탕 훈련');
   const publicPage = await guest.call(share.path);
-  assert.match(publicPage.data, /소탕 훈련/);
+  assert.match(publicPage.data, /슈퍼 지구 소탕 훈련/);
   const own = (await member.call('/api/bootstrap?posts=none')).data.user;
   assert.ok(own.points.current >= balance + 6);
   console.log(

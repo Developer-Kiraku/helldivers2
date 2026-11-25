@@ -4,7 +4,7 @@ export const gameResultLabels = {
   rps: '가위바위보',
   'rps-hand': '손 강화',
   stratagem: '스트라타젬 히어로',
-  extermination: '소탕 훈련',
+  extermination: '슈퍼 지구 소탕 훈련',
 };
 export const validGameShareCode = (code) =>
   typeof code === 'string' && /^[A-Za-z0-9_-]{24}$/.test(code);

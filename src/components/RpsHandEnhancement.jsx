@@ -179,7 +179,7 @@ export default function RpsHandEnhancement() {
         <h1>
           <Sparkles size={27} /> 손 강화
         </h1>
-        <p>가위바위보 승률과 소탕 훈련의 탄 집중도를 높여보세요.</p>
+        <p>가위바위보 승률과 슈퍼 지구 소탕 훈련의 탄 집중도를 높여보세요.</p>
       </header>
       <div className="hand-forge-heading">
         <span>ARCANE FORGE</span>

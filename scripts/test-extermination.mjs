@@ -219,7 +219,7 @@ try {
   );
   assert.deepEqual(another, snapshot, 'A rejected packet must not partially mutate state');
   const share = createGameShare(db, user, { game: 'extermination', resultId: first.id });
-  assert.equal(share.share.result.gameLabel, '소탕 훈련');
+  assert.equal(share.share.result.gameLabel, '슈퍼 지구 소탕 훈련');
   assert.equal(share.share.result.stats.length, 3);
   assert.equal(
     createGameShare(db, user, { game: 'extermination', resultId: first.id }).share.path,
