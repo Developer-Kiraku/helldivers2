@@ -146,6 +146,7 @@ async function run() {
   await import('./test-dice-game.mjs');
   await import('./test-rps-game.mjs');
   await import('./test-extermination.mjs');
+  await import('./test-extermination-ui.mjs');
   await import('./test-rps-enhancement.mjs');
   await import('./test-stratagem-challenge.mjs');
   await import('./test-stratagem-rankings.mjs');

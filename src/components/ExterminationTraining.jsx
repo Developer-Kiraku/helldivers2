@@ -375,7 +375,7 @@ function Training() {
                   type="button"
                   data-enemy={enemy.id}
                   key={enemy.id}
-                  className={'training-enemy' + (view.clock - enemy.hitAt < 150 ? ' is-hit' : '')}
+                  className={'training-enemy' + (view.clock - enemy.hitAt < 240 ? ' is-hit' : '')}
                   style={{
                     left: `${position.x / 10}%`,
                     top: `${position.y / 6.5}%`,
@@ -401,6 +401,19 @@ function Training() {
                 </button>
               );
             })}
+            {impact?.reward && (
+              <img
+                key={'defeated:' + impact.id}
+                className="training-defeated"
+                src={`/images/training/${trainingEnemies[impact.kind].id}.webp`}
+                alt=""
+                style={{
+                  left: `${(impact.position?.x ?? impact.x) / 10}%`,
+                  top: `${(impact.position?.y ?? impact.y) / 6.5}%`,
+                  width: `${trainingEnemies[impact.kind].size / 10}%`,
+                }}
+              />
+            )}
             {attack && (
               <img
                 key={attack.id + ':' + attack.at}
@@ -433,7 +446,7 @@ function Training() {
             {(!view || !playing || connectionError) && (
               <div className="training-overlay">
                 <div>
-                  <Crosshair size={32} />
+                  {view?.status !== 'finished' && <Crosshair size={32} />}
                   <h2>
                     {connectionError
                       ? '연결 확인 중'
@@ -451,13 +464,27 @@ function Training() {
                   </h2>
                   <p>
                     {result
-                      ? `${number(result.record.points)} P 획득 · ${result.rank ? `내 최고 기록 ${result.rank}위` : '순위 제외 기록'}`
+                      ? `${number(result.record.points)} P 획득`
                       : view?.status === 'finished'
                         ? '서버에서 기록과 보상을 확인하고 있습니다…'
                         : view?.status === 'cleared'
                           ? `이번 단계 +${number(view.stagePoints)}P`
                           : '스캐빈저 1발 · 워리어 2발 · 헌터 1발'}
                   </p>
+                  {result && (
+                    <>
+                      <p className="training-final-stats">
+                        {result.record.stage}/20단계 · {result.record.kills}마리 처치 · 명중률{' '}
+                        {result.record.accuracy}% · {puzzleTime(result.record.elapsedMs)}
+                      </p>
+                      {!result.excluded && result.rank >= 1 && result.rank <= 10 && (
+                        <p className="training-top-rank" role="status">
+                          <Trophy size={18} /> 월간 TOP 10 · 내 최고 기록 {result.rank}위
+                        </p>
+                      )}
+                      {result.excluded && <p>순위 제외 기록</p>}
+                    </>
+                  )}
                   <div className="training-actions">
                     {connectionError ? (
                       <Button type="button" onClick={() => void sync()}>
@@ -474,9 +501,17 @@ function Training() {
                     ) : (
                       (!view || result) && (
                         <Button type="button" onClick={start} disabled={busy || readonly}>
-                          {busy ? '준비 중…' : '훈련 시작'}
+                          {result && <RotateCcw size={16} />}
+                          {busy ? '준비 중…' : result ? '재시작' : '훈련 시작'}
                         </Button>
                       )
+                    )}
+                    {result && !connectionError && (
+                      <GameResultShare
+                        game="extermination"
+                        resultId={result.record.id}
+                        label="최종 결과 공유"
+                      />
                     )}
                   </div>
                 </div>

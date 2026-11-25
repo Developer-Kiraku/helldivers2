@@ -120,8 +120,18 @@
   }
   &.is-hit > img {
     animation: training-recoil 150ms ease-out;
-    filter: brightness(2) contrast(1.2);
+    filter: brightness(1.5) contrast(1.1) drop-shadow(0 0 2px var(--hd-color-input-text))
+      drop-shadow(0 0 5px var(--hd-color-accent));
   }
+}
+.training-defeated {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 4;
+  animation: training-defeat 240ms ease-out forwards;
+  filter: brightness(1.5) drop-shadow(0 0 2px var(--hd-color-input-text))
+    drop-shadow(0 0 5px var(--hd-color-accent));
 }
 .training-enemy-health {
   position: absolute;
@@ -215,7 +225,8 @@
   inset: 0;
   z-index: 8;
   display: grid;
-  place-items: center;
+  place-items: safe center;
+  overflow-y: auto;
   background: color-mix(in srgb, var(--hd-color-background) 90%, transparent);
   text-align: center;
   padding: 18px;
@@ -230,6 +241,18 @@
   }
   > div > svg {
     color: var(--hd-color-accent);
+  }
+  .training-final-stats {
+    margin-top: 8px;
+  }
+  .training-top-rank {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    color: var(--hd-color-accent);
+    font-weight: 700;
   }
 }
 .training-actions {
@@ -372,6 +395,12 @@
 @keyframes training-recoil {
   35% {
     top: -5px;
+  }
+}
+@keyframes training-defeat {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.94);
   }
 }
 @keyframes training-attack {

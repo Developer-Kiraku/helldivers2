@@ -235,6 +235,7 @@ export function applyTrainingEvent(run, event) {
     enemy.hitAt = run.clock;
     run.lastImpact.enemy = enemy.id;
     run.lastImpact.kind = enemy.kind;
+    run.lastImpact.position = trainingEnemyPosition(enemy, run.clock);
     if (!enemy.hp) {
       const reward = Math.max(
         1,
