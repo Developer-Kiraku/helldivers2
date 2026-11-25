@@ -17,7 +17,7 @@ import { useCommunity } from './CommunityProvider';
 import { Button } from './ui';
 import Modal from './Modal';
 import GameResultShare from './GameResultShare';
-import RpsHandEnhancement, { EnchantedHand } from './RpsHandEnhancement';
+import { EnchantedHand } from './RpsHandEnhancement';
 import { rpsHandStages } from '@/lib/rps-enhancement.mjs';
 import useRefreshOnReturn from '@/hooks/useRefreshOnReturn';
 import {
@@ -166,7 +166,6 @@ function Game() {
     [error, setError] = useState(''),
     [pending, setPending] = useState(null),
     [reward, setReward] = useState(null),
-    [handOpen, setHandOpen] = useState(false),
     [clock, setClock] = useState(Date.now()),
     [cooldownUntil, setCooldownUntil] = useState(0),
     [opponentPreview, setOpponentPreview] = useState(rpsChoices[0].id);
@@ -322,26 +321,6 @@ function Game() {
   const handLevel = data?.hand?.level || 0;
   const hand = rpsHandStages[handLevel];
   const outcomeWeights = rpsOutcomeWeights(handLevel);
-  const applyEnhancement = useCallback(
-    (result) => {
-      setData((current) =>
-        current ? { ...current, hand: result.hand, points: result.points } : current,
-      );
-      syncPoints(user.id, result.points);
-    },
-    [syncPoints, user.id],
-  );
-  function openEnhancement() {
-    if (busyRef.current || pendingRef.current || preview) return;
-    busyRef.current = true;
-    ++sequence.current;
-    setHandOpen(true);
-  }
-  function closeEnhancement() {
-    setHandOpen(false);
-    busyRef.current = false;
-    void refresh();
-  }
   return (
     <section className="rps-page">
       <header className="rps-heading">
@@ -549,14 +528,10 @@ function Game() {
                   : '최고 강화 달성'}
               </p>
             </div>
-            <Button
-              type="button"
-              onClick={openEnhancement}
-              disabled={!data || busy || Boolean(pending) || preview}
-            >
+            <Link href="/games/hand-enhancement" className="rps-hand-page-link">
               <Sparkles size={17} />손 강화
               <ArrowRight size={16} />
-            </Button>
+            </Link>
           </section>
           <section className="rps-attempts panel">
             <h2>
@@ -638,7 +613,6 @@ function Game() {
       {reward && (
         <RewardReveal key={reward.requestId} round={reward} onClose={() => setReward(null)} />
       )}
-      {handOpen && <RpsHandEnhancement onClose={closeEnhancement} onUpdate={applyEnhancement} />}
     </section>
   );
 }

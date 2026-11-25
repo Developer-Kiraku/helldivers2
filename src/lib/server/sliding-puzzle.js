@@ -43,7 +43,8 @@ const session = (db, run, now) => ({
   stopped: Boolean(run.stoppedAt),
   result: resultFor(db, run),
   elapsedMs: run.startedAt
-    ? (run.completedAt ? Date.parse(run.completedAt) : now) - Date.parse(run.startedAt)
+    ? (run.completedAt || run.stoppedAt ? Date.parse(run.completedAt || run.stoppedAt) : now) -
+      Date.parse(run.startedAt)
     : 0,
 });
 function notifyRank(db, userId, kind, month, rank, previousRank, runId) {

@@ -4,6 +4,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { build } from 'esbuild';
 import { settlePuzzleRewards, puzzleRewardDueAt } from '../src/lib/server/puzzle-rewards.mjs';
+import { resetPuzzleRankings } from '../src/lib/server/puzzle-ranking-reset.mjs';
 import {
   solvedPuzzle,
   shufflePuzzle,
@@ -174,7 +175,14 @@ try {
   assert.throws(() => call(0, 'move', { runId: run.id, tile: 15, step: 2 }), { status: 409 });
   now += 5000;
   const stopped = call(0, 'start').run;
-  call(0, 'stop', { runId: stopped.id });
+  const stoppedRun = db.puzzleRuns.find((row) => row.id === stopped.id);
+  stoppedRun.board = movePuzzle(movePuzzle(solvedPuzzle(), 15), 14);
+  call(0, 'move', { runId: stopped.id, tile: 14, step: 0 });
+  now += 1250;
+  const stoppedTime = call(0, 'stop', { runId: stopped.id }).run.elapsedMs;
+  assert.equal(stoppedTime, 1250);
+  now += 5000;
+  assert.equal(call(0, 'state', {}, 'GET', 'runId=' + stopped.id).run.elapsedMs, stoppedTime);
   call(0, 'stop', { runId: stopped.id });
   assert.throws(() => call(0, 'move', { runId: stopped.id, tile: 15, step: 0 }), { status: 409 });
   assert.throws(() => call(0, 'finish', { runId: stopped.id, moves: [15] }), { status: 409 });
@@ -194,6 +202,8 @@ try {
   assert.equal(db.puzzleRecords.length, oldMonthCount + 1);
   assert.equal(call(0, '', {}, 'GET', 'month=2026-11').total, 4);
   assert.equal(call(0, '', {}, 'GET', 'month=2026-12').total, 1);
+  assert.equal(call(0, '', {}, 'GET').month, '2026-12');
+  assert.equal(call(0, '', {}, 'GET').mine.elapsedMs, 300);
   now = puzzleRewardDueAt('2026-11');
   settlePuzzleRewards(db, now);
   const winner = db.puzzleRewards[0].recipients[0];
@@ -247,6 +257,20 @@ try {
       ),
     { status: 403 },
   );
+  const rewards = structuredClone(db.puzzleRewards);
+  assert.equal(resetPuzzleRankings(db, now), true);
+  assert.equal(call(0, '', {}, 'GET').total, 0);
+  assert.equal(call(0, '', {}, 'GET').mine, null);
+  assert.deepEqual(db.puzzleRuns, []);
+  assert.deepEqual(db.puzzleRewards, rewards);
+  assert.equal(
+    db.notifications.some((row) => row.kind === 'puzzle_rank_enter'),
+    false,
+  );
+  assert.throws(() => call(0, 'finish', { runId: batchRun.id }), { status: 404 });
+  finish(0, 2000);
+  assert.equal(resetPuzzleRankings(db, now), false);
+  assert.equal(call(0, '', {}, 'GET').total, 1, 'The reset must run only once');
   console.log(
     'PASS: solvable shuffles, legal moves, server time/replay, monthly personal bests, KST boundary, ties, private ownership, retry idempotency and podium entry/displacement notifications',
   );

@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Sparkles, ArrowRight, Shield, Flame, RotateCcw } from 'lucide-react';
 import { Button } from './ui';
-import Modal from './Modal';
 import GameResultShare from './GameResultShare';
 import { useCommunity } from './CommunityProvider';
 import { rpsHandStages, rpsMaxHandLevel } from '@/lib/rps-enhancement.mjs';
@@ -60,8 +59,8 @@ export function EnchantedHand({ level = 0, compact = false, effect = '' }) {
   );
 }
 
-export default function RpsHandEnhancement({ onClose, onUpdate }) {
-  const { api, user } = useCommunity();
+export default function RpsHandEnhancement() {
+  const { api, user, syncPoints, role, actualRole } = useCommunity();
   const [data, setData] = useState(null),
     [busy, setBusy] = useState(false),
     [pending, setPending] = useState(null),
@@ -88,9 +87,9 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
   const apply = useCallback(
     (result) => {
       setData(result);
-      onUpdate(result);
+      syncPoints(user.id, result.points);
     },
-    [onUpdate],
+    [syncPoints, user.id],
   );
   const refresh = useCallback(async () => {
     const version = ++revision.current;
@@ -125,7 +124,7 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
     };
   }, [storageKey, refresh, remember]);
   async function enhance() {
-    if (locked.current || !data) return;
+    if (locked.current || !data || role !== actualRole) return;
     locked.current = true;
     ++revision.current;
     setBusy(true);
@@ -175,13 +174,13 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
   const wallet = data?.points.current ?? 0;
   const effect = busy ? 'is-forging' : result ? (result.success ? 'is-success' : 'is-failure') : '';
   return (
-    <Modal
-      title="손 강화"
-      onClose={() => {
-        if (!locked.current) onClose();
-      }}
-      className="rps-enhancement-modal"
-    >
+    <section className="hand-enhancement-page rps-enhancement-modal">
+      <header className="hand-page-heading">
+        <h1>
+          <Sparkles size={27} /> 손 강화
+        </h1>
+        <p>가위바위보 승률과 소탕 훈련의 탄 집중도를 높여보세요.</p>
+      </header>
       <div className="hand-forge-heading">
         <span>ARCANE FORGE</span>
         <small>최대 +{rpsMaxHandLevel}</small>
@@ -254,7 +253,7 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
           <Button
             type="button"
             className="hand-forge-button"
-            disabled={!data || busy || (!pending && wallet < next.cost)}
+            disabled={!data || busy || role !== actualRole || (!pending && wallet < next.cost)}
             onClick={enhance}
           >
             {pending && !busy ? <RotateCcw size={18} /> : <Sparkles size={18} />}
@@ -333,6 +332,6 @@ export default function RpsHandEnhancement({ onClose, onUpdate }) {
           </table>
         </div>
       </details>
-    </Modal>
+    </section>
   );
 }

@@ -9,6 +9,7 @@ import {
 import { reserveLoginAttempt } from '../src/lib/server/login-throttle.mjs';
 import { registerOAuthState, consumeOAuthState } from '../src/lib/server/oauth-state.mjs';
 import { settlePuzzleRewards, puzzleRewardDueAt } from '../src/lib/server/puzzle-rewards.mjs';
+import { resetPuzzleRankings } from '../src/lib/server/puzzle-ranking-reset.mjs';
 
 // Creates only disposable test data in a new isolated schema; never clears application tables.
 const url = new URL(process.env.DATABASE_URL);
@@ -204,6 +205,47 @@ try {
     (await read()).pointLedger.length,
     1,
     'Monthly rewards pay once across processes and restarts',
+  );
+  await postgresTransaction(pool, (db) => {
+    db.puzzleRuns.push({ id: 'old-run', userId: 'test-user' });
+    db.notifications.push({ id: 'old-podium', kind: 'puzzle_rank_enter' });
+  });
+  const resetOptions = {
+    write: false,
+    settle: resetPuzzleRankings,
+    collections: ['puzzleRecords', 'puzzleRuns', 'notifications'],
+  };
+  await Promise.all([
+    assert.rejects(
+      postgresTransaction(
+        pool,
+        () => {
+          throw Error('Rejected request after reset');
+        },
+        resetOptions,
+      ),
+      /Rejected request after reset/,
+    ),
+    postgresTransaction(other, () => null, resetOptions),
+  ]);
+  const reset = await read();
+  assert.equal(reset.puzzleRecords.length, 0);
+  assert.equal(reset.puzzleRuns.length, 0);
+  assert.equal(reset.puzzleRankingReset.records, 1);
+  assert.equal(reset.puzzleRankingReset.runs, 1);
+  assert.equal(reset.notifications.length, 1);
+  assert.equal(reset.puzzleRewards.length, 1);
+  assert.equal(reset.pointLedger.length, 1);
+  await postgresTransaction(pool, (db) => {
+    db.puzzleRecords.push({ id: 'new-record', userId: 'test-user' });
+  });
+  await pool.end();
+  pool = createPool(url.href);
+  await postgresTransaction(pool, () => null, resetOptions);
+  assert.equal(
+    (await read()).puzzleRecords.length,
+    1,
+    'New records survive reset retries and restart',
   );
   console.log(
     'PASS: PostgreSQL import, migration, nested polls, two-pool concurrency, rollback, expiry on rejected requests, record removal and reconnect persistence',

@@ -26,7 +26,7 @@ const rankingPanels = {
   hand: {
     title: '손 강화 랭킹',
     icon: HandFist,
-    href: '/games/rps',
+    href: '/games/hand-enhancement',
     description: '현재 강화 단계순',
     empty: '첫 번째 손 강화에 도전해보세요.',
   },

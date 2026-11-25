@@ -23,6 +23,20 @@ HTMLElement.prototype.scrollIntoView = () => {};
 const require = createRequire(import.meta.url),
   React = require('react');
 const { createRoot } = require('react-dom/client');
+const originalNow = Date.now;
+const originalSetInterval = globalThis.setInterval;
+const originalPerformanceNow = performance.now.bind(performance);
+const performanceDescriptor = Object.getOwnPropertyDescriptor(performance, 'now');
+let clockOffset = 0;
+Object.defineProperty(performance, 'now', {
+  configurable: true,
+  value: () => originalPerformanceNow() + clockOffset,
+});
+const intervals = new Map();
+globalThis.setInterval = (callback, ms, ...args) => {
+  intervals.set(ms, callback);
+  return originalSetInterval(callback, ms, ...args);
+};
 const directory = await fs.mkdtemp(path.resolve('work/puzzle-result-ui-'));
 const root = createRoot(document.getElementById('root'));
 try {
@@ -55,7 +69,7 @@ try {
             resolveDir: process.cwd(),
             contents:
               args.path === 'next/navigation'
-                ? 'export const useRouter=()=>window.puzzleRouter;export const useSearchParams=()=>new URLSearchParams();'
+                ? 'export const useRouter=()=>window.puzzleRouter;export const useSearchParams=()=>new URLSearchParams(window.location.search);'
                 : args.path === './CommunityProvider'
                   ? 'export const useCommunity=()=>window.puzzleContext;'
                   : 'import React from "react"; export const Button=props=>React.createElement("button",props);export const Select=props=>React.createElement("select",props);',
@@ -78,7 +92,12 @@ try {
   const moveRequests = [];
   const moveSignals = [];
   const month = puzzleMonth();
-  window.puzzleRouter = { replace() {} };
+  window.puzzleRouter = {
+    replace(url) {
+      window.history.replaceState(null, '', url);
+    },
+  };
+  window.history.replaceState(null, '', '/games/sliding-puzzle?month=' + month);
   window.puzzleContext = {
     role: 'member',
     actualRole: 'member',
@@ -165,12 +184,15 @@ try {
           record: { month, elapsedMs: games === 1 ? 9100 : 7200, moves: 1 },
         };
       }
+      const requestedMonth = new URL(path, window.location.origin).searchParams.get('month');
+      const rankingMonth = requestedMonth || puzzleMonth();
+      const ownRecord = { rank: 1, nickname: '내 이전 기록', elapsedMs: 1000, moves: 1, own: true };
       return {
-        month,
-        months: [month],
-        total: 1,
-        rankings: [{ rank: 1, nickname: '내 이전 기록', elapsedMs: 1000, moves: 1, own: true }],
-        mine: { rank: 1, elapsedMs: 1000, moves: 1 },
+        month: rankingMonth,
+        months: [puzzleMonth(), month],
+        total: rankingMonth === month ? 1 : 0,
+        rankings: rankingMonth === month ? [ownRecord] : [],
+        mine: rankingMonth === month ? ownRecord : null,
       };
     },
   };
@@ -179,8 +201,22 @@ try {
   const click = async (button) => React.act(async () => button.click());
   const buttonByText = (text) =>
     Array.from(document.querySelectorAll('button')).find((button) => button.textContent === text);
+  const assertScrollBlocking = (active) => {
+    const board = document.querySelector('.puzzle-board');
+    assert.equal(board.classList.contains('is-playing'), active);
+    const event = new dom.window.KeyboardEvent('keydown', {
+      key: 'ArrowUp',
+      bubbles: true,
+      cancelable: true,
+    });
+    board.dispatchEvent(event);
+    assert.equal(event.defaultPrevented, active);
+  };
+  assertScrollBlocking(false);
+  assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
   await click(buttonByText('게임 시작'));
   assert.ok(buttonByText('게임 정지'));
+  assertScrollBlocking(true);
   assert.ok(document.documentElement.classList.contains('puzzle-scroll-locked'));
   await React.act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 150));
@@ -207,6 +243,12 @@ try {
     'An existing first-place record must not label every attempt as a ranking entry',
   );
   assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
+  assertScrollBlocking(false);
+  assert.equal(
+    window.location.search,
+    '',
+    'Finishing must keep the default ranking on the current month',
+  );
   await click(buttonByText('게임 시작'));
   assert.equal(
     document.querySelector('.puzzle-result'),
@@ -224,6 +266,7 @@ try {
   const stoppedBoard = document.querySelector('.puzzle-board').innerHTML;
   await click(buttonByText('게임 정지'));
   assert.ok(buttonByText('게임 시작'));
+  assertScrollBlocking(false);
   assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
   assert.ok([...document.querySelectorAll('.puzzle-tile')].every((tile) => tile.disabled));
   assert.equal(
@@ -251,6 +294,13 @@ try {
       tile.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, detail: 1 }));
     });
   await touch(13);
+  clockOffset += 2000;
+  await React.act(async () => intervals.get(50)());
+  assert.match(
+    document.querySelector('.puzzle-status').textContent,
+    /00:02\./,
+    'The visible clock starts on the first legal input while its response is pending',
+  );
   assert.equal(moveRequests.length, beforeTouches + 1);
   await touch(14);
   assert.equal(
@@ -264,6 +314,20 @@ try {
     'The second touch animates immediately while the first response is pending',
   );
   await React.act(async () => releaseMove());
+  assert.match(
+    document.querySelector('.puzzle-status').textContent,
+    /00:02\./,
+    'Delayed move responses cannot rewind the visible clock',
+  );
+  Date.now = () => originalNow() - 3600000;
+  clockOffset += 500;
+  await React.act(async () => intervals.get(50)());
+  assert.match(
+    document.querySelector('.puzzle-status').textContent,
+    /00:02\./,
+    'Changing the system clock cannot change the measured play duration',
+  );
+  Date.now = originalNow;
   assert.equal(moveRequests.length, beforeTouches + 2, 'Both rapid touches are sent exactly once');
   assert.deepEqual(
     moveRequests.slice(-2).map(({ tiles, step }) => [tiles, step]),
@@ -378,12 +442,37 @@ try {
   );
   assert.equal(activeRun.moves, 1);
   assert.equal(moveRequests.length - retryStart, 2);
+  const [year, number] = month.split('-').map(Number);
+  const rollover = Date.UTC(year, number, 1) - 9 * 3600000;
+  Date.now = () => rollover;
+  await React.act(async () => intervals.get(1000)());
+  assert.equal(document.querySelector('[aria-label="랭킹 월"]').value, puzzleMonth(rollover));
+  assert.equal(document.querySelector('.puzzle-my-record'), null);
+  assert.ok(
+    document.querySelector('.puzzle-empty'),
+    'A new KST month starts with an empty ranking',
+  );
+  window.history.replaceState(null, '', '/games/sliding-puzzle?month=' + month);
+  await React.act(async () => root.render(React.createElement(Puzzle)));
+  assert.equal(document.querySelector('[aria-label="랭킹 월"]').value, month);
+  assert.ok(document.querySelector('.puzzle-my-record'), 'Past monthly records remain viewable');
+  Date.now = () => Date.UTC(year, number + 1, 1) - 9 * 3600000;
+  await React.act(async () => intervals.get(1000)());
+  assert.equal(
+    window.location.search,
+    '?month=' + month,
+    'Browsing history survives later rollovers',
+  );
   await React.act(async () => root.unmount());
   assert.equal(document.documentElement.classList.contains('puzzle-scroll-locked'), false);
   console.log(
     'PASS: puzzle completion, pending-move stop/cancellation, stale-response isolation, stalled-refresh restart, sync recovery, failed-stop unlock and touch/keyboard/mouse input',
   );
 } finally {
+  Date.now = originalNow;
+  globalThis.setInterval = originalSetInterval;
+  if (performanceDescriptor) Object.defineProperty(performance, 'now', performanceDescriptor);
+  else delete performance.now;
   await React.act(async () => root.unmount());
   dom.window.close();
   for (const [key, descriptor] of saved)

@@ -13,6 +13,7 @@ import { syncPointActivity, awardExistingMemberPoints } from './points.mjs';
 import { settleDiceGames } from './dice-game';
 import { settleTestPlayerSessions } from './test-player';
 import { settlePuzzleRewards } from './puzzle-rewards.mjs';
+import { resetPuzzleRankings } from './puzzle-ranking-reset.mjs';
 import { awardRpsPostAttempt } from './rps-attempts.mjs';
 
 const shared = globalThis;
@@ -128,13 +129,19 @@ async function load() {
 // One process owns this JSON store. Every read/write joins the same queue.
 // Replace these repository functions when moving to MariaDB/PostgreSQL.
 function settleStore(db) {
+  const puzzleResetChanged = resetPuzzleRankings(db);
   const probationChanged = settleProbation(db);
   const pointsChanged = awardExistingMemberPoints(db);
   const gamesChanged = settleDiceGames(db);
   const testSessionsChanged = settleTestPlayerSessions(db);
   const puzzleRewardsChanged = settlePuzzleRewards(db);
   return (
-    probationChanged || pointsChanged || gamesChanged || testSessionsChanged || puzzleRewardsChanged
+    puzzleResetChanged ||
+    probationChanged ||
+    pointsChanged ||
+    gamesChanged ||
+    testSessionsChanged ||
+    puzzleRewardsChanged
   );
 }
 // Includes every collection used by automatic settlement, without post bodies/media.
@@ -150,6 +157,8 @@ export const operationalCollections = [
   'puzzleRuns',
   'diceGames',
   'dicePresence',
+  'trainingRuns',
+  'trainingRecords',
 ];
 export function transaction(callback, write = true, options = {}) {
   if (process.env.DATABASE_URL) {

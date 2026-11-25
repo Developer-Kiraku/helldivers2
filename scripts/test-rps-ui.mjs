@@ -32,7 +32,11 @@ let root = createRoot(document.getElementById('root'));
 try {
   const outfile = path.join(directory, 'rps.cjs');
   await build({
-    entryPoints: ['src/components/RockPaperScissors.jsx'],
+    stdin: {
+      contents:
+        'export {default} from "./src/components/RockPaperScissors.jsx"; export {default as HandPage} from "./src/components/RpsHandEnhancement.jsx";',
+      resolveDir: process.cwd(),
+    },
     outfile,
     bundle: true,
     platform: 'node',
@@ -71,6 +75,7 @@ try {
     ],
   });
   const Game = require(outfile).default;
+  const HandPage = require(outfile).HandPage;
   const initial = () => ({
     points: { current: 1000, total: 2000 },
     attempts: { daily: 5, bonus: 0, total: 5, resetsAt: Date.now() + 86400000 },
@@ -162,6 +167,10 @@ try {
       button.click();
     });
   const render = () => React.act(async () => root.render(React.createElement(Game)));
+  const renderHand = () =>
+    React.act(async () =>
+      root.render(React.createElement(HandPage, { key: window.rpsContext.user.id })),
+    );
   await render();
   assert.equal(document.querySelector('.rps-stakes [aria-pressed=true]').textContent, '100 P');
   assert.equal(document.querySelectorAll('.rps-stakes button').length, 4);
@@ -217,8 +226,13 @@ try {
   state = initial();
   window.rpsContext.user = { id: 'enhancement-test', points: state.points };
   await render();
-  await click('손 강화');
-  assert.match(document.querySelector('[role=dialog]').textContent, /여행자의 손/);
+  assert.equal(
+    document.querySelector('.rps-hand-page-link').getAttribute('href'),
+    '/games/hand-enhancement',
+  );
+  await renderHand();
+  assert.equal(document.querySelector('[role=dialog]'), null);
+  assert.match(document.querySelector('.hand-enhancement-page').textContent, /여행자의 손/);
   assert.match(document.querySelector('.hand-forge-success').textContent, /강화 성공 확률 100%/);
   loseEnhancementReply = true;
   await click('+1 강화 · 50P');
@@ -236,11 +250,13 @@ try {
   assert.match(document.querySelector('.hand-forge-visual').textContent, /불씨의 손/);
   assert.match(document.querySelector('.hand-forge-result').textContent, /강화 성공!.*\+0 → \+1/);
   assert.ok(document.querySelector('.hand-success-burst'));
+  await render();
   assert.match(
     visibleWinChance(),
     /손 강화 \+1 적용.*34\.33%/,
     'The arena win chance updates immediately after enhancement succeeds',
   );
+  await renderHand();
   loseEnhancementReply = true;
   await click('+2 강화 · 75P');
   assert.equal(
@@ -249,7 +265,7 @@ try {
     'A lost reply must not replay the previous success effect',
   );
   assert.ok(!document.querySelector('.hand-forge-result').textContent.includes('강화 성공!'));
-  await click('닫기');
+  await render();
   assert.equal(document.querySelector('[role=dialog]'), null);
   assert.match(
     document.querySelector('[aria-label="승패 확률"]').textContent,
@@ -262,11 +278,11 @@ try {
     document.querySelector('[aria-label="승패 확률"]').textContent,
     /승리 약 45\.83%.*무승부 약 28\.89%.*패배 약 25\.28%/,
   );
-  await click('손 강화');
+  await renderHand();
   assert.match(document.querySelector('.hand-forge-success').textContent, /강화 성공 확률 60%/);
   assert.match(document.querySelector('.hand-forge-next').textContent, /\+10 → \+11/);
   assert.ok(!document.querySelector('.hand-forge-visual').textContent.includes('패배 확률'));
-  await click('닫기');
+  await render();
   state = { ...initial(), hand: { level: 20, version: 20 } };
   window.rpsContext.user = { id: 'max-hand', points: state.points };
   await render();
@@ -275,10 +291,10 @@ try {
     document.querySelector('[aria-label="승패 확률"]').textContent,
     /승리 약 70\.83%.*무승부 20%.*패배 약 9\.17%/,
   );
-  await click('손 강화');
+  await renderHand();
   assert.ok(document.querySelector('.hand-forge-max'));
   assert.equal(document.querySelector('.hand-forge-button'), null);
-  await click('닫기');
+  await render();
   assert.equal(
     document.querySelector('[role=dialog]'),
     null,

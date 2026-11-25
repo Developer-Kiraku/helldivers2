@@ -20,7 +20,10 @@ export default function SlidingPuzzle() {
   const { api, actualRole, role, refresh } = useCommunity();
   const router = useRouter(),
     search = useSearchParams();
-  const month = search.get('month') || puzzleMonth();
+  const [currentMonth, setCurrentMonth] = useState(puzzleMonth);
+  const selectedMonth = search.get('month');
+  const month = selectedMonth || currentMonth;
+  const previousMonth = useRef(currentMonth);
   const [ranks, setRanks] = useState(null),
     [version, reload] = useState(0);
   const [rankError, setRankError] = useState(''),
@@ -30,7 +33,7 @@ export default function SlidingPuzzle() {
     [phase, setPhaseState] = useState('idle');
   const [elapsed, setElapsed] = useState(0),
     [result, setResult] = useState(null);
-  const started = useRef(0),
+  const started = useRef(null),
     pending = useRef(false);
   const consoleRef = useRef(null);
   const moveQueue = useRef([]),
@@ -58,9 +61,22 @@ export default function SlidingPuzzle() {
   const [clockStarted, setClockStarted] = useState(false);
   useRefreshOnReturn(() => reload((v) => v + 1));
   useEffect(() => {
+    const timer = setInterval(() => setCurrentMonth(puzzleMonth()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  useEffect(() => {
+    if (previousMonth.current !== currentMonth) {
+      if (selectedMonth === previousMonth.current)
+        router.replace('/games/sliding-puzzle', { scroll: false });
+      previousMonth.current = currentMonth;
+    }
+  }, [currentMonth, selectedMonth, router]);
+  useEffect(() => {
     let active = true;
     setRankError('');
-    api('games/sliding-puzzle?month=' + encodeURIComponent(month))
+    api(
+      'games/sliding-puzzle' + (selectedMonth ? '?month=' + encodeURIComponent(selectedMonth) : ''),
+    )
       .then((data) => {
         if (active) setRanks(data);
       })
@@ -70,10 +86,10 @@ export default function SlidingPuzzle() {
     return () => {
       active = false;
     };
-  }, [api, month, version]);
+  }, [api, selectedMonth, currentMonth, version]);
   useEffect(() => {
     if (phase !== 'playing' || !clockStarted) return;
-    const timer = setInterval(() => setElapsed(Date.now() - started.current), 50);
+    const timer = setInterval(() => setElapsed(performance.now() - started.current), 50);
     return () => clearInterval(timer);
   }, [phase, clockStarted]);
   useEffect(() => {
@@ -99,7 +115,8 @@ export default function SlidingPuzzle() {
     setClockStarted(false);
     setError('');
     setPhase('done');
-    router.replace('/games/sliding-puzzle?month=' + data.record.month, { scroll: false });
+    setCurrentMonth(puzzleMonth());
+    router.replace('/games/sliding-puzzle', { scroll: false });
     reload((value) => value + 1);
     // A bootstrap refresh must never keep the game controls locked.
     void Promise.resolve(refresh()).catch(() => {});
@@ -119,8 +136,8 @@ export default function SlidingPuzzle() {
       void finish(current);
     } else {
       if (current.startedAt) {
-        started.current = Date.now() - current.elapsedMs;
-        setElapsed(current.elapsedMs);
+        started.current ??= performance.now() - current.elapsedMs;
+        setElapsed(performance.now() - started.current);
         setClockStarted(true);
       }
       setPhase('playing');
@@ -177,7 +194,7 @@ export default function SlidingPuzzle() {
       packetRef.current = null;
       setMoves(0);
       setResult(null);
-      started.current = 0;
+      started.current = null;
       setClockStarted(false);
       setElapsed(0);
       setPhase('playing');
@@ -312,8 +329,8 @@ export default function SlidingPuzzle() {
         }
         const verified = verifiedRun.current;
         if (verified.startedAt && phaseRef.current === 'playing') {
-          started.current = Date.now() - verified.elapsedMs;
-          setElapsed(verified.elapsedMs);
+          started.current ??= performance.now() - verified.elapsedMs;
+          setElapsed(performance.now() - started.current);
           setClockStarted(true);
         }
         if (verified.stopped || verified.completedAt) {
@@ -334,6 +351,10 @@ export default function SlidingPuzzle() {
     if (phaseRef.current !== 'playing' || actualRole !== role) return;
     const movement = slidePuzzle(visualBoard.current, tile);
     if (!movement) return;
+    if (started.current === null) {
+      started.current = performance.now();
+      setClockStarted(true);
+    }
     visualBoard.current = movement.board;
     setBoard(movement.board);
     setMoves((value) => value + movement.moves.length);
@@ -382,13 +403,14 @@ export default function SlidingPuzzle() {
             </div>
           </div>
           <div
-            className="puzzle-board"
+            className={'puzzle-board' + (playing && !locked ? ' is-playing' : '')}
             role="group"
             aria-label="4 곱하기 4 퍼즐. 빈칸과 같은 줄의 숫자를 선택하세요."
             onDragStart={(event) => event.preventDefault()}
             onContextMenu={(event) => event.preventDefault()}
             tabIndex={0}
             onKeyDown={(event) => {
+              if (!playing || locked) return;
               const offsets = { ArrowUp: 4, ArrowDown: -4, ArrowLeft: 1, ArrowRight: -1 };
               if (!(event.key in offsets)) return;
               event.preventDefault();
@@ -412,6 +434,7 @@ export default function SlidingPuzzle() {
                   aria-label={tile + '번 타일'}
                   disabled={!playing || locked}
                   onPointerDown={(event) => {
+                    if (!playing || locked) return;
                     if (event.pointerType !== 'touch') {
                       touchActivation.current = false;
                       return;
@@ -556,7 +579,11 @@ export default function SlidingPuzzle() {
               aria-label="랭킹 월"
               value={month}
               onChange={(e) =>
-                router.replace('/games/sliding-puzzle?month=' + e.target.value, { scroll: false })
+                router.replace(
+                  '/games/sliding-puzzle' +
+                    (e.target.value === currentMonth ? '' : '?month=' + e.target.value),
+                  { scroll: false },
+                )
               }
             >
               {[...new Set([month, ...(ranks?.months || [puzzleMonth()])])]

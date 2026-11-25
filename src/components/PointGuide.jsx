@@ -12,6 +12,7 @@ import {
   Dices,
   Hand,
   RadioTower,
+  Crosshair,
   ArrowUpRight,
 } from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
@@ -171,6 +172,19 @@ export default function PointGuide() {
             </p>
             <Link href="/games/sliding-puzzle">
               퍼즐 도전하기
+              <ArrowUpRight size={16} />
+            </Link>
+          </article>
+          <article className="panel">
+            <Crosshair size={27} />
+            <h3>소탕 훈련</h3>
+            <p>참가비 없이 20단계 소탕전에 도전하고, 처치한 적에 따라 포인트를 획득합니다.</p>
+            <p>
+              종료 시 서버가 처치 내역을 확인해 현재 포인트에 지급합니다. 실패해도 처치 보상을
+              받으며, 손 강화는 탄 퍼짐을 줄여줍니다.
+            </p>
+            <Link href="/games/extermination">
+              소탕 훈련 도전하기
               <ArrowUpRight size={16} />
             </Link>
           </article>

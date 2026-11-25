@@ -48,7 +48,7 @@ module.exports = async ({ guest, member, admin, file }) => {
   const handShare = (await member.call('/api/games/share', 'POST', handRequest)).data.share;
   assert.equal(handShare.result.handLevel, handBefore.hand.level);
   const handPage = await guest.call(handShare.path);
-  assert.match(handPage.data, /href="\/games\/rps"/);
+  assert.match(handPage.data, /href="\/games\/hand-enhancement"/);
   assert.match(handPage.data, /\/image\?v=hand-art-2/);
   assert.match(handPage.data, /v=hand-art-2&amp;download=1/);
   const handImage = await fetch(new URL(handShare.path + '/image', handPage.response.url));

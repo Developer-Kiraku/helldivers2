@@ -102,7 +102,7 @@ try {
   assert.equal(rows('스트라타젬 히어로'), 5);
   assert.match(panel('손 강화').textContent, /\+20강.*창세신의 손/);
   assert.match(panel('스트라타젬 히어로').textContent, /15단계.*00:20.000/);
-  assert.equal(panel('손 강화').querySelector('a').getAttribute('href'), '/games/rps');
+  assert.equal(panel('손 강화').querySelector('a').getAttribute('href'), '/games/hand-enhancement');
   assert.equal(
     panel('스트라타젬 히어로').querySelector('a').getAttribute('href'),
     '/games/stratagem',

@@ -14,6 +14,25 @@ const outcomes = { win: '승리!', lose: '다음 승리를 향해', draw: '무�
 const stat = (label, value) => ({ label, value });
 function snapshot(db, actor, game, resultId) {
   const common = { game, gameLabel: gameResultLabels[game], nickname: actor.nickname };
+  if (game === 'extermination') {
+    const record = (db.trainingRecords || []).find(
+      (row) => row.id === resultId && row.userId === actor.id,
+    );
+    if (!record) fail(404, '종료한 소탕 훈련 기록을 찾을 수 없습니다.');
+    return {
+      ...common,
+      completedAt: record.finishedAt,
+      tone: record.points ? 'win' : 'lose',
+      headline: `${record.stage}단계 도달`,
+      summary: `${points(record.points)} 획득 · ${record.kills}마리 처치`,
+      stats: [
+        stat('도달 단계', `${record.stage} / 20`),
+        stat('전투 시간', puzzleTime(record.elapsedMs)),
+        stat('명중률', `${record.accuracy}%`),
+      ],
+      emblem: `${record.points.toLocaleString()} P`,
+    };
+  }
   if (game === 'rps-hand') {
     const hand = rpsHandState(db.users.find((user) => user.id === actor.id));
     const stage = rpsHandStages[hand.level];
@@ -130,7 +149,7 @@ export function createGameShare(db, actor, input) {
     const user = db.users.find((row) => row.id === actor.id);
     if (!user || user.status !== 'active') fail(404, '손 강화 정보를 찾을 수 없습니다.');
     if (String(rpsHandState(user).version) !== resultId)
-      fail(409, '손 강화 상태가 변경되었습니다. 강화 창을 다시 열어 공유해주세요.');
+      fail(409, '손 강화 상태가 변경되었습니다. 손 강화 페이지에서 다시 공유해주세요.');
   }
   db.gameShares ||= [];
   let share = db.gameShares.find(
