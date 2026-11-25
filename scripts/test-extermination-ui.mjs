@@ -144,7 +144,9 @@ try {
     assert.ok(!document.querySelector('.training-overlay').textContent.includes('재시작'));
     await React.act(async () => release());
     const overlay = document.querySelector('.training-overlay');
-    assert.match(overlay.textContent, /게임 오버.*1,234 P 획득/);
+    assert.match(overlay.textContent, /게임 오버/);
+    assert.match(overlay.querySelector('.training-final-points').textContent, /획득 포인트1,234 P/);
+    assert.equal(overlay.querySelectorAll('.training-final-stats > div').length, 4);
     assert.equal(Boolean(overlay.querySelector('.training-top-rank')), !excluded && rank <= 10);
     if (rank <= 10 && !excluded)
       assert.match(

@@ -1,7 +1,17 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Crosshair, Pause, Play, Square, Trophy, RotateCcw } from 'lucide-react';
+import {
+  Crosshair,
+  Pause,
+  Play,
+  Square,
+  Trophy,
+  RotateCcw,
+  Flag,
+  Skull,
+  Clock3,
+} from 'lucide-react';
 import { useCommunity } from './CommunityProvider';
 import { Button } from './ui';
 import GameResultShare from './GameResultShare';
@@ -334,7 +344,10 @@ function Training() {
           <div
             ref={board}
             className={
-              'training-field' + (playing ? ' is-playing' : '') + (attack ? ' is-damaged' : '')
+              'training-field' +
+              (playing ? ' is-playing' : '') +
+              (attack ? ' is-damaged' : '') +
+              (result ? ' has-result' : '')
             }
             aria-label="적을 클릭하거나 터치해 사격하세요"
             onPointerMove={(event) => {
@@ -444,8 +457,20 @@ function Training() {
               <span className="training-feedback">{feedback}</span>
             )}
             {(!view || !playing || connectionError) && (
-              <div className="training-overlay">
-                <div>
+              <div className={'training-overlay' + (result ? ' training-end-overlay' : '')}>
+                <div className={result ? 'training-end-card' : undefined}>
+                  {result && (
+                    <>
+                      <span className="training-report-label">슈퍼 지구 소탕 훈련 · 전투 보고</span>
+                      <div className="training-end-emblem">
+                        {view.reason === 'completed' ? (
+                          <Trophy size={26} />
+                        ) : (
+                          <Crosshair size={26} />
+                        )}
+                      </div>
+                    </>
+                  )}
                   {view?.status !== 'finished' && <Crosshair size={32} />}
                   <h2>
                     {connectionError
@@ -462,27 +487,68 @@ function Training() {
                                 : '훈련 종료'
                             : '슈퍼 지구 소탕 훈련'}
                   </h2>
-                  <p>
-                    {result
-                      ? `${number(result.record.points)} P 획득`
-                      : view?.status === 'finished'
+                  {!result && (
+                    <p>
+                      {view?.status === 'finished'
                         ? '서버에서 기록과 보상을 확인하고 있습니다…'
                         : view?.status === 'cleared'
                           ? `이번 단계 +${number(view.stagePoints)}P`
                           : '스캐빈저 1발 · 워리어 2발 · 헌터 1발'}
-                  </p>
+                    </p>
+                  )}
                   {result && (
                     <>
-                      <p className="training-final-stats">
-                        {result.record.stage}/20단계 · {result.record.kills}마리 처치 · 명중률{' '}
-                        {result.record.accuracy}% · {puzzleTime(result.record.elapsedMs)}
-                      </p>
+                      <div className="training-final-points">
+                        <span>획득 포인트</span>
+                        <strong>
+                          {number(result.record.points)} <small>P</small>
+                        </strong>
+                      </div>
                       {!result.excluded && result.rank >= 1 && result.rank <= 10 && (
                         <p className="training-top-rank" role="status">
-                          <Trophy size={18} /> 월간 TOP 10 · 내 최고 기록 {result.rank}위
+                          <Trophy size={18} /> 월간 TOP 10 <strong>내 최고 {result.rank}위</strong>
                         </p>
                       )}
-                      {result.excluded && <p>순위 제외 기록</p>}
+                      {result.excluded && <p className="training-rank-note">순위 제외 기록</p>}
+                      <dl className="training-final-stats">
+                        <div>
+                          <dt>
+                            <Flag size={15} />
+                            도달 단계
+                          </dt>
+                          <dd>
+                            {result.record.stage}
+                            <small> / 20</small>
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>
+                            <Skull size={15} />
+                            처치 수
+                          </dt>
+                          <dd>
+                            {number(result.record.kills)}
+                            <small> 마리</small>
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>
+                            <Crosshair size={15} />
+                            명중률
+                          </dt>
+                          <dd>
+                            {result.record.accuracy}
+                            <small>%</small>
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>
+                            <Clock3 size={15} />
+                            전투 시간
+                          </dt>
+                          <dd>{puzzleTime(result.record.elapsedMs).slice(0, 5)}</dd>
+                        </div>
+                      </dl>
                     </>
                   )}
                   <div className="training-actions">
@@ -576,32 +642,31 @@ function Training() {
       </div>
       {result && (
         <section className="training-result">
-          <h2>최종 전투 결과</h2>
-          <strong>{number(result.record.points)} P</strong>
-          <p>
-            {result.rank ? `내 월간 최고 기록 ${result.rank}위` : '순위 제외 기록'} ·{' '}
-            {result.record.stage}/20단계 · {result.record.kills}마리 처치 · 명중률{' '}
-            {result.record.accuracy}% · {puzzleTime(result.record.elapsedMs)}
-          </p>
-          <details>
-            <summary>처치별 포인트 정산</summary>
-            <ul>
-              {trainingEnemies.map(
-                (enemy, index) =>
-                  result.record.counts[index] > 0 && (
-                    <li key={enemy.id}>
-                      {enemy.name} {result.record.counts[index]}마리{' '}
-                      <strong>{number(result.record.income[index])} P</strong>
-                    </li>
-                  ),
-              )}
-            </ul>
-          </details>
-          <GameResultShare
-            game="extermination"
-            resultId={result.record.id}
-            label="슈퍼 지구 소탕 훈련 결과 공유"
-          />
+          <h2>
+            <Skull size={22} /> 처치별 전투 기록
+          </h2>
+          <p>이번 도전에서 처치한 적과 획득한 포인트입니다.</p>
+          <ul>
+            {trainingEnemies.map(
+              (enemy, index) =>
+                result.record.counts[index] > 0 && (
+                  <li key={enemy.id}>
+                    <img src={`/images/training/${enemy.id}.webp`} alt="" />
+                    <span>
+                      {enemy.name}
+                      <small>{number(result.record.counts[index])}마리 처치</small>
+                    </span>
+                    <strong>{number(result.record.income[index])} P</strong>
+                  </li>
+                ),
+            )}
+          </ul>
+          {result.record.kills === 0 && (
+            <div className="training-empty-result">
+              <Crosshair size={24} />
+              <p>처치 기록이 없습니다. 다시 소탕에 도전해보세요.</p>
+            </div>
+          )}
         </section>
       )}
       <section className="training-ranking">

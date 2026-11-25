@@ -25,6 +25,32 @@ assert.deepEqual(
   [1, 2, 1, 3, 4, 5, 5],
 );
 assert.ok(trainingEnemies[2].exposure < trainingEnemies[0].exposure);
+for (let kind = 0; kind < 7; kind++) {
+  const enemy = { kind, motionVersion: 2, born: 0, phase: 0, x: 175, y: 140 };
+  const samples = Array.from({ length: 101 }, (_, i) => trainingEnemyPosition(enemy, i * 40));
+  const distance = Math.max(...samples.map((p) => p.x)) - Math.min(...samples.map((p) => p.x));
+  assert.ok(
+    distance > (kind === 2 ? 140 : kind === 5 ? 45 : 60),
+    'Movement must be clearly visible',
+  );
+  for (const position of samples) {
+    assert.ok(position.x - trainingEnemies[kind].size / 2 >= 0);
+    assert.ok(position.y - trainingEnemies[kind].size / 2 >= 0);
+    assert.ok(position.x + 650 + trainingEnemies[kind].size / 2 <= 1000);
+    assert.ok(position.y + 360 + trainingEnemies[kind].size / 2 <= 650);
+  }
+}
+{
+  const legacy = create();
+  legacy.version = 1;
+  advanceTraining(legacy, 400);
+  const enemy = legacy.enemies[0];
+  assert.equal(enemy.motionVersion, 1);
+  assert.equal(
+    trainingEnemyPosition(enemy, 900).x,
+    enemy.x + Math.sin(0.5 * 2.1 + enemy.phase) * (enemy.kind === 2 ? 32 : 14),
+  );
+}
 for (let index = 0; index < 7; index++) {
   const run = create(55, 20);
   run.nextSpawn = 100000;
@@ -105,7 +131,7 @@ function play(seed, level, reaction, cadence, error) {
       .filter((enemy) => run.clock - enemy.born >= reaction)
       .sort((a, b) => a.expires - b.expires)[0];
     if (!target) continue;
-    const position = trainingEnemyPosition(target, run.clock);
+    const position = trainingEnemyPosition(target, run.clock - 80);
     applyTrainingEvent(run, {
       type: 'shot',
       t: time,

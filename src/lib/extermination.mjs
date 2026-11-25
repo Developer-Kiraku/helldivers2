@@ -51,7 +51,7 @@ export function createTrainingRun({ id, userId, seed, handLevel = 0, now = Date.
   return {
     id,
     userId,
-    version: 1,
+    version: 2,
     seed,
     randomState: seed || 1,
     handLevel,
@@ -85,6 +85,14 @@ export function createTrainingRun({ id, userId, seed, handLevel = 0, now = Date.
 }
 export function trainingEnemyPosition(enemy, clock) {
   const age = Math.max(0, clock - enemy.born) / 1000;
+  if (enemy.motionVersion === 2) {
+    const amplitude = [48, 42, 78, 34, 38, 28, 64][enemy.kind];
+    const speed = [3.2, 2.8, 4.4, 2.5, 3, 2, 3.6][enemy.kind];
+    return {
+      x: enemy.x + Math.sin(age * speed + enemy.phase) * amplitude,
+      y: enemy.y + Math.sin(age * speed * 0.73 + enemy.phase) * amplitude * 0.55,
+    };
+  }
   const amplitude = enemy.kind === 2 ? 32 : enemy.kind === 6 ? 26 : 14;
   return {
     x: enemy.x + Math.sin(age * 2.1 + enemy.phase) * amplitude,
@@ -117,6 +125,7 @@ function spawn(run) {
   run.enemies.push({
     id: ++run.spawnCount,
     kind,
+    motionVersion: run.version,
     slot,
     hp: type.hp,
     born: run.clock,
